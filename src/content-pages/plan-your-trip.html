@@ -1,0 +1,138 @@
+<div class="plan-hero">
+  <div class="plan-hero__bg" style="background-image:url('/assets/img/h-03-seychelles-granite.jpg');background-size:cover;background-position:center"></div>
+  <div class="plan-hero__overlay"></div>
+  <div class="plan-hero__inner">
+    <div class="plan-hero__label">Plan Your Trip</div>
+    <h1 class="plan-hero__title">Tell Us Where<br>Your Mark Is</h1>
+    <p class="plan-hero__sub">This is the first conversation, not a commitment. Share as much or as little as you know — Mark reads every inquiry personally and replies within one business day.</p>
+  </div>
+</div>
+
+<section class="plan-section">
+  <div class="plan-grid">
+    <div class="plan-form-wrap">
+      <form id="inquiry-form" class="inq-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY">
+        <input type="hidden" name="subject" value="New trip inquiry — hymtravel.com">
+        <input type="hidden" name="from_name" value="HYM Travel Website">
+        <input type="checkbox" name="botcheck" style="display:none">
+        <div class="inq-row">
+          <div class="inq-field"><label for="inq-name">Full name *</label><input id="inq-name" name="name" type="text" autocomplete="name" required></div>
+          <div class="inq-field"><label for="inq-email">Email *</label><input id="inq-email" name="email" type="email" autocomplete="email" required></div>
+        </div>
+        <div class="inq-row">
+          <div class="inq-field"><label for="inq-phone">Phone <span class="inq-opt">(optional)</span></label><input id="inq-phone" name="phone" type="tel" autocomplete="tel"></div>
+          <div class="inq-field"><label for="inq-type">Trip type</label>
+            <select id="inq-type" name="trip_type">
+              <option>Not sure yet</option>
+              <option>Honeymoon</option>
+              <option>Family trip</option>
+              <option>Group travel</option>
+              <option>Safari</option>
+              <option>Cruise</option>
+              <option>Beach escape</option>
+              <option>Food &amp; wine</option>
+              <option>Adventure</option>
+              <option>Celebration</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="inq-row">
+          <div class="inq-field"><label for="inq-destinations">Destinations on your mind</label><input id="inq-destinations" name="destinations" type="text" placeholder="e.g. Amalfi Coast, Safari in Tanzania, open to ideas"></div>
+          <div class="inq-field"><label for="inq-dates">Approximate dates or season</label><input id="inq-dates" name="dates" type="text" placeholder="e.g. June 2027, 10–14 days, flexible"></div>
+        </div>
+        <div class="inq-row">
+          <div class="inq-field"><label for="inq-budget">Budget range (per person)</label>
+            <select id="inq-budget" name="budget">
+              <option>Prefer to discuss</option>
+              <option>$5,000 – $10,000</option>
+              <option>$10,000 – $20,000</option>
+              <option>$20,000 – $35,000</option>
+              <option>$35,000 – $50,000</option>
+              <option>$50,000+</option>
+            </select>
+          </div>
+          <div class="inq-field"><label for="inq-party">Who's traveling</label><input id="inq-party" name="party" type="text" placeholder="e.g. Two adults; family of five; group of ten"></div>
+        </div>
+        <div class="inq-field"><label for="inq-vision">The vision, in your own words</label><textarea id="inq-vision" name="vision" rows="6" placeholder="What should this trip feel like? Big celebrations, quiet mornings, must-dos, hard nos — anything that helps Mark design it properly."></textarea></div>
+        <div class="inq-field"><label for="inq-referral">How did you hear about us?</label>
+          <select id="inq-referral" name="referral">
+            <option>Select one</option>
+            <option>Referral from a friend or client</option>
+            <option>Google search</option>
+            <option>Instagram</option>
+            <option>Travel journal article</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <button class="inq-submit" type="submit">Send My Inquiry</button>
+        <p class="inq-note">No spam, no list-selling, no pressure. Your details go to one inbox: Mark's.</p>
+      </form>
+      <div id="inquiry-success" class="inq-success" style="display:none">
+        <div class="inq-success__label">Received</div>
+        <h3 class="inq-success__title">Your inquiry is in Mark's inbox.</h3>
+        <p class="inq-success__sub">Expect a personal reply within one business day. If it's urgent, call <a href="tel:+14085681404">(408) 568-1404</a> — a human answers.</p>
+      </div>
+    </div>
+    <aside class="plan-aside">
+      <div class="plan-aside__block">
+        <div class="plan-aside__title">What Happens Next</div>
+        <div class="plan-aside__step"><span class="plan-aside__num">1</span><p><strong>Within one business day</strong> — Mark replies personally with first thoughts and a few sharp questions.</p></div>
+        <div class="plan-aside__step"><span class="plan-aside__num">2</span><p><strong>A short call</strong> — fifteen to thirty minutes to understand pace, style, and non-negotiables.</p></div>
+        <div class="plan-aside__step"><span class="plan-aside__num">3</span><p><strong>A designed proposal</strong> — a considered itinerary with transparent pricing, refined with you until it's exactly right.</p></div>
+      </div>
+      <div class="plan-aside__block">
+        <div class="plan-aside__title">What It Costs</div>
+        <p>The conversation costs nothing. Planning fees, where they apply, are quoted in writing before any work begins — no surprises. Booking through Mark often unlocks preferred rates, upgrades, and amenities you can't get direct.</p>
+      </div>
+      <div class="plan-aside__block">
+        <div class="plan-aside__title">Prefer to Talk?</div>
+        <p><a href="tel:+14085681404">(408) 568-1404</a><br><a href="mailto:mark@hymtravel.com">mark@hymtravel.com</a></p>
+        <p class="plan-aside__muted">Monday–Friday, 9am–6pm Pacific.<br>Traveling clients: 24/7 on-trip support.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="plan-steps">
+  <div class="plan-steps__inner">
+    <div class="plan-steps__label">The Method</div>
+    <h2 class="plan-steps__title">Dream. Aim. Book.</h2>
+    <div class="plan-steps__grid">
+      <div class="plan-step"><div class="plan-step__num">01</div><h3 class="plan-step__title">Dream</h3><p class="plan-step__sub">You bring the spark — a place, a feeling, an occasion. We turn it into a direction worth pursuing.</p></div>
+      <div class="plan-step"><div class="plan-step__num">02</div><h3 class="plan-step__title">Aim</h3><p class="plan-step__sub">Mark designs the route, the stays, and the days — pressure-tested against season, logistics, and your style.</p></div>
+      <div class="plan-step"><div class="plan-step__num">03</div><h3 class="plan-step__title">Book</h3><p class="plan-step__sub">Every reservation confirmed, every detail managed, and support that travels with you until you're home.</p></div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var t = params.get('type');
+  if (t) {
+    var sel = document.getElementById('inq-type');
+    var map = {honeymoon:'Honeymoon', group:'Group travel', family:'Family trip', safari:'Safari', cruise:'Cruise'};
+    if (map[t]) sel.value = map[t];
+  }
+  var form = document.getElementById('inquiry-form');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = form.querySelector('.inq-submit');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch('https://api.web3forms.com/submit', {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}})
+      .then(function(r){return r.json();})
+      .then(function(){
+        form.style.display = 'none';
+        var s = document.getElementById('inquiry-success');
+        s.style.display = 'block';
+        s.scrollIntoView({behavior:'smooth', block:'center'});
+      })
+      .catch(function(){
+        btn.disabled = false; btn.textContent = 'Send My Inquiry';
+        alert('Something went wrong sending the form. Please email mark@hymtravel.com directly — it always works.');
+      });
+  });
+})();
+</script>
