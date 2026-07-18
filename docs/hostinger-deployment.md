@@ -25,12 +25,14 @@ Two complete deliverables were built for you. Pick one to launch; you can switch
 
 (Alternative: FTP with the credentials in hPanel → Files → FTP Accounts.)
 
+> **`.htaccess` is already included** at the zip root. It forces HTTPS, redirects www → non-www, enables gzip compression, sets long cache lifetimes on your images, adds security headers, and routes the custom 404 page. Hostinger runs LiteSpeed, which reads `.htaccess` — no extra config needed. Just make sure it extracts into `public_html` with everything else (it's a hidden dotfile, so enable "show hidden files" in File Manager to see it).
+
 ### 2. Point the domain
 - If `hymtravel.com` is registered **at Hostinger**: hPanel → Domains → assign to this hosting plan. Done.
 - If registered elsewhere (e.g. GoDaddy/Namecheap): either change nameservers to Hostinger's (shown in hPanel → Domains → DNS) — simplest — or create an **A record** pointing `@` and `www` to your hosting IP (hPanel → Hosting Details).
 
 ### 3. SSL (HTTPS)
-hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain, then enable **Force HTTPS**.
+hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://hymtravel.com` loads with the padlock.
 
 ### 4. Activate the forms (Web3Forms key)
 Forms currently carry the placeholder `YOUR_WEB3FORMS_KEY`.
@@ -50,10 +52,13 @@ Forms currently carry the placeholder `YOUR_WEB3FORMS_KEY`.
 ### 1. Install WordPress
 hPanel → **Websites → Auto Installer → WordPress**. Use the same domain, admin email mark@hymtravel.com. Then SSL as above.
 
-### 2. Install the theme
+### 2. Server config (already handled)
+Hostinger's WordPress auto-installer writes its own working `.htaccess` and `wp-config.php` — you don't need to touch either. The theme zip includes `htaccess-wordpress-reference.txt` with optional hardening (blocks xmlrpc brute-force, protects wp-config, disables directory browsing) you can merge in later; it's not required to go live.
+
+### 3. Install the theme
 WP Admin → **Appearance → Themes → Add New → Upload Theme** → choose `hym-travel-wordpress-theme.zip` → Install → **Activate**.
 
-### 3. Create the pages
+### 4. Create the pages
 In **Pages → Add New**, create these and assign the template in the Page sidebar (Template dropdown):
 
 | Page (title) | Slug | Template |
@@ -72,13 +77,13 @@ In **Pages → Add New**, create these and assign the template in the Page sideb
 Then **Settings → Reading**: Homepage = *Home* (static page), Posts page = *Travel Journal*.
 **Settings → Permalinks**: choose **Post name**.
 
-### 4. Menu
+### 5. Menu
 **Appearance → Menus** → create "Primary" with: Experiences, Destinations, About, Travel Journal, Contact → assign to **Primary Navigation**.
 
-### 5. Forms key
+### 6. Forms key
 **Settings → General → Web3Forms Access Key** → paste your key → Save. (Same web3forms.com process as Option A.)
 
-### 6. Build out detail pages & journal over time
+### 7. Build out detail pages & journal over time
 - **Experience/destination detail pages**: Add Page → set parent (Experiences or Destinations) → assign **Experience Detail** or **Destination Detail** template → set a Featured Image (it becomes the hero) → paste content. The 47 generated images are inside the theme at `assets/img/` and also in the static zip — upload via Media Library as needed.
 - **Journal**: Posts → Add New. Featured image = hero; Excerpt = the deck under the headline; Categories drive the filter bar on the journal index.
 
@@ -89,7 +94,7 @@ Then **Settings → Reading**: Homepage = *Home* (static page), Posts page = *Tr
 - **98 pages**, all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap.xml` + `robots.txt` included.
 - **47 images produced** from your Image Prompt Library (plus 6 supplemental heroes to cover sections the library didn't map). All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `hymtravel-image-production-checklist.csv` for exactly where each image is used.
 - **The About page photo is your real family photo** (from the files you provided) — no fake people anywhere on the site.
-- **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). Just add the key (step 4).
+- **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). Just add the key (Option A step 4, or Option B step 6).
 - **E-commerce/booking**: not included per your call — the structure leaves room to add a booking tool later.
 - Phone shown site-wide: (408) 568-1404 · mark@hymtravel.com · Seller of Travel numbers in the footer (CA 2165910-50, WA 605920581, FL ST46122).
 
