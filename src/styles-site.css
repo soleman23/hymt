@@ -1,0 +1,85 @@
+/* ============================================================
+   HIT YOUR MARK TRAVEL — Site-wide additions
+   Mobile nav, shared component responsive rules, utilities
+   ============================================================ */
+
+/* ── MOBILE NAV OVERLAY ── */
+@media (max-width: 900px) {
+  .nav__links {
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: var(--nav-bg-solid);
+    flex-direction: column;
+    padding: 24px 28px 28px;
+    gap: 18px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: none;
+    z-index: 99;
+  }
+  body.nav-open .nav__links { display: flex }
+  body.nav-open .nav__mobile-toggle span:nth-child(1) { transform: translateY(6.5px) rotate(45deg) }
+  body.nav-open .nav__mobile-toggle span:nth-child(2) { opacity: 0 }
+  body.nav-open .nav__mobile-toggle span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg) }
+}
+.nav__mobile-toggle { background: none; border: 0 }
+
+/* ── SKIP LINK (a11y) ── */
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--gold-500); color: var(--navy-900);
+  padding: 10px 16px; z-index: 200;
+  font-family: var(--font-d); font-weight: 700; font-size: 13px;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.skip-link:focus { left: 0 }
+
+/* ── FOCUS VISIBLE ── */
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* ── FORM SHARED ── */
+.inq-form { display: grid; gap: 20px }
+.inq-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px }
+@media (max-width: 700px) { .inq-form__row { grid-template-columns: 1fr } }
+.inq-form label {
+  display: block;
+  font-family: var(--font-d); font-size: 11px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold-500); margin-bottom: 8px;
+}
+.inq-form input, .inq-form select, .inq-form textarea {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-b); font-size: 15px;
+  padding: 13px 14px;
+  border-radius: 0;
+  transition: border-color .15s;
+}
+.inq-form input:focus, .inq-form select:focus, .inq-form textarea:focus {
+  border-color: var(--border-gold); outline: none;
+}
+.inq-form textarea { min-height: 140px; resize: vertical }
+.inq-form__submit {
+  justify-self: start;
+  background: var(--gold-500); color: var(--navy-900);
+  font-family: var(--font-d); font-weight: 700; font-size: 14px;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 16px 36px; border: 0; cursor: pointer;
+  transition: all 150ms cubic-bezier(0.16,1,0.3,1);
+}
+.inq-form__submit:hover { background: var(--gold-400); box-shadow: 0 0 24px rgba(201,168,76,.25) }
+.inq-form__fine { font-size: 12.5px; color: var(--text-muted); line-height: 1.6 }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important }
+  html { scroll-behavior: auto }
+}
+
+/* ── IMAGE DEFAULTS ── */
+img { height: auto }
