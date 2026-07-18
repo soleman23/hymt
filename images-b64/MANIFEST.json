@@ -1,0 +1,247 @@
+[
+ {
+  "b64": "images-b64/assets__family-amalfi.png.b64",
+  "target": "public/assets/family-amalfi.png",
+  "bytes": 2721754
+ },
+ {
+  "b64": "images-b64/assets__logo.png.b64",
+  "target": "public/assets/logo.png",
+  "bytes": 1964490
+ },
+ {
+  "b64": "images-b64/assets__img__d-01-maldives-bento.jpg.b64",
+  "target": "public/assets/img/d-01-maldives-bento.jpg",
+  "bytes": 418671
+ },
+ {
+  "b64": "images-b64/assets__img__d-02-grace-bay.jpg.b64",
+  "target": "public/assets/img/d-02-grace-bay.jpg",
+  "bytes": 257505
+ },
+ {
+  "b64": "images-b64/assets__img__d-03-bora-bora-otemanu.jpg.b64",
+  "target": "public/assets/img/d-03-bora-bora-otemanu.jpg",
+  "bytes": 244541
+ },
+ {
+  "b64": "images-b64/assets__img__d-04-positano-cliffside.jpg.b64",
+  "target": "public/assets/img/d-04-positano-cliffside.jpg",
+  "bytes": 480594
+ },
+ {
+  "b64": "images-b64/assets__img__d-05-seychelles-boulders.jpg.b64",
+  "target": "public/assets/img/d-05-seychelles-boulders.jpg",
+  "bytes": 319506
+ },
+ {
+  "b64": "images-b64/assets__img__d-06-st-barts-harbour.jpg.b64",
+  "target": "public/assets/img/d-06-st-barts-harbour.jpg",
+  "bytes": 317443
+ },
+ {
+  "b64": "images-b64/assets__img__e-01-private-sandbar.jpg.b64",
+  "target": "public/assets/img/e-01-private-sandbar.jpg",
+  "bytes": 326990
+ },
+ {
+  "b64": "images-b64/assets__img__e-02-beach-golden-hour.jpg.b64",
+  "target": "public/assets/img/e-02-beach-golden-hour.jpg",
+  "bytes": 323877
+ },
+ {
+  "b64": "images-b64/assets__img__e-03-grand-resort-dusk.jpg.b64",
+  "target": "public/assets/img/e-03-grand-resort-dusk.jpg",
+  "bytes": 361459
+ },
+ {
+  "b64": "images-b64/assets__img__e-04-swim-up-bar.jpg.b64",
+  "target": "public/assets/img/e-04-swim-up-bar.jpg",
+  "bytes": 481434
+ },
+ {
+  "b64": "images-b64/assets__img__e-05-positano-alley.jpg.b64",
+  "target": "public/assets/img/e-05-positano-alley.jpg",
+  "bytes": 453144
+ },
+ {
+  "b64": "images-b64/assets__img__e-06-tuscan-landscape.jpg.b64",
+  "target": "public/assets/img/e-06-tuscan-landscape.jpg",
+  "bytes": 482329
+ },
+ {
+  "b64": "images-b64/assets__img__e-07-yacht-cove.jpg.b64",
+  "target": "public/assets/img/e-07-yacht-cove.jpg",
+  "bytes": 411299
+ },
+ {
+  "b64": "images-b64/assets__img__e-08-river-cruise-dawn.jpg.b64",
+  "target": "public/assets/img/e-08-river-cruise-dawn.jpg",
+  "bytes": 271315
+ },
+ {
+  "b64": "images-b64/assets__img__e-09-jungle-yoga-pavilion.jpg.b64",
+  "target": "public/assets/img/e-09-jungle-yoga-pavilion.jpg",
+  "bytes": 221466
+ },
+ {
+  "b64": "images-b64/assets__img__e-10-thermal-pool-mountains.jpg.b64",
+  "target": "public/assets/img/e-10-thermal-pool-mountains.jpg",
+  "bytes": 337618
+ },
+ {
+  "b64": "images-b64/assets__img__e-11-elephant-herd-aerial.jpg.b64",
+  "target": "public/assets/img/e-11-elephant-herd-aerial.jpg",
+  "bytes": 289660
+ },
+ {
+  "b64": "images-b64/assets__img__e-12-patagonia-trek.jpg.b64",
+  "target": "public/assets/img/e-12-patagonia-trek.jpg",
+  "bytes": 472013
+ },
+ {
+  "b64": "images-b64/assets__img__e-13-champagne-overwater-deck.jpg.b64",
+  "target": "public/assets/img/e-13-champagne-overwater-deck.jpg",
+  "bytes": 302302
+ },
+ {
+  "b64": "images-b64/assets__img__e-14-private-beach-dinner.jpg.b64",
+  "target": "public/assets/img/e-14-private-beach-dinner.jpg",
+  "bytes": 305386
+ },
+ {
+  "b64": "images-b64/assets__img__e-15-children-shallow-water.jpg.b64",
+  "target": "public/assets/img/e-15-children-shallow-water.jpg",
+  "bytes": 234843
+ },
+ {
+  "b64": "images-b64/assets__img__e-16-safari-vehicle-sunrise.jpg.b64",
+  "target": "public/assets/img/e-16-safari-vehicle-sunrise.jpg",
+  "bytes": 214587
+ },
+ {
+  "b64": "images-b64/assets__img__e-17-tuscan-wine-tasting.jpg.b64",
+  "target": "public/assets/img/e-17-tuscan-wine-tasting.jpg",
+  "bytes": 326654
+ },
+ {
+  "b64": "images-b64/assets__img__e-18-mediterranean-terrace-dinner.jpg.b64",
+  "target": "public/assets/img/e-18-mediterranean-terrace-dinner.jpg",
+  "bytes": 574284
+ },
+ {
+  "b64": "images-b64/assets__img__e-19-secret-sea-cave.jpg.b64",
+  "target": "public/assets/img/e-19-secret-sea-cave.jpg",
+  "bytes": 479461
+ },
+ {
+  "b64": "images-b64/assets__img__e-20-remote-village-dawn.jpg.b64",
+  "target": "public/assets/img/e-20-remote-village-dawn.jpg",
+  "bytes": 302409
+ },
+ {
+  "b64": "images-b64/assets__img__e-21-clifftop-golf.jpg.b64",
+  "target": "public/assets/img/e-21-clifftop-golf.jpg",
+  "bytes": 373173
+ },
+ {
+  "b64": "images-b64/assets__img__e-22-heli-ski-landing.jpg.b64",
+  "target": "public/assets/img/e-22-heli-ski-landing.jpg",
+  "bytes": 291237
+ },
+ {
+  "b64": "images-b64/assets__img__f-01-teal-lagoon-cta.jpg.b64",
+  "target": "public/assets/img/f-01-teal-lagoon-cta.jpg",
+  "bytes": 263694
+ },
+ {
+  "b64": "images-b64/assets__img__h-01-maldives-aerial.jpg.b64",
+  "target": "public/assets/img/h-01-maldives-aerial.jpg",
+  "bytes": 383687
+ },
+ {
+  "b64": "images-b64/assets__img__h-02-bora-bora-dawn.jpg.b64",
+  "target": "public/assets/img/h-02-bora-bora-dawn.jpg",
+  "bytes": 490679
+ },
+ {
+  "b64": "images-b64/assets__img__h-03-seychelles-granite.jpg.b64",
+  "target": "public/assets/img/h-03-seychelles-granite.jpg",
+  "bytes": 540443
+ },
+ {
+  "b64": "images-b64/assets__img__h-04-amalfi-golden-hour.jpg.b64",
+  "target": "public/assets/img/h-04-amalfi-golden-hour.jpg",
+  "bytes": 622500
+ },
+ {
+  "b64": "images-b64/assets__img__i-01-maldives-season-guide.jpg.b64",
+  "target": "public/assets/img/i-01-maldives-season-guide.jpg",
+  "bytes": 275548
+ },
+ {
+  "b64": "images-b64/assets__img__i-02-anniversary-table.jpg.b64",
+  "target": "public/assets/img/i-02-anniversary-table.jpg",
+  "bytes": 284355
+ },
+ {
+  "b64": "images-b64/assets__img__i-03-spring-amalfi.jpg.b64",
+  "target": "public/assets/img/i-03-spring-amalfi.jpg",
+  "bytes": 582179
+ },
+ {
+  "b64": "images-b64/assets__img__p-01-soneva-jani.jpg.b64",
+  "target": "public/assets/img/p-01-soneva-jani.jpg",
+  "bytes": 405071
+ },
+ {
+  "b64": "images-b64/assets__img__p-02-north-island.jpg.b64",
+  "target": "public/assets/img/p-02-north-island.jpg",
+  "bytes": 513832
+ },
+ {
+  "b64": "images-b64/assets__img__p-03-four-seasons-bora-bora.jpg.b64",
+  "target": "public/assets/img/p-03-four-seasons-bora-bora.jpg",
+  "bytes": 292649
+ },
+ {
+  "b64": "images-b64/assets__img__u-01-specialist-portrait.jpg.b64",
+  "target": "public/assets/img/u-01-specialist-portrait.jpg",
+  "bytes": 136627
+ },
+ {
+  "b64": "images-b64/assets__img__u-02-agency-lifestyle.jpg.b64",
+  "target": "public/assets/img/u-02-agency-lifestyle.jpg",
+  "bytes": 293696
+ },
+ {
+  "b64": "images-b64/assets__img__x-01-serengeti-elephants.jpg.b64",
+  "target": "public/assets/img/x-01-serengeti-elephants.jpg",
+  "bytes": 413421
+ },
+ {
+  "b64": "images-b64/assets__img__x-02-bali-rice-terraces.jpg.b64",
+  "target": "public/assets/img/x-02-bali-rice-terraces.jpg",
+  "bytes": 493532
+ },
+ {
+  "b64": "images-b64/assets__img__x-03-petra-treasury.jpg.b64",
+  "target": "public/assets/img/x-03-petra-treasury.jpg",
+  "bytes": 411916
+ },
+ {
+  "b64": "images-b64/assets__img__x-04-napa-vineyard-dining.jpg.b64",
+  "target": "public/assets/img/x-04-napa-vineyard-dining.jpg",
+  "bytes": 371868
+ },
+ {
+  "b64": "images-b64/assets__img__x-05-grand-teton-dawn.jpg.b64",
+  "target": "public/assets/img/x-05-grand-teton-dawn.jpg",
+  "bytes": 426355
+ },
+ {
+  "b64": "images-b64/assets__img__x-06-polar-iceberg-twilight.jpg.b64",
+  "target": "public/assets/img/x-06-polar-iceberg-twilight.jpg",
+  "bytes": 350795
+ }
+]
