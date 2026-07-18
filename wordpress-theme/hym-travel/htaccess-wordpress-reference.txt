@@ -1,0 +1,47 @@
+# ============================================================
+# WordPress — Hostinger / LiteSpeed recommended .htaccess
+# NOTE: Hostinger's WordPress auto-installer already writes a
+# working .htaccess. Use this as a reference / hardening add-on.
+# Place at the WordPress ROOT (same level as wp-config.php).
+# ============================================================
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# ── Force HTTPS ──
+<IfModule mod_rewrite.c>
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ── Security hardening ──
+# Block xmlrpc (common brute-force target)
+<Files xmlrpc.php>
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</Files>
+# Protect wp-config
+<Files wp-config.php>
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</Files>
+# Disable directory browsing
+Options -Indexes
+
+# ── Security headers ──
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
