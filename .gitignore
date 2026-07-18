@@ -1,0 +1,13 @@
+node_modules/
+.astro/
+*.log
+.DS_Store
+
+# Binary images are stored as base64 in images-b64/ (GitHub push limitation).
+# After running tools/restore_images.py these exist locally but stay untracked:
+public/assets/img/
+public/assets/*.jpg
+public/assets/*.png
+dist/assets/
+wordpress-theme/hym-travel/assets/img/
+wordpress-theme/hym-travel/assets/*.png
