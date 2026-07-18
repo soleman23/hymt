@@ -1,0 +1,44 @@
+---
+interface Props { active?: string }
+const { active = "" } = Astro.props;
+const items = [
+  ["experiences", "Experiences", "/experiences/"],
+  ["destinations", "Destinations", "/destinations/"],
+  ["about", "About", "/about/"],
+  ["journal", "Travel Journal", "/travel-journal/"],
+  ["contact", "Contact", "/contact/"],
+] as const;
+---
+<nav class="nav" id="nav">
+  <a href="/"><img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52"></a>
+  <ul class="nav__links" id="navLinks">
+    {items.map(([key, label, href]) => (
+      <li>
+        <a
+          class="nav__link"
+          href={href}
+          style={key === active ? "color:var(--gold-400);border-bottom-color:var(--gold-500)" : undefined}
+        >{label}</a>
+      </li>
+    ))}
+  </ul>
+  <a href="/plan-your-trip/" class="nav__cta">Plan My Trip</a>
+  <button class="nav__mobile-toggle" id="mobileToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav?.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  const toggle = document.getElementById('mobileToggle');
+  const links = document.getElementById('navLinks');
+  toggle?.addEventListener('click', () => {
+    const open = document.body.classList.toggle('nav-open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  links?.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => document.body.classList.remove('nav-open'))
+  );
+</script>

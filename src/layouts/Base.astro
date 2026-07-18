@@ -1,0 +1,107 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Newsletter from "../components/Newsletter.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  active?: string;
+  ogImage?: string;
+  pageCss?: string;
+  extraCss?: string;
+  showNewsletter?: boolean;
+  canonicalPath?: string;
+  schemaType?: "website" | "article";
+  publishDate?: string;
+}
+
+const {
+  title,
+  description = "Hit Your Mark Travel designs bespoke journeys for the time-poor, taste-rich traveler. A lifetime of experience. A global network. And someone who actually picks up the phone.",
+  active = "",
+  ogImage = "/assets/og-default.jpg",
+  pageCss = "",
+  extraCss = "",
+  showNewsletter = true,
+  canonicalPath = "",
+  schemaType = "website",
+  publishDate = "",
+} = Astro.props;
+
+const site = "https://hymtravel.com";
+const canonical = canonicalPath || Astro.url.pathname;
+const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Your Mark Travel`;
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  "name": "Hit Your Mark Travel",
+  "url": site,
+  "logo": `${site}/assets/logo.png`,
+  "description": "Single-agent luxury travel firm designing bespoke journeys for time-poor, taste-rich travelers.",
+  "telephone": "+1-408-568-1404",
+  "email": "mark@hymtravel.com",
+  "founder": { "@type": "Person", "name": "Mark Sole", "jobTitle": "Founder & Travel Director" },
+  "areaServed": "United States",
+  "sameAs": ["https://www.instagram.com/travelwithsoleman/"]
+};
+
+const articleSchema = schemaType === "article" ? {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "author": { "@type": "Person", "name": "Mark Sole" },
+  "publisher": { "@type": "Organization", "name": "Hit Your Mark Travel", "logo": { "@type": "ImageObject", "url": `${site}/assets/logo.png` } },
+  ...(publishDate ? { "datePublished": publishDate } : {}),
+  "mainEntityOfPage": `${site}${canonical}`
+} : null;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{fullTitle}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={`${site}${canonical}`}>
+<meta name="theme-color" content="#0d1b2a">
+
+<meta property="og:type" content={schemaType === "article" ? "article" : "website"}>
+<meta property="og:site_name" content="Hit Your Mark Travel">
+<meta property="og:title" content={fullTitle}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={`${site}${canonical}`}>
+<meta property="og:image" content={`${site}${ogImage}`}>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={fullTitle}>
+<meta name="twitter:description" content={description}>
+<meta name="twitter:image" content={`${site}${ogImage}`}>
+
+<link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="apple-touch-icon" href="/assets/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap">
+
+<script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+{articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+
+<style is:global>
+  @import "../styles-master.css";
+  @import "../styles-site.css";
+</style>
+{pageCss && <style is:global set:html={pageCss} />}
+{extraCss && <style is:global set:html={extraCss} />}
+</head>
+<body class="theme-dark">
+<a class="skip-link" href="#main">Skip to content</a>
+<Header active={active} />
+<main id="main">
+  <slot />
+</main>
+{showNewsletter && <Newsletter />}
+<Footer />
+</body>
+</html>
