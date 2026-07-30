@@ -1,97 +1,335 @@
+<style>
+/* Multi-step Plan Your Trip form — matches local HYM Plan Your Trip.html */
+.plan-multistep { max-width:900px;margin:0 auto }
+.plan-section--multistep { padding-top:56px }
+.plan-grid--solo { grid-template-columns:1fr;max-width:960px }
+.progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:56px}
+.progress-step{display:flex;align-items:center;gap:12px}
+.progress-num{width:36px;height:36px;border-radius:50%;border:2px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-d);font-size:13px;font-weight:700;color:var(--text-muted);transition:all .25s}
+.progress-step.active .progress-num,.progress-step.done .progress-num{background:var(--gold-500);border-color:var(--gold-500);color:var(--navy-900)}
+.progress-label{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);transition:color .25s}
+.progress-step.active .progress-label{color:var(--gold-400)}
+.progress-line{width:60px;height:1px;background:var(--border-subtle);margin:0 12px;flex-shrink:0;transition:background .25s}
+.progress-line.done{background:var(--gold-500)}
+.form-step{display:none}
+.form-step.active{display:block}
+.step-title{font-family:var(--font-d);font-size:clamp(22px,3vw,34px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary);margin-bottom:8px}
+.step-sub{font-family:var(--font-b);font-size:15px;color:var(--text-secondary);line-height:1.65;margin-bottom:40px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:40px}
+.cat-item{position:relative}
+.cat-item input[type="checkbox"]{position:absolute;opacity:0;width:0;height:0}
+.cat-label{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:20px;min-height:100px;cursor:pointer;background:var(--bg-elevated);border:1px solid var(--border-subtle);transition:all .15s;position:relative}
+.cat-item input:checked + .cat-label{background:var(--accent-subtle);border-color:var(--gold-500);box-shadow:0 0 20px rgba(201,168,76,.1)}
+.cat-label:hover{border-color:var(--border-gold)}
+.cat-check{position:absolute;top:14px;right:14px;width:18px;height:18px;border:1.5px solid rgba(138,155,176,.45);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cat-item input:checked + .cat-label .cat-check{background:var(--gold-500);border-color:var(--gold-500)}
+.cat-check::after{content:'';width:5px;height:9px;border-right:2px solid var(--navy-900);border-bottom:2px solid var(--navy-900);transform:rotate(45deg) translateY(-2px);display:none}
+.cat-item input:checked + .cat-label .cat-check::after{display:block}
+.cat-name{font-family:var(--font-d);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-primary);margin-bottom:3px}
+.cat-desc{font-family:var(--font-b);font-size:11px;color:var(--text-muted)}
+.field{margin-bottom:28px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+.field label,.field-row label,.stepper-group label{display:block;font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px}
+.field input[type="text"],.field input[type="email"],.field input[type="tel"],.field select,.field textarea,.field-row select,.field-row input{width:100%;padding:14px 16px;background:var(--bg-elevated);border:1px solid var(--border-subtle);font-family:var(--font-b);font-size:14px;color:var(--text-primary);outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none;border-radius:0}
+.field input:focus,.field select:focus,.field textarea:focus,.field-row select:focus{border-color:var(--gold-500)}
+.field textarea{min-height:140px;resize:vertical}
+.field-hint{font-family:var(--font-b);font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.5}
+.stepper-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--border-subtle)}
+.stepper-btn{width:44px;height:44px;background:var(--bg-elevated);border:none;font-size:18px;font-weight:300;color:var(--gold-500);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.stepper-btn:hover{background:var(--bg-card)}
+.stepper-val{width:56px;text-align:center;background:var(--bg-elevated);font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-primary);border:none;outline:none}
+.radio-group,.check-group{display:flex;flex-direction:column;gap:0}
+.radio-opt,.check-opt{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--border-subtle);border-top:none;cursor:pointer;transition:all .15s}
+.radio-opt:first-child,.check-opt:first-child{border-top:1px solid var(--border-subtle)}
+.radio-opt:hover,.check-opt:hover{border-color:var(--border-gold);background:var(--accent-subtle)}
+.radio-opt input,.check-opt input{appearance:none;width:18px;height:18px;flex-shrink:0;border:1.5px solid rgba(138,155,176,.45);cursor:pointer;transition:all .15s}
+.radio-opt input{border-radius:50%}
+.radio-opt input:checked,.check-opt input:checked{background:var(--gold-500);border-color:var(--gold-500)}
+.radio-opt input:checked{box-shadow:inset 0 0 0 4px var(--bg-elevated)}
+.radio-label,.check-label{font-family:var(--font-b);font-size:14px;color:var(--text-primary)}
+.radio-label span,.check-label span{display:block;font-size:12px;color:var(--text-muted);margin-top:2px}
+.occasions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:28px}
+.occ-item{position:relative}
+.occ-item input{position:absolute;opacity:0;width:0;height:0}
+.occ-label{display:flex;align-items:center;justify-content:center;padding:14px 12px;cursor:pointer;background:var(--bg-elevated);border:1px solid var(--border-subtle);font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-secondary);transition:all .15s;text-align:center}
+.occ-item input:checked + .occ-label{background:var(--accent-subtle);border-color:var(--gold-500);color:var(--gold-400)}
+.occ-label:hover{border-color:var(--border-gold)}
+.form-nav{display:flex;align-items:center;justify-content:space-between;margin-top:44px;padding-top:32px;border-top:1px solid var(--border-subtle);gap:16px}
+.btn-back{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:transparent;border:1px solid rgba(138,155,176,.35);color:var(--text-secondary);padding:13px 28px;cursor:pointer;transition:all .15s}
+.btn-back:hover{border-color:var(--silver-300);color:var(--text-primary)}
+.btn-back:disabled{opacity:.3;cursor:not-allowed}
+.btn-next{font-family:var(--font-d);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--gold-500);color:var(--navy-900);border:none;padding:15px 40px;cursor:pointer;transition:all .15s;flex:1;max-width:280px}
+.btn-next:hover{background:var(--gold-400);box-shadow:0 0 24px rgba(201,168,76,.2)}
+.btn-next:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.step-count{font-family:var(--font-b);font-size:12px;color:var(--text-muted)}
+.success-state{display:none;text-align:center;padding:80px 40px}
+.success-state.show{display:block}
+.success-mark{width:64px;height:64px;border:2px solid var(--gold-500);display:flex;align-items:center;justify-content:center;margin:0 auto 32px}
+.success-mark::after{content:'';width:14px;height:24px;border-right:2.5px solid var(--gold-500);border-bottom:2.5px solid var(--gold-500);transform:rotate(45deg) translateY(-4px)}
+.success-title{font-family:var(--font-d);font-size:clamp(24px,3vw,36px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary);margin-bottom:16px}
+.success-body{font-family:var(--font-b);font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:48ch;margin:0 auto 32px}
+.success-quote{font-family:var(--font-d);font-size:15px;font-style:italic;color:var(--gold-400);max-width:44ch;margin:0 auto}
+.trust-strip{background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);padding:48px 52px}
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:1200px;margin:0 auto}
+.trust-item{padding:32px 28px;background:var(--bg-elevated);border:1px solid var(--border-subtle)}
+.trust-num{font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--gold-400);line-height:1;letter-spacing:-.02em;margin-bottom:8px}
+.trust-title{font-family:var(--font-d);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);margin-bottom:6px}
+.trust-desc{font-family:var(--font-b);font-size:13px;color:var(--text-secondary);line-height:1.55}
+@media(max-width:900px){
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .field-row{grid-template-columns:1fr}
+  .occasions-grid{grid-template-columns:repeat(2,1fr)}
+  .trust-grid{grid-template-columns:1fr}
+  .progress-label{display:none}
+  .trust-strip{padding:40px 28px}
+  .progress-line{width:40px}
+}
+@media(max-width:540px){
+  .cat-grid{grid-template-columns:1fr 1fr}
+  .progress-line{width:28px}
+}
+</style>
+
 <div class="plan-hero">
   <div class="plan-hero__bg" style="background-image:url('/assets/img/h-03-seychelles-granite.jpg');background-size:cover;background-position:center"></div>
   <div class="plan-hero__overlay"></div>
   <div class="plan-hero__inner">
     <div class="plan-hero__label">Plan Your Trip</div>
     <h1 class="plan-hero__title">Tell Us Where<br>Your Mark Is</h1>
-    <p class="plan-hero__sub">This is the first conversation, not a commitment. Share as much or as little as you know — Mark reads every inquiry personally and replies within one business day.</p>
+    <p class="plan-hero__sub">Tell me what you're after — the feeling, the timing, the people you're traveling with. Four quick steps. I'll take it from there.</p>
   </div>
 </div>
 
-<section class="plan-section">
-  <div class="plan-grid">
-    <div class="plan-form-wrap">
-      <form id="inquiry-form" class="inq-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY">
-        <input type="hidden" name="subject" value="New trip inquiry — hymtravel.com">
-        <input type="hidden" name="from_name" value="HYM Travel Website">
-        <input type="checkbox" name="botcheck" style="display:none">
-        <div class="inq-row">
-          <div class="inq-field"><label for="inq-name">Full name *</label><input id="inq-name" name="name" type="text" autocomplete="name" required></div>
-          <div class="inq-field"><label for="inq-email">Email *</label><input id="inq-email" name="email" type="email" autocomplete="email" required></div>
+<div class="trust-strip">
+  <div class="trust-grid">
+    <div class="trust-item">
+      <div class="trust-num">24h</div>
+      <div class="trust-title">Response Guarantee</div>
+      <div class="trust-desc">Every inquiry gets a personal reply from Mark within one business day.</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">0</div>
+      <div class="trust-title">Booking Fees</div>
+      <div class="trust-desc">No fee to start planning. We charge when we book — and only if you're happy with the proposal.</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">100%</div>
+      <div class="trust-title">Bespoke</div>
+      <div class="trust-desc">No templates, no packages. Every itinerary is built from scratch around you.</div>
+    </div>
+  </div>
+</div>
+
+<section class="plan-section plan-section--multistep">
+  <div class="plan-grid plan-grid--solo">
+    <div class="plan-form-wrap plan-multistep">
+      <div class="progress" id="progress">
+        <div class="progress-step active" id="ps1"><div class="progress-num">1</div><div class="progress-label">Experience</div></div>
+        <div class="progress-line" id="pl1"></div>
+        <div class="progress-step" id="ps2"><div class="progress-num">2</div><div class="progress-label">When &amp; Who</div></div>
+        <div class="progress-line" id="pl2"></div>
+        <div class="progress-step" id="ps3"><div class="progress-num">3</div><div class="progress-label">Your Vision</div></div>
+        <div class="progress-line" id="pl3"></div>
+        <div class="progress-step" id="ps4"><div class="progress-num">4</div><div class="progress-label">Contact</div></div>
+      </div>
+
+      <div class="form-step active" id="step1">
+        <div class="label" style="margin-bottom:10px">Step 1 of 4</div>
+        <h2 class="step-title">What are you after?</h2>
+        <p class="step-sub">Select all that apply. If you're not sure yet, that's fine — we'll figure it out together.</p>
+        <div class="cat-grid">
+          <div class="cat-item"><input type="checkbox" id="c1" value="beach" data-type="beach"><label for="c1" class="cat-label"><div class="cat-check"></div><div class="cat-name">Beach &amp; Islands</div><div class="cat-desc">Sand, water, seclusion</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c2" value="all-inclusive"><label for="c2" class="cat-label"><div class="cat-check"></div><div class="cat-name">All-Inclusive</div><div class="cat-desc">Resort, no decisions</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c3" value="family" data-type="family"><label for="c3" class="cat-label"><div class="cat-check"></div><div class="cat-name">Family Travel</div><div class="cat-desc">Kids, all ages</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c4" value="multigen"><label for="c4" class="cat-label"><div class="cat-check"></div><div class="cat-name">Multigenerational</div><div class="cat-desc">Three generations</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c5" value="adventure"><label for="c5" class="cat-label"><div class="cat-check"></div><div class="cat-name">Adventure &amp; Active</div><div class="cat-desc">Hiking, ski, diving</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c6" value="wellness"><label for="c6" class="cat-label"><div class="cat-check"></div><div class="cat-name">Wellness &amp; Retreat</div><div class="cat-desc">Rest, reset, restore</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c7" value="culture"><label for="c7" class="cat-label"><div class="cat-check"></div><div class="cat-name">Culture &amp; Immersive</div><div class="cat-desc">Art, heritage, local</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c8" value="food-wine"><label for="c8" class="cat-label"><div class="cat-check"></div><div class="cat-name">Food &amp; Wine</div><div class="cat-desc">Tables, cellars, chefs</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c9" value="cruises" data-type="cruise"><label for="c9" class="cat-label"><div class="cat-check"></div><div class="cat-name">Cruises</div><div class="cat-desc">Ocean, river, yacht</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c10" value="romance" data-type="honeymoon"><label for="c10" class="cat-label"><div class="cat-check"></div><div class="cat-name">Romance</div><div class="cat-desc">Honeymoon, anniversary</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c11" value="safari" data-type="safari"><label for="c11" class="cat-label"><div class="cat-check"></div><div class="cat-name">Safari &amp; Wildlife</div><div class="cat-desc">Africa, camps, guides</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c12" value="sports"><label for="c12" class="cat-label"><div class="cat-check"></div><div class="cat-name">Sports &amp; Events</div><div class="cat-desc">F1, golf, Wimbledon</div></label></div>
+          <div class="cat-item"><input type="checkbox" id="c13" value="group" data-type="group"><label for="c13" class="cat-label"><div class="cat-check"></div><div class="cat-name">Group Travel</div><div class="cat-desc">Friends, clubs, teams</div></label></div>
         </div>
-        <div class="inq-row">
-          <div class="inq-field"><label for="inq-phone">Phone <span class="inq-opt">(optional)</span></label><input id="inq-phone" name="phone" type="tel" autocomplete="tel"></div>
-          <div class="inq-field"><label for="inq-type">Trip type</label>
-            <select id="inq-type" name="trip_type">
-              <option>Not sure yet</option>
-              <option>Honeymoon</option>
-              <option>Family trip</option>
-              <option>Group travel</option>
-              <option>Safari</option>
-              <option>Cruise</option>
-              <option>Beach escape</option>
-              <option>Food &amp; wine</option>
-              <option>Adventure</option>
-              <option>Celebration</option>
-              <option>Other</option>
+        <div class="form-nav">
+          <button type="button" class="btn-back" disabled>Back</button>
+          <span class="step-count">1 / 4</span>
+          <button type="button" class="btn-next" onclick="goTo(2)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="form-step" id="step2">
+        <div class="label" style="margin-bottom:10px">Step 2 of 4</div>
+        <h2 class="step-title">When &amp; who</h2>
+        <p class="step-sub">Rough dates are fine. If you're flexible, let me know — shoulder season often produces the best trips.</p>
+        <div class="field-row">
+          <div>
+            <label for="month">Month / Season</label>
+            <select id="month">
+              <option value="">Select a month or season</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+              <option>Flexible — anytime</option><option>Flexible — avoiding summer</option>
+              <option>Flexible — shoulder season preferred</option>
+            </select>
+          </div>
+          <div>
+            <label for="year">Year</label>
+            <select id="year">
+              <option value="">Select</option>
+              <option>2026</option><option>2027</option><option>2028</option>
             </select>
           </div>
         </div>
-        <div class="inq-row">
-          <div class="inq-field"><label for="inq-destinations">Destinations on your mind</label><input id="inq-destinations" name="destinations" type="text" placeholder="e.g. Amalfi Coast, Safari in Tanzania, open to ideas"></div>
-          <div class="inq-field"><label for="inq-dates">Approximate dates or season</label><input id="inq-dates" name="dates" type="text" placeholder="e.g. June 2027, 10–14 days, flexible"></div>
+        <div class="field">
+          <label for="duration">Trip length</label>
+          <select id="duration">
+            <option value="">Select a duration</option>
+            <option>5–7 days</option><option>8–10 days</option><option>10–14 days</option>
+            <option>2–3 weeks</option><option>3–4 weeks</option><option>One month+</option>
+            <option>Flexible</option>
+          </select>
         </div>
-        <div class="inq-row">
-          <div class="inq-field"><label for="inq-budget">Budget range (per person)</label>
-            <select id="inq-budget" name="budget">
-              <option>Prefer to discuss</option>
-              <option>$5,000 – $10,000</option>
-              <option>$10,000 – $20,000</option>
-              <option>$20,000 – $35,000</option>
-              <option>$35,000 – $50,000</option>
-              <option>$50,000+</option>
-            </select>
+        <div class="stepper-row">
+          <div class="stepper-group">
+            <label>Adults (18+)</label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" onclick="adj('adults',-1)">−</button>
+              <input class="stepper-val" id="adults" value="2" readonly>
+              <button type="button" class="stepper-btn" onclick="adj('adults',1)">+</button>
+            </div>
           </div>
-          <div class="inq-field"><label for="inq-party">Who's traveling</label><input id="inq-party" name="party" type="text" placeholder="e.g. Two adults; family of five; group of ten"></div>
+          <div class="stepper-group">
+            <label>Children</label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" onclick="adj('children',-1)">−</button>
+              <input class="stepper-val" id="children" value="0" readonly>
+              <button type="button" class="stepper-btn" onclick="adj('children',1)">+</button>
+            </div>
+          </div>
         </div>
-        <div class="inq-field"><label for="inq-vision">The vision, in your own words</label><textarea id="inq-vision" name="vision" rows="6" placeholder="What should this trip feel like? Big celebrations, quiet mornings, must-dos, hard nos — anything that helps Mark design it properly."></textarea></div>
-        <div class="inq-field"><label for="inq-referral">How did you hear about us?</label>
-          <select id="inq-referral" name="referral">
-            <option>Select one</option>
-            <option>Referral from a friend or client</option>
+        <div class="field">
+          <label>Approximate trip budget (total)</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="budget" value="Under $15,000"><span class="radio-label">Under $15,000</span></label>
+            <label class="radio-opt"><input type="radio" name="budget" value="$15,000 – $30,000"><span class="radio-label">$15,000 – $30,000</span></label>
+            <label class="radio-opt"><input type="radio" name="budget" value="$30,000 – $60,000"><span class="radio-label">$30,000 – $60,000</span></label>
+            <label class="radio-opt"><input type="radio" name="budget" value="$60,000 – $100,000"><span class="radio-label">$60,000 – $100,000</span></label>
+            <label class="radio-opt"><input type="radio" name="budget" value="$100,000+"><span class="radio-label">$100,000+</span></label>
+            <label class="radio-opt"><input type="radio" name="budget" value="Prefer not to say"><span class="radio-label">Prefer not to say</span></label>
+          </div>
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn-back" onclick="goTo(1)">← Back</button>
+          <span class="step-count">2 / 4</span>
+          <button type="button" class="btn-next" onclick="goTo(3)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="form-step" id="step3">
+        <div class="label" style="margin-bottom:10px">Step 3 of 4</div>
+        <h2 class="step-title">Tell me what you're dreaming of</h2>
+        <p class="step-sub">Not just the destination — the feeling. The more specific you are, the better the trip.</p>
+        <div class="field">
+          <label for="dest-idea">Destinations in mind (if any)</label>
+          <input type="text" id="dest-idea" placeholder="A place, a region, or just a vibe — anything helps">
+        </div>
+        <div class="field">
+          <label for="vision">Describe the trip you're imagining</label>
+          <textarea id="vision" placeholder="The kind of morning you want, whether you want silence or a city, what your ideal dinner looks like. Anything that helps me understand what would make this exceptional for you."></textarea>
+          <div class="field-hint">The most useful thing you can write: what would make this trip a failure. We design around that.</div>
+        </div>
+        <div class="field">
+          <label>Any special occasion?</label>
+          <div class="occasions-grid">
+            <div class="occ-item"><input type="checkbox" id="o1" name="occasion" value="Honeymoon"><label for="o1" class="occ-label">Honeymoon</label></div>
+            <div class="occ-item"><input type="checkbox" id="o2" name="occasion" value="Anniversary"><label for="o2" class="occ-label">Anniversary</label></div>
+            <div class="occ-item"><input type="checkbox" id="o3" name="occasion" value="Birthday"><label for="o3" class="occ-label">Birthday</label></div>
+            <div class="occ-item"><input type="checkbox" id="o4" name="occasion" value="Babymoon"><label for="o4" class="occ-label">Babymoon</label></div>
+            <div class="occ-item"><input type="checkbox" id="o5" name="occasion" value="Graduation"><label for="o5" class="occ-label">Graduation</label></div>
+            <div class="occ-item"><input type="checkbox" id="o6" name="occasion" value="None"><label for="o6" class="occ-label">None</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Have you traveled with a travel advisor before?</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="advisor-exp" value="First time"><span class="radio-label">No — this is my first time <span>I'll walk you through exactly how it works</span></span></label>
+            <label class="radio-opt"><input type="radio" name="advisor-exp" value="Yes, elsewhere"><span class="radio-label">Yes, with another agency <span>Tell me what worked and what didn't</span></span></label>
+            <label class="radio-opt"><input type="radio" name="advisor-exp" value="Yes, with HYM"><span class="radio-label">Yes — I've worked with Mark before</span></label>
+          </div>
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn-back" onclick="goTo(2)">← Back</button>
+          <span class="step-count">3 / 4</span>
+          <button type="button" class="btn-next" onclick="goTo(4)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="form-step" id="step4">
+        <div class="label" style="margin-bottom:10px">Step 4 of 4</div>
+        <h2 class="step-title">Almost there</h2>
+        <p class="step-sub">Where should Mark send your reply?</p>
+        <div class="field-row">
+          <div class="field" style="margin-bottom:0">
+            <label for="fname">First name</label>
+            <input type="text" id="fname" placeholder="First name" autocomplete="given-name">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="lname">Last name</label>
+            <input type="text" id="lname" placeholder="Last name" autocomplete="family-name">
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="phone">Phone (optional)</label>
+          <input type="tel" id="phone" placeholder="+1 (___) ___-____" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="referral">How did you hear about us?</label>
+          <select id="referral">
+            <option value="">Select an option</option>
+            <option>Referred by a friend or client</option>
             <option>Google search</option>
             <option>Instagram</option>
-            <option>Travel journal article</option>
+            <option>LinkedIn</option>
+            <option>A financial advisor or wealth manager</option>
+            <option>A hotel or concierge</option>
+            <option>Editorial / press coverage</option>
             <option>Other</option>
           </select>
         </div>
-        <button class="inq-submit" type="submit">Send My Inquiry</button>
-        <p class="inq-note">No spam, no list-selling, no pressure. Your details go to one inbox: Mark's.</p>
-      </form>
-      <div id="inquiry-success" class="inq-success" style="display:none">
-        <div class="inq-success__label">Received</div>
-        <h3 class="inq-success__title">Your inquiry is in Mark's inbox.</h3>
-        <p class="inq-success__sub">Expect a personal reply within one business day. If it's urgent, call <a href="tel:+14085681404">(408) 568-1404</a> — a human answers.</p>
+        <div class="check-group" style="margin-bottom:28px">
+          <label class="check-opt">
+            <input type="checkbox" id="newsletter-opt">
+            <span class="check-label">Add me to the Travel Journal — destination notes delivered occasionally, no spam</span>
+          </label>
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn-back" onclick="goTo(3)">← Back</button>
+          <span class="step-count">4 / 4</span>
+          <button type="button" class="btn-next" id="planSubmitBtn" onclick="submitForm()" style="background:var(--gold-500)">Submit My Inquiry →</button>
+        </div>
+        <p id="planError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:16px;text-align:right"></p>
+      </div>
+
+      <div class="success-state" id="successState">
+        <div class="success-mark"></div>
+        <h2 class="success-title">Your inquiry is on its way.</h2>
+        <p class="success-body">Mark will review everything you've shared and reply within one business day. In the meantime, feel free to explore the Journal or browse destinations — the more you know about where you want to go, the better the conversation will be.</p>
+        <p class="success-quote">"The only decision you made was reaching out. We'll handle the rest."</p>
+        <div style="margin-top:40px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+          <a href="/travel-journal/" class="btn-back" style="text-decoration:none">Read the Journal</a>
+          <a href="/destinations/" class="btn-next" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Browse Destinations</a>
+        </div>
       </div>
     </div>
-    <aside class="plan-aside">
-      <div class="plan-aside__block">
-        <div class="plan-aside__title">What Happens Next</div>
-        <div class="plan-aside__step"><span class="plan-aside__num">1</span><p><strong>Within one business day</strong> — Mark replies personally with first thoughts and a few sharp questions.</p></div>
-        <div class="plan-aside__step"><span class="plan-aside__num">2</span><p><strong>A short call</strong> — fifteen to thirty minutes to understand pace, style, and non-negotiables.</p></div>
-        <div class="plan-aside__step"><span class="plan-aside__num">3</span><p><strong>A designed proposal</strong> — a considered itinerary with transparent pricing, refined with you until it's exactly right.</p></div>
-      </div>
-      <div class="plan-aside__block">
-        <div class="plan-aside__title">What It Costs</div>
-        <p>The conversation costs nothing. Planning fees, where they apply, are quoted in writing before any work begins — no surprises. Booking through Mark often unlocks preferred rates, upgrades, and amenities you can't get direct.</p>
-      </div>
-      <div class="plan-aside__block">
-        <div class="plan-aside__title">Prefer to Talk?</div>
-        <p><a href="tel:+14085681404">(408) 568-1404</a><br><a href="mailto:mark@hymtravel.com">mark@hymtravel.com</a></p>
-        <p class="plan-aside__muted">Monday–Friday, 9am–6pm Pacific.<br>Traveling clients: 24/7 on-trip support.</p>
-      </div>
-    </aside>
   </div>
 </section>
 
@@ -112,27 +350,142 @@
   var params = new URLSearchParams(window.location.search);
   var t = params.get('type');
   if (t) {
-    var sel = document.getElementById('inq-type');
-    var map = {honeymoon:'Honeymoon', group:'Group travel', family:'Family trip', safari:'Safari', cruise:'Cruise'};
-    if (map[t]) sel.value = map[t];
+    var el = document.querySelector('.cat-grid input[data-type="'+t+'"]');
+    if (el) el.checked = true;
+    if (t === 'honeymoon') {
+      var o = document.getElementById('o1');
+      if (o) o.checked = true;
+    }
   }
-  var form = document.getElementById('inquiry-form');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var btn = form.querySelector('.inq-submit');
-    btn.disabled = true; btn.textContent = 'Sending…';
-    fetch('https://api.web3forms.com/submit', {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}})
-      .then(function(r){return r.json();})
-      .then(function(){
-        form.style.display = 'none';
-        var s = document.getElementById('inquiry-success');
-        s.style.display = 'block';
-        s.scrollIntoView({behavior:'smooth', block:'center'});
-      })
-      .catch(function(){
-        btn.disabled = false; btn.textContent = 'Send My Inquiry';
-        alert('Something went wrong sending the form. Please email mark@hymtravel.com directly — it always works.');
-      });
-  });
 })();
+
+function adj(id, delta) {
+  var el = document.getElementById(id);
+  var min = id === 'adults' ? 1 : 0;
+  el.value = Math.max(min, parseInt(el.value, 10) + delta);
+}
+
+var current = 1;
+function goTo(n) {
+  document.getElementById('step' + current).classList.remove('active');
+  document.getElementById('step' + n).classList.add('active');
+  for (var i = 1; i <= 4; i++) {
+    var ps = document.getElementById('ps' + i);
+    ps.classList.remove('active','done');
+    if (i < n) ps.classList.add('done');
+    if (i === n) ps.classList.add('active');
+    if (i < 4) document.getElementById('pl' + i).classList.toggle('done', i < n);
+  }
+  current = n;
+  var wrap = document.querySelector('.plan-multistep');
+  if (wrap) window.scrollTo({top: wrap.getBoundingClientRect().top + window.scrollY - 100, behavior:'smooth'});
+}
+
+var emailOk = function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
+var planSubmitting = false;
+
+async function submitForm() {
+  if (planSubmitting) return;
+  var fnameEl = document.getElementById('fname');
+  var emailEl = document.getElementById('email');
+  var fname = fnameEl.value.trim();
+  var lname = document.getElementById('lname').value.trim();
+  var email = emailEl.value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var referral = document.getElementById('referral').value;
+  var errorEl = document.getElementById('planError');
+  var submitBtn = document.getElementById('planSubmitBtn');
+
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
+  fnameEl.style.borderColor = 'var(--border-subtle)';
+  emailEl.style.borderColor = 'var(--border-subtle)';
+
+  var valid = true;
+  if (!fname) { fnameEl.style.borderColor = 'var(--gold-500)'; valid = false; }
+  if (!email || !emailOk(email)) { emailEl.style.borderColor = 'var(--gold-500)'; valid = false; }
+  if (!valid) {
+    if (email && !emailOk(email)) {
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.style.display = 'block';
+    }
+    return;
+  }
+
+  var experiences = Array.prototype.slice.call(document.querySelectorAll('.cat-grid input:checked')).map(function(el){
+    var label = el.closest('.cat-item') && el.closest('.cat-item').querySelector('.cat-name');
+    return label ? label.textContent.trim() : el.value;
+  });
+  var occasions = Array.prototype.slice.call(document.querySelectorAll('input[name="occasion"]:checked')).map(function(el){ return el.value; });
+  var budgetEl = document.querySelector('input[name="budget"]:checked');
+  var advisorEl = document.querySelector('input[name="advisor-exp"]:checked');
+  var budget = budgetEl ? budgetEl.value : '';
+  var advisorExp = advisorEl ? advisorEl.value : '';
+  var newsletter = document.getElementById('newsletter-opt').checked ? 'Yes' : 'No';
+  var whenParts = [document.getElementById('month').value, document.getElementById('year').value].filter(Boolean);
+  var when = whenParts.length ? whenParts.join(' ') : 'Not specified';
+  var duration = document.getElementById('duration').value || 'Not specified';
+  var destination = document.getElementById('dest-idea').value.trim() || 'Not specified';
+  var vision = document.getElementById('vision').value.trim() || 'Not specified';
+
+  var message = [
+    'New Plan Your Trip inquiry',
+    '',
+    'EXPERIENCES: ' + (experiences.join(', ') || 'Not specified'),
+    'WHEN: ' + when,
+    'DURATION: ' + duration,
+    'TRAVELERS: ' + document.getElementById('adults').value + ' adults, ' + document.getElementById('children').value + ' children',
+    'BUDGET: ' + (budget || 'Not specified'),
+    'DESTINATION IDEA: ' + destination,
+    'VISION: ' + vision,
+    'OCCASION: ' + (occasions.join(', ') || 'None'),
+    'ADVISOR EXPERIENCE: ' + (advisorExp || 'Not specified'),
+    'REFERRAL: ' + (referral || 'Not specified'),
+    'NEWSLETTER: ' + newsletter,
+    '',
+    'PHONE: ' + (phone || 'Not provided')
+  ].join('\n');
+
+  var formData = new FormData();
+  formData.append('access_key', '94312057-04b8-44d8-a7a8-7cb083d999b8');
+  formData.append('subject', 'HYM Plan Your Trip — New Inquiry');
+  formData.append('from_name', 'Hit Your Mark Travel');
+  formData.append('name', [fname, lname].filter(Boolean).join(' '));
+  formData.append('email', email);
+  formData.append('replyto', email);
+  formData.append('phone', phone);
+  formData.append('message', message);
+  formData.append('experiences', experiences.join(', '));
+  formData.append('destination', document.getElementById('dest-idea').value.trim());
+  formData.append('budget', budget);
+  formData.append('newsletter', newsletter);
+
+  var originalText = submitBtn.textContent;
+  planSubmitting = true;
+  submitBtn.textContent = 'Sending...';
+  submitBtn.disabled = true;
+
+  try {
+    var response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+    var data = {};
+    try { data = await response.json(); } catch (e) {}
+    if (response.ok && data.success) {
+      document.getElementById('step4').classList.remove('active');
+      document.getElementById('successState').classList.add('show');
+      document.getElementById('progress').style.display = 'none';
+      var wrap = document.querySelector('.plan-multistep');
+      if (wrap) window.scrollTo({top: wrap.getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'});
+      return;
+    }
+    errorEl.textContent = data.message || 'Something went wrong. Please try again or email mark@hymtravel.com.';
+    errorEl.style.display = 'block';
+  } catch (err) {
+    errorEl.textContent = 'Something went wrong. Please try again or call (408) 568-1404.';
+    errorEl.style.display = 'block';
+  } finally {
+    planSubmitting = false;
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
+}
 </script>
