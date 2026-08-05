@@ -60,7 +60,16 @@ python3 tools/generate.py          # converts source pages
 python3 tools/home_and_routes.py   # homepage + new routes
 python3 tools/final_pages.py       # legal pages, sitemap, robots, plan page
 npx astro build                    # → dist/
+python3 tools/restore_images.py    # ← MUST be re-run AFTER every build
 ```
+
+> **Run `restore_images.py` after `astro build`, not just after cloning.**
+> The build regenerates `dist/` from scratch, which deletes the 11 aliased
+> images it writes straight into `dist/assets/` (see `images-b64/ALIASES.json` —
+> `africa-safari.jpg`, `europe-landscape.jpg`, `willamette-vineyard.jpg` and
+> friends). Those aliases are referenced by the destination hub pages, so
+> skipping this step ships a site with broken images and nothing in the build
+> output warns you.
 
 ## WordPress theme
 
