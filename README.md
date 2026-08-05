@@ -54,14 +54,29 @@ The restored paths are gitignored — images stay as `images-b64/` in the repo.
 
 ## Rebuilding from source
 
+The normal rebuild is two commands:
+
 ```bash
 npm install
-python3 tools/generate.py          # converts source pages
-python3 tools/home_and_routes.py   # homepage + new routes
-python3 tools/final_pages.py       # legal pages, sitemap, robots, plan page
 npx astro build                    # → dist/
 python3 tools/restore_images.py    # ← MUST be re-run AFTER every build
 ```
+
+That is all you need. `src/pages/` and `src/content-pages/` are committed, so
+Astro builds the whole site from them.
+
+<details>
+<summary>The one-time <code>tools/*.py</code> generation scripts (legacy)</summary>
+
+`tools/generate.py`, `home_and_routes.py` and `final_pages.py` were used once to
+convert the original hand-built HTML into Astro pages. **They cannot be re-run
+here:** `tools/convert.py` hardcodes `UP = "/mnt/agents/upload"`, the upload
+directory of the environment the site was originally built in. That path does
+not exist on a normal machine, so the scripts would find no source files.
+
+They are kept for reference only. Edit `src/pages/` and `src/content-pages/`
+directly instead — those are the real source now.
+</details>
 
 > **Run `restore_images.py` after `astro build`, not just after cloning.**
 > The build regenerates `dist/` from scratch, which deletes the 11 aliased
