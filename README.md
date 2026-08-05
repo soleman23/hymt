@@ -34,6 +34,12 @@ Restore them to real binaries with one command:
 python3 tools/restore_images.py
 ```
 
+On Windows the interpreter is `python`, not `python3`:
+
+```powershell
+python tools/restore_images.py
+```
+
 This reconstructs every image into `public/assets/`, `dist/assets/`, and
 `wordpress-theme/hym-travel/assets/` (verified by hash against the originals).
 The restored paths are gitignored — images stay as `images-b64/` in the repo.
@@ -54,16 +60,26 @@ The restored paths are gitignored — images stay as `images-b64/` in the repo.
 
 ## Rebuilding from source
 
-The normal rebuild is two commands:
+Run these three, in order, from the repo root:
 
 ```bash
 npm install
-npx astro build                    # → dist/
-python3 tools/restore_images.py    # ← MUST be re-run AFTER every build
+npx astro build                   # → dist/
+python tools/restore_images.py    # ← MUST be re-run AFTER every build
 ```
 
 That is all you need. `src/pages/` and `src/content-pages/` are committed, so
 Astro builds the whole site from them.
+
+**On Windows PowerShell**, run the three lines one at a time. PowerShell 5.1 does
+not accept `&&` as a statement separator, and the interpreter is `python`, not
+`python3` (`python3` is not a recognised command). To chain them in one line:
+
+```powershell
+npm install; if ($?) { npx astro build }; if ($?) { python tools/restore_images.py }
+```
+
+On macOS/Linux use `python3` and `&&` as normal.
 
 <details>
 <summary>The one-time <code>tools/*.py</code> generation scripts (legacy)</summary>
