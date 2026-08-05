@@ -1,0 +1,331 @@
+[
+ {
+  "id": "h-01",
+  "file": "h-01-maldives-aerial.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Aerial drone photograph of a luxury Maldives overwater bungalow resort at dawn, looking north across the Indian Ocean, turquoise lagoon shading from aquamarine in the shallows to deep sapphire in the channel, thatched roof water villas on wooden jetties extending over the water, a single wooden pontoon dock visible in the lower middle third, warm peach and gold light breaking at the horizon under a soft layered sky of indigo and amber, the lagoon surface mirror-still with gentle refraction patterns visible through the clear water, no people, no boats moving, absolute stillness, shot on Phase One XF camera system, photorealistic, ultra high resolution, cinematic colour grade, deep dark lower foreground fading to luminous horizon, f/8 equivalent depth of field."
+ },
+ {
+  "id": "h-02",
+  "file": "h-02-bora-bora-dawn.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Wide cinematic photograph of a luxury overwater bungalow in Bora Bora at golden hour sunset, Mount Otemanu rising dark against a sky of deep amber and rose gold in the far distance across a calm lagoon, the bungalow deck extending over luminous turquoise water that transitions to deeper green-blue, the thatched roof casting long warm shadows, a single deck chair visible but empty, the water below perfectly clear showing coral formations, the air slightly warm and hazy with golden light, shot from sea level or slightly elevated at the end of the jetty looking toward the mountain, Hasselblad medium format photorealistic aesthetic, cinematic warm colour grade, ultra high detail, soft vignette edges."
+ },
+ {
+  "id": "h-03",
+  "file": "h-03-seychelles-granite.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic wide-angle photograph of Anse Source d'Argent beach on La Digue, Seychelles, at sunrise, massive ancient granite boulders in shades of warm grey and rust-orange filling the right third of the frame, smooth pink-sand beach curving left toward clear shallow turquoise water, a single palm tree leaning into frame from the left, the sea completely calm with subtle reflections of the warm pink and gold sky, gentle surf traces on the sand, lush tropical vegetation behind the boulders, no people, no footprints in the foreground sand, the horizon perfectly sharp, shot at f/11 on a 24mm equivalent lens for expansive depth of field, ultra high resolution, National Geographic photography style."
+ },
+ {
+  "id": "h-04",
+  "file": "h-04-amalfi-golden-hour.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Sweeping cinematic photograph of the Amalfi Coast, Italy, taken from a private terrace or cliffside viewpoint at golden hour, lemon-yellow and terracotta buildings stacked vertically on the cliff face tumbling toward the deep cobalt-blue Tyrrhenian Sea below, a dramatic diagonal cliff face cutting diagonally across the frame, bougainvillea and Mediterranean flora in the foreground out of focus in warm purple and orange, the sea glittering with late afternoon sunlight, a single traditional fishing boat far below on the water, the sky a deep rich blue with minimal clouds near the horizon, photorealistic Italian travel editorial photography, Leica aesthetic, cinematic depth of field."
+ },
+ {
+  "id": "d-01",
+  "file": "d-01-maldives-bento.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Aerial photograph looking directly down at a Maldivian overwater villa resort from approximately 200 metres altitude, a symmetrical arrangement of dark thatched-roof water villas on white wooden jetties extending from a small coral island with dense tropical vegetation at its centre, surrounded by a perfectly circular shallow coral reef creating a dramatic ring of luminous aquamarine water inside and darker sapphire blue ocean outside, the sandbank visible below the water at the reef edge, the Indian Ocean extending to a clear horizon, midday sun creating maximum colour saturation in the water without losing photorealistic texture, the geometry of the jetties and villas creating strong graphic lines."
+ },
+ {
+  "id": "d-02",
+  "file": "d-02-grace-bay.jpg",
+  "ratio": "3:2",
+  "res": "1K",
+  "prompt": "Aerial drone photograph of Grace Bay beach, Providenciales, Turks and Caicos Islands, showing the long unbroken curve of white powder-sand beach from a 45-degree elevated angle, the shallow water a brilliant clear turquoise transitioning to deeper blue over the coral reef offshore, the beach pristine and near-empty, a distant line of low-rise white resort buildings barely visible behind vegetation to the right, the Caribbean sky a deep intense blue with a few natural cumulus clouds near the horizon, the water so clear that the sandy bottom texture is visible even far from shore, photorealistic medium format aerial photography."
+ },
+ {
+  "id": "d-03",
+  "file": "d-03-bora-bora-otemanu.jpg",
+  "ratio": "3:2",
+  "res": "1K",
+  "prompt": "Photorealistic wide-angle photograph of Bora Bora lagoon at golden hour, Mount Otemanu's dramatic volcanic peak rising sharply against an amber and gold sky in the background, its dark jungle slopes reflected in the glassy lagoon surface in the foreground, a lone traditional Polynesian outrigger canoe resting still at the edge of the frame barely touching the water, the lagoon colour shifting from pale jade near the sandbars to deep emerald in the channel, no buildings or people in the primary field of view, the mountain dominating the upper half of the composition, shot from a low motu viewpoint at water level."
+ },
+ {
+  "id": "d-04",
+  "file": "d-04-positano-cliffside.jpg",
+  "ratio": "3:2",
+  "res": "1K",
+  "prompt": "Photorealistic editorial photograph of Positano, Amalfi Coast, Italy, shot from the sea looking up at the dramatic cliff coloured buildings in shades of ochre, terracotta, peach, and white, the colourful buildings cascading down the steep hillside toward the blue Mediterranean water below, lush bougainvillea in deep fuchsia and purple clinging to whitewashed walls, the sea a rich cobalt blue catching the afternoon sun, small terracotta-tiled domes of a church visible mid-frame, the overall effect jewel-like and cinematic, shot on a 50mm equivalent lens, warm afternoon light creating long golden shadows across the cliff face, magazine editorial photography quality."
+ },
+ {
+  "id": "d-05",
+  "file": "d-05-seychelles-boulders.jpg",
+  "ratio": "3:2",
+  "res": "1K",
+  "prompt": "Photorealistic landscape photograph of a Seychelles beach at soft morning light, ancient pre-Cambrian boulders in warm grey and rust-orange tones dominating the right side of the frame, their smooth rounded surfaces glowing in warm diffused light, the shallow water lapping gently at their base a luminous translucent jade green, pale white sand in the foreground, lush tropical palms and Takamaka trees framing the upper left, the Indian Ocean extending to a clear horizon in deep turquoise blue, the light soft and early \u2014 perhaps one hour after sunrise \u2014 creating gentle shadows in the boulder crevices and warm highlights on the highest surfaces, completely empty, not a single person or footprint."
+ },
+ {
+  "id": "d-06",
+  "file": "d-06-st-barts-harbour.jpg",
+  "ratio": "3:2",
+  "res": "1K",
+  "prompt": "Editorial travel photograph of Gustavia harbour, St. Barts, at blue hour just after sunset, the harbour mouth colonial French architecture with terracotta-tiled roofs glowing warmly from interior lights beginning to illuminate, a collection of private sailing yachts and motor yachts moored perfectly still in the glassy harbour reflecting the deep indigo sky and warm amber harbour lights, the Swedish fort wall visible in the background, the surrounding hillside dark with tropical vegetation, the atmosphere of understated French Caribbean luxury and quiet confidence, no crowds, photorealistic architectural travel photography, warm interior lights contrasting cool blue exterior sky."
+ },
+ {
+  "id": "e-01",
+  "file": "e-01-private-sandbar.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Aerial drone perspective of an exclusive, untouched private sandbar in the Indian Ocean or Caribbean, captured at golden hour. The sandbar curves through crystalline turquoise water with dramatic gradient to deep navy. Pure white sand gleams pristine and empty, unmarked by footprints. Vibrant coral beneath shallow water in intricate patterns. Tropical vegetation and palms frame the edges in soft focus. The water holds luminous peacock and teal tones. No people, boats, or infrastructure visible. Medium format photography aesthetic. Warm golden hour light creates subtle shadows and dimension on the sand. Shot by a Hasselblad H6D, rich colour saturation, editorial luxury travel photography. The composition evokes pristine solitude and untouched paradise."
+ },
+ {
+  "id": "e-02",
+  "file": "e-02-beach-golden-hour.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Ground-level photography at golden hour (7-9am or 4-6pm) along a pristine tropical beach. Camera positioned in shallow turquoise water, capturing the texture of white sand meeting the glassy surface. Warm amber light bathes the scene, creating gentle ripples and bokeh reflections. Native palm trees vegetation frame the foreground and edges, creating a natural frame. The water is impossibly clear, showing fine sand ripples beneath the surface in warm tones. No people, footprints, or infrastructure. Distant reef or rock formations visible but soft-focused. The air is impossibly still. Photorealistic editorial luxury travel aesthetic. Medium format Hasselblad aesthetic, warm color palette with golden amber, cream, and deep turquoise tones. The feeling is one of complete solitude and timeless tropical tranquility."
+ },
+ {
+  "id": "e-03",
+  "file": "e-03-grand-resort-dusk.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Architectural photography of a palatial all-inclusive resort main entrance at dusk, captured during blue hour entrance features soaring columns, marble or light stone, with tropical garden surrounds. Warm accent lighting illuminates architectural details and landscaping. Lush tropical vegetation frames the composition\u2014towering palms, flowering bougainvillea, and manicured gardens in deep greens and rich purples. The sky holds soft purple-to-amber gradation. No people visible. The architecture conveys luxury, scale, and refined elegance. Water features\u2014fountains or pools\u2014catch ambient light. Editorial luxury travel photography, medium format aesthetic. Warm colour palette with stone tones, deep greens, purples, and golden accent lighting. The image communicates arrival at a destination of exceptional comfort."
+ },
+ {
+  "id": "e-04",
+  "file": "e-04-swim-up-bar.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Luxury resort amenity shot of an overwater swim-up bar at sunrise, tropical setting. The bar counter, crafted from natural wood above impossibly clear turquoise water. Thatched palapa roof overhead provides shade with decorative wooden elements. Crystal glasses sit on the counter catching first light. Fresh tropical flowers\u2014white plumeria, bright hibiscus\u2014accent the space in soft focus. The water beneath is glassy, reflecting the sky, showing sand and rocks below in perfect clarity. Distant palm-lined shore visible but soft. Golden hour warmth bathes the scene. No people or guests visible. The mood is serene, aspirational solitude. Editorial luxury travel photography, Hasselblad medium format aesthetic. Warm gold, turquoise, and cream tones. The image evokes the promise of effortless relaxation and tropical indulgence."
+ },
+ {
+  "id": "e-05",
+  "file": "e-05-positano-alley.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "A narrow, picturesque cobblestone alleyway in Positano or Santorini at golden hour, Mediterranean coastal European aesthetic. Ancient whitewashed stone walls create a tight compositional frame. Vibrant magenta and deep purple bougainvillea cascades over terracotta-tiled rooftops and doorways, creating natural colour contrast. Warm golden afternoon light rakes across the texture of stone and flowers, creating dramatic shadows and depth. A glimpse of impossibly blue sea visible at the alley's end. Terra cotta pots with flowering geraniums sit on weathered doorsteps. The air feels still and timeless. No people, tourists, visible. Photorealistic editorial travel photography, medium format aesthetic. Warm ochre, magenta, deep blues, and cream tones. The image evokes the romantic essence of Mediterranean village charm."
+ },
+ {
+  "id": "e-06",
+  "file": "e-06-tuscan-landscape.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Expansive landscape photography of rolling Tuscan hills at golden hour, captured from an elevated vantage point. Gently undulating vineyards in neat rows stretch toward the horizon in warm gold-green tones. A classic Tuscan villa with terracotta roof sits prominently mid-composition, surrounded by dark cypress trees. The sky holds warm amber-to-pale-cream gradation with soft clouds catching golden light. Distant hills fade to misty blue on the horizon, creating atmospheric perspective. The sun is low, casting long shadows across the vineyard rows. No people, no modern infrastructure, no crowds. The light is warm and honeyed, creating a sense of timeless abundance and peaceful prosperity. Editorial photography, Hasselblad medium format aesthetic. Rich earthy tones\u2014ochre, olive green, gold, terracotta, deep purple shadows. The image embodies the romantic essence of European countryside and wine country luxury."
+ },
+ {
+  "id": "e-07",
+  "file": "e-07-yacht-cove.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Photography of a sleek, modern luxury yacht at anchor in a pristine Mediterranean cove, shot from the water at water level. The yacht's white hull and teak details gleam in golden hour light. Crystal-clear turquoise water surrounds the vessel, showing sand and rocks on the seabed in perfect clarity. Dramatic rocky cliffs frame the cove in warm ochre and grey tones. The sky is clear and pale, with soft golden light. No other boats, people, or infrastructure visible\u2014the cove feels undiscovered and exclusive. Gentle ripples on the water catch light. The yacht suggests access to hidden, untouched destinations. Photorealistic editorial luxury travel photography, medium format aesthetic. Warm colour palette with turquoise water, white yacht, golden light, and earthy rock tones. The image communicates freedom, exclusivity, and Mediterranean sophistication."
+ },
+ {
+  "id": "e-08",
+  "file": "e-08-river-cruise-dawn.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Dawn photograph of an elegant river cruise ship navigating the Rhine River, captured from the riverbank. The vessel is mid-river, multi-deck with white hull and refined railings. Ethereal mist rises from the still water, catching the first light of dawn in soft pink and gold tones. On the distant cliff overlooking the river, an ancient castle silhouettes against the pale dawn sky. Steep forested riverbanks frame both sides\u2014dark green pines creating compositional depth. The water is like glass, reflecting everything in muted tones. No people visible. The light is soft, cool-to-warm transition of dawn. Photorealistic editorial travel photography, medium format aesthetic. Colour palette: soft pinks, golds, deep greens, cool greys, muted castle tones. The image evokes the romance of European river journeys, historic geography, and unhurried luxury."
+ },
+ {
+  "id": "e-09",
+  "file": "e-09-jungle-yoga-pavilion.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "A serene open-air yoga pavilion at sunrise in a Bali jungle setting, captured in natural wood. The structure is simple and elegant\u2014wooden beams and natural materials, no walls, open to the surrounding jungle. A single meditation mat and yoga props sit center frame. White pillar candles flicker, their soft glow still visible in the pre-dawn light. Thick mist rises from the dense jungle vegetation surrounding the pavilion, creating dreamlike atmosphere. Lush tropical plants\u2014banana palms, ferns, flowering vines\u2014frame the composition in deep greens. The sky transitions from deep purple to pale pink. No people visible. The air feels still, sacred, peaceful. The light is cool and soft, creating subtle shadows. Photorealistic editorial wellness photography, medium format aesthetic. Colour palette: soft pinks, pale golds, deep greens, misty whites, candlelight warmth. The image evokes tranquility, spiritual awakening, and inner peace."
+ },
+ {
+  "id": "e-10",
+  "file": "e-10-thermal-pool-mountains.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "An outdoor hydrotherapy thermal pool or natural hot spring bath set in misty mountain terrain, captured at dawn or dusk. The water is impossibly turquoise-blue, steaming slightly, with mineral deposits visible on surrounding rocks in cream and rust tones. Dense mist envelops the scene, obscuring distant mountains in soft layers, creating an ethereal, otherworldly atmosphere. Moss-covered rocks and natural stone edges frame the water's edge. Occasional vegetation\u2014hardy mountain plants\u2014emerge from the mist. The lighting is soft and diffused, creating no harsh shadows. No people or bodies in the water. The mood is deeply restorative and healing. Photorealistic editorial wellness photography, medium format aesthetic. Colour palette: turquoise water, cream mineral deposits, grey-green mist, dark rocky tones, soft golden ambient light. The image communicates natural healing, rejuvenation, and ancient wellness tradition."
+ },
+ {
+  "id": "e-11",
+  "file": "e-11-elephant-herd-aerial.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Aerial drone perspective of a majestic elephant herd crossing the Serengeti grasslands at golden hour, captured during their migration. Multiple elephants in a loose formation traverse the golden grassland. Dust kicked up by their movement catches the warm late-afternoon light, creating an ethereal golden haze that frames each elephant. The savanna extends endlessly behind them, with acacia trees scattered in soft focus. The sky holds warm amber-to-pale tones with soft clouds catching golden light. The light is warm and rich, creating natural rim-lighting on each animal. No people visible. The moment captures the raw majesty and scale of African wildlife. Photorealistic editorial wildlife photography, medium format aesthetic. Colour palette: golden grassland, warm amber dust, deep earthy elephant tones, pale sky. The image evokes the awe and power of wild Africa and authentic safari adventure."
+ },
+ {
+  "id": "e-12",
+  "file": "e-12-patagonia-trek.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "A dramatic mountain trekking vista in Patagonia or the Himalayas at golden hour, with a lone trekker silhouetted against the vast landscape. The figure is positioned in the mid-ground, from behind, walking away from the camera toward distant, towering peaks. Dramatic granite or snow-capped mountains dominate the background, their peaks catching golden and pink light against a pale sky. The foreground shows rocky, sparse alpine terrain in cool earthy tones. The trekker carries minimal gear\u2014a backpack, walking poles\u2014silhouetted in dark tones. The light is warm and golden, casting long shadows across the landscape. No crowds, no infrastructure. The mood is one of solitude, challenge, and transcendent natural beauty. Photorealistic editorial adventure photography, medium format aesthetic. Colour palette: golden light on peaks, cool grey and pink rocks, dark silhouette, pale sky. The image evokes the thrill of adventure and communion with wild landscapes."
+ },
+ {
+  "id": "e-13",
+  "file": "e-13-champagne-overwater-deck.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Two crystal champagne glasses filled with golden champagne sit on a weathered teak overwater deck in the Maldives at dawn. The glasses catch the first light of sunrise, creating warm amber glows and soft bokeh reflections. Bubbles rise through the champagne in crystalline detail. The deck surface shows natural wood grain and grain texture. Beyond the deck, impossibly turquoise water stretches to the horizon, showing the ocean floor in perfect clarity\u2014pale sand, coral formations. The sky transitions from deep purple-blue to warm pink-gold. Soft mist may rise from the water. No people visible. The moment feels intimate, celebratory, romantic, and peaceful. Photorealistic editorial luxury photography, medium format aesthetic, shot with shallow depth of field creating bokeh. Colour palette: golden champagne, warm dawn light, turquoise water, pale sand, deep blue sky. The image embodies the essence of romantic celebration and intimate luxury."
+ },
+ {
+  "id": "e-14",
+  "file": "e-14-private-beach-dinner.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "An intimate private dinner table set for two at water's edge on a pristine beach at dusk, captured during golden hour transition to blue hour. The white linen tablecloth glows softly. Fine china, crystal glasses, and silver cutlery catch the warm light. A low arrangement of fresh white flowers and rose petals sits at the table's center. Flickering candles in glass holders provide soft ambient light. The ocean laps gently at the table's edge, creating a magical boundary between land and water. The sand is pristine and unmarked. Soft waves catch the last of the golden light, creating shimmering reflections. The sky holds warm pink-to-purple gradation. No people visible. The mood is deeply romantic, intimate, and celebratory. Photorealistic editorial luxury wedding/honeymoon photography, medium format aesthetic. Colour palette: white linens, golden candlelight, soft pink sky, deep blue water, rose petals. The image embodies timeless romance and once-in-a-lifetime celebration."
+ },
+ {
+  "id": "e-15",
+  "file": "e-15-children-shallow-water.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "Close-up detail shot of children's feet and lower legs in shallow tropical water at golden hour, backlit by warm sunset light. The water is impossibly clear and turquoise, showing fine sand ripples beneath small feet. The backlit glow creates a luminous halo effect around the water and small legs, emphasizing clarity and purity. Ripples radiate from where the feet meet the water. The sandy bottom is visible, with shells and small pebbles. Warm golden light floods the scene, creating bokeh and luminance. The foreground shows only feet and ankles\u2014no faces or identifiable features. The mood is joyful, carefree, innocent, and deeply connected to nature's beauty. Photorealistic editorial family travel photography, medium format aesthetic, shot with shallow depth of field and backlighting. Colour palette: warm gold light, turquoise water, pale sand, skin tones. The image captures the essence of childhood wonder and family tropical escape."
+ },
+ {
+  "id": "e-16",
+  "file": "e-16-safari-vehicle-sunrise.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "An open-top safari vehicle at sunrise on the Serengeti, photographed from the side with children silhouettes visible inside\u2014heads and shoulders only, no faces. The vehicle is positioned to frame both the safari experience and distant wildlife. An elephant herd is visible in the mid-ground and background, softly focused but recognizable. The grassland stretches golden and warm in the early light. The sky transitions from deep purple to pink-gold. Mist may rise from the warm grass meeting cool air. The light is soft and warm, catching dust particles in the air. The mood captures the thrill of family wildlife discovery and shared adventure. Photorealistic editorial family travel photography, medium format aesthetic. Colour palette: golden grassland, warm pink sky, deep silhouette, earthy elephant tones. The image embodies the wonder of safari as a family educational and bonding experience."
+ },
+ {
+  "id": "e-17",
+  "file": "e-17-tuscan-wine-tasting.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "A rustic wooden wine tasting table in Tuscany at harvest time, photographed at golden hour with warm, honeyed light. Multiple glasses of deep red wine sit on the table, their ruby tones catching the golden light and glowing from within. A weathered wooden table surface shows natural grain, knots, and patina. Surrounding vineyard rows stretch into soft focus behind the table, with ripening grapes visible. The light is warm and raking, creating dramatic shadows across the wood grain. Fresh bread, aged cheese, and simple rustic elements may accent the scene. The sky holds warm amber-to-cream tones. No people visible. The mood is contemplative, and deeply connected to the land and tradition. Photorealistic editorial food & wine photography, medium format aesthetic. Colour palette: deep wine reds, warm golden light, earthy wood tones, olive-green vines. The image captures the sensory essence of wine country and harvesting tradition."
+ },
+ {
+  "id": "e-18",
+  "file": "e-18-mediterranean-terrace-dinner.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "An elegant open-air restaurant terrace on the Mediterranean coast at dusk, captured during golden hour transition to blue hour. White linen tablecloths drape tables offering an abundance of fresh seafood\u2014whole fish, prawns, lobster, mussels\u2014artfully arranged on ice and simple white platters. Crystal glasses hold white wine and water. Candles flicker softly in glass holders. The sea stretches behind the terrace, catching the last golden light and shifting to deep blue. Distant cliffs or coastal mountains create a romantic backdrop. The sky holds warm pink-to-purple gradation. No people visible\u2014tables are set but awaiting guests. The mood is luxurious, welcoming, deeply sensual, and celebratory. Photorealistic editorial fine dining photography, medium format aesthetic. Colour palette: white linens, golden seafood, rich wine colours, pale sky, deep blue water. The image embodies the romance and abundance of Mediterranean coastal dining."
+ },
+ {
+  "id": "e-19",
+  "file": "e-19-secret-sea-cave.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "A secret sea cave or hidden cove accessible only by boat, with turquoise water of impossible clarity and dramatic towering cliffs framing the space. The water in the cove is glassy and luminous, showing the white sand and rock formations on the seabed in crystalline detail. The cliffs are massive and sculptural, with deep shadows and warm ochre and grey tones catching golden hour light. The cave entrance may frame the view with natural stone arch. No infrastructure, no people, no evidence of tourism or accessibility. The cove feels undiscovered, sacred, timeless. Soft golden light bounces between cliff faces, creating warm ambient glow. The mood is one of intimate discovery and untouched natural wonder. Photorealistic editorial travel photography, medium format aesthetic. Colour palette: turquoise water, warm cliff tones, deep cave shadows, golden ambient light. The image embodies the promise of exclusive discovery and adventure beyond the ordinary."
+ },
+ {
+  "id": "e-20",
+  "file": "e-20-remote-village-dawn.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "A remote village or ancient ruin in Central Asia, the Middle East, or Southeast Asia, photographed at dawn before tourists arrive. Weathered stone or adobe structures sit quietly in the soft, cool light of early morning. Ancient architecture\u2014possibly carved directly from cliff faces or built of traditional materials\u2014shows the patina of centuries. The landscape is dramatic and sparse\u2014desert, mountains, or plains stretching to the horizon. Mist or dust may hang in the valley. The sky transitions from deep blue to pale pink-gold. No people visible, no crowds, no commercial activity, no tour buses. The mood is contemplative, timeless, and deeply historical. The light is soft and cool, revealing texture and detail without harsh shadows. Photorealistic editorial travel photography, medium format aesthetic. Colour palette: warm stone tones, cool dawn light, earthy landscape tones, pale sky. The image evokes the thrill of uncovering history and authentic cultural immersion."
+ },
+ {
+  "id": "e-21",
+  "file": "e-21-clifftop-golf.jpg",
+  "ratio": "2:3",
+  "res": "1K",
+  "prompt": "A dramatic tee shot composition on an iconic clifftop golf course (Pebble Beach or Cape Kidnappers aesthetic) at golden hour, captured from behind the tee box looking down the fairway. The white tee block sits in sharp focus on pristine emerald-green grass. Beyond the tee, the fairway drops dramatically toward the ocean far below, creating a vertigo-inducing composition. The Pacific coast stretches to the horizon, the ocean catching golden light in shimmering tones. Dramatic cliffs frame both sides of the fairway in warm ochre and grey. The sky is clear and pale with warm golden light. No people visible. The mood is one of exhilaration, confidence, and the thrill of championship golf in an incomparable setting. Photorealistic editorial sports photography, medium format aesthetic. Colour palette: emerald grass, white tee, golden light, deep blue ocean, warm cliff tones. The image captures the prestige and drama of world-class golf."
+ },
+ {
+  "id": "e-22",
+  "file": "e-22-heli-ski-landing.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "A helicopter ski landing moment on an untouched powder mountain slope, captured at dawn or during golden hour. The red or black helicopter is visible mid-composition, blades creating snow spray. The mountain slope is pristine and blindingly white, covered in fresh powder with no visible tracks. Dramatic snow-capped peaks stretch to the horizon, creating epic mountain backdrop. The sky is clear and pale with soft golden or pink light. The air is crisp and clean. The moment captures the exhilaration and exclusivity of heli-skiing. No crowds visible. The scale is truly impressive and humbling. Photorealistic editorial action sports photography, medium format aesthetic. Colour palette: brilliant white snow, warm golden light, deep blue sky, helicopter silhouette, mountain tones. The image embodies adventure, luxury, and the pursuit of untouched wilderness skiing experiences."
+ },
+ {
+  "id": "p-01",
+  "file": "p-01-soneva-jani.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic architectural photography of an ultra-luxury overwater villa bedroom at night with the roof fully retracted revealing the night sky, a king bed with crisp white linen centred under the open roof, the Milky Way visible above in perfect clarity as a broad arc of stars across the open sky rectangle, the bedroom walls teak with soft integrated lighting casting a warm amber glow, a private plunge pool visible through large glass sliding doors that are open to the deck, the Indian Ocean dark and still beyond, no people, the atmosphere of sublime seclusion and intimate connection with the sky, architectural interior photography with long exposure for star detail."
+ },
+ {
+  "id": "p-02",
+  "file": "p-02-north-island.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Aerial drone photograph from 150 metres looking down at a private island beach villa in the Seychelles, a single thatched-roof villa structure with a private pool barely visible behind tropical vegetation, a pristine white beach curving around the villa with the Indian Ocean on two sides, the beach extending 200 metres in each direction completely deserted, a wooden walkway from the villa to the beach barely visible through the palm trees, the surrounding water shifting from pale jade at the beach edge to deep cobalt blue in the surrounding ocean, absolute isolation, not another structure in sight, photorealistic, National Geographic aerial photography quality."
+ },
+ {
+  "id": "p-03",
+  "file": "p-03-four-seasons-bora-bora.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic travel photograph taken at water level looking along a row of luxury luxury accommodations in Bora Bora at sunrise, the bungalow closest to camera partially silhouetted against the warm peach and gold sky, its thatched roof profile crisp against the sky, Mount Otemanu a dark volcanic silhouette in the extreme background, the lagoon surface at lens level perfectly still reflecting the warm dawn colours, the wooden jetty barely above the water surface extending between the bungalows, the nearest bungalow's private deck visible with two empty chairs facing the sunrise, absolute stillness, photorealistic cinematic photography, the light just barely breaking the horizon."
+ },
+ {
+  "id": "i-01",
+  "file": "i-01-maldives-season-guide.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic underwater photography in the Maldives from approximately 6 metres depth looking upward toward the surface, a large manta ray with wingspan approximately 5 metres, its luminous blue-green surface light, its underside white with characteristic dark spot patterns visible, the water clear and blue-green with shafts of surface light creating god-rays descending through the water column, distant reef structures barely visible below, the whole image suffused with an ethereal underwater blue-green light, shot with a wide-angle underwater dome port aesthetic, National Geographic underwater photography quality."
+ },
+ {
+  "id": "i-02",
+  "file": "i-02-anniversary-table.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Warm, intimate photorealistic editorial photograph of a private anniversary dinner set up on a small sandbank in the Indian Ocean at dusk, hurricane lanterns casting warm gold light across the table set with white linen and silver, wine glasses reflecting the last warm colours of the sunset sky, the table set perhaps 100 metres from any visible shore, the ocean glassy and dark around the sandbank, a few scattered white petals on the sand, the sky a deep layered blue and rose, the composition suggesting a photograph taken discreetly from 20 metres away \u2014 private and romantic, not staged or intrusive."
+ },
+ {
+  "id": "i-03",
+  "file": "i-03-spring-amalfi.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic spring editorial photograph on the Amalfi Coast, a close foreground of wild bougainvillea and Mediterranean wildflowers in full spring bloom \u2014 deep fuchsia, white, and yellow \u2014 cascading over a low stone wall, below the wall the Tyrrhenian Sea a brilliant cobalt blue visible between the flowering branches, a distant white-and-terracotta Amalfi Coast village visible on the cliffs across the bay in soft focus, the light soft and warm, suggesting late morning in May, the flowers sharp and richly detailed against the soft blue background, a sense of the coast at its quieter, more authentic spring self before the summer crowds, Italian editorial travel photography."
+ },
+ {
+  "id": "f-01",
+  "file": "f-01-teal-lagoon-cta.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Atmospheric aerial photograph of a deep teal-green tropical lagoon and coral atoll taken from 400 metres altitude, the water dark and rich in the centre fading to luminous turquoise at the sandbank edges, a thin sliver of white sand island curving through the lower third, deep blue open ocean on the upper portion, the surface texture of the deep water visible with subtle current patterns, no vessels, no buildings, no people, shot at twilight just after sunset so the sky is deep indigo above a line of barely-visible rose and amber near the horizon, the overall image predominantly dark-toned \u2014 suitable as a background for white text."
+ },
+ {
+  "id": "u-01",
+  "file": "u-01-specialist-portrait.jpg",
+  "ratio": "1:1",
+  "res": "1K",
+  "prompt": "Photorealistic editorial portrait photograph of a confident professional woman in her early thirties, photographed from the shoulders up against a warm natural sand-coloured or whitewashed textured wall, wearing a simple high-quality linen shirt in pale cream or soft teal, warm natural window light from the left side creating soft shadows that give the face depth and character, a genuine but understated smile suggesting intelligence hair simply styled, minimal jewellery if any, the portrait quality of a high-end editorial magazine \u2014 Kinfolk, Cereal, Monocle \u2014 shot on a 85mm lens at f/2 for beautiful background separation, photorealistic, not a corporate headshot."
+ },
+ {
+  "id": "u-02",
+  "file": "u-02-agency-lifestyle.jpg",
+  "ratio": "3:2",
+  "res": "1K",
+  "prompt": "Warm editorial lifestyle photograph of a small travel specialist agency office interior, bright and minimal with whitewashed walls, large windows overlooking a garden, a beautiful wooden desk with an open laptop, flat-lay travel reference books and destination photography prints, a ceramic coffee mug, a few hand-written notes and maps, framed destination photography on the walls, warm morning light flooding through the window creating long soft shadows, a very small potted succulent, the overall aesthetic of a corporate office, no people visible but feeling inhabited and human, Kinfolk magazine editorial aesthetic, warm tonal grade, photorealistic."
+ },
+ {
+  "id": "x-01",
+  "file": "x-01-serengeti-elephants.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic wide cinematic photograph of the Serengeti plains at golden hour, a vast herd of elephants moving through tall amber grass in the middle distance, dust catching the low warm light, a single flat-topped acacia tree silhouetted against a sky of deep apricot and soft indigo, distant rocky kopjes on the horizon, the landscape immense and empty, shot on medium format, cinematic warm colour grade, ultra high detail, no people, no vehicles, no text"
+ },
+ {
+  "id": "x-02",
+  "file": "x-02-bali-rice-terraces.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic aerial photograph of ancient terraced rice fields in Bali at dawn, emerald green paddies stepping down a valley in organic curves, morning mist pooling in the lower terraces, palm trees scattered along the earthen ridges, soft diffused tropical light, the geometry of the terraces creating flowing graphic lines, no people, medium format photorealistic, ultra high detail, no text"
+ },
+ {
+  "id": "x-03",
+  "file": "x-03-petra-treasury.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic photograph of the Treasury facade at Petra, Jordan, at first light, the rose-red carved sandstone glowing warm against deep shadow in the narrow siq canyon opening, a single resting camel in the far lower third for scale, no tourists, warm desert light raking across the carved columns, fine sand texture in the foreground, medium format cinematic travel photography, ultra high detail, no text"
+ },
+ {
+  "id": "x-04",
+  "file": "x-04-napa-vineyard-dining.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic editorial photograph of an al fresco dining table set for wine tasting on a stone terrace above Napa Valley vineyards at golden hour, glasses of red wine catching the warm light, vineyard rows rolling into blue-hazed hills beyond, olive trees at the terrace edge, rustic linen and ceramic tableware, no people, medium format editorial photography, warm cinematic grade, no text"
+ },
+ {
+  "id": "x-05",
+  "file": "x-05-grand-teton-dawn.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic wide photograph of the Grand Teton mountain range at dawn, jagged granite peaks catching first alpenglow in shades of rose and gold, perfectly reflected in the still surface of a beaver pond in the foreground, morning mist rising off the water, sagebrush meadow in deep shadow, no people, medium format landscape photography, ultra high detail, no text"
+ },
+ {
+  "id": "x-06",
+  "file": "x-06-polar-iceberg-twilight.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "prompt": "Photorealistic photograph of a vast Antarctic landscape at twilight, a massive tabular iceberg glowing pale blue and soft rose in low polar light, calm dark water with scattered brash ice in the foreground, distant snow-covered peaks under a layered sky of indigo and faint amber, absolute stillness, no people, no ships, medium format cinematic photography, ultra high detail, no text"
+ }
+]

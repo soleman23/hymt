@@ -1,0 +1,210 @@
+<?php
+/**
+ * Template Name: Contact
+ *
+ * @package hym-travel
+ */
+get_header();
+?>
+<!-- ══ HERO ══ -->
+<section class="page-hero">
+  <div style="position:absolute;inset:0;background:var(--navy-800)"></div>
+  <img src="<?php echo esc_url( HYM_URI . '/assets/logo.png' ); ?>" class="page-hero__watermark" alt="" aria-hidden="true">
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <div class="label">Get in Touch</div>
+    <h1 class="page-hero__headline">Contact</h1>
+    <p class="page-hero__sub">The first conversation costs nothing and takes fifteen minutes. Call, email, or send a message — Mark replies within one business day.</p>
+  </div>
+</section>
+
+
+<!-- ══ MAIN ══ -->
+<div class="contact-main">
+
+  <!-- INFO -->
+  <div class="contact-info">
+    <div class="contact-photo">Portrait Photography<br>Mark Sole</div>
+    <div class="contact-name">Mark Sole</div>
+    <div class="contact-title">Founder &amp; Travel Director</div>
+    <p class="contact-intro">
+      If you have a trip in mind — or just an idea of what you're after — reach out directly. I don't use an intake system. You'll hear from me personally, usually the same day.
+    </p>
+    <div class="contact-divider"></div>
+    <div class="contact-methods">
+      <div class="contact-method">
+        <span class="contact-method-label">Phone</span>
+        <div class="contact-method-val">
+          <a href="tel:14085681404">(408) 568-1404</a>
+          <small>Best for quick questions or a first conversation</small>
+        </div>
+      </div>
+      <div class="contact-method">
+        <span class="contact-method-label">Email</span>
+        <div class="contact-method-val">
+          <a href="mailto:mark@hymtravel.com">mark@hymtravel.com</a>
+          <small>24-hour response guaranteed on business days</small>
+        </div>
+      </div>
+      <div class="contact-method">
+        <span class="contact-method-label">Web</span>
+        <div class="contact-method-val">
+          <a href="https://www.hymtravel.com" target="_blank">hymtravel.com</a>
+          <small>Destination guides, the Journal, and more</small>
+        </div>
+      </div>
+      <div class="contact-method">
+        <span class="contact-method-label">Instagram</span>
+        <div class="contact-method-val">
+          <a href="https://www.instagram.com/travelwithsoleman/" target="_blank">@travelwithsoleman</a>
+          <small>Destination photos and travel notes</small>
+        </div>
+      </div>
+      <div class="contact-method">
+        <span class="contact-method-label">LinkedIn</span>
+        <div class="contact-method-val">
+          <a href="https://www.linkedin.com/in/mark-sole/" target="_blank">linkedin.com/in/mark-sole</a>
+          <small>Professional background and recommendations</small>
+        </div>
+      </div>
+      <div class="contact-method">
+        <span class="contact-method-label">Based</span>
+        <div class="contact-method-val">
+          <span style="color:var(--text-primary)">Bend, Oregon</span>
+          <small>Available to meet in person for clients in the area</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="contact-form-col">
+    <h2 class="form-title">Send a message</h2>
+    <p class="form-sub">If you'd prefer to plan your trip in detail, use the <a href="/plan-your-trip/" style="color:var(--gold-500)">Plan Your Trip form</a> — it takes about five minutes and gives Mark everything he needs to put together a proposal.</p>
+
+    <div id="contactForm">
+      <div class="cf-row">
+        <div class="cf">
+          <label for="cfname">First name</label>
+          <input type="text" id="cfname" placeholder="First name">
+        </div>
+        <div class="cf">
+          <label for="cflname">Last name</label>
+          <input type="text" id="cflname" placeholder="Last name">
+        </div>
+      </div>
+      <div class="cf">
+        <label for="cfemail">Email</label>
+        <input type="email" id="cfemail" placeholder="your@email.com">
+      </div>
+      <div class="cf">
+        <label for="cfphone">Phone (optional)</label>
+        <input type="tel" id="cfphone" placeholder="+1 (___) ___-____">
+      </div>
+      <div class="cf">
+        <label for="cfsubject">What's this about?</label>
+        <select id="cfsubject">
+          <option value="">Select an option</option>
+          <option>I want to start planning a trip</option>
+          <option>I have a quick question</option>
+          <option>I'm interested in group travel</option>
+          <option>I'm planning a honeymoon or anniversary trip</option>
+          <option>I'd like to learn more about how you work</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="cf">
+        <label for="cfmsg">Message</label>
+        <textarea id="cfmsg" placeholder="Tell me what's on your mind — a destination, a timing question, or just an idea you're working through."></textarea>
+      </div>
+      <button class="cf-submit" onclick="submitContact()">Send Message</button>
+      <p class="cf-note">By submitting you agree to be contacted by Hit Your Mark Travel. No spam, no sharing. Just a reply from Mark.</p>
+    </div>
+    <div class="cf-success" id="cfSuccess">
+      <div class="cf-success-title">Message received.</div>
+      <div class="cf-success-body">Mark will reply within one business day. If it's urgent, call directly at (408) 568-1404.</div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══ HOURS ══ -->
+<div class="hours-strip">
+  <div class="hours-item">
+    <span class="hours-label">Monday – Friday</span>
+    <div class="hours-val">9:00 am – 6:00 pm PT</div>
+    <div class="hours-note">Primary availability for calls and replies</div>
+  </div>
+  <div class="hours-item">
+    <span class="hours-label">Saturday</span>
+    <div class="hours-val">10:00 am – 2:00 pm PT</div>
+    <div class="hours-note">Available for scheduled calls — email to set up a time</div>
+  </div>
+  <div class="hours-item">
+    <span class="hours-label">Response Guarantee</span>
+    <div class="hours-val">Within 24 hours</div>
+    <div class="hours-note">Every inquiry gets a personal reply. No autoresponders, no assistants.</div>
+  </div>
+</div>
+
+
+<!-- ══ FAQ ══ -->
+<section class="faq-section">
+  <div class="faq-header">
+    <div class="label" style="margin-bottom:12px">Common Questions</div>
+    <h2 class="faq-title">Before you reach out</h2>
+    <p class="faq-sub">These are the questions most clients ask first. If yours isn't here, just ask.</p>
+  </div>
+  <div class="faq-grid">
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What do you charge?</div>
+      <div class="faq-a">There's no fee to start planning. We earn a commission from the hotels, operators, and suppliers we book — the same commission you'd forfeit by booking directly, with none of the work and none of the access. For complex itineraries, a planning fee may apply; if so, I'll tell you upfront before we proceed.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">How does the process work?</div>
+      <div class="faq-a">We start with a conversation — fifteen minutes by phone or a back-and-forth by email. I ask questions, you answer honestly. From there, I put together a proposal with specific properties, itineraries, and a cost breakdown. You approve, revise, or start over. Nothing gets booked until you're confident it's right.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">How far in advance should I reach out?</div>
+      <div class="faq-a">For most trips, six to twelve months gives us the best options. For safaris, ski chalets, or peak season bookings in popular destinations, twelve to eighteen months is better. That said, I've put together excellent last-minute trips — reach out regardless of timing and we'll tell you honestly what's possible.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Can you handle any destination?</div>
+      <div class="faq-a">Most of them. I've personally visited destinations across six continents and maintain active relationships with hotels and operators in all of the regions we cover. For a handful of niche destinations, I work with trusted partners who have ground-level expertise. I'll always tell you when that's the case.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What makes you different from booking online?</div>
+      <div class="faq-a">Access, knowledge, and relationships. Booking engines show you what's publicly available at published rates. We access rates and perks through preferred partner programs that aren't bookable directly — room upgrades, complimentary amenities, guaranteed early check-in, and connections with hotel GMs that make a difference when things need adjusting mid-trip.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Who do you typically work with?</div>
+      <div class="faq-a">Professionals and families who value their time more than the hours it would take to research a trip properly. Most clients have a household income well above the national average and have outgrown booking sites — not because they can't use them, but because they've had one mediocre trip too many and decided the alternative is worth it.</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ SOCIAL ══ -->
+<div class="social-strip">
+  <div>
+    <div class="label" style="margin-bottom:10px">Follow the Journey</div>
+    <div class="social-strip__title">@travelwithsoleman</div>
+    <p class="social-strip__sub">Destination photography, travel notes, and the occasional opinion on where to go — and why.</p>
+  </div>
+  <div class="social-links">
+    <a href="https://www.instagram.com/travelwithsoleman/" target="_blank" class="social-link">Instagram</a>
+    <a href="https://www.linkedin.com/in/mark-sole/" target="_blank" class="social-link">LinkedIn</a>
+  </div>
+</div>
+
+
+<!-- ══ FOOTER ══ -->
+<?php get_footer();

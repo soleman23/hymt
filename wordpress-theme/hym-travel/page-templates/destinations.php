@@ -1,0 +1,411 @@
+<?php
+/**
+ * Template Name: Destinations Hub
+ *
+ * @package hym-travel
+ */
+get_header();
+?>
+<!-- ══ HERO ══ -->
+<section class="page-hero">
+  <div class="page-hero__bg"></div>
+  <img src="<?php echo esc_url( HYM_URI . '/assets/logo.png' ); ?>" class="page-hero__watermark" alt="" aria-hidden="true">
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <div class="label">60+ Destinations Personally Visited</div>
+    <h1 class="page-hero__headline">Where in the World<br>Will You Go?</h1>
+    <p class="page-hero__sub">Nine regions. Every destination on this page has been visited in person — most of them more than once. We recommend nothing we haven't seen ourselves.</p>
+  </div>
+</section>
+
+
+<!-- ══ FILTER ══ -->
+<div class="filter-bar">
+  <div class="filter-bar__inner">
+    <button class="filter-pill active" data-filter="all">All Regions</button>
+    <button class="filter-pill" data-filter="caribbean-mexico">Caribbean &amp; Mexico</button>
+    <button class="filter-pill" data-filter="europe">Europe</button>
+    <button class="filter-pill" data-filter="africa">Africa</button>
+    <button class="filter-pill" data-filter="asia">Asia</button>
+    <button class="filter-pill" data-filter="south-pacific">South Pacific</button>
+    <button class="filter-pill" data-filter="middle-east">Middle East</button>
+    <button class="filter-pill" data-filter="north-america">North America</button>
+    <button class="filter-pill" data-filter="south-america">South America</button>
+  </div>
+</div>
+
+
+<!-- ══ DESTINATIONS GRID ══ -->
+<section class="dest-section">
+  <div class="dest-grid" id="destGrid">
+
+    <!-- MALDIVES — Featured -->
+    <div class="dest-card dest-card--featured" data-filter="asia">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'd-01-maldives-bento.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Asia</span>
+        <div class="dest-card__name">The Maldives</div>
+        <div class="dest-card__desc">Where the sky meets the sea and every sunrise feels made for two. Overwater villas, private atolls, and lagoons that glow at night.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Overwater</span>
+          <span class="dest-tag">Honeymoons</span>
+          <span class="dest-tag">Seclusion</span>
+          <span class="dest-tag">Nov–Apr</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEYCHELLES -->
+    <div class="dest-card" data-filter="africa">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'd-05-seychelles-boulders.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Africa</span>
+        <div class="dest-card__name">Seychelles</div>
+        <div class="dest-card__desc">Granite boulders, jungle-fringed beaches, prehistoric quiet.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Island Hopping</span>
+          <span class="dest-tag">Nature</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ST. BARTH'S -->
+    <div class="dest-card" data-filter="caribbean-mexico">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'd-06-st-barts-harbour.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Caribbean &amp; Mexico</span>
+        <div class="dest-card__name">St. Barth's</div>
+        <div class="dest-card__desc">French sophistication, Caribbean soul. Boutique hotels, white-linen dining, and beaches known only to the fortunate few.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Boutique</span>
+          <span class="dest-tag">Romance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TURKS & CAICOS -->
+    <div class="dest-card" data-filter="caribbean-mexico">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'd-02-grace-bay.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Caribbean &amp; Mexico</span>
+        <div class="dest-card__name">Turks &amp; Caicos</div>
+        <div class="dest-card__desc">Grace Bay — one of the longest stretches of unbroken white sand on earth. Effortlessly refined.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Family</span>
+          <span class="dest-tag">Diving</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTSWANA — Featured -->
+    <div class="dest-card dest-card--featured" data-filter="africa">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'e-11-elephant-herd-aerial.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Africa</span>
+        <div class="dest-card__name">Botswana</div>
+        <div class="dest-card__desc">Moremi in shoulder season. Camps at half capacity. A guide who's been here thirty years and knows where the leopard sleeps.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Safari</span>
+          <span class="dest-tag">Shoulder Season</span>
+          <span class="dest-tag">May–Oct</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERENGETI -->
+    <div class="dest-card" data-filter="africa">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'x-01-serengeti-elephants.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Africa</span>
+        <div class="dest-card__name">Serengeti</div>
+        <div class="dest-card__desc">Two million animals. The Great Migration. The greatest wildlife spectacle on earth.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Migration</span>
+          <span class="dest-tag">Wildlife</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SANTORINI -->
+    <div class="dest-card" data-filter="europe">
+      <div class="dest-card__ph" style="background:#1a2638">Destination Photography · Santorini</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Europe</span>
+        <div class="dest-card__name">Santorini</div>
+        <div class="dest-card__desc">White-washed caldera villages, volcanic wine, and sunsets that settle arguments about where to honeymoon.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Honeymoons</span>
+          <span class="dest-tag">Wine</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRENCH RIVIERA — Featured -->
+    <div class="dest-card dest-card--featured" data-filter="europe">
+      <div class="dest-card__ph" style="background:#1c2632">Destination Photography · French Riviera</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Europe</span>
+        <div class="dest-card__name">French Riviera</div>
+        <div class="dest-card__desc">Cap Ferrat to Saint-Tropez. Azure water, grand hotels, and a coastline that invented the idea of glamour.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Yachts</span>
+          <span class="dest-tag">Glamour</span>
+          <span class="dest-tag">Côte d'Azur</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AMALFI COAST -->
+    <div class="dest-card" data-filter="europe">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'd-04-positano-cliffside.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Europe</span>
+        <div class="dest-card__name">Amalfi Coast</div>
+        <div class="dest-card__desc">Cliff-perched villages, lemon groves, and the kind of light painters have chased for centuries.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Culture</span>
+          <span class="dest-tag">Food &amp; Wine</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROVENCE -->
+    <div class="dest-card" data-filter="europe">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'e-06-tuscan-landscape.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Europe</span>
+        <div class="dest-card__name">Provence</div>
+        <div class="dest-card__desc">Lavender fields, farmhouse estates, and a Sunday market that's been running for four hundred years.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Villas</span>
+          <span class="dest-tag">Food &amp; Wine</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BORA BORA -->
+    <div class="dest-card" data-filter="south-pacific">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'd-03-bora-bora-otemanu.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">South Pacific</span>
+        <div class="dest-card__name">Bora Bora</div>
+        <div class="dest-card__desc">Romance suspended over still water. Mount Otemanu rising from a lagoon so blue it defies description.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Romance</span>
+          <span class="dest-tag">Overwater</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KYOTO -->
+    <div class="dest-card" data-filter="asia">
+      <div class="dest-card__ph" style="background:#182230">Destination Photography · Kyoto</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Asia</span>
+        <div class="dest-card__name">Kyoto</div>
+        <div class="dest-card__desc">Bamboo groves, kaiseki precision, and centuries-old tea ceremonies. Japan's spiritual heart, unhurried and unforgettable.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Culture</span>
+          <span class="dest-tag">Kaiseki</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BALI -->
+    <div class="dest-card" data-filter="asia">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'e-09-jungle-yoga-pavilion.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Asia</span>
+        <div class="dest-card__name">Bali</div>
+        <div class="dest-card__desc">Rice terraces, temple ceremonies, and wellness retreats that draw you back year after year.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Wellness</span>
+          <span class="dest-tag">Culture</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BHUTAN -->
+    <div class="dest-card" data-filter="asia">
+      <div class="dest-card__ph" style="background:#1c2430">Destination Photography · Bhutan</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Asia</span>
+        <div class="dest-card__name">Bhutan</div>
+        <div class="dest-card__desc">Not the Tiger's Nest — a monastery road trip through Bumthang Valley, hosted by a family who've guided quietly for twenty years.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Hidden Gem</span>
+          <span class="dest-tag">Bespoke</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATAGONIA -->
+    <div class="dest-card" data-filter="south-america">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'e-12-patagonia-trek.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">South America</span>
+        <div class="dest-card__name">Patagonia</div>
+        <div class="dest-card__desc">Granite towers, glacial lakes, and a silence so vast it recalibrates your sense of scale.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Adventure</span>
+          <span class="dest-tag">Trekking</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COSTA RICA -->
+    <div class="dest-card" data-filter="caribbean-mexico">
+      <div class="dest-card__ph" style="background:#1a2822">Destination Photography · Costa Rica</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Caribbean &amp; Mexico</span>
+        <div class="dest-card__name">Costa Rica</div>
+        <div class="dest-card__desc">Volcanic hot springs, cloud forests, and Pacific coastline. The world's best family adventure destination, with luxury lodges to match.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Family</span>
+          <span class="dest-tag">Adventure</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANFF -->
+    <div class="dest-card" data-filter="north-america">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'e-22-heli-ski-landing.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">North America</span>
+        <div class="dest-card__name">Banff</div>
+        <div class="dest-card__desc">Turquoise glacier lakes, Rocky Mountain grandeur, and luxury lodges where the wilderness starts at your front door.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Mountains</span>
+          <span class="dest-tag">Skiing</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- OMAN — Featured -->
+    <div class="dest-card dest-card--featured" data-filter="middle-east">
+      <div class="dest-card__ph" style="background:#1e2830">Destination Photography · Oman · Musandam</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Middle East</span>
+        <div class="dest-card__name">Oman</div>
+        <div class="dest-card__desc">Dramatic fjords, ancient forts, and desert camps under a sky full of stars. The most underrated luxury destination in the region — and we have the contacts to do it properly.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Adventure</span>
+          <span class="dest-tag">Culture</span>
+          <span class="dest-tag">Hidden Gem</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- JORDAN -->
+    <div class="dest-card" data-filter="middle-east">
+      <div class="dest-card__ph" style="background-image:url('<?php echo hym_img( 'x-03-petra-treasury.jpg' ); ?>');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Middle East</span>
+        <div class="dest-card__name">Jordan</div>
+        <div class="dest-card__desc">Petra at dawn before the crowds arrive. Wadi Rum by private camp. The Dead Sea with no agenda. Jordan rewards anyone willing to go beyond the highlights.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Culture</span>
+          <span class="dest-tag">Petra</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASPEN -->
+    <div class="dest-card" data-filter="north-america">
+      <div class="dest-card__ph" style="background:#1a2030">Destination Photography · Aspen</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">North America</span>
+        <div class="dest-card__name">Aspen</div>
+        <div class="dest-card__desc">Ski-in chalet access, the right table at Matsuhisa, and a mountain town that operates at a pace most resorts can't match. Winter or summer — Aspen works.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Skiing</span>
+          <span class="dest-tag">Mountain</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ COMPARE SECTION ══ -->
+<section class="compare-section">
+  <div class="compare-header">
+    <div class="label" style="margin-bottom:12px">Can't Decide?</div>
+    <h2 class="compare-title">Destination Comparisons</h2>
+    <p class="compare-sub">Still weighing your options? These are the comparisons we're asked most often — and the answers are almost never what people expect.</p>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card__vs">Maldives vs. Seychelles</div>
+      <p class="compare-card__desc">Both in the Indian Ocean — One is built for overwater living, the other for island exploration. The differences run deeper than most guides suggest — the right choice depends on whether you want seclusion or discovery.</p>
+      <button class="compare-card__cta" onclick="window.location.href='/plan-your-trip/'">Ask Mark</button>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card__vs">St. Barth's vs. Turks &amp; Caicos</div>
+      <p class="compare-card__desc">French sophistication or effortless family ease? Both deliver exceptional beaches and first-class hotels — but the atmosphere and logistics are entirely different. Worth a conversation before you book either.</p>
+      <button class="compare-card__cta" onclick="window.location.href='/plan-your-trip/'">Ask Mark</button>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card__vs">Amalfi Coast vs. French Riviera</div>
+      <p class="compare-card__desc">Mediterranean culture or Mediterranean glamour? Each has the cliff roads, the blue water, and the impossibly good food. The right choice is entirely personal — and the wrong choice is still a very good trip.</p>
+      <button class="compare-card__cta" onclick="window.location.href='/plan-your-trip/'">Ask Mark</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FINAL CTA ══ -->
+<section class="final-cta" style="background-image:linear-gradient(135deg,rgba(8,15,26,.86),rgba(8,15,26,.55)),url('<?php echo hym_img( 'f-01-teal-lagoon-cta.jpg' ); ?>');background-size:cover;background-position:center">
+  <div>
+    <div class="label" style="margin-bottom:14px">Not Sure Where to Start?</div>
+    <h2 class="final-cta__title">Tell me what you're dreaming of.<br>I'll tell you which destination fits.</h2>
+    <p class="final-cta__body">Our specialists have personally visited every destination on this page. Share what you're after — the feeling, the timing, the people you're traveling with — and we'll recommend the one that fits, or design a trip that combines several.</p>
+    <a href="/#contact" class="btn-gold">Plan My Trip &nbsp;→</a>
+    <p class="final-cta__note">No booking fees &nbsp;·&nbsp; Response within 24 hours &nbsp;·&nbsp; Fully bespoke</p>
+  </div>
+  <div class="final-cta__aside">
+    <div class="final-cta__aside-stat">
+      <div class="final-cta__aside-num">60+</div>
+      <div class="final-cta__aside-desc">Destinations personally visited and vetted</div>
+    </div>
+    <div class="final-cta__aside-stat">
+      <div class="final-cta__aside-num">7</div>
+      <div class="final-cta__aside-desc">Regions covered across six continents</div>
+    </div>
+    <div class="final-cta__aside-stat">
+      <div class="final-cta__aside-num">20+</div>
+      <div class="final-cta__aside-desc">Years of first-hand travel knowledge</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ NEWSLETTER ══ -->
+
+
+
+<!-- ══ FOOTER ══ -->
+<?php hym_newsletter(); ?>
+<?php get_footer();

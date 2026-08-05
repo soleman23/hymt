@@ -1,0 +1,199 @@
+<?php
+/**
+ * Template Name: Experiences Hub
+ *
+ * @package hym-travel
+ */
+get_header();
+?>
+<!-- ══ PAGE HERO ══ -->
+<section class="page-hero">
+  <div class="page-hero__bg"></div>
+  <img src="<?php echo esc_url( HYM_URI . '/assets/logo.png' ); ?>" class="page-hero__watermark" alt="" aria-hidden="true">
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <div class="label">What We Do Best</div>
+    <h1 class="page-hero__headline">Eleven Ways to Travel<br>Exceptionally Well</h1>
+    <p class="page-hero__sub">Every trip we build falls into one of these categories — and every one of them is designed around you, not around inventory.</p>
+  </div>
+</section>
+
+
+<!-- ══ FILTER BAR ══ -->
+<div class="filter-bar">
+  <div class="filter-bar__inner">
+    <button class="filter-pill active" data-filter="all">All Experiences</button>
+    <button class="filter-pill" data-filter="beach">Beach &amp; Islands</button>
+    <button class="filter-pill" data-filter="all-inclusive">All-Inclusive</button>
+    <button class="filter-pill" data-filter="family">Family</button>
+    <button class="filter-pill" data-filter="multigen">Multigenerational</button>
+    <button class="filter-pill" data-filter="adventure">Adventure &amp; Active</button>
+    <button class="filter-pill" data-filter="wellness">Wellness</button>
+    <button class="filter-pill" data-filter="culture">Culture &amp; Immersive</button>
+    <button class="filter-pill" data-filter="food-wine">Food &amp; Wine</button>
+    <button class="filter-pill" data-filter="cruises">Cruises</button>
+    <button class="filter-pill" data-filter="romance">Romance</button>
+    <button class="filter-pill" data-filter="safari">Safari &amp; Wildlife</button>
+    <button class="filter-pill" data-filter="sports">Sports &amp; Events</button>
+  </div>
+</div>
+
+
+
+<!-- ══ EXPERIENCES GRID ══ -->
+<section class="exp-section">
+  <div class="exp-grid" id="expGrid">
+
+    <div class="exp-card" data-filter="beach">
+      <div class="exp-card__num">01</div>
+      <div class="exp-card__cat label">Sand &amp; Sea</div>
+      <h2 class="exp-card__title">Beach &amp; Island Escapes</h2>
+      <p class="exp-card__body">Not every beach is the same. Grace Bay in Turks &amp; Caicos and a public beach in Cancún are both technically tropical, but they are entirely different experiences. We know which stretches of sand are worth the travel — and which properties actually have access to them.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Turks &amp; Caicos</span><span class="exp-tag">Maldives</span><span class="exp-tag">Seychelles</span><span class="exp-tag">St. Barth's</span><span class="exp-tag">Bora Bora</span></div></div>
+      <a href="/experiences/safari-wildlife-travel/" class="exp-card__cta">Explore Safari &amp; Wildlife</a>
+    </div>
+
+    <div class="exp-card" data-filter="all-inclusive">
+      <div class="exp-card__num">02</div>
+      <div class="exp-card__cat label">Resort &amp; Inclusive</div>
+      <h2 class="exp-card__title">All-Inclusive Vacations</h2>
+      <p class="exp-card__body">Not all all-inclusives are created equal — and most people find that out after they've booked. We know which resorts actually deliver on the promise: the food, the service, the rooms, the beach. And which ones look excellent in photos and disappoint on arrival.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Mexico</span><span class="exp-tag">Caribbean</span><span class="exp-tag">Maldives</span><span class="exp-tag">Adults-Only</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="family">
+      <div class="exp-card__num">03</div>
+      <div class="exp-card__cat label">Family</div>
+      <h2 class="exp-card__title">Family Travel</h2>
+      <p class="exp-card__body">The kids are engaged. The parents aren't managing logistics. Family travel has more variables than almost anything else we plan — and getting those variables right requires knowing exactly which properties, guides, and itineraries handle it well.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Costa Rica</span><span class="exp-tag">Turks &amp; Caicos</span><span class="exp-tag">Japan</span><span class="exp-tag">Banff</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="multigen">
+      <div class="exp-card__num">04</div>
+      <div class="exp-card__cat label">Multigenerational</div>
+      <h2 class="exp-card__title">Multigenerational Travel</h2>
+      <p class="exp-card__body">Three generations, one trip, no compromises. The grandparents are comfortable. The teenagers aren't bored. The parents have nothing on their plate. A private villa with dedicated staff, an itinerary that branches — these are the tools that make it work.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Formats</span><div class="exp-card__tags"><span class="exp-tag">Private Villas</span><span class="exp-tag">Family Reunions</span><span class="exp-tag">Milestone Trips</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="adventure">
+      <div class="exp-card__num">05</div>
+      <div class="exp-card__cat label">Active &amp; Outdoor</div>
+      <h2 class="exp-card__title">Adventure &amp; Active Travel</h2>
+      <p class="exp-card__body">Ski-in access in Verbier. Trekking in Patagonia with a private guide. Scuba diving in the Coral Triangle with a liveaboard crew who know the reefs by name. Active travel at the luxury level — where the adventure is extraordinary and the evening is just as good.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Experiences</span><div class="exp-card__tags"><span class="exp-tag">Skiing</span><span class="exp-tag">Trekking</span><span class="exp-tag">Diving</span><span class="exp-tag">Expeditions</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="wellness">
+      <div class="exp-card__num">06</div>
+      <div class="exp-card__cat label">Wellbeing</div>
+      <h2 class="exp-card__title">Wellness &amp; Retreat Travel</h2>
+      <p class="exp-card__body">Not a spa weekend — a genuine reset. The kind of place where the programme is designed around you, the food is actually restorative, and you return home having changed something. We know which wellness properties actually work.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Bali</span><span class="exp-tag">Thailand</span><span class="exp-tag">Maldives</span><span class="exp-tag">Switzerland</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="culture">
+      <div class="exp-card__num">07</div>
+      <div class="exp-card__cat label">Culture &amp; Discovery</div>
+      <h2 class="exp-card__title">Culture &amp; Immersive Travel</h2>
+      <p class="exp-card__body">A private tour of the Vatican before it opens. A monastery road trip through Bhutan's Bumthang Valley. A week in Kyoto with a local guide who's spent thirty years navigating it. Immersive travel is about access — to people, places, and perspectives most itineraries never reach.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Bhutan</span><span class="exp-tag">Kyoto</span><span class="exp-tag">Rome</span><span class="exp-tag">Oman</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="food-wine">
+      <div class="exp-card__num">08</div>
+      <div class="exp-card__cat label">Culinary</div>
+      <h2 class="exp-card__title">Food &amp; Wine Travel</h2>
+      <p class="exp-card__body">A Burgundy cellar that isn't on any tasting tour. A kaiseki counter in Kyoto with a six-month waiting list. A cooking lesson in Bologna with someone who's been making pasta the same way since 1963. Food travel is about access — and access is what we do.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Burgundy</span><span class="exp-tag">Kyoto</span><span class="exp-tag">Bologna</span><span class="exp-tag">San Sebastián</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="cruises">
+      <div class="exp-card__num">09</div>
+      <div class="exp-card__cat label">Sea &amp; River</div>
+      <h2 class="exp-card__title">Cruises</h2>
+      <p class="exp-card__body">Seven days, eight islands, one crew who knows every hidden cove between Santorini and Patmos. Or a river cruise through Burgundy in harvest season. Not all cruises are the same — the vessel, the route, and the season change everything.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Routes</span><div class="exp-card__tags"><span class="exp-tag">Ocean Cruises</span><span class="exp-tag">River Cruises</span><span class="exp-tag">Small-Ship</span><span class="exp-tag">Yacht Charters</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="romance">
+      <div class="exp-card__num">10</div>
+      <div class="exp-card__cat label">Romance &amp; Celebration</div>
+      <h2 class="exp-card__title">Romance &amp; Celebration Travel</h2>
+      <p class="exp-card__body">The villa sits on a coral cliff above Petit Cul-de-Sac. Everything is arranged before you land. Honeymoons, anniversaries, proposals, babymoons, landmark birthdays — these are the trips where everything has to be right, and we treat them accordingly.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Occasions</span><div class="exp-card__tags"><span class="exp-tag">Honeymoons</span><span class="exp-tag">Anniversaries</span><span class="exp-tag">Proposals</span><span class="exp-tag">Babymoons</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="safari">
+      <div class="exp-card__num">11</div>
+      <div class="exp-card__cat label">Africa &amp; Beyond</div>
+      <h2 class="exp-card__title">Safari &amp; Wildlife</h2>
+      <p class="exp-card__body">Moremi in shoulder season — when the herds are still there and the camps are at half capacity. Your guide has been here thirty years. He knows where the leopard sleeps and which waterhole the elephants prefer at dusk. That knowledge is not available on a booking engine.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Popular Destinations</span><div class="exp-card__tags"><span class="exp-tag">Botswana</span><span class="exp-tag">Kenya</span><span class="exp-tag">Tanzania</span><span class="exp-tag">Rwanda</span></div></div>
+      <a href="/#contact" class="exp-card__cta">Plan My Trip</a>
+    </div>
+
+    <div class="exp-card" data-filter="sports">
+      <div class="exp-card__num">12</div>
+      <div class="exp-card__cat label">Sport &amp; Unique Access</div>
+      <h2 class="exp-card__title">Sports &amp; Event Travel</h2>
+      <p class="exp-card__body">A Monaco paddock pass and three nights at the Hôtel de Paris. A guaranteed tee time at Augusta National. Front-row seats at Wimbledon with hospitality that doesn't feel like a conference. Elite sporting access is a specialty — and the logistics require someone who's done it before.</p>
+      <div class="exp-card__dests"><span class="exp-card__dests-label">Notable Events</span><div class="exp-card__tags"><span class="exp-tag">Monaco Grand Prix</span><span class="exp-tag">The Masters</span><span class="exp-tag">Wimbledon</span><span class="exp-tag">Pebble Beach</span></div></div>
+      <a href="/experiences/sports-event-travel/" class="exp-card__cta">Explore Sports &amp; Events</a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ FEATURED EXPERIENCE ══ -->
+<section class="exp-featured">
+  <div class="exp-featured__grid">
+    <div class="exp-featured__image">
+      <span class="exp-featured__image-ph">Destination Photography<br>Botswana · Moremi Game Reserve</span>
+    </div>
+    <div class="exp-featured__content">
+      <div class="label" style="margin-bottom:16px">Currently Featured</div>
+      <h2 class="exp-featured__title">Safari &amp; Wildlife —<br>Africa Done Right</h2>
+      <p class="exp-featured__body">The difference between a good safari and an exceptional one is almost entirely the camp and the guide. We've visited every property we recommend — many of them repeatedly — in Botswana, Kenya, Tanzania, South Africa, and Rwanda.</p>
+      <p class="exp-featured__body">Shoulder season. Smaller camps. Guides who've been doing this for decades. That's the brief we work from.</p>
+      <div class="exp-featured__tags">
+        <span class="exp-tag">Botswana</span>
+        <span class="exp-tag">Kenya</span>
+        <span class="exp-tag">Tanzania</span>
+        <span class="exp-tag">South Africa</span>
+      </div>
+      <a href="/#contact" class="exp-featured__cta">Plan My Safari &nbsp;→</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ PLANNING STRIP ══ -->
+<section class="planning-strip">
+  <div>
+    <div class="label" style="margin-bottom:14px">Not Sure Where to Start?</div>
+    <h2 class="planning-strip__title">Tell me what you're dreaming of.<br>I'll tell you which category fits.</h2>
+    <p class="planning-strip__body">Many of the best trips we've planned don't fit neatly into one category. A honeymoon with a safari leg. A family trip built around a food and wine itinerary. Start the conversation and we'll figure it out from there.</p>
+  </div>
+  <a href="/#contact" class="planning-strip__cta">Plan My Trip &nbsp;→</a>
+</section>
+
+
+<!-- ══ NEWSLETTER ══ -->
+
+
+
+<!-- ══ FOOTER ══ -->
+<?php hym_newsletter(); ?>
+<?php get_footer();

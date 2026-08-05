@@ -1,0 +1,518 @@
+[
+ {
+  "route": "/about/",
+  "title": "About Mark Sole \u2014 Hit Your Mark Travel",
+  "desc": "Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone.",
+  "src": "HYM About.html"
+ },
+ {
+  "route": "/contact/",
+  "title": "Contact \u2014 Hit Your Mark Travel",
+  "desc": "Get in touch with Mark Sole, Founder & Travel Director at Hit Your Mark Travel. Call, email, or send a message \u2014 we respond within 24 hours.",
+  "src": "HYM Contact.html"
+ },
+ {
+  "route": "/faq/",
+  "title": "Frequently Asked Questions \u2014 Hit Your Mark Travel",
+  "desc": "Answers to the most common questions about working with Hit Your Mark Travel \u2014 from how we charge to what happens when something goes wrong.",
+  "src": "HYM FAQ.html"
+ },
+ {
+  "route": "/travel-journal/",
+  "title": "Travel Journal \u2014 Hit Your Mark Travel",
+  "desc": "The Hit Your Mark Travel Journal \u2014 destination notes, shoulder-season guides, and considered opinions on how to travel exceptionally well.",
+  "src": "HYM Journal.html"
+ },
+ {
+  "route": "/experiences/",
+  "title": "Experiences \u2014 Hit Your Mark Travel",
+  "desc": "Twelve curated luxury travel experiences \u2014 beach escapes, all-inclusive vacations, family, multigenerational, adventure, wellness, culture, food & wine, cruises, romance, safari, and sports travel.",
+  "src": "HYM Experiences.html"
+ },
+ {
+  "route": "/destinations/",
+  "title": "Destinations \u2014 Hit Your Mark Travel",
+  "desc": "60+ handpicked luxury destinations across 7 regions \u2014 every one personally visited and vetted. From Maldives overwater villas to Botswana safaris, Santorini caldera suites to Patagonian wilderness lodges.",
+  "src": "HYM Destinations.html"
+ },
+ {
+  "route": "/experiences/beach-island-escapes/",
+  "title": "Beach &amp; Island Escapes \u2014 Hit Your Mark Travel",
+  "desc": "Maldives, Turks &amp; Caicos, Seychelles, St. Barth's, and the South Pacific. Private beach access, direct overwater villas, and the right week for the water. Every property personally vetted.",
+  "src": "HYM Experience Beach.html"
+ },
+ {
+  "route": "/experiences/all-inclusive-vacations/",
+  "title": "All-Inclusive Vacations \u2014 Hit Your Mark Travel",
+  "desc": "Mexico, Jamaica, Dominican Republic, St. Lucia, and the Mediterranean. The all-inclusive category spans a remarkable quality range. We know which properties actually deliver \u2014 and which ones photograph better than they stay.",
+  "src": "HYM Experience All-Inclusive.html"
+ },
+ {
+  "route": "/experiences/family-travel/",
+  "title": "Family Travel \u2014 Hit Your Mark Travel",
+  "desc": "Mexico, Costa Rica, Hawaii, Europe, and beyond. Family travel planned around how families actually travel \u2014 not adult itineraries with kids added on. Every detail vetted from check-in to check-out.",
+  "src": "HYM Experience Family.html"
+ },
+ {
+  "route": "/experiences/multigenerational-travel/",
+  "title": "Multigenerational Travel \u2014 Hit Your Mark Travel",
+  "desc": "Italy, Japan, Hawaii, Portugal, and beyond. Multigenerational travel planned around what actually works when grandparents, parents, and kids are all on the same trip \u2014 pacing, villa configurations, shared time and independent time.",
+  "src": "HYM Experience Multigenerational.html"
+ },
+ {
+  "route": "/experiences/adventure-active-travel/",
+  "title": "Adventure &amp; Active Travel \u2014 Hit Your Mark Travel",
+  "desc": "Patagonia, Peru, New Zealand, Iceland, the Dolomites, and beyond. Active travel planned around your fitness level, the right permits, and guides who know the terrain. Not just destinations \u2014 experiences built around doing.",
+  "src": "HYM Experience Adventure.html"
+ },
+ {
+  "route": "/experiences/wellness-retreat-travel/",
+  "title": "Wellness &amp; Retreat Travel \u2014 Hit Your Mark Travel",
+  "desc": "Bali, Sri Lanka, Japan, Mexico, and beyond. Wellness travel planned around what you actually need \u2014 genuine programs, vetted practitioners, and properties that deliver restoration rather than just describing it.",
+  "src": "HYM Experience Wellness.html"
+ },
+ {
+  "route": "/experiences/culture-immersive-travel/",
+  "title": "Culture &amp; Immersive Travel \u2014 Hit Your Mark Travel",
+  "desc": "Japan, Italy, Morocco, Jordan, Greece, and beyond. Cultural travel planned around depth over breadth \u2014 private expert guides, genuine access, and the kind of understanding that doesn't come from a highlights tour.",
+  "src": "HYM Experience Culture.html"
+ },
+ {
+  "route": "/experiences/food-wine-travel/",
+  "title": "Food &amp; Wine Travel \u2014 Hit Your Mark Travel",
+  "desc": "Italy, Japan, France, Spain, California, and Peru. Food and wine travel planned around producers, markets, and the people making what ends up on the table \u2014 not just the restaurants that have already been written about.",
+  "src": "HYM Experience Food Wine.html"
+ },
+ {
+  "route": "/experiences/safari-wildlife-travel/",
+  "title": "Safari &amp; Wildlife Travel \u2014 Hit Your Mark Travel",
+  "desc": "Botswana, Kenya, Tanzania, South Africa, Rwanda. Private camps, expert guides, and the kind of access that makes a safari unforgettable. Every property personally visited.",
+  "src": "HYM Experience Safari.html"
+ },
+ {
+  "route": "/experiences/sports-event-travel/",
+  "title": "Sports &amp; Event Travel \u2014 Hit Your Mark Travel",
+  "desc": "Courtside at Wimbledon. Trackside at Monaco. Fairways at Augusta. The world's great sporting moments \u2014 with VIP access, luxury accommodation, and every detail handled.",
+  "src": "HYM Experience Sports.html"
+ },
+ {
+  "route": "/destinations/caribbean-mexico/",
+  "title": "Caribbean &amp; Mexico \u2014 Hit Your Mark Travel",
+  "desc": "Turks &amp; Caicos, St. Barth's, Jamaica, Barbados, Riviera Maya, and Los Cabos. Caribbean and Mexico travel planned around the specific islands, properties, and windows that actually deliver \u2014 not the ones that photograph well.",
+  "src": "HYM Destination Caribbean Mexico.html"
+ },
+ {
+  "route": "/destinations/europe/",
+  "title": "Europe \u2014 Hit Your Mark Travel",
+  "desc": "Italy, France, Spain, Portugal, Greece, and the United Kingdom. European travel planned around the specific places, guides, and access that most itineraries never reach \u2014 not the highlights, but the depth behind them.",
+  "src": "HYM Destination Europe.html"
+ },
+ {
+  "route": "/destinations/africa/",
+  "title": "Africa \u2014 Hit Your Mark Travel",
+  "desc": "Kenya, Tanzania, Botswana, South Africa, Rwanda, and Morocco. African travel planned around the camps, guides, and windows that actually deliver the continent at its most extraordinary.",
+  "src": "HYM Destination Africa.html"
+ },
+ {
+  "route": "/destinations/asia/",
+  "title": "Asia \u2014 Hit Your Mark Travel",
+  "desc": "Japan, Bali, Thailand, Vietnam, India, and Sri Lanka. Asian travel planned around the guides, properties, and windows that reveal the continent at its most extraordinary \u2014 not the surface, but the depth.",
+  "src": "HYM Destination Asia.html"
+ },
+ {
+  "route": "/destinations/south-pacific/",
+  "title": "South Pacific \u2014 Hit Your Mark Travel",
+  "desc": "French Polynesia, Fiji, New Zealand, Australia, and the Cook Islands. South Pacific travel planned around the overwater villas, private islands, and landscapes that justify the distance.",
+  "src": "HYM Destination South Pacific.html"
+ },
+ {
+  "route": "/destinations/middle-east/",
+  "title": "Middle East \u2014 Hit Your Mark Travel",
+  "desc": "Jordan, Israel, Oman, Egypt, and the UAE. Middle East travel planned around the ancient sites, desert landscapes, and cultural access most itineraries never reach.",
+  "src": "HYM Destination Middle East.html"
+ },
+ {
+  "route": "/destinations/north-america/",
+  "title": "North America \u2014 Hit Your Mark Travel",
+  "desc": "Napa & Sonoma, Hawaii, Alaska, New York, the Canadian Rockies, and New Orleans. North American travel planned around the specific places, properties, and experiences that actually deliver \u2014 not the ones that photograph well.",
+  "src": "HYM Destination North America.html"
+ },
+ {
+  "route": "/destinations/south-america/",
+  "title": "South America \u2014 Hit Your Mark Travel",
+  "desc": "Patagonia, Peru, the Gal\u00e1pagos, Brazil, Colombia, and Argentina. South American travel planned around the landscapes, lodges, and windows that deliver the continent at its most extraordinary.",
+  "src": "HYM Destination South America.html"
+ },
+ {
+  "route": "/destinations/polar-regions/",
+  "title": "Polar Regions \u2014 Hit Your Mark Travel",
+  "desc": "Antarctica, Arctic Norway, Svalbard, Greenland, and Iceland. Polar expedition travel planned around the vessels, naturalists, and windows that deliver the ends of the earth at their most extraordinary.",
+  "src": "HYM Destination Polar Regions.html"
+ },
+ {
+  "route": "/destinations/alaska/",
+  "title": "Alaska \u2014 Hit Your Mark Travel",
+  "desc": "The Inside Passage, Denali, the Kenai Peninsula, Prince William Sound, and Arctic Alaska. The last genuinely wild place in North America \u2014 planned around the wilderness lodges, float planes, and guides that make the scale comprehensible.",
+  "src": "HYM Destination Alaska.html"
+ },
+ {
+  "route": "/destinations/bali/",
+  "title": "Bali \u2014 Hit Your Mark Travel",
+  "desc": "Ubud, Sidemen Valley, the Nusa Islands, Komodo, and Lombok. Bali's spiritual geography, rice terrace culture, and surrounding islands \u2014 planned around the experiences most visitors never find.",
+  "src": "HYM Destination Bali.html"
+ },
+ {
+  "route": "/destinations/botswana/",
+  "title": "Botswana \u2014 Hit Your Mark Travel",
+  "desc": "The Okavango Delta, Chobe, Central Kalahari, and Linyanti. Botswana's low-volume, high-value safari model produces the most pristine wilderness experience available anywhere in Africa.",
+  "src": "HYM Destination Botswana.html"
+ },
+ {
+  "route": "/destinations/egypt/",
+  "title": "Egypt \u2014 Hit Your Mark Travel",
+  "desc": "The Pyramids of Giza, the Valley of the Kings, Abu Simbel, and the Nile between Luxor and Aswan. Egyptian travel planned around the Egyptologists, the dawn access, and the timing that delivers the monuments without the crowds.",
+  "src": "HYM Destination Egypt.html"
+ },
+ {
+  "route": "/destinations/fiji/",
+  "title": "Fiji \u2014 Hit Your Mark Travel",
+  "desc": "The Mamanuca and Yasawa Islands, the Coral Coast, the Lau Group, and Vanua Levu. Fiji planned around the private island resorts, the soft coral diving, and the genuine Pacific welcome that the brochures hint at and only the right itinerary delivers.",
+  "src": "HYM Destination Fiji.html"
+ },
+ {
+  "route": "/destinations/france/",
+  "title": "France \u2014 Hit Your Mark Travel",
+  "desc": "Paris, Provence, Bordeaux, the Loire Valley, Alsace, and Normandy. French travel planned around the food specialists, property selections, and the depth that converts a visit into an understanding.",
+  "src": "HYM Destination France.html"
+ },
+ {
+  "route": "/destinations/french-polynesia/",
+  "title": "French Polynesia \u2014 Hit Your Mark Travel",
+  "desc": "Bora Bora, Moorea, Tahiti, Fakarava, and the Tuamotu atolls. French Polynesia planned around the lagoon properties, the island combinations, and the dive sites that justify the distance from anywhere.",
+  "src": "HYM Destination French Polynesia.html"
+ },
+ {
+  "route": "/destinations/galapagos/",
+  "title": "The Gal\u00e1pagos \u2014 Hit Your Mark Travel",
+  "desc": "Santa Cruz, Fernandina, Espa\u00f1ola, Bartolom\u00e9, and the outer islands. The Gal\u00e1pagos planned around the liveaboard vs land-based decision, the island selection, and the naturalist guides that reveal what Darwin was actually observing.",
+  "src": "HYM Destination Galapagos.html"
+ },
+ {
+  "route": "/destinations/greece/",
+  "title": "Greece \u2014 Hit Your Mark Travel",
+  "desc": "Athens, Santorini, Mykonos, Crete, the Peloponnese, and Rhodes. Greek travel planned around the archaeological access, island combinations, and property selections that deliver the country at its most extraordinary.",
+  "src": "HYM Destination Greece.html"
+ },
+ {
+  "route": "/destinations/hawaii/",
+  "title": "Hawaii \u2014 Hit Your Mark Travel",
+  "desc": "Maui, Kauai, the Big Island, and Lanai. Hawaii planned around the island selection, the property choices, the inter-island sequencing, and the experiences that convert a beach vacation into one of the great American trips.",
+  "src": "HYM Destination Hawaii.html"
+ },
+ {
+  "route": "/destinations/italy/",
+  "title": "Italy \u2014 Hit Your Mark Travel",
+  "desc": "Rome, Tuscany, the Amalfi Coast, Venice, Sicily, and Puglia. Italian travel planned around the art historians, food specialists, and property selections that reveal the country at its most extraordinary.",
+  "src": "HYM Destination Italy.html"
+ },
+ {
+  "route": "/destinations/japan/",
+  "title": "Japan \u2014 Hit Your Mark Travel",
+  "desc": "Tokyo, Kyoto, Osaka, Hiroshima, Kanazawa, and rural Japan. The most complete travel destination in the world \u2014 planned around specialist guides, the right properties, and the depth that most itineraries never reach.",
+  "src": "HYM Destination Japan.html"
+ },
+ {
+  "route": "/destinations/jordan/",
+  "title": "Jordan \u2014 Hit Your Mark Travel",
+  "desc": "Petra, Wadi Rum, the Dead Sea, Jerash, and the Aqaba coast. Jordan planned around the Nabataean archaeology, the Bedouin guides, and the hospitality culture that makes every Jordan traveler return.",
+  "src": "HYM Destination Jordan.html"
+ },
+ {
+  "route": "/destinations/kenya-tanzania/",
+  "title": "Kenya &amp; Tanzania \u2014 Hit Your Mark Travel",
+  "desc": "The Masai Mara, Serengeti, Amboseli, Ngorongoro, and Laikipia. East Africa's greatest wildlife theater planned around the camps, guides, and seasonal windows that put you in the right place at the right moment.",
+  "src": "HYM Destination Kenya Tanzania.html"
+ },
+ {
+  "route": "/destinations/maldives/",
+  "title": "The Maldives \u2014 Hit Your Mark Travel",
+  "desc": "The Maldives: overwater villas, private atolls, and lagoons that glow at dusk. Every property personally visited. Every itinerary built from scratch.",
+  "src": "HYM Destination Maldives.html"
+ },
+ {
+  "route": "/destinations/new-york/",
+  "title": "New York \u2014 Hit Your Mark Travel",
+  "desc": "Manhattan, Brooklyn, the Hudson Valley, the Hamptons, and Upstate New York. The city that rewards knowing it \u2014 planned around the neighborhoods, the food specialists, and the escapes that most visitors never find.",
+  "src": "HYM Destination New York.html"
+ },
+ {
+  "route": "/destinations/new-zealand/",
+  "title": "New Zealand \u2014 Hit Your Mark Travel",
+  "desc": "Queenstown, Fiordland, the Marlborough wine region, Rotorua, the Bay of Islands, and Stewart Island. New Zealand planned around the South Island landscapes, the Great Walk lodge-supported routes, and the adventure and elegance combinations that justify the long flight.",
+  "src": "HYM Destination New Zealand.html"
+ },
+ {
+  "route": "/destinations/oman/",
+  "title": "Oman \u2014 Hit Your Mark Travel",
+  "desc": "Muscat, Wahiba Sands, the Musandam Peninsula, Nizwa, and Wadi Shab. The Middle East's most underused destination \u2014 extraordinary landscape diversity, one of the highest hospitality standards in the world, and a self-drive road trip culture that rewards planning.",
+  "src": "HYM Destination Oman.html"
+ },
+ {
+  "route": "/destinations/patagonia/",
+  "title": "Patagonia \u2014 Hit Your Mark Travel",
+  "desc": "Torres del Paine, Los Glaciares, El Chalt\u00e9n, Tierra del Fuego, and the Beagle Channel. The end of the earth \u2014 planned around the weather windows, the right lodges, and the trekking that makes the distance worthwhile.",
+  "src": "HYM Destination Patagonia.html"
+ },
+ {
+  "route": "/destinations/peru/",
+  "title": "Peru \u2014 Hit Your Mark Travel",
+  "desc": "Machu Picchu, the Sacred Valley, Cusco, Lake Titicaca, and the Amazon. Peru planned around the altitude acclimatization, the archaeological context, and the experiences that convert a Machu Picchu visit into an Andean journey.",
+  "src": "HYM Destination Peru.html"
+ },
+ {
+  "route": "/destinations/rwanda/",
+  "title": "Rwanda \u2014 Hit Your Mark Travel",
+  "desc": "Mountain gorilla trekking in the Volcanoes National Park. Rwanda's highlands offer the most profound wildlife encounter available anywhere \u2014 and a country rebuilt around extraordinary small-group tourism.",
+  "src": "HYM Destination Rwanda.html"
+ },
+ {
+  "route": "/destinations/thailand/",
+  "title": "Thailand \u2014 Hit Your Mark Travel",
+  "desc": "Bangkok, Chiang Mai, the northern hill tribes, and the southern islands. Thailand planned around the food culture, the temples, the specialist guides, and the versions of each destination most visitors never find.",
+  "src": "HYM Destination Thailand.html"
+ },
+ {
+  "route": "/destinations/turks-caicos/",
+  "title": "Turks &amp; Caicos \u2014 Hit Your Mark Travel",
+  "desc": "Grace Bay, North Caicos, Salt Cay, Pine Cay, and Parrot Cay. Turks &amp; Caicos planned around the right villa or resort on Providenciales, the quieter outer cays, and the diving and whale-watching that the brochures don't always mention.",
+  "src": "HYM Destination Turks Caicos.html"
+ },
+ {
+  "route": "/travel-journal/01-brand-colors/",
+  "title": "",
+  "desc": "",
+  "src": "01-brand-colors.html"
+ },
+ {
+  "route": "/travel-journal/02-typography/",
+  "title": "",
+  "desc": "",
+  "src": "02-typography.html"
+ },
+ {
+  "route": "/travel-journal/03-logo-usage/",
+  "title": "",
+  "desc": "",
+  "src": "03-logo-usage.html"
+ },
+ {
+  "route": "/travel-journal/04-voice-tone/",
+  "title": "",
+  "desc": "",
+  "src": "04-voice-tone.html"
+ },
+ {
+  "route": "/travel-journal/05-components/",
+  "title": "",
+  "desc": "",
+  "src": "05-components.html"
+ },
+ {
+  "route": "/travel-journal/06-destination-card/",
+  "title": "",
+  "desc": "",
+  "src": "06-destination-card.html"
+ },
+ {
+  "route": "/travel-journal/07-business-card/",
+  "title": "",
+  "desc": "",
+  "src": "07-business-card.html"
+ },
+ {
+  "route": "/travel-journal/08-email-signature/",
+  "title": "",
+  "desc": "",
+  "src": "08-email-signature.html"
+ },
+ {
+  "route": "/travel-journal/09-social-templates/",
+  "title": "",
+  "desc": "",
+  "src": "09-social-templates.html"
+ },
+ {
+  "route": "/travel-journal/africa-destination-guide/",
+  "title": "The Africa Destination Guide: Safari Camp Selection and Six Regions Worth Understanding \u2014 Hit Your Mark Travel Journal",
+  "desc": "From the Okavango Delta to gorilla country to Morocco's medinas \u2014 six African regions, why camp selection matters more than any other decision in safari travel, and the properties that consistently deliver.",
+  "src": "africa-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/african-safari-calendar/",
+  "title": "The African Safari Calendar: When to Go for What \u2014 Hit Your Mark Travel Journal",
+  "desc": "Africa's safari regions run on different seasonal logics. Here's the month-by-month breakdown \u2014 migration cycles, dry season windows, and why the green season is more compelling than most travelers realize.",
+  "src": "african-safari-calendar.html"
+ },
+ {
+  "route": "/travel-journal/amanjiwo-field-report/",
+  "title": "Three Nights at Amanjiwo \u2014 Hit Your Mark Travel Journal",
+  "desc": "Borobudur at dawn, a private pool facing the volcanoes, and a staff-to-guest ratio that makes the phrase 'dedicated service' finally mean something. Here is what the experience actually is.",
+  "src": "amanjiwo-field-report.html"
+ },
+ {
+  "route": "/travel-journal/asia-destination-guide/",
+  "title": "The Asia Destination Guide: Six Regions, the Right Season, and Why Asia Requires a Different Planning Framework \u2014 Hit Your Mark Travel Journal",
+  "desc": "Japan, Bhutan, Southeast Asia, Indonesia, India, and the Maldives \u2014 six Asian regions that require fundamentally different planning approaches, the seasonal logic behind each, and the properties worth knowing.",
+  "src": "asia-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/botswana-shoulder-season/",
+  "title": "Botswana Before the Crowd: Why Shoulder Season Changes Everything \u2014 Hit Your Mark Travel Journal",
+  "desc": "Moremi Game Reserve in May and June \u2014 before the crowds and while the water levels are still rising \u2014 is a different kind of safari experience. Here's the version worth knowing about.",
+  "src": "botswana-shoulder-season.html"
+ },
+ {
+  "route": "/travel-journal/caribbean-mexico-destination-guide/",
+  "title": "The Caribbean &amp; Mexico Destination Guide: How to Choose the Right Island \u2014 Hit Your Mark Travel Journal",
+  "desc": "Six Caribbean and Mexico destinations, their honest differences, when to go, which properties actually earn their rates, and why the island you choose matters more than any other decision you'll make.",
+  "src": "caribbean-mexico-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/europe-destination-guide/",
+  "title": "The Europe Destination Guide: Choosing the Right Version of the Continent \u2014 Hit Your Mark Travel Journal",
+  "desc": "From the Amalfi cliff hotels to Proven\u00e7al village stays to Norway's fjord country \u2014 six European regions, their honest character, when the season matters, and the properties that earn their rates.",
+  "src": "europe-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/european-grand-tour-mistake/",
+  "title": "The European Grand Tour Is Usually the Wrong Trip \u2014 Hit Your Mark Travel Journal",
+  "desc": "London, Paris, Rome, Florence, Venice, Barcelona in two weeks. It's the most common European itinerary and one of the least satisfying travel experiences available. Here is why \u2014 and what to do instead.",
+  "src": "european-grand-tour-mistake.html"
+ },
+ {
+  "route": "/travel-journal/five-star-problem/",
+  "title": "The Five-Star Problem \u2014 Hit Your Mark Travel Journal",
+  "desc": "The five-star rating once meant something specific. It no longer does. Here is what actually tells you whether a hotel is exceptional \u2014 and why the official categories have become nearly useless as a planning tool.",
+  "src": "five-star-problem.html"
+ },
+ {
+  "route": "/travel-journal/glacier-express-field-report/",
+  "title": "The Glacier Express, End to End \u2014 Hit Your Mark Travel Journal",
+  "desc": "Zermatt to St. Moritz in eight hours. 291 bridges, 91 tunnels, and one of the most deliberate rail journeys on earth. Here is what the experience is \u2014 and why direction matters.",
+  "src": "glacier-express-field-report.html"
+ },
+ {
+  "route": "/travel-journal/heli-ski-field-report/",
+  "title": "A Week of Heli-Skiing: What the Experience Actually Is \u2014 Hit Your Mark Travel Journal",
+  "desc": "No lifts. No groomers. No other tracks in the snow. A helicopter drops you at a peak and you ski back to the valley, then does it again. Here is what a week of heli-skiing in British Columbia actually looks like \u2014 the runs, the weather, the lodge, and what you need to be able to ski before you go.",
+  "src": "heli-ski-field-report.html"
+ },
+ {
+  "route": "/travel-journal/how-hotel-upgrades-work/",
+  "title": "How Hotel Upgrades Actually Work \u2014 Hit Your Mark Travel Journal",
+  "desc": "The anniversary email almost never works. Here's what actually drives complimentary upgrades \u2014 and how to position yourself to receive one.",
+  "src": "how-hotel-upgrades-work.html"
+ },
+ {
+  "route": "/travel-journal/in-defense-of-slow-travel/",
+  "title": "In Defense of Slow Travel \u2014 Hit Your Mark Travel Journal",
+  "desc": "The case for staying longer, covering less ground, and returning from a trip with something more than a list of places visited. Why slower travel is almost always better \u2014 and cheaper than you think.",
+  "src": "in-defense-of-slow-travel.html"
+ },
+ {
+  "route": "/travel-journal/kentucky-derby-field-report/",
+  "title": "The Kentucky Derby: What the Race Actually Is to Attend \u2014 Hit Your Mark Travel Journal",
+  "desc": "It's a two-minute race that takes twelve hours to attend. Both of those facts are exactly right. Here is what the Kentucky Derby experience actually is \u2014 the tiers, the buildup, the race itself, and how to do Louisville properly around it.",
+  "src": "kentucky-derby-field-report.html"
+ },
+ {
+  "route": "/travel-journal/masters-field-report/",
+  "title": "The Masters: What Augusta National Actually Is to Attend \u2014 Hit Your Mark Travel Journal",
+  "desc": "The badge waiting list closed in 1978. The concession prices haven't changed in decades. No phones, no advertising, no crowds in the usual sense. Here is what The Masters experience actually is \u2014 and how access works.",
+  "src": "masters-field-report.html"
+ },
+ {
+  "route": "/travel-journal/mediterranean-october/",
+  "title": "The Mediterranean in October \u2014 Hit Your Mark Travel Journal",
+  "desc": "September is still crowded and expensive. October changes everything \u2014 the heat is gone, the crowds have left, the sea is still warm, and harvest season is underway across Italy and Greece.",
+  "src": "mediterranean-october.html"
+ },
+ {
+  "route": "/travel-journal/middle-east-destination-guide/",
+  "title": "The Middle East Destination Guide: Six Regions, Ancient History, and the World's Newest Hospitality Infrastructure \u2014 Hit Your Mark Travel Journal",
+  "desc": "The UAE, Jordan, Oman, Saudi Arabia, Egypt, and Turkey \u2014 why the Middle East is the most consistently underestimated luxury travel region in the world, the seasonal logic behind it, and the properties worth knowing.",
+  "src": "middle-east-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/napa-sonoma-winery-route/",
+  "title": "The Napa &amp; Sonoma Winery Route: How to Actually Drink Well in Wine Country \u2014 Hit Your Mark Travel Journal",
+  "desc": "A 2 and 3-day winery route through Napa Valley and Sonoma \u2014 the appointments worth making, the properties worth staying at, and the mistakes most wine country trips make before they start.",
+  "src": "napa-sonoma-winery-route.html"
+ },
+ {
+  "route": "/travel-journal/north-america-destination-guide/",
+  "title": "The North America Destination Guide: Six Regions Worth Booking Intentionally \u2014 Hit Your Mark Travel Journal",
+  "desc": "From Alaskan wilderness lodges to Utah desert sanctuaries to Hawaii's most exclusive island \u2014 six North American regions, their honest character, when to go, and the properties that earn their rates.",
+  "src": "north-america-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/polar-destination-guide/",
+  "title": "The Polar Regions Guide: Antarctica, the Arctic, and the Case for the Ends of the Earth \u2014 Hit Your Mark Travel Journal",
+  "desc": "Antarctica, Svalbard, Greenland, Iceland, South Georgia, and Alaska \u2014 why polar travel operates on a completely different planning logic than anywhere else, and the expedition vessels and lodges worth building the trip around.",
+  "src": "polar-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/private-guide-advantage/",
+  "title": "The Private Guide Advantage: What Separates Great Guides from Good Ones \u2014 Hit Your Mark Travel Journal",
+  "desc": "The difference between a licensed guide and an exceptional one isn't credentials \u2014 it's depth, specialization, and the right questions asked before the day begins. How to find the ones worth hiring.",
+  "src": "private-guide-advantage.html"
+ },
+ {
+  "route": "/travel-journal/safari-planning-12-questions/",
+  "title": "Safari Planning: The 12 Questions Worth Asking Before You Book \u2014 Hit Your Mark Travel Journal",
+  "desc": "Most people ask about price and availability. The questions that actually determine the quality of a safari \u2014 camp size, guide tenure, vehicle policy \u2014 rarely come up until it's too late.",
+  "src": "safari-planning-12-questions.html"
+ },
+ {
+  "route": "/travel-journal/singita-grumeti-field-report/",
+  "title": "Four Nights at Singita Grumeti \u2014 Hit Your Mark Travel Journal",
+  "desc": "The migration crosses the Western Corridor in July. Here's what that actually looks like from the camp \u2014 and what separates Grumeti from the other properties in the ecosystem.",
+  "src": "singita-grumeti-field-report.html"
+ },
+ {
+  "route": "/travel-journal/south-america-destination-guide/",
+  "title": "The South America Destination Guide: Six Regions Beyond the Marquee Images \u2014 Hit Your Mark Travel Journal",
+  "desc": "Argentina, Chile, Peru, the Gal\u00e1pagos, Colombia, and Brazil \u2014 why South America's luxury travel product is underused almost entirely because of a perception gap, and the properties and seasons worth building the trip around.",
+  "src": "south-america-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/south-pacific-destination-guide/",
+  "title": "The South Pacific Destination Guide: Six Regions, the Case for the Long Flight, and the Lagoons That Justify It \u2014 Hit Your Mark Travel Journal",
+  "desc": "French Polynesia, Fiji, New Zealand, Australia, the Cook Islands, and Melanesia \u2014 why the South Pacific rewards the traveler willing to commit to the distance, and the properties and seasons worth building the trip around.",
+  "src": "south-pacific-destination-guide.html"
+ },
+ {
+  "route": "/travel-journal/the-case-for-shoulder-season/",
+  "title": "The Case for Shoulder Season \u2014 Hit Your Mark Travel Journal",
+  "desc": "Peak season is the most crowded, most expensive version of most destinations. Here's why the months on either side almost always produce the better trip \u2014 and the specific windows worth knowing.",
+  "src": "the-case-for-shoulder-season.html"
+ },
+ {
+  "route": "/travel-journal/what-a-travel-advisor-actually-does/",
+  "title": "What a Travel Advisor Actually Does (And Why It's Worth It) \u2014 Hit Your Mark Travel Journal",
+  "desc": "The honest answer is less glamorous than the brochure version. Here's what a travel advisor actually does \u2014 and why the right one pays for itself.",
+  "src": "what-a-travel-advisor-actually-does.html"
+ },
+ {
+  "route": "/travel-journal/what-hotel-descriptions-actually-mean/",
+  "title": "What Hotel Descriptions Actually Mean \u2014 Hit Your Mark Travel Journal",
+  "desc": "A translation guide for the language hotels use in their room descriptions \u2014 what the words signal, what they obscure, and the three questions worth asking before you book any room.",
+  "src": "what-hotel-descriptions-actually-mean.html"
+ },
+ {
+  "route": "/travel-journal/willamette-valley-winery-route/",
+  "title": "The Willamette Valley Winery Route: Oregon's Answer to Burgundy \u2014 Hit Your Mark Travel Journal",
+  "desc": "A 2 and 3-day winery route through the Willamette Valley \u2014 Dundee Hills, Ribbon Ridge, Eola-Amity, and the wineries that made Oregon Pinot Noir worth traveling for.",
+  "src": "willamette-valley-winery-route.html"
+ }
+]

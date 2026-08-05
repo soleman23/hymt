@@ -11,3 +11,16 @@ public/assets/*.png
 dist/assets/
 wordpress-theme/hym-travel/assets/img/
 wordpress-theme/hym-travel/assets/*.png
+
+# Local deployment tooling. These embed the Hostinger FTP host and username,
+# and this repository is public - keep them off GitHub. They live in the
+# working copy only; see docs/hostinger-deployment.md for the procedure.
+deploy-to-hostinger.ps1
+check-remote.ps1
+cleanup-home-stray.ps1
+
+# Local scratch / rollback copies
+dist-deployed-backup/
+_partial_node_modules_stash/
+*.bak
+*.singlestep.bak

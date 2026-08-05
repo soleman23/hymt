@@ -31,7 +31,7 @@ function hym_breadcrumb( $trail = array() ) {
 
 /** Newsletter signup section (Web3Forms — replace the placeholder key). */
 function hym_newsletter() {
-    $key = get_option( 'hym_web3forms_key', 'YOUR_WEB3FORMS_KEY' );
+    $key = get_option( 'hym_web3forms_key', '94312057-04b8-44d8-a7a8-7cb083d999b8' );
     ?>
 <section class="newsletter">
   <div class="newsletter__inner">
@@ -55,10 +55,10 @@ add_action( 'admin_init', function () {
     register_setting( 'general', 'hym_web3forms_key', array(
         'type'              => 'string',
         'sanitize_callback' => 'sanitize_text_field',
-        'default'           => 'YOUR_WEB3FORMS_KEY',
+        'default'           => '94312057-04b8-44d8-a7a8-7cb083d999b8',
     ) );
     add_settings_field( 'hym_web3forms_key', 'Web3Forms Access Key', function () {
-        $v = get_option( 'hym_web3forms_key', 'YOUR_WEB3FORMS_KEY' );
+        $v = get_option( 'hym_web3forms_key', '94312057-04b8-44d8-a7a8-7cb083d999b8' );
         echo '<input type="text" id="hym_web3forms_key" name="hym_web3forms_key" value="' . esc_attr( $v ) . '" class="regular-text">';
         echo '<p class="description">Free key from web3forms.com — used by all inquiry and newsletter forms.</p>';
     }, 'general' );

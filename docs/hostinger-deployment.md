@@ -5,8 +5,8 @@ Two complete deliverables were built for you. Pick one to launch; you can switch
 | | **Option A — Static Site** | **Option B — WordPress Theme** |
 |---|---|---|
 | File | `hymtravel-static-site.zip` | `hym-travel-wordpress-theme.zip` |
-| What it is | The complete 98-page site, ready to serve | Design system + core page templates for WordPress |
-| Pages live on day one | All 98 (every destination, experience, journal article) | Core pages (home, hubs, about, FAQ, contact, plan, legal); detail pages and journal posts are added in wp-admin over time |
+| What it is | The complete 89-page site, ready to serve | Design system + core page templates for WordPress |
+| Pages live on day one | All 89 (every destination, experience, journal article) | Core pages (home, hubs, about, FAQ, contact, plan, legal); detail pages and journal posts are added in wp-admin over time |
 | Editing | Edit HTML directly (Cursor/AI) | Edit in WordPress admin |
 | Speed / maintenance | Fastest possible; zero maintenance | Slightly heavier; plugin/core updates |
 | Best if | You want the full site live this week | You want a CMS long-term |
@@ -25,23 +25,53 @@ Two complete deliverables were built for you. Pick one to launch; you can switch
 
 (Alternative: FTP with the credentials in hPanel → Files → FTP Accounts.)
 
-> **`.htaccess` is already included** at the zip root. It forces HTTPS, redirects www → non-www, enables gzip compression, sets long cache lifetimes on your images, adds security headers, and routes the custom 404 page. Hostinger runs LiteSpeed, which reads `.htaccess` — no extra config needed. Just make sure it extracts into `public_html` with everything else (it's a hidden dotfile, so enable "show hidden files" in File Manager to see it).
+> ### ⚠️ FTP: the web root is NOT where FTP drops you
+>
+> hPanel lists the upload folder as `public_html`, but the FTP account logs in
+> to the **home directory**, which has no `public_html` in it. The served web
+> root is nested:
+>
+> ```
+> domains/<your-domain>/public_html
+> ```
+>
+> Uploading to the login root instead puts a full copy of the site in the home
+> directory where **nothing serves it**. Every file reports success and the live
+> site simply never changes — which looks exactly like a CDN caching problem and
+> will send you chasing cache purges that do nothing.
+>
+> **Never treat "upload succeeded" as proof of deployment.** Verify by reading a
+> file back off the server, and by checking that the `Last-Modified` header on
+> `sitemap.xml` actually moves.
+
+> **`.htaccess` is already included** at the zip root. It forces HTTPS, redirects the apex domain → `www.hymtravel.com` (matching every canonical, `og:url` and sitemap entry), enables gzip compression, sets long cache lifetimes on your images, adds security headers, and routes the custom 404 page. Hostinger runs LiteSpeed, which reads `.htaccess` — no extra config needed. Just make sure it extracts into `public_html` with everything else (it's a hidden dotfile, so enable "show hidden files" in File Manager to see it).
+>
+> The apex → www rule is deliberately scoped to `hymtravel.com`. A blanket
+> "force www" rule would redirect the `*.hostingersite.com` preview domain to a
+> hostname that does not exist, breaking the preview site.
 
 ### 2. Point the domain
 - If `hymtravel.com` is registered **at Hostinger**: hPanel → Domains → assign to this hosting plan. Done.
 - If registered elsewhere (e.g. GoDaddy/Namecheap): either change nameservers to Hostinger's (shown in hPanel → Domains → DNS) — simplest — or create an **A record** pointing `@` and `www` to your hosting IP (hPanel → Hosting Details).
 
 ### 3. SSL (HTTPS)
-hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://hymtravel.com` loads with the padlock.
+hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://www.hymtravel.com` loads with the padlock.
 
-### 4. Activate the forms (Web3Forms key)
-Forms currently carry the placeholder `YOUR_WEB3FORMS_KEY`.
-1. Go to [web3forms.com](https://web3forms.com) → enter **mark@hymtravel.com** → copy the access key they email you.
-2. Replace the placeholder in all HTML files. Fastest way: hPanel → **Files → FTP** + any editor, or SSH (`find public_html -name "*.html" -exec sed -i 's/YOUR_WEB3FORMS_KEY/PASTE_KEY_HERE/g' {} +`). The key appears in the newsletter form on nearly every page plus the two inquiry forms (96 files total).
-3. Test: submit the Plan Your Trip form — it should land in mark@hymtravel.com within a minute. **Check spam on the first one** and mark it "not spam."
+### 4. Forms (Web3Forms key) — already done
+The real Web3Forms access key is **already baked into every form** (87 pages: the
+newsletter on nearly every page, plus the Contact and Plan Your Trip inquiry
+forms). No placeholder remains and no post-upload find/replace is needed.
+
+Web3Forms keys are not secrets — they are public by design, since the key sits in
+client-side HTML on every page.
+
+Submissions were tested end-to-end and deliver to **mark@hymtravel.com**. If you
+ever rotate the key, change it in `src/components/Newsletter.astro`,
+`src/content-pages/plan-your-trip.html`, `src/content-pages/contact.html` and
+`wordpress-theme/hym-travel/inc/template-tags.php`, then rebuild.
 
 ### 5. Post-launch
-- Google Search Console → add property → submit `https://hymtravel.com/sitemap.xml`.
+- Google Search Console → add property → submit `https://www.hymtravel.com/sitemap.xml`.
 - `robots.txt` is already in place.
 - Email: set up mark@hymtravel.com in hPanel → Emails (or point MX to Google Workspace if you prefer Gmail).
 
@@ -91,7 +121,7 @@ Then **Settings → Reading**: Homepage = *Home* (static page), Posts page = *Tr
 
 ## Notes on what was built
 
-- **98 pages**, all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap.xml` + `robots.txt` included.
+- **89 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap.xml` + `robots.txt` included.
 - **47 images produced** from your Image Prompt Library (plus 6 supplemental heroes to cover sections the library didn't map). All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `hymtravel-image-production-checklist.csv` for exactly where each image is used.
 - **The About page photo is your real family photo** (from the files you provided) — no fake people anywhere on the site.
 - **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). Just add the key (Option A step 4, or Option B step 6).

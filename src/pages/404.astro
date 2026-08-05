@@ -1,0 +1,56 @@
+---
+import Base from "../layouts/Base.astro";
+
+const pageCss = `
+.nf{min-height:calc(100vh - 76px);margin-top:76px;display:flex;align-items:center;justify-content:center;padding:96px 52px;background:var(--bg-page)}
+.nf__inner{max-width:640px;text-align:center}
+.nf__label{font-family:var(--font-d);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-500);margin-bottom:18px}
+.nf__code{font-family:var(--font-d);font-size:clamp(64px,12vw,120px);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--gold-500);opacity:.22;margin-bottom:-18px}
+.nf__title{font-family:var(--font-d);font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary);line-height:1.05;margin-bottom:20px}
+.nf__body{font-family:var(--font-b);font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:48ch;margin:0 auto 36px}
+.nf__btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.nf__btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-d);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:16px 36px;text-decoration:none;transition:background .15s,border-color .15s,color .15s}
+.nf__btn--primary{background:var(--gold-500);color:var(--navy-900);border:1px solid var(--gold-500)}
+.nf__btn--primary:hover{background:var(--gold-400);border-color:var(--gold-400)}
+.nf__btn--ghost{background:transparent;color:var(--text-primary);border:1px solid var(--border-subtle)}
+.nf__btn--ghost:hover{border-color:var(--gold-500);color:var(--gold-400)}
+.nf__links{border-top:1px solid var(--border-subtle);padding-top:32px}
+.nf__links-title{font-family:var(--font-d);font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px}
+.nf__links-list{list-style:none;padding:0;margin:0;display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+.nf__links-list a{font-family:var(--font-b);font-size:13.5px;color:var(--text-secondary);text-decoration:none;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.nf__links-list a:hover{color:var(--gold-400);border-bottom-color:var(--gold-500)}
+@media(max-width:768px){.nf{padding:72px 28px}}
+`;
+---
+<Base
+  title="Page Not Found | Hit Your Mark Travel"
+  description="That page has moved or no longer exists. Explore our destinations, experiences and travel journal — or start planning your trip."
+  pageCss={pageCss}
+  showNewsletter={false}
+>
+  <section class="nf">
+    <div class="nf__inner">
+      <p class="nf__label">Error 404</p>
+      <p class="nf__code" aria-hidden="true">404</p>
+      <h1 class="nf__title">This page has wandered off the itinerary.</h1>
+      <p class="nf__body">
+        The page you were looking for has moved or no longer exists. Let's get you
+        back to somewhere worth being.
+      </p>
+      <div class="nf__btns">
+        <a class="nf__btn nf__btn--primary" href="/">Back to Homepage&nbsp;&rarr;</a>
+        <a class="nf__btn nf__btn--ghost" href="/plan-your-trip/">Plan My Trip</a>
+      </div>
+      <div class="nf__links">
+        <p class="nf__links-title">Popular destinations</p>
+        <ul class="nf__links-list">
+          <li><a href="/destinations/">Destinations</a></li>
+          <li><a href="/experiences/">Experiences</a></li>
+          <li><a href="/travel-journal/">Travel Journal</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,48 @@
+Image ID,Area/Page,Task Description,Produced File,Placed At,Status
+H-01,Homepage Hero,Maldives Aerial Lagoon hero,assets/img/h-01-maldives-aerial.jpg,Homepage hero slide 1; /destinations/maldives/ hero; journal: south-pacific guide hero,Produced & placed
+H-02,Homepage Hero,Bora Bora Overwater at Dawn,assets/img/h-02-bora-bora-dawn.jpg,Homepage hero slide 2; /destinations/french-polynesia/ hero,Produced & placed
+H-03,Homepage Hero,Seychelles Granite Travel,assets/img/h-03-seychelles-granite.jpg,Homepage hero slide 3; /plan-your-trip/ hero,Produced & placed
+H-04,Homepage Hero,Amalfi Coast at Golden Hour,assets/img/h-04-amalfi-golden-hour.jpg,Homepage hero slide 4; /destinations/italy/ hero; journal: europe guide hero,Produced & placed
+D-01,Destinations Grid,Maldives Aerial Bento Card,assets/img/d-01-maldives-bento.jpg,Destinations hub — Maldives card (featured); Homepage Instagram grid,Produced & placed
+D-02,Destinations Grid,Turks & Caicos Grace Bay card,assets/img/d-02-grace-bay.jpg,Destinations hub — Turks & Caicos card; /destinations/turks-caicos/ hero; journal: caribbean guide hero + card,Produced & placed
+D-03,Destinations Grid,Bora Bora Lagoon & Otemanu card,assets/img/d-03-bora-bora-otemanu.jpg,Destinations hub — Bora Bora card; /destinations/south-pacific/ hero,Produced & placed
+D-04,Destinations Grid,Amalfi Cliffside Village card,assets/img/d-04-positano-cliffside.jpg,Destinations hub — Amalfi Coast card,Produced & placed
+D-05,Destinations Grid,Seychelles Pink Sand Travel card,assets/img/d-05-seychelles-boulders.jpg,Destinations hub — Seychelles card,Produced & placed
+D-06,Destinations Grid,St. Barts Harbour card,assets/img/d-06-st-barts-harbour.jpg,Destinations hub — St. Barth's card; /destinations/caribbean-mexico/ hero,Produced & placed
+E-01,Beach Escapes Tile,Pristine Sandbar Aerial tile,assets/img/e-01-private-sandbar.jpg,Homepage Instagram grid,Produced & placed
+E-02,Beach Escapes Hero,Golden Hour Ground Level hero,assets/img/e-02-beach-golden-hour.jpg,/experiences/beach-island-escapes/ hero,Produced & placed
+E-03,All-Inclusive Tile,Grand Resort at Dusk tile,assets/img/e-03-grand-resort-dusk.jpg,Homepage Instagram grid,Produced & placed
+E-04,All-Inclusive Hero,Swim-Up Bar Overhead hero,assets/img/e-04-swim-up-bar.jpg,/experiences/all-inclusive-vacations/ hero,Produced & placed
+E-05,Europe Tile,Positano Alley at Golden Hour,assets/img/e-05-positano-alley.jpg,Homepage Instagram grid; journal: grand tour card,Produced & placed
+E-06,Europe Hero,Tuscan Landscape Aerial hero,assets/img/e-06-tuscan-landscape.jpg,Homepage — Villas & Private Estates (wide); Destinations hub — Provence card; /destinations/europe/ hero,Produced & placed
+E-07,Cruises & Yachts Tile,Yacht at Anchor in Cove tile,assets/img/e-07-yacht-cove.jpg,Homepage — Cruises & Yachts card,Produced & placed
+E-08,Cruises & Yachts Hero,River Cruise at Dawn hero,assets/img/e-08-river-cruise-dawn.jpg,/experiences/cruises/ hero,Produced & placed
+E-09,Wellness Tile,Jungle Yoga Pavilion at Sunrise,assets/img/e-09-jungle-yoga-pavilion.jpg,Homepage Instagram grid; Destinations hub — Bali card; /destinations/bali/ hero,Produced & placed
+E-10,Wellness Hero,Outdoor Thermal Pool in Mountains,assets/img/e-10-thermal-pool-mountains.jpg,/experiences/wellness-retreat-travel/ hero,Produced & placed
+E-11,Adventure & Safari Tile,Elephant Herd Aerial tile,assets/img/e-11-elephant-herd-aerial.jpg,Homepage — Safari & Wildlife (large); Destinations hub — Botswana card; /destinations/botswana/ hero; journal: botswana card,Produced & placed
+E-12,Adventure & Safari Hero,Patagonia Trek Vista hero,assets/img/e-12-patagonia-trek.jpg,/experiences/adventure-active-travel/ hero; Destinations hub — Patagonia card; /destinations/patagonia/ hero; journal: south-america guide hero + card,Produced & placed
+E-13,Honeymoons Tile,Champagne on Overwater Deck tile,assets/img/e-13-champagne-overwater-deck.jpg,Homepage — Honeymoons card,Produced & placed
+E-14,Honeymoons Hero,Private Beach Dinner at Dusk hero,assets/img/e-14-private-beach-dinner.jpg,/experiences/romance-celebration-travel/ hero,Produced & placed
+E-15,Family Travel Tile,Children's Feet in Shallow Water,assets/img/e-15-children-shallow-water.jpg,Homepage — Family Luxury card,Produced & placed
+E-16,Family Travel Hero,Safari Vehicle at Sunrise hero,assets/img/e-16-safari-vehicle-sunrise.jpg,/experiences/family-travel/ hero; Homepage — Featured Journey (Botswana); journal: featured + singita card,Produced & placed
+E-17,Food & Wine Tile,Tuscan Harvest Wine Tasting tile,assets/img/e-17-tuscan-wine-tasting.jpg,Homepage Instagram grid; journal: willamette guide hero + card,Produced & placed
+E-18,Food & Wine Hero,Mediterranean Terrace Dinner hero,assets/img/e-18-mediterranean-terrace-dinner.jpg,/experiences/food-wine-travel/ hero; /destinations/napa-sonoma/ hero,Produced & placed
+E-19,Hidden Gems Tile,Secret Sea Cave Cove tile,assets/img/e-19-secret-sea-cave.jpg,Homepage — Hidden Gems card,Produced & placed
+E-20,Hidden Gems Hero,Remote Village at Dawn hero,assets/img/e-20-remote-village-dawn.jpg,/experiences/culture-immersive-travel/ hero,Produced & placed
+E-21,Sports Tile,Clifftop Golf Over the Ocean tile,assets/img/e-21-clifftop-golf.jpg,Homepage — F1 & Golf card; journal: masters card,Produced & placed
+E-22,Sports Hero,Heli-Ski Mountain Landing hero,assets/img/e-22-heli-ski-landing.jpg,Homepage — Ski & Mountain card; Destinations hub — Banff card; /destinations/alaska/ + /canadian-rockies/ heroes; journal: heli-ski card,Produced & placed
+P-01,Property Card,Soneva Jani Overwater at Dusk,assets/img/p-01-soneva-jani.jpg,"/destinations/maldives/ — Where to Stay, North Malé Atoll card",Produced & placed
+P-02,Property Card,North Island Private Travel,assets/img/p-02-north-island.jpg,Asset library (no matching page section yet — reserved for a future Seychelles property feature),Produced & placed
+P-03,Property Card,Four Seasons Bora Bora Lagoon,assets/img/p-03-four-seasons-bora-bora.jpg,/destinations/french-polynesia/ — Bora Bora place card,Produced & placed
+I-01,Blog Article Hero,Maldives Season travel guide hero,assets/img/i-01-maldives-season-guide.jpg,/travel-journal/ hub hero; journal: south-pacific guide card,Produced & placed
+I-02,Blog Story Hero,Anniversary Table guest story hero,assets/img/i-02-anniversary-table.jpg,Journal: in-defense-of-slow-travel card,Produced & placed
+I-03,Blog Seasonal Card,Spring Amalfi seasonal edit card,assets/img/i-03-spring-amalfi.jpg,Journal: mediterranean-october card,Produced & placed
+F-01,CTA Banner,Teal Lagoon final CTA background,assets/img/f-01-teal-lagoon-cta.jpg,/destinations/ hub — final CTA background; WP theme detail templates CTA,Produced & placed
+U-01,Team Portrait,specialist portrait for Meet the Team,assets/img/u-01-specialist-portrait.jpg,Asset library (brand rule: no faces — reserved for future team section),Produced & placed
+U-02,About Page,agency lifestyle for Our Story,assets/img/u-02-agency-lifestyle.jpg,/about/ hero,Produced & placed
+X-01,Extra — site coverage,Supplemental hero (site section not covered by library),assets/img/x-01-serengeti-elephants.jpg,/experiences/safari-wildlife-travel/ hero; /destinations/africa/ + /kenya-tanzania/ heroes; Destinations hub — Serengeti card; journal: africa guide hero + singita card,Produced & placed
+X-02,Extra — site coverage,Supplemental hero (site section not covered by library),assets/img/x-02-bali-rice-terraces.jpg,journal: asia guide hero + card,Produced & placed
+X-03,Extra — site coverage,Supplemental hero (site section not covered by library),assets/img/x-03-petra-treasury.jpg,/destinations/jordan/ hero; Destinations hub — Jordan · Petra card; journal: middle-east guide hero + card,Produced & placed
+X-04,Extra — site coverage,Supplemental hero (site section not covered by library),assets/img/x-04-napa-vineyard-dining.jpg,journal: napa-sonoma guide hero + card,Produced & placed
+X-05,Extra — site coverage,Supplemental hero (site section not covered by library),assets/img/x-05-grand-teton-dawn.jpg,journal: north-america guide hero + card,Produced & placed
+X-06,Extra — site coverage,Supplemental hero (site section not covered by library),assets/img/x-06-polar-iceberg-twilight.jpg,journal: polar guide hero + card,Produced & placed

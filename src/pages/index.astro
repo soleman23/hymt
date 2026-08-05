@@ -1,0 +1,11 @@
+---
+import Base from "../layouts/Base.astro";
+import Content from "../content-pages/home.html?raw";
+---
+<Base
+  title="Hit Your Mark Travel — Bespoke Luxury Journeys"
+  description="Hit Your Mark Travel designs bespoke journeys for the time-poor, taste-rich traveler. A lifetime of experience. A global network. And someone who actually picks up the phone."
+  active=""
+>
+  <Fragment set:html={Content} />
+</Base>

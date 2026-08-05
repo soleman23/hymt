@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080f1a;padding:24px 28px;display:flex;flex-direction:column;gap:24px}
+.group-label{font-family:'Raleway',sans-serif;font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:12px}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;font-family:'Raleway',sans-serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:11px 24px;cursor:pointer;border:none;text-decoration:none;white-space:nowrap}
+.btn-p{background:#C9A84C;color:#080f1a}
+.btn-o{background:transparent;color:#C9A84C;border:1px solid #C9A84C}
+.btn-g{background:transparent;color:#f5f0e8;border:1px solid rgba(138,155,176,.35);padding:10px 20px}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.badge{display:inline-block;font-family:'Raleway',sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:4px 12px;border:1px solid rgba(201,168,76,.3);color:#d4b86a;background:rgba(201,168,76,.1)}
+.nav-demo{background:#0d1b2a;border:1px solid rgba(138,155,176,.15);padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.nav-demo img{height:40px;width:40px;object-fit:contain}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-link{font-family:'Raleway',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#8a9bb0;text-decoration:none;padding:16px 0;border-bottom:2px solid transparent}
+.nav-link.active{color:#d4b86a;border-color:#C9A84C}
+</style></head><body>
+<div>
+  <div class="group-label">Buttons</div>
+  <div class="btn-row">
+    <a class="btn btn-p" href="#">Plan My Trip</a>
+    <a class="btn btn-o" href="#">View Destinations</a>
+    <a class="btn btn-g" href="#">Learn More</a>
+  </div>
+</div>
+<div>
+  <div class="group-label">Badges</div>
+  <div class="badge-row">
+    <span class="badge">Honeymoons</span>
+    <span class="badge">Safari &amp; Wildlife</span>
+    <span class="badge">Cruises &amp; Yachts</span>
+    <span class="badge">Family Luxury</span>
+    <span class="badge">Hidden Gems</span>
+  </div>
+</div>
+<div>
+  <div class="group-label">Navigation</div>
+  <div class="nav-demo">
+    <img src="/assets/logo.png" alt="logo">
+    <div class="nav-links">
+      <a class="nav-link" href="#">Destinations</a>
+      <a class="nav-link active" href="#">Honeymoons</a>
+      <a class="nav-link" href="#">About</a>
+      <a class="nav-link" href="#">Journal</a>
+    </div>
+    <a class="btn btn-o" style="font-size:9px;padding:8px 16px">Plan My Trip</a>
+  </div>
+</div>
+</body></html>

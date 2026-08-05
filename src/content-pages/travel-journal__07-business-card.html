@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080f1a;padding:24px;display:flex;gap:24px;align-items:flex-start;justify-content:center}
+.wrap{display:flex;flex-direction:column;gap:8px;align-items:center}
+.label{font-family:'Raleway',sans-serif;font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C}
+.bc{width:280px;height:160px;position:relative;border:1px solid rgba(201,168,76,.3);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(201,168,76,.08)}
+.front{background:#0d1b2a;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:16px}
+.front::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent)}
+.front::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent)}
+.front img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(201,168,76,.3))}
+.f-name{font-family:'Raleway',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#f5f0e8;margin-top:8px}
+.f-title{font-family:'Raleway',sans-serif;font-size:8px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#C9A84C;margin-top:3px}
+.back{background:#0d1b2a;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;padding:20px 24px;position:relative;overflow:hidden}
+.back::before{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,#C9A84C,transparent)}
+.b-co{font-family:'Raleway',sans-serif;font-size:7px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#f5f0e8;opacity:.4;margin-bottom:12px}
+.b-row{display:flex;gap:8px;align-items:center;margin-bottom:5px}
+.b-lbl{font-family:'Raleway',sans-serif;font-size:7px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C9A84C;width:28px;flex-shrink:0}
+.b-val{font-family:'DM Sans',sans-serif;font-size:9px;color:#8a9bb0}
+.b-tag{position:absolute;bottom:14px;right:16px;font-family:'Raleway',sans-serif;font-size:6px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#a8862e}
+</style></head><body>
+<div class="wrap">
+  <div class="label">Front</div>
+  <div class="bc">
+    <div class="front">
+      <img src="/assets/logo.png" alt="logo">
+      <div class="f-name">Mark Sole</div>
+      <div class="f-title">Founder &amp; Travel Director</div>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="label">Back</div>
+  <div class="bc">
+    <div class="back">
+      <div class="b-co">Hit Your Mark Travel</div>
+      <div class="b-row"><span class="b-lbl">Web</span><span class="b-val">hymtravel.com</span></div>
+      <div class="b-row"><span class="b-lbl">Email</span><span class="b-val">mark@hymtravel.com</span></div>
+      <div class="b-row"><span class="b-lbl">Phone</span><span class="b-val">(408) 568-1404</span></div>
+      <div class="b-tag">Dream It. Aim It. Book It.</div>
+    </div>
+  </div>
+</div>
+</body></html>
