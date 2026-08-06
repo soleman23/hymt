@@ -20,6 +20,9 @@ import Base from "./Base.astro";
  * It carries no selector that the global sheets also define, so its position
  * in the cascade relative to them does not matter.
  */
+// section-shared.css must stay first: destination.css overrides .intro-content
+// and .seasons-grid from it, and later source order is what makes that work.
+import "../styles/section-shared.css";
 import "../styles/destination.css";
 
 export interface HeroStat {

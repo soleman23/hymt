@@ -14,6 +14,9 @@
  * The hub at /experiences/ is a different page type and is not on this layout.
  */
 import Base from "./Base.astro";
+// section-shared.css must stay first: experience.css overrides .intro-content
+// and .seasons-grid from it, and later source order is what makes that work.
+import "../styles/section-shared.css";
 import "../styles/experience.css";
 
 interface Props {

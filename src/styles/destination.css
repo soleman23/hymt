@@ -9,20 +9,9 @@
    keeps rendering from one source.
    ══════════════════════════════════════════════════════════════════ */
 
-/* ── BREADCRUMB ── */
-.breadcrumb {
-  background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);
-  padding:14px 52px;margin-top:76px;
-}
-.breadcrumb__inner {
-  display:flex;flex-wrap:wrap;align-items:center;gap:10px;
-  font-family:var(--font-d);font-size:10px;font-weight:600;
-  letter-spacing:.12em;text-transform:uppercase;
-}
-.breadcrumb__link { color:var(--text-muted);text-decoration:none;transition:color .15s }
-.breadcrumb__link:hover { color:var(--gold-400) }
-.breadcrumb__sep { color:var(--text-muted);font-size:10px }
-.breadcrumb__current { color:var(--gold-500) }
+/* The breadcrumb, gold buttons, editorial intro, seasons strip,
+   testimonial, Mark's note and page FAQ live in styles/section-shared.css,
+   which DestinationLayout imports immediately before this file. */
 
 /* ── HERO ──
    Full-bleed photograph, copy bottom-left, stat rail bottom-right.
@@ -85,15 +74,9 @@
   color:var(--cream-100);line-height:1.2;
 }
 
-/* ── BUTTONS ── */
-.btn-primary-gold {
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--font-d);font-size:11px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;
-  background:var(--gold-500);color:var(--navy-900);
-  padding:16px 36px;border:none;cursor:pointer;transition:all .15s;text-decoration:none;
-}
-.btn-primary-gold:hover { background:var(--gold-400);box-shadow:0 0 32px rgba(201,168,76,.25) }
+/* ── BUTTONS ──
+   .btn-primary-gold and .btn-ghost-gold are in section-shared.css.
+   This outline variant is destination-only. */
 .btn-outline-gold {
   display:inline-flex;align-items:center;gap:8px;
   font-family:var(--font-d);font-size:11px;font-weight:700;
@@ -103,41 +86,11 @@
   cursor:pointer;transition:all .15s;text-decoration:none;
 }
 .btn-outline-gold:hover { background:var(--accent-subtle) }
-.btn-ghost-gold {
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--font-d);font-size:11px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;
-  background:transparent;color:var(--cream-100);
-  padding:15px 32px;border:1px solid rgba(255,255,255,.25);
-  cursor:pointer;transition:all .15s;text-decoration:none;
-}
-.btn-ghost-gold:hover { border-color:var(--gold-500);color:var(--gold-400) }
 
-/* ── EDITORIAL INTRO (two-up: copy + image) ── */
-.intro-section {
-  display:grid;grid-template-columns:1fr 1fr;
-  background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);
-}
+/* ── EDITORIAL INTRO ──
+   The rest of this component is in section-shared.css. Destinations run a
+   52px inner gutter where experiences run 64px, so this one stays here. */
 .intro-content { padding:72px 52px }
-.intro-title {
-  font-family:var(--font-d);font-size:clamp(24px,3vw,36px);font-weight:700;
-  letter-spacing:-.02em;color:var(--text-primary);margin-bottom:24px;
-}
-.intro-body {
-  font-family:var(--font-b);font-size:15px;color:var(--text-secondary);
-  line-height:1.8;margin-bottom:18px;
-}
-.intro-image {
-  background:var(--bg-card);position:relative;
-  display:flex;align-items:center;justify-content:center;min-height:480px;
-  font-family:var(--font-d);font-size:10px;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;color:rgba(138,155,176,.25);
-}
-.intro-image-label {
-  position:absolute;bottom:20px;left:24px;
-  font-family:var(--font-d);font-size:9px;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-700);
-}
 
 /* Maldives-style intro — same two-up idea, tighter measure. */
 .dest-intro {
@@ -301,31 +254,10 @@
 .dest-exp-body { font-family:var(--font-b);font-size:13px;color:var(--text-secondary);line-height:1.7 }
 
 /* ── SEASONS ──
-   auto-fit so a 3-item and a 4-item strip both come out even without
-   each page having to restate the column count. */
-.seasons-strip {
-  background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);
-  padding:64px 52px;
-}
+   The rest of this component is in section-shared.css. auto-fit so a
+   3-item and a 4-item strip both come out even without each page having
+   to restate the column count; experiences pin theirs to three. */
 .seasons-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:3px }
-.season-item { padding:28px;border:1px solid var(--border-subtle);background:var(--bg-elevated) }
-.season-item--best { border-color:var(--border-gold);background:var(--accent-subtle) }
-.season-name {
-  font-family:var(--font-d);font-size:10px;font-weight:700;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;
-}
-.season-item--best .season-name { color:var(--gold-500) }
-.season-months {
-  font-family:var(--font-d);font-size:18px;font-weight:600;
-  color:var(--text-primary);margin-bottom:10px;
-}
-.season-desc { font-family:var(--font-b);font-size:13px;color:var(--text-muted);line-height:1.6 }
-.season-badge {
-  display:inline-block;margin-top:10px;
-  font-family:var(--font-d);font-size:8px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;
-  padding:4px 10px;background:var(--gold-500);color:var(--navy-900);
-}
 
 /* ── WHERE TO STAY ── */
 .stay-section {
@@ -385,50 +317,6 @@
 .practical-item:last-child { border-bottom:none }
 .practical-item-label { color:var(--text-muted);font-weight:500 }
 .practical-item-val { color:var(--text-primary) }
-
-/* ── TESTIMONIAL ── */
-.testimonial-section {
-  padding:80px 52px;background:var(--navy-800);
-  border-bottom:1px solid var(--border-subtle);text-align:center;
-}
-.testimonial-mark {
-  font-family:var(--font-d);font-size:80px;font-weight:700;
-  color:var(--gold-500);opacity:.2;line-height:1;margin-bottom:-20px;
-}
-.testimonial-quote {
-  font-family:var(--font-d);font-size:clamp(16px,2.2vw,22px);font-weight:400;font-style:italic;
-  color:var(--cream-100);line-height:1.65;max-width:780px;margin:0 auto 24px;
-}
-.testimonial-attr {
-  font-family:var(--font-d);font-size:11px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--gold-500);
-}
-
-/* ── NOTE FROM MARK ── */
-.mark-note {
-  padding:72px 52px;background:var(--bg-surface);
-  border-bottom:1px solid var(--border-subtle);
-}
-.mark-note__grid {
-  display:grid;grid-template-columns:auto 1fr;gap:48px;
-  max-width:840px;margin:0 auto;align-items:start;
-}
-.mark-note__photo {
-  width:96px;height:96px;object-fit:contain;
-  filter:drop-shadow(0 4px 16px rgba(201,168,76,.2));flex-shrink:0;
-}
-.mark-note__name {
-  font-family:var(--font-d);font-size:16px;font-weight:700;
-  color:var(--gold-500);margin-bottom:2px;
-}
-.mark-note__title {
-  font-family:var(--font-b);font-size:12px;color:var(--text-muted);
-  letter-spacing:.04em;margin-bottom:20px;
-}
-.mark-note__quote {
-  font-family:var(--font-b);font-size:15px;color:var(--text-secondary);
-  line-height:1.8;font-style:italic;
-}
 
 /* ── RELATED DESTINATIONS ── */
 .related-section {
@@ -508,70 +396,27 @@
 .dest-cta__aside-val a { color:var(--silver-300);transition:color .15s }
 .dest-cta__aside-val a:hover { color:var(--gold-400) }
 
-/* ── PAGE FAQ ── */
-.page-faq {
-  padding:80px 52px;background:var(--bg-surface);
-  border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);
-}
-.page-faq__header { max-width:640px;margin-bottom:48px }
-.page-faq__label {
-  font-family:var(--font-d);font-size:10px;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-500);margin-bottom:12px;
-}
-.page-faq__title {
-  font-family:var(--font-d);font-size:clamp(24px,3vw,36px);font-weight:700;
-  letter-spacing:-.02em;color:var(--text-primary);margin-bottom:16px;
-}
-.page-faq__sub { font-family:var(--font-b);font-size:15px;color:var(--text-secondary);line-height:1.7 }
-.pf-grid { display:grid;grid-template-columns:1fr 1fr;gap:3px }
-.pf-item { background:var(--bg-elevated);border:1px solid var(--border-subtle);transition:border-color .2s }
-.pf-item.open { border-color:var(--border-gold) }
-.pf-q { display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 28px;cursor:pointer }
-.pf-q__text { font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--text-primary);line-height:1.35 }
-.pf-q__icon {
-  width:28px;height:28px;flex-shrink:0;border:1px solid var(--border-subtle);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--gold-500);font-size:18px;line-height:1;
-  transition:transform .2s,border-color .2s;margin-top:2px;
-}
-.pf-item.open .pf-q__icon { transform:rotate(45deg);border-color:var(--border-gold) }
-.pf-a { display:none;padding:0 28px 24px;font-family:var(--font-b);font-size:14px;color:var(--text-secondary);line-height:1.75 }
-.pf-item.open .pf-a { display:block }
-.page-faq__more { margin-top:36px;display:flex;align-items:center;gap:12px }
-.page-faq__more-link {
-  font-family:var(--font-d);font-size:11px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);
-  text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:gap .15s;
-}
-.page-faq__more-link:hover { gap:10px }
-.page-faq__more-link::after { content:'→' }
-
-/* ── RESPONSIVE ── */
+/* ── RESPONSIVE ──
+   The page-gutter batch below deliberately restates padding on
+   .seasons-strip, .testimonial-section and .mark-note, which are defined
+   in section-shared.css. That sheet loads first, so these win. */
 @media (max-width:900px) {
-  .breadcrumb { padding:12px 28px }
   .dest-hero__content { grid-template-columns:1fr;padding:0 28px 56px }
   .dest-hero__right { display:none }
-  .intro-section,.dest-intro { grid-template-columns:1fr }
+  .dest-intro { grid-template-columns:1fr }
   .intro-content { padding:48px 28px }
   .dest-intro__content { padding:48px 28px }
-  .intro-image { min-height:280px;aspect-ratio:16/9;width:100%;min-width:0 }
   .dest-intro__image { min-height:260px;aspect-ratio:16/9 }
   .places-grid { grid-template-columns:1fr 1fr }
   .itineraries-grid,.itin-card { grid-template-columns:1fr }
   .itin-image { min-height:180px }
   .why-grid { grid-template-columns:repeat(2,1fr) }
   .dest-exp-grid,.stay-grid,.related-grid,.practical-grid { grid-template-columns:1fr }
-  .mark-note__grid { grid-template-columns:1fr;text-align:center }
-  .mark-note__photo { margin:0 auto }
   .dest-cta--split { grid-template-columns:1fr;gap:40px }
   .dest-cta__aside { padding-left:0;border-left:none;border-top:1px solid var(--border-gold);padding-top:28px }
   .intro-section,.places-section,.itineraries-section,.why-section,.dest-exp-section,
   .seasons-strip,.stay-section,.practical-section,.testimonial-section,.mark-note,
   .related-section,.dest-cta { padding-left:28px;padding-right:28px }
-}
-@media (max-width:768px) {
-  .pf-grid { grid-template-columns:1fr }
-  .page-faq { padding:64px 28px }
 }
 @media (max-width:540px) {
   .places-grid { grid-template-columns:1fr;grid-auto-rows:240px }

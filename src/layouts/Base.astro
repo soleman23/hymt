@@ -29,7 +29,10 @@ const {
   publishDate = "",
 } = Astro.props;
 
-const site = "https://www.hymtravel.com";
+/* Canonicals, og:url and the JSON-LD all derive from astro.config.mjs `site`,
+   which is the single place the production domain is written. Change it there
+   and every tag here follows. */
+const site = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
 const canonical = canonicalPath || Astro.url.pathname;
 const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Your Mark Travel`;
 
