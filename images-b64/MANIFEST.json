@@ -368,5 +368,95 @@
   "b64": "images-b64/assets__img__dh-25-uk-ireland-highland-loch.jpg.b64",
   "target": "public/assets/img/dh-25-uk-ireland-highland-loch.jpg",
   "bytes": 441418
+ },
+ {
+  "b64": "images-b64/assets__img__jh-01-serengeti-season-plains.jpg.b64",
+  "target": "public/assets/img/jh-01-serengeti-season-plains.jpg",
+  "bytes": 358612
+ },
+ {
+  "b64": "images-b64/assets__img__jh-02-borobudur-dawn-stupas.jpg.b64",
+  "target": "public/assets/img/jh-02-borobudur-dawn-stupas.jpg",
+  "bytes": 504697
+ },
+ {
+  "b64": "images-b64/assets__img__jh-03-moremi-delta-channel.jpg.b64",
+  "target": "public/assets/img/jh-03-moremi-delta-channel.jpg",
+  "bytes": 496571
+ },
+ {
+  "b64": "images-b64/assets__img__jh-04-european-station-concourse.jpg.b64",
+  "target": "public/assets/img/jh-04-european-station-concourse.jpg",
+  "bytes": 502103
+ },
+ {
+  "b64": "images-b64/assets__img__jh-05-grand-hotel-facade-dusk.jpg.b64",
+  "target": "public/assets/img/jh-05-grand-hotel-facade-dusk.jpg",
+  "bytes": 455844
+ },
+ {
+  "b64": "images-b64/assets__img__jh-06-landwasser-viaduct.jpg.b64",
+  "target": "public/assets/img/jh-06-landwasser-viaduct.jpg",
+  "bytes": 490584
+ },
+ {
+  "b64": "images-b64/assets__img__jh-07-bc-powder-ridgeline.jpg.b64",
+  "target": "public/assets/img/jh-07-bc-powder-ridgeline.jpg",
+  "bytes": 393648
+ },
+ {
+  "b64": "images-b64/assets__img__jh-08-suite-interior-golden-hour.jpg.b64",
+  "target": "public/assets/img/jh-08-suite-interior-golden-hour.jpg",
+  "bytes": 504211
+ },
+ {
+  "b64": "images-b64/assets__img__jh-09-hill-village-lane.jpg.b64",
+  "target": "public/assets/img/jh-09-hill-village-lane.jpg",
+  "bytes": 501505
+ },
+ {
+  "b64": "images-b64/assets__img__jh-10-racetrack-home-stretch.jpg.b64",
+  "target": "public/assets/img/jh-10-racetrack-home-stretch.jpg",
+  "bytes": 510739
+ },
+ {
+  "b64": "images-b64/assets__img__jh-11-augusta-azalea-hole.jpg.b64",
+  "target": "public/assets/img/jh-11-augusta-azalea-hole.jpg",
+  "bytes": 506232
+ },
+ {
+  "b64": "images-b64/assets__img__jh-12-mediterranean-october-coast.jpg.b64",
+  "target": "public/assets/img/jh-12-mediterranean-october-coast.jpg",
+  "bytes": 487792
+ },
+ {
+  "b64": "images-b64/assets__img__jh-13-medina-alley-light.jpg.b64",
+  "target": "public/assets/img/jh-13-medina-alley-light.jpg",
+  "bytes": 500754
+ },
+ {
+  "b64": "images-b64/assets__img__jh-14-east-africa-plains-dawn.jpg.b64",
+  "target": "public/assets/img/jh-14-east-africa-plains-dawn.jpg",
+  "bytes": 383475
+ },
+ {
+  "b64": "images-b64/assets__img__jh-15-grumeti-river-corridor.jpg.b64",
+  "target": "public/assets/img/jh-15-grumeti-river-corridor.jpg",
+  "bytes": 504048
+ },
+ {
+  "b64": "images-b64/assets__img__jh-16-empty-piazza-shoulder.jpg.b64",
+  "target": "public/assets/img/jh-16-empty-piazza-shoulder.jpg",
+  "bytes": 487541
+ },
+ {
+  "b64": "images-b64/assets__img__jh-17-planning-desk-window.jpg.b64",
+  "target": "public/assets/img/jh-17-planning-desk-window.jpg",
+  "bytes": 511197
+ },
+ {
+  "b64": "images-b64/assets__img__jh-18-balcony-partial-sea-view.jpg.b64",
+  "target": "public/assets/img/jh-18-balcony-partial-sea-view.jpg",
+  "bytes": 315039
  }
 ]

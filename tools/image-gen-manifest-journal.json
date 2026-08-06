@@ -1,0 +1,147 @@
+[
+ {
+  "id": "jh-01",
+  "slug": "african-safari-calendar",
+  "file": "jh-01-serengeti-season-plains.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of the Serengeti plains at golden hour, a lone flat-topped acacia in the middle distance throwing a long shadow across bleached grassland, a vast wildebeest herd strung out in a thin dark line along the far horizon, dust hanging gold in the low light above them, granite kopjes rising to the left in warm silhouette, a sky of deep amber grading to dusty violet with towering distant cloud, the space immense and unhurried, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no vehicles, no text"
+ },
+ {
+  "id": "jh-02",
+  "slug": "amanjiwo-field-report",
+  "file": "jh-02-borobudur-dawn-stupas.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of Borobudur in Central Java at first light, the temple's tiered stone terraces and perforated bell-shaped stupas in the near middle distance catching low gold sun on their weathered volcanic rock, dense palm canopy below drowned in layered white valley mist, the Menoreh Hills receding in soft blue-grey planes behind, the cone of a distant volcano faint on the horizon, a sky of pale apricot into cool jade, serene and ancient, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "jh-03",
+  "slug": "botswana-shoulder-season",
+  "file": "jh-03-moremi-delta-channel.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of the Okavango Delta in Moremi Game Reserve at golden hour, a still papyrus-fringed water channel winding from the foreground into the middle distance and holding a perfect mirror of the sky, floating islands of green reed and drowned fan palms scattered across the floodplain, a distant treeline of mopane in warm silhouette, low gold light raking across the water and catching insects in the air, a sky of burnished copper into soft rose, quiet and remote, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no boats, no text"
+ },
+ {
+  "id": "jh-04",
+  "slug": "european-grand-tour-mistake",
+  "file": "jh-04-european-station-concourse.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of a grand nineteenth-century European railway station concourse at golden hour, low sun driving long shafts of amber light through a vast arched iron-and-glass trainshed roof onto empty polished stone platforms, parallel rails curving away into warm haze at the far end of the hall, ornate cast-iron columns and a great clock face catching the light, fine dust suspended in the beams, the enormous space entirely still and empty, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no legible signage, no text"
+ },
+ {
+  "id": "jh-05",
+  "slug": "five-star-problem",
+  "file": "jh-05-grand-hotel-facade-dusk.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of the facade of a grand belle-epoque seaside hotel at dusk, pale limestone and wrought-iron balconies washed in the last warm light, tall shuttered french windows glowing amber from within, mature palms and clipped topiary along an empty gravel forecourt in the foreground, a calm sea flat and pewter beyond the building's left shoulder, a sky graduating from soft coral into deep blue with the first star, composed, expensive and strangely quiet, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no cars, no text"
+ },
+ {
+  "id": "jh-06",
+  "slug": "glacier-express-field-report",
+  "file": "jh-06-landwasser-viaduct.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of the Landwasser Viaduct in the Swiss canton of Graubunden at golden hour, the curving limestone arches of the viaduct sweeping across a deep forested gorge in the middle distance and running straight into a sheer rock tunnel mouth, dense spruce forest falling away below in cool blue shadow, snow-dusted alpine peaks catching pink alpenglow behind, thin mist rising off the river far below, a sky of warm gold into cold violet, engineered and monumental, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "jh-07",
+  "slug": "heli-ski-field-report",
+  "file": "jh-07-bc-powder-ridgeline.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of a remote ridgeline in the Canadian Rockies of British Columbia at golden hour, an untracked bowl of deep wind-sculpted powder snow filling the foreground with the low sun raking blue shadow across every ripple, jagged granite spires and hanging glaciers rising behind in successive planes, a single small helicopter far off against the peaks for scale, spindrift blowing off the summit ridge and lit gold, a sky of pale fire into deep cobalt, cold, vast and silent, shot on medium format at f/11, cinematic cool colour grade with warm highlight, ultra high detail, no people, no text"
+ },
+ {
+  "id": "jh-08",
+  "slug": "how-hotel-upgrades-work",
+  "file": "jh-08-suite-interior-golden-hour.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic interior photograph of an empty corner suite in a fine hotel at golden hour, low sun pouring through tall glass doors and laying long warm rectangles across pale oak flooring and a linen sofa, an uncreased bed with heavy white bedding to the right, a marble side table holding a single vase of stems, sheer curtains lifting slightly in the draught, a balcony beyond opening onto a hazy coastline dissolving in gold light, calm and immaculate and entirely unoccupied, shot on medium format at f/5.6, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "jh-09",
+  "slug": "in-defense-of-slow-travel",
+  "file": "jh-09-hill-village-lane.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of a narrow stone lane in an old Mediterranean hill village at golden hour, worn cobbles running away from the camera between ochre and faded-rose plaster walls, an arched passage midway through framing a bright slot of valley beyond, geraniums and a twisted vine spilling from an upper balcony, wooden shutters half closed, low sun striking the upper storeys and leaving the lane floor in cool shadow, terraced olive slopes and blue hills visible through the arch, unhurried and lived-in, shot on medium format at f/5.6, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "jh-10",
+  "slug": "kentucky-derby-field-report",
+  "file": "jh-10-racetrack-home-stretch.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "note": "First prompt named the landmark twin spires and was refused; regenerated without the trademarked description.",
+  "prompt": "Photorealistic wide cinematic photograph of a classic American horse racing track in early May at golden hour, a raked dirt oval and immaculate emerald turf course sweeping across the foreground behind white running rail, low gold sun throwing long shadows down the home stretch, a white-painted timber grandstand with a steep slate roof and decorative cupolas along the left, mature oaks and flowering shrubs beyond the infield rail, warm haze and a sky of deep amber into soft rose, groomed and expectant and completely empty, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no horses, no banners, no text"
+ },
+ {
+  "id": "jh-11",
+  "slug": "masters-field-report",
+  "file": "jh-11-augusta-azalea-hole.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of an immaculate championship golf hole in Georgia in early April at golden hour, a shortened par three playing over a narrow creek to a green cut into a hollow, banks of pink and crimson azaleas and white dogwood blooming heavily behind the putting surface, towering loblolly pines framing both sides in warm silhouette, flawless emerald fairway and pale sculpted bunkers catching low gold light, a hint of mist off the water, spring-perfect and utterly still, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no flagstick branding, no text"
+ },
+ {
+  "id": "jh-12",
+  "slug": "mediterranean-october",
+  "file": "jh-12-mediterranean-october-coast.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of a rocky Mediterranean coastline in October at golden hour, low autumn sun laying a long broken gold path across deep indigo water, limestone headlands stepping away in receding warm planes to a soft horizon, dry umbrella pines and silver scrub clinging to the cliff in the foreground, a small empty pebble cove below with clear turquoise shallows, the light noticeably lower and softer than summer, a sky of warm honey into pale grey-blue, calm and emptied out, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no boats, no text"
+ },
+ {
+  "id": "jh-13",
+  "slug": "private-guide-advantage",
+  "file": "jh-13-medina-alley-light.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of a narrow medina alley in an old North African city at golden hour, a shaft of low gold sun falling through a gap in the roof beams onto worn stone paving and a carved cedar doorway, ochre and rose lime-washed walls rising close on both sides, brass lanterns and stacked woven baskets in warm shadow, a glimpse through a horseshoe arch to a sunlit courtyard with a tiled fountain beyond, dust drifting in the light beam, intimate and half hidden, shot on medium format at f/4, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "jh-14",
+  "slug": "safari-planning-12-questions",
+  "file": "jh-14-east-africa-plains-dawn.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of open East African savannah at golden hour, twin faint vehicle tracks running from the foreground through pale gold grass toward a distant treeline, scattered flat-topped acacias throwing long shadows across the plain, the blue wall of an escarpment low on the horizon, a solitary giraffe far off in warm silhouette, dust and low light softening the middle distance, a sky of deep amber into lilac with high cloud catching fire, expansive and quiet, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no vehicles, no text"
+ },
+ {
+  "id": "jh-15",
+  "slug": "singita-grumeti-field-report",
+  "file": "jh-15-grumeti-river-corridor.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of the Grumeti River corridor in the western Serengeti at golden hour, a slow green river curving through the frame between steep earth banks hung with riverine fig and sausage trees, golden grassland rolling away beyond to rounded hills in warm haze, low sun igniting the seed heads along the near bank, a sandbar and still reflective pool in the middle distance, a sky of rich gold into soft mauve with scattered cloud, lush and remote, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no vehicles, no text"
+ },
+ {
+  "id": "jh-16",
+  "slug": "the-case-for-shoulder-season",
+  "file": "jh-16-empty-piazza-shoulder.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph of an empty southern European piazza in shoulder season at golden hour, low sun washing across worn flagstones still damp from recent rain and throwing a long reflection of the surrounding facades, a stone fountain at the centre catching warm light, shuttered pastel palazzi and a bell tower rising behind, stacked empty cafe chairs under a furled awning to one side, a few fallen plane leaves on the stones, the square entirely deserted and softly lit, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no legible signage, no text"
+ },
+ {
+  "id": "jh-17",
+  "slug": "what-a-travel-advisor-actually-does",
+  "file": "jh-17-planning-desk-window.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic still life photograph of a wooden desk beside a tall window at golden hour, low sun laying warm bars of light across an unfolded paper map, a leather notebook open to handwritten pages, a fountain pen, a worn passport and a cup of coffee still steaming, a wall of travel books softly out of focus behind, sheer curtain glowing at the window edge and a hazy city rooftop view beyond, dust motes suspended in the light, considered and quietly industrious, shot on medium format at f/2.8 with shallow depth of field, cinematic warm colour grade, ultra high detail, no people, no legible writing, no text"
+ },
+ {
+  "id": "jh-18",
+  "slug": "what-hotel-descriptions-actually-mean",
+  "file": "jh-18-balcony-partial-sea-view.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "prompt": "Photorealistic wide cinematic photograph taken from inside an empty hotel room looking out through open balcony doors at golden hour, a wrought-iron balcony rail and two folded loungers in the near middle distance, the sea visible as a bright gold band but partly interrupted by a neighbouring roofline and a mature palm to the right, low sun flaring softly around the door frame and throwing a long warm rectangle onto the tiled floor inside, linen curtain lifting in the breeze, honest and specific about what the view really is, shot on medium format at f/5.6, cinematic warm colour grade, ultra high detail, no people, no text"
+ }
+]
