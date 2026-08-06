@@ -60,6 +60,7 @@ const urlOf = (f) => "/" + rel(f).replace(/^dist\//, "").replace(/index\.html$/,
 const TEMPLATED = [
   { dir: "destinations", layout: "DestinationLayout", css: "styles/destination.css" },
   { dir: "experiences", layout: "ExperienceLayout", css: "styles/experience.css" },
+  { dir: "travel-journal", layout: "JournalLayout", css: "styles/journal.css" },
 ];
 for (const { dir, layout, css } of TEMPLATED) {
   const hub = path.join(PAGES, dir, "index.astro");

@@ -1,0 +1,89 @@
+---
+/**
+ * JournalLayout — the one template every /travel-journal/<slug>/ post uses.
+ *
+ * Same idea as DestinationLayout and ExperienceLayout: the layout owns the
+ * hero and breadcrumb so they cannot drift, posts pass their copy as props,
+ * and the article body comes through the default slot. Styling is
+ * styles/journal.css, imported normally so Astro bundles it into one cached
+ * asset instead of inlining a copy into all 29 posts.
+ *
+ * Note the order here is hero-then-breadcrumb, which is the journal's own
+ * arrangement and the reverse of the other two sections. The breadcrumb also
+ * uses bare anchors rather than .breadcrumb__link — kept as-is so the
+ * existing journal CSS still matches.
+ *
+ * Copy renders with set:html because the content carries HTML entities and
+ * <br> line breaks the original posts depend on.
+ *
+ * The hub at /travel-journal/ is a different page type and is not on this.
+ */
+import Base from "./Base.astro";
+import "../styles/journal.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonicalPath?: string;
+  publishDate?: string;
+  /** Breadcrumb leaf and hero headline are separate: the crumb is usually shorter. */
+  name: string;
+  category: { label: string; href?: string };
+  hero: {
+    image?: string;
+    /** Placeholder plate shown while no photograph exists. */
+    placeholder?: string;
+    headline: string;
+    deck: string;
+    date: string;
+    readTime: string;
+  };
+}
+
+const { title, description, ogImage, canonicalPath, publishDate, name, category, hero } = Astro.props;
+const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
+const catHref = category.href ?? "/travel-journal/";
+---
+<Base
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  canonicalPath={canonicalPath}
+  publishDate={publishDate}
+  schemaType="article"
+  active="journal"
+>
+  <section class="post-hero">
+    <div class="post-hero__bg" style={bgStyle}>
+      {!hero.image && hero.placeholder && (
+        <span class="post-hero__bg-ph" set:html={hero.placeholder} />
+      )}
+    </div>
+    <img src="/assets/logo.png" class="post-hero__watermark" alt="" aria-hidden="true">
+    <div class="post-hero__overlay"></div>
+    <div class="post-hero__content">
+      <div class="post-hero__meta">
+        <span class="post-hero__cat" set:html={category.label} />
+        <span class="post-hero__dot"></span>
+        <span class="post-hero__date" set:html={hero.date} />
+        <span class="post-hero__dot"></span>
+        <span class="post-hero__read" set:html={hero.readTime} />
+      </div>
+      <h1 class="post-hero__headline" set:html={hero.headline} />
+      <p class="post-hero__deck" set:html={hero.deck} />
+    </div>
+  </section>
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+    <a href="/travel-journal/">Travel Journal</a>
+    <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+    <a href={catHref} set:html={category.label} />
+    <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+    <span class="breadcrumb__current" aria-current="page" set:html={name} />
+  </nav>
+
+  <slot />
+</Base>
