@@ -12,19 +12,15 @@
  * <br> line breaks that the original pages depend on.
  */
 import Base from "./Base.astro";
-import destinationCssSource from "../styles/destination.css?raw";
 
 /**
- * The stylesheet is inlined into every destination page, so keep the source
- * readable and strip the comments and indentation at build time. Deliberately
- * conservative: comments out, whitespace runs collapsed, spaces removed only
- * where they sit next to a brace, semicolon or comma. Nothing else is touched.
+ * A bare CSS import, not `?raw` piped through Base's pageCss prop. Astro
+ * bundles and minifies it into a content-hashed asset that every destination
+ * page links to, so the browser fetches these rules once for the whole set.
+ * It carries no selector that the global sheets also define, so its position
+ * in the cascade relative to them does not matter.
  */
-const destinationCss = destinationCssSource
-  .replace(/\/\*[\s\S]*?\*\//g, "")
-  .replace(/\s+/g, " ")
-  .replace(/\s*([{};,])\s*/g, "$1")
-  .trim();
+import "../styles/destination.css";
 
 export interface HeroStat {
   label: string;
@@ -67,7 +63,6 @@ const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined
   canonicalPath={canonicalPath}
   schemaType={schemaType}
   active="destinations"
-  pageCss={destinationCss}
 >
   <div class="breadcrumb">
     <div class="breadcrumb__inner">
