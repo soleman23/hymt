@@ -28,3 +28,8 @@ _partial_node_modules_stash/
 # 4K generation masters for the destination heroes. Local only — the web
 # derivatives live in images-b64/ like every other image in this repo.
 tools/hero-masters/
+
+# Staging area for incoming source photography before it is sized and
+# converted into images-b64/. Same rule as tools/hero-masters/: originals
+# stay local, only the base64 web derivatives are tracked.
+incoming-sports/
