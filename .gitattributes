@@ -1,0 +1,19 @@
+# ============================================================
+# Hit Your Mark Travel — line-ending policy
+# ============================================================
+#
+# dist/ is build output. `astro build` writes it and the deploy uploads it
+# to Hostinger byte-for-byte, so Git must not rewrite its line endings.
+#
+# core.autocrlf is true on the machine this repo is worked on, and Astro's
+# compressHTML output contains MIXED line endings — a mixed file cannot
+# round-trip through LF->CRLF->LF conversion, so Git saw ~86 dist files as
+# modified after every single rebuild while `git diff --ignore-cr-at-eol`
+# showed no actual change. Real edits were getting buried in that noise.
+#
+# -text switches conversion off entirely for these paths: what the build
+# writes is what gets stored, and what gets stored is what gets checked out.
+dist/** -text
+
+# Source stays under normal text handling: it is authored with LF, and the
+# CRLF working-tree copies round-trip cleanly because nothing here is mixed.
