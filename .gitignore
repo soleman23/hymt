@@ -24,3 +24,7 @@ dist-deployed-backup/
 _partial_node_modules_stash/
 *.bak
 *.singlestep.bak
+
+# 4K generation masters for the destination heroes. Local only — the web
+# derivatives live in images-b64/ like every other image in this repo.
+tools/hero-masters/

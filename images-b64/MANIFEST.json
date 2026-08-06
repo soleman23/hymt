@@ -243,5 +243,130 @@
   "b64": "images-b64/assets__img__x-06-polar-iceberg-twilight.jpg.b64",
   "target": "public/assets/img/x-06-polar-iceberg-twilight.jpg",
   "bytes": 350795
+ },
+ {
+  "b64": "images-b64/assets__img__dh-01-antarctica-ice-cliffs.jpg.b64",
+  "target": "public/assets/img/dh-01-antarctica-ice-cliffs.jpg",
+  "bytes": 447647
+ },
+ {
+  "b64": "images-b64/assets__img__dh-02-asia-temple-valley.jpg.b64",
+  "target": "public/assets/img/dh-02-asia-temple-valley.jpg",
+  "bytes": 479622
+ },
+ {
+  "b64": "images-b64/assets__img__dh-03-egypt-nile-dusk.jpg.b64",
+  "target": "public/assets/img/dh-03-egypt-nile-dusk.jpg",
+  "bytes": 486233
+ },
+ {
+  "b64": "images-b64/assets__img__dh-04-fiji-lagoon-aerial.jpg.b64",
+  "target": "public/assets/img/dh-04-fiji-lagoon-aerial.jpg",
+  "bytes": 482100
+ },
+ {
+  "b64": "images-b64/assets__img__dh-05-france-provence-dusk.jpg.b64",
+  "target": "public/assets/img/dh-05-france-provence-dusk.jpg",
+  "bytes": 494007
+ },
+ {
+  "b64": "images-b64/assets__img__dh-06-galapagos-volcanic-coast.jpg.b64",
+  "target": "public/assets/img/dh-06-galapagos-volcanic-coast.jpg",
+  "bytes": 505338
+ },
+ {
+  "b64": "images-b64/assets__img__dh-07-greece-caldera-dusk.jpg.b64",
+  "target": "public/assets/img/dh-07-greece-caldera-dusk.jpg",
+  "bytes": 358917
+ },
+ {
+  "b64": "images-b64/assets__img__dh-08-hawaii-napali-coast.jpg.b64",
+  "target": "public/assets/img/dh-08-hawaii-napali-coast.jpg",
+  "bytes": 490821
+ },
+ {
+  "b64": "images-b64/assets__img__dh-09-iceland-glacial-lagoon.jpg.b64",
+  "target": "public/assets/img/dh-09-iceland-glacial-lagoon.jpg",
+  "bytes": 412736
+ },
+ {
+  "b64": "images-b64/assets__img__dh-10-japan-kyoto-dawn.jpg.b64",
+  "target": "public/assets/img/dh-10-japan-kyoto-dawn.jpg",
+  "bytes": 391386
+ },
+ {
+  "b64": "images-b64/assets__img__dh-11-middle-east-dunes.jpg.b64",
+  "target": "public/assets/img/dh-11-middle-east-dunes.jpg",
+  "bytes": 342904
+ },
+ {
+  "b64": "images-b64/assets__img__dh-12-new-orleans-quarter-dusk.jpg.b64",
+  "target": "public/assets/img/dh-12-new-orleans-quarter-dusk.jpg",
+  "bytes": 502499
+ },
+ {
+  "b64": "images-b64/assets__img__dh-13-new-york-skyline-dusk.jpg.b64",
+  "target": "public/assets/img/dh-13-new-york-skyline-dusk.jpg",
+  "bytes": 498082
+ },
+ {
+  "b64": "images-b64/assets__img__dh-14-new-zealand-fiord-dawn.jpg.b64",
+  "target": "public/assets/img/dh-14-new-zealand-fiord-dawn.jpg",
+  "bytes": 428446
+ },
+ {
+  "b64": "images-b64/assets__img__dh-15-north-america-rockies-dawn.jpg.b64",
+  "target": "public/assets/img/dh-15-north-america-rockies-dawn.jpg",
+  "bytes": 504266
+ },
+ {
+  "b64": "images-b64/assets__img__dh-16-oman-wadi-fort.jpg.b64",
+  "target": "public/assets/img/dh-16-oman-wadi-fort.jpg",
+  "bytes": 486218
+ },
+ {
+  "b64": "images-b64/assets__img__dh-17-peru-machu-picchu-dawn.jpg.b64",
+  "target": "public/assets/img/dh-17-peru-machu-picchu-dawn.jpg",
+  "bytes": 508920
+ },
+ {
+  "b64": "images-b64/assets__img__dh-18-polar-arctic-twilight.jpg.b64",
+  "target": "public/assets/img/dh-18-polar-arctic-twilight.jpg",
+  "bytes": 410914
+ },
+ {
+  "b64": "images-b64/assets__img__dh-19-portugal-douro-valley.jpg.b64",
+  "target": "public/assets/img/dh-19-portugal-douro-valley.jpg",
+  "bytes": 502952
+ },
+ {
+  "b64": "images-b64/assets__img__dh-20-riviera-maya-coast.jpg.b64",
+  "target": "public/assets/img/dh-20-riviera-maya-coast.jpg",
+  "bytes": 488900
+ },
+ {
+  "b64": "images-b64/assets__img__dh-21-rwanda-volcano-hills.jpg.b64",
+  "target": "public/assets/img/dh-21-rwanda-volcano-hills.jpg",
+  "bytes": 499063
+ },
+ {
+  "b64": "images-b64/assets__img__dh-22-south-america-andes-lake.jpg.b64",
+  "target": "public/assets/img/dh-22-south-america-andes-lake.jpg",
+  "bytes": 497807
+ },
+ {
+  "b64": "images-b64/assets__img__dh-23-spain-andalusia-dusk.jpg.b64",
+  "target": "public/assets/img/dh-23-spain-andalusia-dusk.jpg",
+  "bytes": 419740
+ },
+ {
+  "b64": "images-b64/assets__img__dh-24-thailand-limestone-bay.jpg.b64",
+  "target": "public/assets/img/dh-24-thailand-limestone-bay.jpg",
+  "bytes": 424194
+ },
+ {
+  "b64": "images-b64/assets__img__dh-25-uk-ireland-highland-loch.jpg.b64",
+  "target": "public/assets/img/dh-25-uk-ireland-highland-loch.jpg",
+  "bytes": 441418
  }
 ]
