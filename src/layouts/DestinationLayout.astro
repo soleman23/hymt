@@ -1,0 +1,124 @@
+---
+/**
+ * DestinationLayout — the one template every /destinations/<slug>/ page uses.
+ *
+ * It owns the breadcrumb and the hero so those can never drift page to page;
+ * each page passes its copy in as props and supplies only the body sections
+ * through the default slot. Styling comes from styles/destination.css — the
+ * single source for the whole destination set. Do not inline page CSS here.
+ *
+ * Copy fields (name, region.label, headline, sub, CTA labels, stat values)
+ * are rendered with set:html because the content carries HTML entities and
+ * <br> line breaks that the original pages depend on.
+ */
+import Base from "./Base.astro";
+import destinationCssSource from "../styles/destination.css?raw";
+
+/**
+ * The stylesheet is inlined into every destination page, so keep the source
+ * readable and strip the comments and indentation at build time. Deliberately
+ * conservative: comments out, whitespace runs collapsed, spaces removed only
+ * where they sit next to a brace, semicolon or comma. Nothing else is touched.
+ */
+const destinationCss = destinationCssSource
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/\s+/g, " ")
+  .replace(/\s*([{};,])\s*/g, "$1")
+  .trim();
+
+export interface HeroStat {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonicalPath?: string;
+  schemaType?: "website" | "article";
+  /** Breadcrumb leaf — the destination's own name. */
+  name: string;
+  /** Parent region crumb. Omit on the region hub pages themselves. */
+  region?: { label: string; href: string };
+  hero: {
+    /** Full-bleed background photo. Falls back to the placeholder plate. */
+    image?: string;
+    /** Placeholder caption shown while no photograph exists. */
+    placeholder?: string;
+    eyebrow: string;
+    headline: string;
+    sub: string;
+    ctaPrimary: { label: string; href: string };
+    ctaSecondary?: { label: string; href: string };
+    /** Rail at bottom right. Renders only what is supplied; hidden under 900px. */
+    stats?: HeroStat[];
+  };
+}
+
+const { title, description, ogImage, canonicalPath, schemaType, name, region, hero } = Astro.props;
+const stats = (hero.stats ?? []).filter((s) => s && s.label && s.value);
+const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
+---
+<Base
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  canonicalPath={canonicalPath}
+  schemaType={schemaType}
+  active="destinations"
+  pageCss={destinationCss}
+>
+  <div class="breadcrumb">
+    <div class="breadcrumb__inner">
+      <a class="breadcrumb__link" href="/">Home</a>
+      <span class="breadcrumb__sep">&rsaquo;</span>
+      <a class="breadcrumb__link" href="/destinations/">Destinations</a>
+      {region && (
+        <>
+          <span class="breadcrumb__sep">&rsaquo;</span>
+          <a class="breadcrumb__link" href={region.href} set:html={region.label} />
+        </>
+      )}
+      <span class="breadcrumb__sep">&rsaquo;</span>
+      <span class="breadcrumb__current" set:html={name} />
+    </div>
+  </div>
+
+  <section class="dest-hero">
+    <div class="dest-hero__bg" style={bgStyle}>
+      {!hero.image && hero.placeholder && (
+        <span class="dest-hero__bg-ph" set:html={hero.placeholder} />
+      )}
+    </div>
+    <img src="/assets/logo.png" class="dest-hero__watermark" alt="" aria-hidden="true">
+    <div class="dest-hero__overlay"></div>
+    <div class="dest-hero__content">
+      <div class="dest-hero__left">
+        <div class="dest-hero__region">
+          <span class="label" set:html={hero.eyebrow} />
+        </div>
+        <h1 class="dest-hero__headline" set:html={hero.headline} />
+        <p class="dest-hero__sub" set:html={hero.sub} />
+        <div class="dest-hero__ctas">
+          <a href={hero.ctaPrimary.href} class="btn-primary-gold" set:html={hero.ctaPrimary.label} />
+          {hero.ctaSecondary && (
+            <a href={hero.ctaSecondary.href} class="btn-outline-gold" set:html={hero.ctaSecondary.label} />
+          )}
+        </div>
+      </div>
+      {stats.length > 0 && (
+        <div class="dest-hero__right">
+          {stats.map((stat) => (
+            <div>
+              <span class="dest-hero__stat-label" set:html={stat.label} />
+              <div class="dest-hero__stat-val" set:html={stat.value} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <slot />
+</Base>
