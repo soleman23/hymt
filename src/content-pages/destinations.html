@@ -13,26 +13,31 @@
 
 <!-- ══ FILTER ══ -->
 <div class="filter-bar">
-  <div class="filter-bar__inner">
-    <button class="filter-pill active" data-filter="all">All Regions</button>
-    <button class="filter-pill" data-filter="caribbean-mexico">Caribbean &amp; Mexico</button>
-    <button class="filter-pill" data-filter="europe">Europe</button>
-    <button class="filter-pill" data-filter="africa">Africa</button>
-    <button class="filter-pill" data-filter="asia">Asia</button>
-    <button class="filter-pill" data-filter="south-pacific">South Pacific</button>
-    <button class="filter-pill" data-filter="middle-east">Middle East</button>
-    <button class="filter-pill" data-filter="north-america">North America</button>
-    <button class="filter-pill" data-filter="south-america">South America</button>
+  <div class="filter-bar__inner" role="group" aria-label="Filter destinations by region">
+    <button type="button" class="filter-pill active" data-region="all" aria-pressed="true">All Regions</button>
+    <button type="button" class="filter-pill" data-region="caribbean-mexico" aria-pressed="false">Caribbean &amp; Mexico</button>
+    <button type="button" class="filter-pill" data-region="europe" aria-pressed="false">Europe</button>
+    <button type="button" class="filter-pill" data-region="africa" aria-pressed="false">Africa</button>
+    <button type="button" class="filter-pill" data-region="asia" aria-pressed="false">Asia</button>
+    <button type="button" class="filter-pill" data-region="south-pacific" aria-pressed="false">South Pacific</button>
+    <button type="button" class="filter-pill" data-region="middle-east" aria-pressed="false">Middle East</button>
+    <button type="button" class="filter-pill" data-region="north-america" aria-pressed="false">North America</button>
+    <button type="button" class="filter-pill" data-region="south-america" aria-pressed="false">South America</button>
+    <button type="button" class="filter-pill" data-region="polar-regions" aria-pressed="false">Polar Regions</button>
   </div>
 </div>
 
 
 <!-- ══ DESTINATIONS GRID ══ -->
 <section class="dest-section">
+  <p class="dest-hubline" id="destHubline" hidden>
+    <a class="dest-hubline__link" id="destHublineLink" href="/destinations/"></a>
+  </p>
+
   <div class="dest-grid" id="destGrid">
 
-    <!-- MALDIVES — Featured -->
-    <div class="dest-card dest-card--featured" data-filter="asia">
+    <!-- MALDIVES -->
+    <a class="dest-card" href="/destinations/maldives/" data-region="asia">
       <div class="dest-card__ph" style="background-image:url('/assets/img/d-01-maldives-bento.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -46,10 +51,10 @@
           <span class="dest-tag">Nov–Apr</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- SEYCHELLES -->
-    <div class="dest-card" data-filter="africa">
+    <div class="dest-card" data-region="africa">
       <div class="dest-card__ph" style="background-image:url('/assets/img/d-05-seychelles-boulders.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -64,7 +69,7 @@
     </div>
 
     <!-- ST. BARTH'S -->
-    <div class="dest-card" data-filter="caribbean-mexico">
+    <a class="dest-card" href="/destinations/st-barths/" data-region="caribbean-mexico">
       <div class="dest-card__ph" style="background-image:url('/assets/img/d-06-st-barts-harbour.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -76,10 +81,10 @@
           <span class="dest-tag">Romance</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- TURKS & CAICOS -->
-    <div class="dest-card" data-filter="caribbean-mexico">
+    <a class="dest-card" href="/destinations/turks-caicos/" data-region="caribbean-mexico">
       <div class="dest-card__ph" style="background-image:url('/assets/img/d-02-grace-bay.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -91,10 +96,10 @@
           <span class="dest-tag">Diving</span>
         </div>
       </div>
-    </div>
+    </a>
 
-    <!-- BOTSWANA — Featured -->
-    <div class="dest-card dest-card--featured" data-filter="africa">
+    <!-- BOTSWANA -->
+    <a class="dest-card" href="/destinations/botswana/" data-region="africa">
       <div class="dest-card__ph" style="background-image:url('/assets/img/e-11-elephant-herd-aerial.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -107,10 +112,10 @@
           <span class="dest-tag">May–Oct</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- SERENGETI -->
-    <div class="dest-card" data-filter="africa">
+    <a class="dest-card" href="/destinations/kenya-tanzania/" data-region="africa">
       <div class="dest-card__ph" style="background-image:url('/assets/img/x-01-serengeti-elephants.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -122,10 +127,10 @@
           <span class="dest-tag">Wildlife</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- SANTORINI -->
-    <div class="dest-card" data-filter="europe">
+    <a class="dest-card" href="/destinations/greece/" data-region="europe">
       <div class="dest-card__ph" style="background:#1a2638">Destination Photography · Santorini</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -137,10 +142,10 @@
           <span class="dest-tag">Wine</span>
         </div>
       </div>
-    </div>
+    </a>
 
-    <!-- FRENCH RIVIERA — Featured -->
-    <div class="dest-card dest-card--featured" data-filter="europe">
+    <!-- FRENCH RIVIERA -->
+    <a class="dest-card" href="/destinations/france/" data-region="europe">
       <div class="dest-card__ph" style="background:#1c2632">Destination Photography · French Riviera</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -153,10 +158,10 @@
           <span class="dest-tag">Côte d'Azur</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- AMALFI COAST -->
-    <div class="dest-card" data-filter="europe">
+    <a class="dest-card" href="/destinations/italy/" data-region="europe">
       <div class="dest-card__ph" style="background-image:url('/assets/img/d-04-positano-cliffside.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -168,10 +173,10 @@
           <span class="dest-tag">Food &amp; Wine</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- PROVENCE -->
-    <div class="dest-card" data-filter="europe">
+    <a class="dest-card" href="/destinations/france/" data-region="europe">
       <div class="dest-card__ph" style="background-image:url('/assets/img/e-06-tuscan-landscape.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -183,10 +188,10 @@
           <span class="dest-tag">Food &amp; Wine</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- BORA BORA -->
-    <div class="dest-card" data-filter="south-pacific">
+    <a class="dest-card" href="/destinations/french-polynesia/" data-region="south-pacific">
       <div class="dest-card__ph" style="background-image:url('/assets/img/d-03-bora-bora-otemanu.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -198,10 +203,10 @@
           <span class="dest-tag">Overwater</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- KYOTO -->
-    <div class="dest-card" data-filter="asia">
+    <a class="dest-card" href="/destinations/japan/" data-region="asia">
       <div class="dest-card__ph" style="background:#182230">Destination Photography · Kyoto</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -213,10 +218,10 @@
           <span class="dest-tag">Kaiseki</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- BALI -->
-    <div class="dest-card" data-filter="asia">
+    <a class="dest-card" href="/destinations/bali/" data-region="asia">
       <div class="dest-card__ph" style="background-image:url('/assets/img/e-09-jungle-yoga-pavilion.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -228,10 +233,10 @@
           <span class="dest-tag">Culture</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- BHUTAN -->
-    <div class="dest-card" data-filter="asia">
+    <div class="dest-card" data-region="asia">
       <div class="dest-card__ph" style="background:#1c2430">Destination Photography · Bhutan</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -246,7 +251,7 @@
     </div>
 
     <!-- PATAGONIA -->
-    <div class="dest-card" data-filter="south-america">
+    <a class="dest-card" href="/destinations/patagonia/" data-region="south-america">
       <div class="dest-card__ph" style="background-image:url('/assets/img/e-12-patagonia-trek.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -258,10 +263,10 @@
           <span class="dest-tag">Trekking</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- COSTA RICA -->
-    <div class="dest-card" data-filter="caribbean-mexico">
+    <div class="dest-card" data-region="caribbean-mexico">
       <div class="dest-card__ph" style="background:#1a2822">Destination Photography · Costa Rica</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -276,7 +281,7 @@
     </div>
 
     <!-- BANFF -->
-    <div class="dest-card" data-filter="north-america">
+    <a class="dest-card" href="/destinations/canadian-rockies/" data-region="north-america">
       <div class="dest-card__ph" style="background-image:url('/assets/img/e-22-heli-ski-landing.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -288,11 +293,11 @@
           <span class="dest-tag">Skiing</span>
         </div>
       </div>
-    </div>
+    </a>
 
 
-    <!-- OMAN — Featured -->
-    <div class="dest-card dest-card--featured" data-filter="middle-east">
+    <!-- OMAN -->
+    <a class="dest-card" href="/destinations/oman/" data-region="middle-east">
       <div class="dest-card__ph" style="background:#1e2830">Destination Photography · Oman · Musandam</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -305,10 +310,10 @@
           <span class="dest-tag">Hidden Gem</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- JORDAN -->
-    <div class="dest-card" data-filter="middle-east">
+    <a class="dest-card" href="/destinations/jordan/" data-region="middle-east">
       <div class="dest-card__ph" style="background-image:url('/assets/img/x-03-petra-treasury.jpg');background-size:cover;background-position:center"></div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -320,10 +325,10 @@
           <span class="dest-tag">Petra</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- ASPEN -->
-    <div class="dest-card" data-filter="north-america">
+    <div class="dest-card" data-region="north-america">
       <div class="dest-card__ph" style="background:#1a2030">Destination Photography · Aspen</div>
       <div class="dest-card__overlay"></div>
       <div class="dest-card__body">
@@ -337,7 +342,40 @@
       </div>
     </div>
 
+    <!-- ANTARCTICA -->
+    <a class="dest-card" href="/destinations/antarctica/" data-region="polar-regions">
+      <div class="dest-card__ph" style="background-image:url('/assets/img/x-06-polar-iceberg-twilight.jpg');background-size:cover;background-position:center"></div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Polar Regions</span>
+        <div class="dest-card__name">Antarctica</div>
+        <div class="dest-card__desc">Zodiac landings among penguin colonies, an ice-strengthened ship, and a naturalist team who have made the Drake crossing more times than they can count.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Expedition</span>
+          <span class="dest-tag">Wildlife</span>
+          <span class="dest-tag">Nov–Mar</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ICELAND -->
+    <a class="dest-card" href="/destinations/iceland/" data-region="polar-regions">
+      <div class="dest-card__ph" style="background:#16202c">Destination Photography · Iceland</div>
+      <div class="dest-card__overlay"></div>
+      <div class="dest-card__body">
+        <span class="dest-card__region">Polar Regions</span>
+        <div class="dest-card__name">Iceland</div>
+        <div class="dest-card__desc">Glacier tongues, black-sand coastline, and the aurora overhead in winter. Small enough to cross in a week, strange enough to stay longer.</div>
+        <div class="dest-card__tags">
+          <span class="dest-tag">Aurora</span>
+          <span class="dest-tag">Landscapes</span>
+        </div>
+      </div>
+    </a>
+
   </div>
+
+  <p class="dest-empty" id="destEmpty" hidden>No destinations in this region yet.</p>
 </section>
 
 
@@ -383,8 +421,8 @@
       <div class="final-cta__aside-desc">Destinations personally visited and vetted</div>
     </div>
     <div class="final-cta__aside-stat">
-      <div class="final-cta__aside-num">7</div>
-      <div class="final-cta__aside-desc">Regions covered across six continents</div>
+      <div class="final-cta__aside-num">9</div>
+      <div class="final-cta__aside-desc">Regions covered across seven continents</div>
     </div>
     <div class="final-cta__aside-stat">
       <div class="final-cta__aside-num">20+</div>
@@ -399,3 +437,79 @@
 
 
 <!-- ══ FOOTER ══ -->
+
+
+<!-- ══ REGION FILTER ══ -->
+<script>
+(function () {
+  var HUBS = {
+    'caribbean-mexico': 'Caribbean & Mexico',
+    'europe':           'Europe',
+    'africa':           'Africa',
+    'asia':             'Asia',
+    'south-pacific':    'South Pacific',
+    'middle-east':      'Middle East',
+    'north-america':    'North America',
+    'south-america':    'South America',
+    'polar-regions':    'Polar Regions'
+  };
+
+  var pills   = [].slice.call(document.querySelectorAll('.filter-pill'));
+  var cards   = [].slice.call(document.querySelectorAll('.dest-card'));
+  var grid    = document.getElementById('destGrid');
+  var empty   = document.getElementById('destEmpty');
+  var hubline = document.getElementById('destHubline');
+  var hubLink = document.getElementById('destHublineLink');
+  if (!pills.length || !cards.length) return;
+
+  function apply(region) {
+    if (region !== 'all' && !HUBS[region]) region = 'all';
+    var shown = 0;
+
+    for (var i = 0; i < cards.length; i++) {
+      var match = region === 'all' || cards[i].getAttribute('data-region') === region;
+      cards[i].hidden = !match;
+      if (match) shown++;
+    }
+
+    for (var j = 0; j < pills.length; j++) {
+      var on = pills[j].getAttribute('data-region') === region;
+      pills[j].classList.toggle('active', on);
+      pills[j].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+
+    if (empty) empty.hidden = shown > 0;
+    if (grid)  grid.setAttribute('aria-busy', 'false');
+
+    if (region === 'all') {
+      hubline.hidden = true;
+    } else {
+      hubLink.setAttribute('href', '/destinations/' + region + '/');
+      hubLink.textContent = 'Explore the full ' + HUBS[region] + ' guide';
+      hubline.hidden = false;
+    }
+    return region;
+  }
+
+  function regionFromUrl() {
+    var m = /[?&]region=([a-z-]+)/.exec(window.location.search);
+    return m ? m[1] : 'all';
+  }
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      var region = apply(pill.getAttribute('data-region'));
+      var url = region === 'all'
+        ? window.location.pathname
+        : window.location.pathname + '?region=' + region;
+      history.pushState({ region: region }, '', url);
+    });
+  });
+
+  window.addEventListener('popstate', function () {
+    apply(regionFromUrl());
+  });
+
+  apply(regionFromUrl());
+})();
+</script>

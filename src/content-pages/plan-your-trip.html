@@ -89,6 +89,12 @@
   .cat-grid{grid-template-columns:1fr 1fr}
   .progress-line{width:28px}
 }
+@media(max-width:360px){
+  /* At 320px the two-up category grid can't fit inside the 28px gutters,
+     and it sets the min-content width of the whole form wrapper. */
+  .cat-grid{grid-template-columns:minmax(0,1fr)}
+  .progress-line{width:12px;margin:0 4px}
+}
 </style>
 
 <div class="plan-hero">
