@@ -1,21 +1,11 @@
 # Hit Your Mark Travel — Hostinger Deployment Guide
 
-Two complete deliverables were built for you. Pick one to launch; you can switch later.
-
-| | **Option A — Static Site** | **Option B — WordPress Theme** |
-|---|---|---|
-| File | `hymtravel-static-site.zip` | `hym-travel-wordpress-theme.zip` |
-| What it is | The complete 89-page site, ready to serve | Design system + core page templates for WordPress |
-| Pages live on day one | All 89 (every destination, experience, journal article) | Core pages (home, hubs, about, FAQ, contact, plan, legal); detail pages and journal posts are added in wp-admin over time |
-| Editing | Edit HTML directly (Cursor/AI) | Edit in WordPress admin |
-| Speed / maintenance | Fastest possible; zero maintenance | Slightly heavier; plugin/core updates |
-| Best if | You want the full site live this week | You want a CMS long-term |
-
-**Recommendation: launch Option A now.** It is the whole site, pixel-finished, with all images in place. Option B is there when you want self-serve editing.
+The deliverable is a static site: 93 pages plus a custom 404, ready to serve.
+Edit the Astro source, run `npm run build`, and upload `dist/`.
 
 ---
 
-## Option A — Deploy the static site (≈15 minutes)
+## Deploy the static site (≈15 minutes)
 
 ### 1. Upload
 1. Hostinger hPanel → **Files → File Manager** → open `public_html`.
@@ -67,8 +57,8 @@ client-side HTML on every page.
 
 Submissions were tested end-to-end and deliver to **mark@hymtravel.com**. If you
 ever rotate the key, change it in `src/components/Newsletter.astro`,
-`src/content-pages/plan-your-trip.html`, `src/content-pages/contact.html` and
-`wordpress-theme/hym-travel/inc/template-tags.php`, then rebuild.
+`src/content-pages/plan-your-trip.html` and `src/content-pages/contact.html`,
+then rebuild.
 
 ### 5. Post-launch
 - Google Search Console → add property → submit `https://www.hymtravel.com/sitemap.xml`.
@@ -77,54 +67,12 @@ ever rotate the key, change it in `src/components/Newsletter.astro`,
 
 ---
 
-## Option B — Deploy WordPress (≈45 minutes)
-
-### 1. Install WordPress
-hPanel → **Websites → Auto Installer → WordPress**. Use the same domain, admin email mark@hymtravel.com. Then SSL as above.
-
-### 2. Server config (already handled)
-Hostinger's WordPress auto-installer writes its own working `.htaccess` and `wp-config.php` — you don't need to touch either. The theme zip includes `htaccess-wordpress-reference.txt` with optional hardening (blocks xmlrpc brute-force, protects wp-config, disables directory browsing) you can merge in later; it's not required to go live.
-
-### 3. Install the theme
-WP Admin → **Appearance → Themes → Add New → Upload Theme** → choose `hym-travel-wordpress-theme.zip` → Install → **Activate**.
-
-### 4. Create the pages
-In **Pages → Add New**, create these and assign the template in the Page sidebar (Template dropdown):
-
-| Page (title) | Slug | Template |
-|---|---|---|
-| Home | home | *(any — front-page.php applies automatically)* |
-| Experiences | experiences | Experiences Hub |
-| Destinations | destinations | Destinations Hub |
-| About | about | About |
-| FAQ | faq | FAQ |
-| Contact | contact | Contact |
-| Plan Your Trip | plan-your-trip | Plan Your Trip |
-| Privacy Policy | privacy-policy | Privacy Policy |
-| Terms & Conditions | terms-and-conditions | Terms and Conditions |
-| Travel Journal | travel-journal | *(default — set as Posts page)* |
-
-Then **Settings → Reading**: Homepage = *Home* (static page), Posts page = *Travel Journal*.
-**Settings → Permalinks**: choose **Post name**.
-
-### 5. Menu
-**Appearance → Menus** → create "Primary" with: Experiences, Destinations, About, Travel Journal, Contact → assign to **Primary Navigation**.
-
-### 6. Forms key
-**Settings → General → Web3Forms Access Key** → paste your key → Save. (Same web3forms.com process as Option A.)
-
-### 7. Build out detail pages & journal over time
-- **Experience/destination detail pages**: Add Page → set parent (Experiences or Destinations) → assign **Experience Detail** or **Destination Detail** template → set a Featured Image (it becomes the hero) → paste content. The 47 generated images are inside the theme at `assets/img/` and also in the static zip — upload via Media Library as needed.
-- **Journal**: Posts → Add New. Featured image = hero; Excerpt = the deck under the headline; Categories drive the filter bar on the journal index.
-
----
-
 ## Notes on what was built
 
-- **89 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap.xml` + `robots.txt` included.
-- **47 images produced** from your Image Prompt Library (plus 6 supplemental heroes to cover sections the library didn't map). All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `hymtravel-image-production-checklist.csv` for exactly where each image is used.
+- **93 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap.xml` + `robots.txt` included.
+- **92 images produced** from your Image Prompt Library, plus supplemental heroes for the sections the library didn't map — every destination, experience and journal post now opens on a photograph. All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `image-production-checklist.csv` for exactly where each image is used.
 - **The About page photo is your real family photo** (from the files you provided) — no fake people anywhere on the site.
-- **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). Just add the key (Option A step 4, or Option B step 6).
+- **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). The live key is already in place — see step 4.
 - **E-commerce/booking**: not included per your call — the structure leaves room to add a booking tool later.
 - Phone shown site-wide: (408) 568-1404 · mark@hymtravel.com · Seller of Travel numbers in the footer (CA 2165910-50, WA 605920581, FL ST46122).
 
