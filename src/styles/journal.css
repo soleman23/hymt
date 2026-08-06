@@ -316,12 +316,6 @@
 .winery-section__region-head { padding:40px 0 20px; border-bottom:1px solid var(--border-subtle); margin-bottom:3px; }
 .winery-section__region-label { font-family:var(--font-d);font-size:9px;font-weight:700; letter-spacing:.22em;text-transform:uppercase;color:var(--gold-500);margin-bottom:8px; }
 .winery-section__region-title { font-family:var(--font-d);font-size:clamp(18px,2vw,22px);font-weight:700; letter-spacing:-.01em;color:var(--text-primary); }
-@media (max-width:600px) {
-  .cal-grid { grid-template-columns:repeat(4,1fr) }
-  .route-stats { grid-template-columns:1fr 1fr }
-  .winery-card { grid-template-columns:1fr }
-  .winery-card__num { display:none }
-}
 @media (max-width:900px) {
   .cal-grid { grid-template-columns:repeat(6,1fr) }
   .day-block__header { grid-template-columns:1fr }
@@ -330,7 +324,11 @@
   .er-facts__value { text-align:left }
   .glossary__row { grid-template-columns:1fr }
   .glossary__term { border-right:none;border-bottom:1px solid var(--border-subtle) }
-  .post-image--wide { margin:40px -28px }
+  /* No negative gutter here: .post-image--wide is grid-column:1/-1, so it
+     already spans the 28px rails this breakpoint creates. Pulling it out
+     another 28px each side is what put a horizontal scrollbar on the
+     posts that use it. */
+  .post-image--wide { margin:40px 0 }
   .post-image--wide .post-image__caption { padding:0 28px }
   .question-block { grid-template-columns:36px 1fr;gap:0 20px }
   .route-stats { grid-template-columns:repeat(2,1fr) }
@@ -340,4 +338,14 @@
   .shoulder-row { grid-template-columns:1fr }
   .stay-eat-grid { grid-template-columns:1fr }
   .winery-section { padding:0 28px 48px }
+}
+/* This block MUST stay after the 900px one above. Both match on a phone,
+   so source order decides — while it sat before, the 900px .cal-grid rule
+   won and the calendar stayed at 6 columns, whose min-content width was
+   wider than the viewport and scrolled the whole page sideways. */
+@media (max-width:600px) {
+  .cal-grid { grid-template-columns:repeat(4,1fr) }
+  .route-stats { grid-template-columns:1fr 1fr }
+  .winery-card { grid-template-columns:1fr }
+  .winery-card__num { display:none }
 }

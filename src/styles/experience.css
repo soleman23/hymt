@@ -59,8 +59,11 @@
 
 /* COUNTRIES GRID */
 .countries-section { padding:72px 52px;background:var(--bg-page) }
+/* minmax, not a fixed track — see the same note on .places-grid in
+   destination.css. A fixed row clipped the card name off the top of any
+   card whose copy ran long. */
 .countries-grid {
-  display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:280px;gap:3px;
+  display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(280px,auto);gap:3px;
 }
 .country-card {
   position:relative;overflow:hidden;cursor:pointer;background:var(--bg-card);
@@ -80,8 +83,11 @@
   transition:opacity .3s;
 }
 .country-card:hover .country-card__overlay { opacity:.7 }
+/* Bottom-anchored scrim so the copy stays legible at any card height —
+   see the same note on .place-card__body in destination.css. */
 .country-card__body {
-  position:relative;z-index:1;padding:24px;
+  position:relative;z-index:1;padding:44px 24px 24px;
+  background:linear-gradient(to top,rgba(8,15,26,.92) calc(100% - 40px),rgba(8,15,26,0) 100%);
   border-top:1px solid transparent;transition:border-color .3s;
 }
 .country-card:hover .country-card__body { border-color:rgba(201,168,76,.35) }
@@ -268,7 +274,7 @@
   .exp-hero__content { padding:0 28px }
 }
 @media(max-width:540px){
-  .countries-grid { grid-template-columns:1fr;grid-auto-rows:240px }
+  .countries-grid { grid-template-columns:1fr;grid-auto-rows:minmax(240px,auto) }
   .country-card--featured { grid-column:span 1 }
   .inclusions-grid { grid-template-columns:1fr }
   .sports-grid { grid-template-columns:1fr }
