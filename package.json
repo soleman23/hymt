@@ -7,7 +7,8 @@
     "build": "astro build && node tools/verify-deployment.mjs",
     "preview": "astro preview",
     "verify": "node tools/verify-deployment.mjs",
-    "verify:remote": "node tools/verify-deployment.mjs --remote https://www.hymtravel.com"
+    "verify:remote": "node tools/verify-deployment.mjs --remote https://brown-goose-754147.hostingersite.com",
+    "verify:prod": "node tools/verify-deployment.mjs --remote https://www.hymtravel.com"
   },
   "dependencies": { "astro": "^5.0.0" }
 }

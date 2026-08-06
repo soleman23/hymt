@@ -72,6 +72,12 @@ upload actually landed (the FTP account does not start in the web root):
 npm run verify:remote
 ```
 
+That checks `brown-goose-754147.hostingersite.com`, which is where deploys
+actually go. **`www.hymtravel.com` still resolves to an old Wix site** — the DNS
+cutover to Hostinger has not happened, so nothing in this repo is live on the
+production domain yet. `npm run verify:prod` points at it and will report 404s
+on every clean URL until that changes; it is there for after the cutover.
+
 ## The static site (`dist/`)
 
 89 pages, fully linked, SEO meta/canonicals/JSON-LD in place, sitemap + robots included:
