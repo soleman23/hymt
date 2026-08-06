@@ -2,6 +2,12 @@
   "name": "hym-travel",
   "type": "module",
   "version": "1.0.0",
-  "scripts": { "dev": "astro dev", "build": "astro build", "preview": "astro preview" },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node tools/verify-deployment.mjs",
+    "preview": "astro preview",
+    "verify": "node tools/verify-deployment.mjs",
+    "verify:remote": "node tools/verify-deployment.mjs --remote https://www.hymtravel.com"
+  },
   "dependencies": { "astro": "^5.0.0" }
 }

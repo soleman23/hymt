@@ -44,6 +44,34 @@ This reconstructs every image into `public/assets/`, `dist/assets/`, and
 `wordpress-theme/hym-travel/assets/` (verified by hash against the originals).
 The restored paths are gitignored — images stay as `images-b64/` in the repo.
 
+## Building and verifying
+
+`npm run build` runs `astro build` and then `tools/verify-deployment.mjs`, which
+fails the build on the mistakes this repo has actually shipped before:
+
+- a page under `src/pages/destinations/` that leaves `DestinationLayout` or
+  reintroduces its own `pageCss` (all 42 share `src/styles/destination.css`)
+- double-escaped HTML entities — page copy contains literal `&#39;`/`&amp;`, so a
+  title passed as a JS string instead of a template attribute ships as `&amp;#39;`
+- an asset referenced by a built page that is missing from `dist/`, including the
+  aliased images `astro build` wipes on every run
+- a change to any page's `<title>`, meta description or canonical
+
+That last check compares against `tools/head-baseline.json`. When a change is
+intentional, accept it explicitly:
+
+```bash
+node tools/verify-deployment.mjs --update-baseline
+```
+
+`astro build` deletes the aliased images, so **run `restore_images.py` after every
+build** — the verifier will stop you if you forget. After deploying, confirm the
+upload actually landed (the FTP account does not start in the web root):
+
+```bash
+npm run verify:remote
+```
+
 ## The static site (`dist/`)
 
 89 pages, fully linked, SEO meta/canonicals/JSON-LD in place, sitemap + robots included:
