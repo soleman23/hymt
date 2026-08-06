@@ -51,28 +51,33 @@ if (!(await exists(path.join(DIST, "index.html")))) {
 const htmlFiles = await walk(DIST, (f) => f.endsWith(".html"));
 const urlOf = (f) => "/" + rel(f).replace(/^dist\//, "").replace(/index\.html$/, "");
 
-/* ── 1. Destination pages stay on the shared template ──
-   Each must render through DestinationLayout and must not carry a pageCss
-   string of its own; a page doing either is how the 8-way CSS drift started.
-   The hub at /destinations/ is a different page type (its own hero, compare
-   table) and has not been given a shared layout yet, so it is exempt. */
-const HUB = path.join(PAGES, "destinations", "index.astro");
-const destPages = (await walk(path.join(PAGES, "destinations"), (f) => f.endsWith(".astro")))
-  .filter((f) => f !== HUB);
-for (const file of destPages) {
-  const src = await readFile(file, "utf8");
-  if (/\bpageCss\b/.test(src)) {
-    fail(
-      "shared-template",
-      `${rel(file)} defines pageCss. Destination pages share styles/destination.css — ` +
-        `add a modifier class there instead of a per-page stylesheet.`,
-    );
+/* ── 1. Templated sections stay on their shared template ──
+   Each page must render through its section layout and must not carry a
+   pageCss string of its own; pages doing either is how one stylesheet turned
+   into 8 copies under destinations and 11 under experiences. Each section's
+   hub (/destinations/, /experiences/) is a different page type with its own
+   hero and grid, and is exempt until it gets a template of its own. */
+const TEMPLATED = [
+  { dir: "destinations", layout: "DestinationLayout", css: "styles/destination.css" },
+  { dir: "experiences", layout: "ExperienceLayout", css: "styles/experience.css" },
+];
+for (const { dir, layout, css } of TEMPLATED) {
+  const hub = path.join(PAGES, dir, "index.astro");
+  const pages = (await walk(path.join(PAGES, dir), (f) => f.endsWith(".astro")))
+    .filter((f) => f !== hub);
+  for (const file of pages) {
+    const src = await readFile(file, "utf8");
+    if (/\bpageCss\b/.test(src)) {
+      fail("shared-template",
+        `${rel(file)} defines pageCss. ${dir} pages share ${css} — ` +
+          `add a modifier class there instead of a per-page stylesheet.`);
+    }
+    if (!new RegExp(`from\\s+["'][^"']*${layout}\\.astro["']`).test(src)) {
+      fail("shared-template", `${rel(file)} does not use ${layout}.`);
+    }
   }
-  if (!/from\s+["'][^"']*DestinationLayout\.astro["']/.test(src)) {
-    fail("shared-template", `${rel(file)} does not use DestinationLayout.`);
-  }
+  notes.push(`${pages.length} ${dir} pages on the shared template`);
 }
-notes.push(`${destPages.length} destination pages on the shared template`);
 
 /* ── 2. No double-escaped HTML entities ──
    Page copy contains literal entities (&#39;, &amp;). Passing that copy to an

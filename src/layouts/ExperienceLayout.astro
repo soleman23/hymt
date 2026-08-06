@@ -1,0 +1,83 @@
+---
+/**
+ * ExperienceLayout — the one template every /experiences/<slug>/ page uses.
+ *
+ * Same shape as DestinationLayout: it owns the breadcrumb and the hero so
+ * they cannot drift page to page, pages pass their copy in as props, and the
+ * body sections come through the default slot. Styling is styles/experience.css,
+ * imported normally so Astro bundles it into a cached asset rather than
+ * inlining a copy into all 12 pages.
+ *
+ * Copy fields render with set:html because the content carries HTML entities
+ * and <br> line breaks the original pages depend on.
+ *
+ * The hub at /experiences/ is a different page type and is not on this layout.
+ */
+import Base from "./Base.astro";
+import "../styles/experience.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonicalPath?: string;
+  schemaType?: "website" | "article";
+  /** Breadcrumb leaf — the experience's own name. */
+  name: string;
+  hero: {
+    /** Full-bleed background photo. Falls back to the placeholder plate. */
+    image?: string;
+    /** Placeholder caption shown while no photograph exists. */
+    placeholder?: string;
+    eyebrow: string;
+    headline: string;
+    sub: string;
+    ctaPrimary: { label: string; href: string };
+    ctaSecondary?: { label: string; href: string };
+  };
+}
+
+const { title, description, ogImage, canonicalPath, schemaType, name, hero } = Astro.props;
+const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
+---
+<Base
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  canonicalPath={canonicalPath}
+  schemaType={schemaType}
+  active="experiences"
+>
+  <div class="breadcrumb">
+    <div class="breadcrumb__inner">
+      <a class="breadcrumb__link" href="/">Home</a>
+      <span class="breadcrumb__sep">&rsaquo;</span>
+      <a class="breadcrumb__link" href="/experiences/">Experiences</a>
+      <span class="breadcrumb__sep">&rsaquo;</span>
+      <span class="breadcrumb__current" set:html={name} />
+    </div>
+  </div>
+
+  <section class="exp-hero">
+    <div class="exp-hero__bg" style={bgStyle}>
+      {!hero.image && hero.placeholder && (
+        <span class="exp-hero__bg-ph" set:html={hero.placeholder} />
+      )}
+    </div>
+    <img src="/assets/logo.png" class="exp-hero__watermark" alt="" aria-hidden="true">
+    <div class="exp-hero__overlay"></div>
+    <div class="exp-hero__content">
+      <div class="label" set:html={hero.eyebrow} />
+      <h1 class="exp-hero__headline" set:html={hero.headline} />
+      <p class="exp-hero__sub" set:html={hero.sub} />
+      <div class="exp-hero__ctas">
+        <a href={hero.ctaPrimary.href} class="btn-primary-gold" set:html={hero.ctaPrimary.label} />
+        {hero.ctaSecondary && (
+          <a href={hero.ctaSecondary.href} class="btn-ghost-gold" set:html={hero.ctaSecondary.label} />
+        )}
+      </div>
+    </div>
+  </section>
+
+  <slot />
+</Base>
