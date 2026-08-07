@@ -18,6 +18,7 @@ dist/assets/
 deploy-to-hostinger.ps1
 check-remote.ps1
 cleanup-home-stray.ps1
+upload-one-file.ps1
 
 # Local scratch / rollback copies
 dist-deployed-backup/
