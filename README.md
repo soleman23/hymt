@@ -16,7 +16,7 @@ Two deployable versions of the same site live in this repo, plus the full build 
 
 > **This repository is now the complete, single source of truth.** It holds the
 > full build pipeline (`tools/`), every generated page source, the `dist/` output,
-> and `images-b64/`. Clone it, run `python3 tools/restore_images.py`, and you have
+> and `images-b64/`. Clone it, run `npm run restore`, and you have
 > the entire site locally — no separate archive required.
 >
 > Earlier revisions of this README pointed at a `hymt-complete-repo.zip` handoff
@@ -30,21 +30,20 @@ text in `images-b64/` — a constraint of the tooling that maintains this repo.
 Restore them to real binaries with one command:
 
 ```bash
-python3 tools/restore_images.py
+npm run restore
 ```
 
-On Windows the interpreter is `python`, not `python3`:
-
-```powershell
-python tools/restore_images.py
-```
+That runs `tools/restore-images.mjs`, which finds the local Python interpreter
+itself (`python3` on mac/linux, `python` on Windows) and runs
+`tools/restore_images.py` with it.
 
 This reconstructs every image into `public/assets/` and `dist/assets/`.
 The restored paths are gitignored — images stay as `images-b64/` in the repo.
 
 ## Building and verifying
 
-`npm run build` runs `astro build` and then `tools/verify-deployment.mjs`, which
+`npm run build` is self-contained: `astro build`, then the image restore
+(`tools/restore-images.mjs`), then `tools/verify-deployment.mjs`, which
 fails the build on the mistakes this repo has actually shipped before:
 
 - a page under `src/pages/destinations/` that leaves `DestinationLayout` or
@@ -66,8 +65,9 @@ intentional, accept it explicitly:
 node tools/verify-deployment.mjs --update-baseline
 ```
 
-`astro build` deletes the aliased images, so **run `restore_images.py` after every
-build** — the verifier will stop you if you forget. After deploying, confirm the
+`astro build` deletes the aliased images; `npm run build` re-restores them
+itself. If you run `npx astro build` directly, follow it with `npm run restore`
+— the verifier will stop you if you forget. After deploying, confirm the
 upload actually landed (the FTP account does not start in the web root):
 
 ```bash
@@ -91,31 +91,28 @@ every clean URL until the cutover; it is there for after it happens.
 - Privacy Policy, Terms & Conditions, custom 404
 - 92 AI-generated brand images (golden-hour editorial, no faces, no text)
 
-**Deploy:** upload the contents of `dist/` to Hostinger `public_html` (after running
-`restore_images.py`). Full guide: `docs/hostinger-deployment.md`.
+**Deploy:** upload the contents of `dist/` to Hostinger `public_html` (after a
+clean `npm run build`). Full guide: `docs/hostinger-deployment.md`.
 
 ## Rebuilding from source
 
-Run these three, in order, from the repo root:
+Run these two, in order, from the repo root:
 
 ```bash
 npm install
-npx astro build                   # → dist/
-python tools/restore_images.py    # ← MUST be re-run AFTER every build
+npm run build     # → dist/ (astro build + image restore + verifier)
 ```
 
 That is all you need. `src/pages/` and `src/content-pages/` are committed, so
-Astro builds the whole site from them.
+Astro builds the whole site from them, and the build restores the images and
+verifies itself.
 
-**On Windows PowerShell**, run the three lines one at a time. PowerShell 5.1 does
-not accept `&&` as a statement separator, and the interpreter is `python`, not
-`python3` (`python3` is not a recognised command). To chain them in one line:
+**On Windows PowerShell 5.1**, `&&` is not a statement separator — run the two
+lines one at a time, or chain with:
 
 ```powershell
-npm install; if ($?) { npx astro build }; if ($?) { python tools/restore_images.py }
+npm install; if ($?) { npm run build }
 ```
-
-On macOS/Linux use `python3` and `&&` as normal.
 
 <details>
 <summary>The one-time <code>tools/*.py</code> generation scripts (legacy)</summary>
@@ -130,7 +127,8 @@ They are kept for reference only. Edit `src/pages/` and `src/content-pages/`
 directly instead — those are the real source now.
 </details>
 
-> **Run `restore_images.py` after `astro build`, not just after cloning.**
+> **The image restore must follow every `astro build` — `npm run build` does it
+> automatically; a direct `npx astro build` needs `npm run restore` after.**
 > The build regenerates `dist/` from scratch, which deletes the 11 aliased
 > images it writes straight into `dist/assets/` (see `images-b64/ALIASES.json` —
 > `africa-safari.jpg`, `europe-landscape.jpg`, `willamette-vineyard.jpg` and

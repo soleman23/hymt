@@ -58,7 +58,7 @@ No new pages, no template changes after this point. Content copy edits only.
 Nothing proceeds until all of these pass.
 
 ### 2.1 Build gates
-- [ ] `npm install && npx astro build && python3 tools/restore_images.py`
+- [ ] `npm install && npm run build`
 - [ ] `node tools/verify-deployment.mjs` — zero failures
 - [ ] `npm run verify:remote` against the staging host — zero failures
 - [ ] All Phase 0–3 tasks in `SEO-AIO-PLAN.md` complete
@@ -149,7 +149,7 @@ Pick a low-traffic window — a weekday morning is fine for a site this size.
 Budget two hours including checks. Do not do this on a Friday.
 
 ### 4.1 Final deploy to staging (T-60 min)
-- [ ] `git pull && npm install && npx astro build && python3 tools/restore_images.py`
+- [ ] `git pull && npm install && npm run build`
 - [ ] `node tools/verify-deployment.mjs` clean
 - [ ] Upload `dist/` to Hostinger `public_html` (see `docs/hostinger-deployment.md`)
 - [ ] `npm run verify:remote` clean

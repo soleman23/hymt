@@ -122,7 +122,7 @@ if (!missingAssets.length) {
 } else if (missingAssets.every((a) => a.startsWith("/assets/"))) {
   // astro build wipes dist/assets/, including the aliased images that only
   // restore_images.py writes. Nothing else warns about this.
-  hints.push("Every missing file is under /assets/ — run `python tools/restore_images.py` (python3 on mac/linux). astro build wipes these on every run.");
+  hints.push("Every missing file is under /assets/ — run `npm run restore`. astro build wipes these on every run; `npm run build` restores them automatically.");
 }
 
 /* ── 3b. og:image resolves to a file that exists ──
@@ -139,7 +139,7 @@ for (const file of htmlFiles) {
 }
 for (const p of ogMissing) {
   fail("og-image", `og:image target ${p} is not in dist/`);
-  if (p.startsWith("/assets/")) hints.push(`og:image ${p} lives under /assets/ — run \`python tools/restore_images.py\` (python3 on mac/linux).`);
+  if (p.startsWith("/assets/")) hints.push(`og:image ${p} lives under /assets/ — run \`npm run restore\`.`);
 }
 
 /* ── 4. Head tags match the committed baseline ──

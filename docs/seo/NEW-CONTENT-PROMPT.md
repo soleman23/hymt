@@ -64,7 +64,7 @@ Finally:
 - Add the post card to src/content-pages/travel-journal.html, matching the
   existing cards.
 - Add two links to this post from relevant destination or experience pages.
-- Run: npx astro build && python3 tools/restore_images.py && node tools/verify-deployment.mjs
+- Run: npm run build (self-contained: astro build, image restore, verifier)
 - If the verifier reports a head-baseline change, run it once with
   --update-baseline and commit that separately.
 - Report the CONTENT-STANDARDS.md § 9 checklist with each item ticked or

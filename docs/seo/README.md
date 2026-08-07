@@ -49,7 +49,9 @@ These come from the repo's `README.md` (note: the current `CLAUDE.md` /
 exactly why step 2 above appends the rules addendum to both). None of the work
 in this folder overrides them:
 
-- `python3 tools/restore_images.py` runs **after every** `astro build`.
+- `npm run build` is self-contained: astro build, image restore
+  (`tools/restore-images.mjs`, which autodetects `python3`/`python`), verifier.
+  `npm run restore` runs the restore alone.
 - No new CSS or JS framework. Astro-official integrations only, and only where
   this plan names one.
 - Destination / experience / journal pages stay on their shared layout and

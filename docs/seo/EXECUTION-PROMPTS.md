@@ -54,8 +54,8 @@ at the end of your report. For P0-5, implement the Analytics component with a
 placeholder GA4 measurement ID ("G-XXXXXXXXXX") and tell me where to paste the
 real one once I create the GA4 property.
 
-After the work: npx astro build && python3 tools/restore_images.py &&
-node tools/verify-deployment.mjs. All clean before you finish.
+After the work: npm run build (self-contained: astro build, image restore,
+verifier). All clean before you finish.
 
 Verify specifically before reporting:
 - /faq/ and /destinations/italy/ show every FAQ answer with JavaScript

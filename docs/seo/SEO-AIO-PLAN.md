@@ -987,8 +987,8 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never change the Web3Forms access key.
 
 ### Before every commit
-- `npm run build` (runs `tools/verify-deployment.mjs`) must pass.
-- `python3 tools/restore_images.py` after every build.
+- `npm run build` must pass. It is self-contained: astro build, then the image
+  restore (`node tools/restore-images.mjs`), then `tools/verify-deployment.mjs`.
 - Intentional `<title>`/description/canonical changes:
   `node tools/verify-deployment.mjs --update-baseline`, in their own commit.
 ```

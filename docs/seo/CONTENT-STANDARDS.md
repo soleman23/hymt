@@ -297,8 +297,7 @@ these are the rest.
 - [ ] Below-fold images lazy; LCP image not lazy
 
 **Build**
-- [ ] `npm run build` passes
-- [ ] `python3 tools/restore_images.py` run after the build
+- [ ] `npm run build` passes (self-contained: astro build → image restore → verifier)
 - [ ] Intentional title/description changes: `--update-baseline` in its own commit
 - [ ] Renders correctly at 375 px and 768 px
 

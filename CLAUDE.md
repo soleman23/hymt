@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **hymt** (827 symbols, 926 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **hymt** (840 symbols, 946 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -100,7 +100,7 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never change the Web3Forms access key.
 
 ### Before every commit
-- `npm run build` (runs `tools/verify-deployment.mjs`) must pass.
-- `python3 tools/restore_images.py` after every build.
+- `npm run build` must pass. It is self-contained: astro build, then the image
+  restore (`node tools/restore-images.mjs`), then `tools/verify-deployment.mjs`.
 - Intentional `<title>`/description/canonical changes:
   `node tools/verify-deployment.mjs --update-baseline`, in their own commit.
