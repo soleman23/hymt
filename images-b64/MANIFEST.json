@@ -488,5 +488,35 @@
     "b64": "images-b64/assets__og-default.jpg.b64",
     "target": "public/assets/og-default.jpg",
     "bytes": 56216
+  },
+  {
+    "b64": "images-b64/assets__fonts__raleway-var.woff2.b64",
+    "target": "public/assets/fonts/raleway-var.woff2",
+    "bytes": 48264
+  },
+  {
+    "b64": "images-b64/assets__fonts__raleway-var-ext.woff2.b64",
+    "target": "public/assets/fonts/raleway-var-ext.woff2",
+    "bytes": 31480
+  },
+  {
+    "b64": "images-b64/assets__fonts__raleway-var-italic.woff2.b64",
+    "target": "public/assets/fonts/raleway-var-italic.woff2",
+    "bytes": 50244
+  },
+  {
+    "b64": "images-b64/assets__fonts__raleway-var-italic-ext.woff2.b64",
+    "target": "public/assets/fonts/raleway-var-italic-ext.woff2",
+    "bytes": 33476
+  },
+  {
+    "b64": "images-b64/assets__fonts__dmsans-var.woff2.b64",
+    "target": "public/assets/fonts/dmsans-var.woff2",
+    "bytes": 62724
+  },
+  {
+    "b64": "images-b64/assets__fonts__dmsans-var-ext.woff2.b64",
+    "target": "public/assets/fonts/dmsans-var-ext.woff2",
+    "bytes": 31292
   }
 ]

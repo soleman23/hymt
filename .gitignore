@@ -10,6 +10,7 @@ __pycache__/
 public/assets/img/
 public/assets/*.jpg
 public/assets/*.png
+public/assets/fonts/
 dist/assets/
 
 # Local deployment tooling. These embed the Hostinger FTP host and username,
