@@ -2,6 +2,8 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Newsletter from "../components/Newsletter.astro";
+import Accordion from "../components/Accordion.astro";
+import Analytics from "../components/Analytics.astro";
 
 interface Props {
   title: string;
@@ -106,5 +108,7 @@ const articleSchema = schemaType === "article" ? {
 </main>
 {showNewsletter && <Newsletter />}
 <Footer />
+<Accordion />
+<Analytics />
 </body>
 </html>

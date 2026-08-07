@@ -22,14 +22,14 @@
 <!-- ══ CATEGORY FILTER BAR ══ -->
 <div class="faq-cats" id="faqCats">
   <div class="faq-cats__inner">
-    <button class="faq-cat-btn active" data-cat="all">All Questions</button>
-    <button class="faq-cat-btn" data-cat="working-with-us">Working With Us</button>
-    <button class="faq-cat-btn" data-cat="booking-payment">Booking &amp; Payment</button>
-    <button class="faq-cat-btn" data-cat="cancellation">Cancellation &amp; Changes</button>
-    <button class="faq-cat-btn" data-cat="destinations">Destinations &amp; Trips</button>
-    <button class="faq-cat-btn" data-cat="logistics">Trip Logistics</button>
-    <button class="faq-cat-btn" data-cat="insurance">Travel Insurance</button>
-    <button class="faq-cat-btn" data-cat="on-trip">On-Trip Support</button>
+    <button class="faq-cat-btn active" type="button" data-cat="all" aria-pressed="true">All Questions</button>
+    <button class="faq-cat-btn" type="button" data-cat="working-with-us" aria-pressed="false">Working With Us</button>
+    <button class="faq-cat-btn" type="button" data-cat="booking-payment" aria-pressed="false">Booking &amp; Payment</button>
+    <button class="faq-cat-btn" type="button" data-cat="cancellation" aria-pressed="false">Cancellation &amp; Changes</button>
+    <button class="faq-cat-btn" type="button" data-cat="destinations" aria-pressed="false">Destinations &amp; Trips</button>
+    <button class="faq-cat-btn" type="button" data-cat="logistics" aria-pressed="false">Trip Logistics</button>
+    <button class="faq-cat-btn" type="button" data-cat="insurance" aria-pressed="false">Travel Insurance</button>
+    <button class="faq-cat-btn" type="button" data-cat="on-trip" aria-pressed="false">On-Trip Support</button>
   </div>
 </div>
 
@@ -66,11 +66,11 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-1" id="faq-1-q">
           <span class="faq-q__text">How do you charge for your services?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-1" role="region" aria-labelledby="faq-1-q">
           <p>We charge a planning fee that covers the time and expertise involved in designing your itinerary, researching and vetting properties, and managing the booking process from start to finish. The fee varies based on the complexity and length of the trip, and it's always discussed and agreed upon before any work begins.</p>
           <p>In addition to planning fees, we also receive commissions from many hotels, resorts, and tour operators — which is standard practice in the travel advisor industry. These commissions never influence what we recommend. If a property pays us nothing but is genuinely the right fit for your trip, that's what we'll book.</p>
           <p>All fees are disclosed transparently before you commit to anything.</p>
@@ -78,11 +78,11 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-2" id="faq-2-q">
           <span class="faq-q__text">Why work with a travel advisor when I can book online myself?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-2" role="region" aria-labelledby="faq-2-q">
           <p>Online booking tools are efficient for straightforward trips where you already know exactly what you want and the stakes are low. For anything more complex — multi-destination itineraries, high-investment trips, unfamiliar regions, or travel where a bad decision costs real money — they fall short in a few specific ways.</p>
           <p>First, access. We book properties, rooms, and experiences that aren't available through standard consumer channels — preferred partnerships, suite upgrades, resort credits, and amenities that the same room costs more to access online. Second, knowledge. Knowing that a hotel photographs well is different from knowing which rooms face the wrong direction, or that the pool is under renovation in the season you're traveling. Third, advocacy. If something goes wrong, you're handling it alone at midnight from a foreign country. We're handling it for you.</p>
           <p>The clients who benefit most from working with us are the ones who've had a trip go sideways on a self-booked vacation and decided they'd never do that again on a significant trip.</p>
@@ -90,22 +90,22 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-3" id="faq-3-q">
           <span class="faq-q__text">What does the planning process look like from start to finish?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-3" role="region" aria-labelledby="faq-3-q">
           <p>It starts with a conversation — either by phone, video call, or email — where we get into the specifics: where you want to go, what kind of experience you're after, how you travel, your budget, and any constraints or preferences we need to design around. This isn't a form you fill out. It's a real conversation.</p>
           <p>From there, we build an itinerary proposal with specific properties, a day-by-day flow, and pricing. We refine it together until it's exactly right. Once you approve the itinerary and authorize payment, we handle all bookings, confirmations, and logistics. Before departure, we send a complete trip document with every confirmation, contact number, transfer detail, and anything else you need. During the trip, we're available if anything comes up. After, we debrief to understand what worked and what didn't — which improves future trips.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-4" id="faq-4-q">
           <span class="faq-q__text">How early should I start planning?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-4" role="region" aria-labelledby="faq-4-q">
           <p>As early as possible — especially for high-demand destinations, specific safari camps, peak season travel, or trips with multiple components. Here's a rough guide:</p>
           <ul>
             <li><strong>Safari travel:</strong> 9–12 months in advance. The best camps have very limited capacity and fill up fast, especially for July–October.</li>
@@ -119,32 +119,32 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-5" id="faq-5-q">
           <span class="faq-q__text">Do you work with clients outside California?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-5" role="region" aria-labelledby="faq-5-q">
           <p>Yes. We work with clients across the United States. Our seller of travel registrations cover California, Washington, and Florida, and we plan trips for clients in all 50 states. Most of our client relationships are handled by phone, video, and email — geography doesn't limit what we can do together.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-6" id="faq-6-q">
           <span class="faq-q__text">Do you have a minimum trip budget?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-6" role="region" aria-labelledby="faq-6-q">
           <p>We don't publish a hard minimum, but we're most effective — and most valuable — on trips where the planning complexity justifies the engagement. Practically speaking, that tends to mean trips with a total budget of $5,000 or more. Below that threshold, the planning fee structure often doesn't make sense for either party.</p>
           <p>If you're unsure whether your trip is a good fit, reach out and tell us what you have in mind. We'll give you an honest answer.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-7" id="faq-7-q">
           <span class="faq-q__text">What if I already have some of my trip booked?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-7" role="region" aria-labelledby="faq-7-q">
           <p>We can work with what you have. If you've already booked flights and want help with the rest, or you have a hotel locked in but need the surrounding itinerary built out, we can step in at any point in the process. We'll review what you have, flag anything worth reconsidering, and build around it.</p>
         </div>
       </div>
@@ -162,64 +162,64 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-8" id="faq-8-q">
           <span class="faq-q__text">When do I pay, and what are the payment stages?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-8" role="region" aria-labelledby="faq-8-q">
           <p>Payment typically happens in two stages. First, a deposit is required at the time of booking — the amount varies by supplier and will be clearly communicated before you commit to anything. Second, final payment is due closer to departure, again on a timeline determined by each supplier (typically 60–90 days out for most international trips, though this varies).</p>
           <p>Planning fees, if applicable, are charged separately from supplier deposits and are generally due at the start of the planning process.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-9" id="faq-9-q">
           <span class="faq-q__text">What payment methods do you accept?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-9" role="region" aria-labelledby="faq-9-q">
           <p>We accept all major credit cards — Visa, Mastercard, and American Express. Using a credit card for travel purchases is always recommended, as it provides an additional layer of purchase protection. Some suppliers may have preferred payment methods, which we'll communicate in advance.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-10" id="faq-10-q">
           <span class="faq-q__text">Can the price change after I get a quote?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-10" role="region" aria-labelledby="faq-10-q">
           <p>Hotel and land prices are generally protected once a deposit is paid. Airfare is the exception — prices are not locked until ticketing is complete. We'll always advise you on the best timing to ticket flights based on the route and your itinerary.</p>
           <p>Occasionally, a supplier will update their rates between quote and booking, especially if availability changes. We always confirm current pricing before collecting any payment and notify you of any changes before proceeding.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-11" id="faq-11-q">
           <span class="faq-q__text">Do you book flights?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-11" role="region" aria-labelledby="faq-11-q">
           <p>Yes. We can book all components of your trip, including international and domestic flights. For most itineraries, we recommend letting us coordinate flights alongside the rest of your trip so that transfers, timing, and connections are planned properly. On some trips — particularly those using frequent flyer miles or with complex routing you've already mapped out — it makes sense for clients to handle their own air. We'll discuss what approach makes sense for your specific trip.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-12" id="faq-12-q">
           <span class="faq-q__text">What's included in a typical booking?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-12" role="region" aria-labelledby="faq-12-q">
           <p>That depends on the trip. We build itineraries to the level of detail each trip requires. Most include hotel accommodations, key transfers, and curated activities or experiences. Many include flights. Some are fully packaged — every meal, every excursion, every transfer accounted for. Others are more open-ended, with specific touchpoints and freedom built in between.</p>
           <p>We'll discuss the level of structure you want before building the itinerary. Some travelers want every hour planned. Others want a framework and prefer to be spontaneous in between. We design around how you actually travel.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-13" id="faq-13-q">
           <span class="faq-q__text">Can I use points or miles for part of my booking?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-13" role="region" aria-labelledby="faq-13-q">
           <p>Yes, in many cases. We can work with your existing loyalty program memberships and, in some cases, apply hotel points or airline miles to specific components of your trip. We're also familiar with the programs and transfer partners where points deliver the most value, and can help you think through the best use of what you have. That said, for complex points redemptions, particularly on business or first class international awards, we may refer you to a specialist who focuses exclusively on that.</p>
         </div>
       </div>
@@ -237,11 +237,11 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-14" id="faq-14-q">
           <span class="faq-q__text">What happens if I need to cancel my trip?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-14" role="region" aria-labelledby="faq-14-q">
           <p>Cancellation policies vary by supplier — hotels, airlines, cruise lines, and tour operators all have their own terms, and they're communicated clearly before any booking is made. Some reservations have penalty-free cancellation windows. Others are non-refundable from deposit. We make sure you understand what you're committing to before you commit.</p>
           <p>To cancel, contact us in writing at <a href="mailto:mark@hymtravel.com">mark@hymtravel.com</a>. We process the cancellation with each supplier according to their terms and confirm the outcome to you in writing. Planning fees are non-refundable once planning has begun, regardless of whether a booking is made.</p>
           <div class="faq-a-note">
@@ -251,33 +251,33 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-15" id="faq-15-q">
           <span class="faq-q__text">What if I need to change dates or destinations after booking?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-15" role="region" aria-labelledby="faq-15-q">
           <p>It depends on the timing and what's been booked. Early in the planning process, changes are usually straightforward. After deposits are paid, changes may involve cancellation penalties, availability constraints, or re-booking fees from suppliers. We'll always lay out exactly what a change will cost and what alternatives exist before proceeding.</p>
           <p>Contact us as early as possible when you know a change is needed — earlier notice almost always means more options and lower costs.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-16" id="faq-16-q">
           <span class="faq-q__text">What if a hotel, airline, or tour operator cancels on me?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-16" role="region" aria-labelledby="faq-16-q">
           <p>This is one of the clearest advantages of working with an advisor rather than booking alone. If a supplier cancels, changes, or fails to deliver, we're the ones on the phone handling it — not you. We have direct supplier relationships and know how to escalate quickly.</p>
           <p>What we can recover depends on the supplier's policies, the reason for cancellation, and whether you have travel insurance. We'll advocate hard on your behalf, but our ability to compel a supplier to act is limited by the terms of our agency relationship. Travel insurance fills the gap when a supplier can't or won't make you whole.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-17" id="faq-17-q">
           <span class="faq-q__text">What about weather or natural disaster cancellations?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-17" role="region" aria-labelledby="faq-17-q">
           <p>Force majeure events — hurricanes, earthquakes, volcanic eruptions, political instability, pandemics — fall outside standard supplier cancellation policies. Each supplier handles these situations differently. Some offer full refunds or rebooking. Others issue credits. Some release nothing unless you have travel insurance that covers the event.</p>
           <p>We monitor conditions in your destination as departure approaches and will reach out proactively if something warrants attention. Our job during a disruption is to help you navigate options and recover as much value as possible. Travel insurance with cancel-for-any-reason or trip interruption coverage is the most reliable protection against force majeure losses.</p>
         </div>
@@ -296,66 +296,66 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-18" id="faq-18-q">
           <span class="faq-q__text">What destinations do you specialize in?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-18" role="region" aria-labelledby="faq-18-q">
           <p>We plan travel across all major regions — Africa, Europe, Asia, the South Pacific, the Middle East, South America, the Caribbean and Mexico, North America, and Polar expeditions. Within each region, we focus on the destinations and experiences where planning actually makes a material difference in the quality of the trip.</p>
           <p>Some of our deepest experience is in East Africa safari travel, European cultural itineraries, Japan and Southeast Asia, French Polynesia, and luxury beach travel in the Caribbean. That said, we're honest about what we know deeply versus where we partner with trusted local specialists to fill gaps.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-19" id="faq-19-q">
           <span class="faq-q__text">Do you plan honeymoons?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-19" role="region" aria-labelledby="faq-19-q">
           <p>Yes, and they're some of our favorite trips to plan. Honeymoons have a higher emotional stakes than most travel — they need to be right, not just good — and that's exactly where having someone who has been to the destinations and knows the properties pays off. We know which Maldives overwater villas are worth the price and which are underwhelming. We know the difference between the right side and wrong side of a French Polynesian island for snorkeling. Those details matter more on a honeymoon than almost any other trip.</p>
           <p>We also handle the small touches — room setup notes, private dining requests, experience upgrades — that turn a nice trip into one you'll talk about for decades.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-20" id="faq-20-q">
           <span class="faq-q__text">Do you plan family travel?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-20" role="region" aria-labelledby="faq-20-q">
           <p>Yes. Family travel requires a different kind of planning than trips for couples or solo travelers. The right hotel isn't just about quality — it's about layout, connecting rooms, on-site programming for kids, and whether the property is genuinely family-oriented rather than simply family-tolerant. The right itinerary pace for a family with young children is nothing like what works for adults.</p>
           <p>We plan everything from multi-generational group trips to beach vacations with toddlers to adventure travel for older kids and teenagers. Tell us the ages of everyone traveling and what matters most to each of them, and we'll build accordingly.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-21" id="faq-21-q">
           <span class="faq-q__text">Do you plan group trips?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-21" role="region" aria-labelledby="faq-21-q">
           <p>Yes. Groups add coordination complexity that individual travelers often underestimate — room blocks, group pricing negotiations, multiple payment streams, varied dietary and accessibility needs, and keeping a schedule that actually works for everyone. We handle all of it.</p>
           <p>Group travel works well for friend groups, multi-generational family reunions, corporate retreats, destination weddings, and milestone celebration trips. We can work with groups of 4 to 40+. Reach out early for group travel — lead times are longer and the best properties fill quickly.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-22" id="faq-22-q">
           <span class="faq-q__text">Do you plan cruises?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-22" role="region" aria-labelledby="faq-22-q">
           <p>Yes — particularly small-ship expedition cruises, river cruises, and luxury ocean voyages. Our approach to cruises is the same as our approach to any travel: we know the difference between products that look similar on paper but deliver very different experiences. Vessel selection, cabin category, itinerary routing, and the quality of the expedition team all matter significantly.</p>
           <p>We're particularly strong in the expedition cruise space — Antarctica, the Arctic, Galápagos, and remote oceanic itineraries — where vessel and team quality varies widely and the wrong choice has real consequences.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-23" id="faq-23-q">
           <span class="faq-q__text">I've never done a safari. Where do I start?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-23" role="region" aria-labelledby="faq-23-q">
           <p>Start by telling us when you want to go, roughly how long you have, and what you're hoping to experience. Safari travel has more variables than almost any other trip type — country, camp style, conservation area, season, price tier, and experience focus all interact in ways that aren't obvious from the outside.</p>
           <p>We have firsthand experience in East Africa (Kenya and Tanzania), Southern Africa (Botswana, South Africa, Zambia, Zimbabwe), and Rwanda, and we'll walk you through the options that fit your situation before you commit to anything. Most first-time safari travelers are surprised by how much the destination and camp selection matters — the difference between a crowded game drive and a private conservancy morning is the difference between two different trips.</p>
           <p>You can also read our <a href="/travel-journal/safari-planning-12-questions/">Safari Planning guide</a> in the Travel Journal for a deeper orientation.</p>
@@ -363,11 +363,11 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-24" id="faq-24-q">
           <span class="faq-q__text">Can you plan an Antarctica expedition?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-24" role="region" aria-labelledby="faq-24-q">
           <p>Yes. Polar expedition planning is one of the areas where having an advisor makes the most measurable difference. The gap between the best expedition vessels and the weakest ones in the Antarctic market is enormous — in wildlife access, in Zodiac quality, in the caliber of naturalist guides, and in how landings are managed. Most of that variation isn't visible from a brochure.</p>
           <p>We book Antarctica, the Arctic, Svalbard, and South Georgia expeditions, and we know the operators worth recommending versus the ones that look similar on price but deliver a substantially weaker experience. Book well in advance — the best ships and cabins often sell out 12 to 18 months ahead of the season.</p>
         </div>
@@ -386,66 +386,66 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-25" id="faq-25-q">
           <span class="faq-q__text">Do you help with visas and passport requirements?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-25" role="region" aria-labelledby="faq-25-q">
           <p>We provide general guidance on visa and entry requirements for your destinations and flag anything that needs attention. We're not visa agents and don't process applications on your behalf, but we'll make sure you know what's required, what the timelines are, and where to go for the official application.</p>
           <p>Entry requirements change. We always recommend verifying requirements directly with the relevant embassy or consulate — or with the official government source — in the weeks leading up to your trip. For passports, most international destinations require at least six months of validity beyond your travel dates. If yours is close, renew it before booking.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-26" id="faq-26-q">
           <span class="faq-q__text">Can you accommodate dietary restrictions or food allergies?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-26" role="region" aria-labelledby="faq-26-q">
           <p>Yes. We communicate dietary restrictions and food allergies to all properties and operators at the time of booking and follow up closer to departure. Most quality hotels and lodges are well-equipped to accommodate common dietary needs — vegetarian, vegan, gluten-free, nut allergies, kosher, halal, and others.</p>
           <p>For severe allergies, we go further — we identify properties with strong kitchen communication protocols and brief you on what to expect in each destination. Some destinations handle dietary restrictions more reliably than others, and we'll give you an honest picture of what to expect wherever you're going.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-27" id="faq-27-q">
           <span class="faq-q__text">Can you accommodate travelers with accessibility needs?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-27" role="region" aria-labelledby="faq-27-q">
           <p>Yes. Accessibility varies enormously by destination and property, and we'll research the specific needs of your group against what's actually available — not just what a hotel's website claims. We verify room configurations, bathroom setups, elevator access, activity compatibility, and transportation options for travelers with mobility limitations, hearing or vision impairments, or other needs.</p>
           <p>Some destinations and experiences are more accessible than others, and we'll give you an honest picture of what's realistic before you commit to an itinerary. Tell us exactly what you need and we'll design around it.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-28" id="faq-28-q">
           <span class="faq-q__text">Do you handle airport transfers and ground transportation?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-28" role="region" aria-labelledby="faq-28-q">
           <p>Yes. For most trips, we coordinate all transfers — airport to hotel, between properties, and any ground transportation needed throughout the itinerary. Having transfers arranged in advance removes one of the most common points of friction in international travel, especially on arrival after a long flight.</p>
           <p>For self-drive itineraries — road trips through New Zealand's South Island, a drive through Morocco, or a self-guided tour of Portugal — we handle car rental arrangements and provide detailed routing and logistics.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-29" id="faq-29-q">
           <span class="faq-q__text">What vaccinations or health precautions should I consider?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-29" role="region" aria-labelledby="faq-29-q">
           <p>We provide general destination health guidance — which destinations require proof of yellow fever vaccination, where malaria prophylaxis is typically recommended, and what travelers commonly report about health conditions in specific regions. We flag what to discuss with a healthcare provider.</p>
           <p>We are not medical professionals and don't provide medical advice. For specific vaccination recommendations and any prescriptions you might need (malaria prophylaxis, altitude medication, etc.), consult a travel medicine clinic or your physician well before departure — ideally 6 to 8 weeks out, since some vaccinations require time to take effect.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-30" id="faq-30-q">
           <span class="faq-q__text">What should I pack? What gear do I actually need?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-30" role="region" aria-labelledby="faq-30-q">
           <p>We provide packing and gear guidance tailored to each specific itinerary — because what you need for a Botswana safari in the Okavango is very different from what you need for a Patagonia trekking trip or a week in the Maldives. Generic packing lists are close to useless. Destination- and activity-specific guidance is actually helpful.</p>
           <p>Before departure, your trip documents include a packing section with specific recommendations — including what you genuinely need and what you'll never use.</p>
         </div>
@@ -464,11 +464,11 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-31" id="faq-31-q">
           <span class="faq-q__text">Do I really need travel insurance?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-31" role="region" aria-labelledby="faq-31-q">
           <p>Yes. We recommend it on every trip, and we mean it. The question isn't whether something can go wrong — it's what the financial exposure looks like when it does. On a $20,000 international trip with non-refundable deposits, a medical emergency, or a last-minute family crisis, the difference between having insurance and not having it is potentially a five-figure loss.</p>
           <p>Medical evacuation alone — being airlifted from a remote safari camp or a mountain region to a facility capable of treating you — can cost $50,000 to $200,000 without insurance. Your domestic health plan almost certainly doesn't cover international medical evacuation.</p>
           <p>Declining insurance is your right. But if you're booking through us, we want you to make that decision consciously — not because it seemed like an easy place to cut costs.</p>
@@ -476,11 +476,11 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-32" id="faq-32-q">
           <span class="faq-q__text">What should I look for in a travel insurance policy?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-32" role="region" aria-labelledby="faq-32-q">
           <p>At minimum, look for coverage in these areas:</p>
           <ul>
             <li><strong>Trip cancellation and interruption</strong> — reimburses non-refundable costs if you cancel for a covered reason (illness, death in the family, etc.)</li>
@@ -497,22 +497,22 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-33" id="faq-33-q">
           <span class="faq-q__text">When should I buy travel insurance?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-33" role="region" aria-labelledby="faq-33-q">
           <p>As soon as you make your first deposit. Two important coverages — pre-existing condition waivers and Cancel for Any Reason — typically have strict purchase windows that begin at your first deposit date. If you wait until your final payment to buy insurance, you may have already lost eligibility for both.</p>
           <p>We'll remind you about insurance timing at the point of first deposit, but ultimately the responsibility to purchase is yours.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-34" id="faq-34-q">
           <span class="faq-q__text">Does my credit card provide adequate travel coverage?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-34" role="region" aria-labelledby="faq-34-q">
           <p>Some premium travel credit cards include meaningful travel benefits — trip delay coverage, baggage protection, and in some cases trip cancellation coverage. A few offer emergency medical benefits. Before relying on credit card coverage, read the actual benefit guide carefully and understand the coverage limits, exclusions, and claim process.</p>
           <p>In most cases, credit card travel benefits are secondary coverage and have significantly lower limits than a dedicated travel insurance policy. For high-value trips or any destination where medical evacuation is a realistic risk, a standalone policy is a more reliable safety net.</p>
         </div>
@@ -531,22 +531,22 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-35" id="faq-35-q">
           <span class="faq-q__text">Are you available if something goes wrong during my trip?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-35" role="region" aria-labelledby="faq-35-q">
           <p>Yes. One of the core reasons to work with an advisor rather than booking alone is that you're not handling disruptions by yourself. If a flight is cancelled, a hotel has a problem, a transfer doesn't show up, or anything else goes sideways, you contact us directly and we work the problem.</p>
           <p>Your trip documents include our direct contact information. We ask that you reach out to us first — we can often resolve issues faster through supplier relationships than a client can through a standard guest services line.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-36" id="faq-36-q">
           <span class="faq-q__text">What's in the trip documents you send before departure?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-36" role="region" aria-labelledby="faq-36-q">
           <p>Before your departure, we send a complete trip document that includes:</p>
           <ul>
             <li>Full day-by-day itinerary with hotel names, addresses, and check-in/check-out times</li>
@@ -562,33 +562,33 @@
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-37" id="faq-37-q">
           <span class="faq-q__text">What if a hotel or experience doesn't live up to expectations?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-37" role="region" aria-labelledby="faq-37-q">
           <p>Contact us immediately — don't wait until you get home. The sooner we know, the more options we have. If a room is genuinely not what was promised, we'll work with the property to upgrade or move you. If an experience falls short, we'll explore alternatives.</p>
           <p>When you return, we want to hear the full debrief — what worked, what didn't, what surprised you. That feedback directly improves how we plan trips in the same region going forward, and it holds suppliers accountable.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-38" id="faq-38-q">
           <span class="faq-q__text">What if I get sick or have a medical emergency during my trip?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-38" role="region" aria-labelledby="faq-38-q">
           <p>Contact us and contact your travel insurance provider's emergency line immediately — your policy documents will have a 24/7 emergency number. Your insurer's assistance line can help coordinate medical care, arrange evacuation if necessary, and manage the logistics of the situation. That's what the coverage is for.</p>
           <p>Your trip documents will include the contact information for your insurer's emergency line alongside our direct contact. For non-urgent issues, the properties we book are accustomed to assisting guests with medical needs and can recommend local doctors or clinics.</p>
         </div>
       </div>
 
       <div class="faq-item">
-        <button class="faq-q">
+        <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-39" id="faq-39-q">
           <span class="faq-q__text">Do you do anything after the trip is over?</span>
-          <span class="faq-q__icon">+</span>
-        </button>
-        <div class="faq-a">
+          <span class="faq-q__icon" aria-hidden="true">+</span>
+        </button></h3>
+        <div class="faq-a" id="faq-39" role="region" aria-labelledby="faq-39-q">
           <p>Yes. After every trip, we do a debrief — usually a short call or email exchange where we go through what worked, what could have been better, and what surprised you. That feedback improves the next trip, and it helps us hold suppliers accountable when something falls short.</p>
           <p>We keep notes on every client trip, so when you come back to plan your next one — whether that's six months later or three years later — we're starting from a real understanding of how you travel and what delivers for you.</p>
         </div>

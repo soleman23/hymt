@@ -181,8 +181,15 @@
   transition:transform .2s,border-color .2s;margin-top:2px;
 }
 .pf-item.open .pf-q__icon { transform:rotate(45deg);border-color:var(--border-gold) }
-.pf-a { display:none;padding:0 28px 24px;font-family:var(--font-b);font-size:14px;color:var(--text-secondary);line-height:1.75 }
-.pf-item.open .pf-a { display:block }
+/* Answers are visible by default and only hidden once Accordion.astro adds
+   .js-accordion to <html>. With JS off every answer renders open — deliberate;
+   never move the hide rule outside that scope. */
+.pf-q-h { margin:0; font:inherit; }
+.pf-q { width:100%; background:none; border:none; cursor:pointer; text-align:left;
+        font:inherit; color:inherit; appearance:none; -webkit-appearance:none; }
+.pf-a { padding:0 28px 24px;font-family:var(--font-b);font-size:14px;color:var(--text-secondary);line-height:1.75 }
+.js-accordion .pf-a { display:none }
+.js-accordion .pf-item.open .pf-a { display:block }
 .page-faq__more { margin-top:36px;display:flex;align-items:center;gap:12px }
 .page-faq__more-link {
   font-family:var(--font-d);font-size:11px;font-weight:700;

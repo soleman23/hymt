@@ -1,0 +1,43 @@
+---
+/**
+ * Accordion — the one behaviour script for every FAQ block on the site.
+ *
+ * Both accordion flavours exist: `.pf-item`/`.pf-q`/`.pf-a` on destination and
+ * experience pages, and `.faq-item`/`.faq-q`/`.faq-a` on /faq/. Their CSS is
+ * identical in structure (`display:none`, revealed by `.open` on the item), so
+ * one delegated listener drives both. It was missing entirely until 2026-08;
+ * every answer on the site was permanently hidden. Do not remove it.
+ *
+ * Progressive enhancement: `js-accordion` is set on <html> by this script, and
+ * the stylesheets only hide answers when that class is present. With JS off,
+ * every answer renders open. That is deliberate — the answers are the most
+ * valuable content on the site and must never depend on script execution.
+ */
+---
+<script>
+  document.documentElement.classList.add('js-accordion');
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.pf-q, .faq-q');
+    if (!btn) return;
+    const item = btn.closest('.pf-item, .faq-item');
+    if (!item) return;
+    const open = item.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(open));
+  });
+
+  /* /faq/ category filter (P0-2). The buttons carry data-cat matching the
+     data-cat on each .faq-group; "all" shows everything. Same delegation
+     pattern as the accordion so this stays the only behaviour script. */
+  document.addEventListener('click', (e) => {
+    const cat = (e.target as HTMLElement).closest('.faq-cat-btn');
+    if (!(cat instanceof HTMLElement)) return;
+    const want = cat.dataset.cat;
+    document.querySelectorAll('.faq-cat-btn').forEach((b) => {
+      b.classList.toggle('active', b === cat);
+      b.setAttribute('aria-pressed', String(b === cat));
+    });
+    document.querySelectorAll<HTMLElement>('.faq-group').forEach((g) => {
+      g.style.display = want === 'all' || g.dataset.cat === want ? '' : 'none';
+    });
+  });
+</script>
