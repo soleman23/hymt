@@ -29,6 +29,13 @@ const notes = [];
 const hints = [];
 const fail = (check, detail) => failures.push({ check, detail });
 
+/* Checks whose subject matter is built in a LATER phase register here as
+   warnings until that phase lands, then flip to fail(): schema-required
+   flips in Phase 2 (P2-4); title-length and desc-length flip in Phase 3
+   (P3-1). Flipping = change softFail to fail at the call site. */
+const softFailures = [];
+const softFail = (check, phase, detail) => softFailures.push({ check, phase, detail });
+
 async function walk(dir, filter) {
   const out = [];
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -178,6 +185,146 @@ if (UPDATE) {
   notes.push(`${Object.keys(heads).length} pages checked against the head baseline`);
 }
 
+/* ── 4b. Page-quality gates (P1-6) ──
+   Every machine-checkable standard from docs/seo/SEO-AIO-PLAN.md lives here
+   so it enforces itself on every future page instead of depending on anyone
+   remembering. The canonical host is read from astro.config.mjs `site` —
+   the single place the production domain is written. */
+const SITE = (await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"))
+  .match(/site:\s*'([^']+)'/)?.[1]?.replace(/\/$/, "") ?? "";
+if (!SITE) fail("canonical-host", "could not read `site` from astro.config.mjs");
+
+/* sitemap-parity: the generated sitemap must exist, cover every indexable
+   page (HTML minus the 404), and robots.txt must point at a file that is
+   actually in dist/. This is the drift class that produced the old
+   93-URLs-for-94-pages hand-maintained sitemap. */
+{
+  const s0 = path.join(DIST, "sitemap-0.xml");
+  if (!(await exists(path.join(DIST, "sitemap-index.xml"))) || !(await exists(s0))) {
+    fail("sitemap-parity", "sitemap-index.xml / sitemap-0.xml missing from dist/ — the @astrojs/sitemap integration did not run");
+  } else {
+    const urls = [...(await readFile(s0, "utf8")).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    const expected = htmlFiles.length - 1;
+    if (urls.length !== expected) {
+      fail("sitemap-parity", `sitemap has ${urls.length} URLs but dist has ${expected} indexable pages (HTML files minus the 404)`);
+    }
+    const bad = urls.find((u) => !u.startsWith(SITE + "/") || !u.endsWith("/"));
+    if (bad) fail("sitemap-parity", `sitemap URL ${bad} is not a trailing-slash ${SITE} URL`);
+  }
+  const robots = await readFile(path.join(DIST, "robots.txt"), "utf8").catch(() => "");
+  const sm = robots.match(/^Sitemap:\s*(\S+)/im)?.[1];
+  if (!sm) {
+    fail("sitemap-parity", "dist/robots.txt has no Sitemap: line");
+  } else if (!(await exists(path.join(DIST, new URL(sm).pathname)))) {
+    fail("sitemap-parity", `robots.txt points at ${new URL(sm).pathname}, which is not in dist/`);
+  }
+}
+
+const linkResolves = async (p) => {
+  const noSlash = p.replace(/\/$/, "");
+  if (!noSlash) return exists(path.join(DIST, "index.html"));
+  return (await exists(path.join(DIST, noSlash, "index.html"))) ||
+         (await exists(path.join(DIST, noSlash)));
+};
+
+const deadLinks = new Set();
+for (const file of htmlFiles) {
+  const html = await readFile(file, "utf8");
+  const url = urlOf(file);
+  const is404 = file.endsWith("404.html");
+
+  /* img-attrs: intrinsic dimensions prevent CLS; alt is non-negotiable. */
+  for (const img of html.match(/<img\b[^>]*>/gi) ?? []) {
+    for (const attr of ["alt", "width", "height"]) {
+      if (!new RegExp(`\\b${attr}=`).test(img)) {
+        fail("img-attrs", `${url} has an <img> missing ${attr}: ${img.slice(0, 80)}…`);
+      }
+    }
+  }
+
+  /* canonical-host: nothing may point anywhere but the production host. */
+  for (const [what, val] of [
+    ["canonical", pick(html, /<link rel="canonical" href="([^"]*)"/i)],
+    ["og:url", pick(html, /<meta property="og:url" content="([^"]*)"/i)],
+  ]) {
+    if (val && !val.startsWith(SITE)) {
+      fail("canonical-host", `${url} ${what} is ${val} — must start with ${SITE}`);
+    }
+  }
+
+  /* single-h1 / heading-order */
+  const h1s = (html.match(/<h1\b/gi) ?? []).length;
+  if (h1s !== 1) fail("single-h1", `${url} has ${h1s} <h1> elements`);
+  let prev = 0;
+  for (const m of html.matchAll(/<h([1-6])\b/gi)) {
+    const lvl = +m[1];
+    if (prev && lvl > prev + 1) {
+      fail("heading-order", `${url} jumps h${prev} → h${lvl}`);
+      break;
+    }
+    prev = lvl;
+  }
+
+  /* schema-valid, and collect @types for schema-required */
+  const schemaTypes = [];
+  for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)) {
+    try {
+      for (const node of [].concat(JSON.parse(m[1]))) schemaTypes.push(node["@type"]);
+    } catch {
+      fail("schema-valid", `${url} has an application/ld+json block that does not JSON.parse`);
+    }
+  }
+  if (html.includes('class="breadcrumb') && !schemaTypes.includes("BreadcrumbList")) {
+    softFail("schema-required", "Phase 2 / P2-4", `${url} renders breadcrumbs but emits no BreadcrumbList`);
+  }
+
+  /* title-length / desc-length — quality bounds from the content standards */
+  const title = pick(html, /<title>([\s\S]*?)<\/title>/i);
+  if (title.length < 30 || title.length > 65) {
+    softFail("title-length", "Phase 3 / P3-1", `${url} title is ${title.length} chars: ${title.slice(0, 70)}`);
+  }
+  const desc = pick(html, /<meta name="description" content="([^"]*)"/i);
+  if (!is404 && (desc.length < 110 || desc.length > 165)) {
+    softFail("desc-length", "Phase 3 / P3-1", `${url} description is ${desc.length} chars`);
+  }
+
+  /* internal-links: every same-site href must resolve to something in dist */
+  for (const m of html.matchAll(/<a\b[^>]+href="(\/[^"#?]*)/gi)) {
+    if (!m[1].startsWith("//") && !(await linkResolves(m[1]))) deadLinks.add(m[1]);
+  }
+
+  /* accordion-a11y: the P0-1 contract, kept honest forever */
+  for (const m of html.matchAll(/<button\b[^>]*class="[^"]*\b(?:pf-q|faq-q)\b[^"]*"[^>]*>/gi)) {
+    if (!/aria-expanded=/.test(m[0]) || !/aria-controls=/.test(m[0])) {
+      fail("accordion-a11y", `${url} has an accordion button without aria-expanded/aria-controls`);
+      break;
+    }
+  }
+
+  /* placeholder-copy: visible text only — scripts, comments and tags are
+     stripped first, so the sanctioned <!-- NEEDS MARK --> markers and the
+     GA4 placeholder ID never trip it, but shipped copy does. */
+  if (!is404) {
+    const text = html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<!--[\s\S]*?-->/g, " ")
+      .replace(/<[^>]+>/g, " ");
+    for (const [name, re] of [
+      ["Lorem ipsum", /lorem ipsum/i],
+      ["TBD", /\bTBD\b/],
+      ["Coming soon", /coming soon/i],
+      ["TODO", /\bTODO\b/],
+      ["XXX", /\bXXX\b/],
+      ["Placeholder", /placeholder/i],
+    ]) {
+      if (re.test(text)) fail("placeholder-copy", `${url} ships the placeholder text "${name}"`);
+    }
+  }
+}
+for (const link of deadLinks) fail("internal-links", `internal href ${link} resolves to nothing in dist/`);
+notes.push("page-quality gates checked (P1-6)");
+
 /* ── 5. Optional: confirm a deploy actually landed ──
    The FTP account does not land in the web root, so an upload can report
    success while the live site is untouched. This fetches the assets a real
@@ -220,6 +367,16 @@ report();
 
 function report() {
   for (const n of notes) console.log(`  ok  ${n}`);
+  if (softFailures.length) {
+    const byCheck = {};
+    for (const f of softFailures) (byCheck[`${f.check} — flips hard in ${f.phase}`] ??= []).push(f.detail);
+    console.log(`  warnings (enforced in a later phase — do not let these grow):`);
+    for (const [check, details] of Object.entries(byCheck)) {
+      console.log(`  [${check}] ${details.length} page${details.length > 1 ? "s" : ""}`);
+      for (const d of details.slice(0, 4)) console.log(`    - ${d}`);
+      if (details.length > 4) console.log(`    ...and ${details.length - 4} more`);
+    }
+  }
   if (!failures.length) {
     console.log(`  ok  ${htmlFiles?.length ?? 0} pages verified`);
     return;
