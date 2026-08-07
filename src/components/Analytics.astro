@@ -1,0 +1,86 @@
+---
+/**
+ * Analytics — GA4 via gtag.js, direct, no Tag Manager (P0-5 / DECISION-1).
+ *
+ * PASTE THE REAL MEASUREMENT ID BELOW when the GA4 property exists. The
+ * placeholder "G-XXXXXXXXXX" is safe to ship: the script only ever runs on
+ * www.hymtravel.com, and gtag requests with a placeholder ID are no-ops.
+ *
+ * Deliberate constraints — do not "improve" them away:
+ *  - Never fires on staging or localhost: hard hostname gate below.
+ *  - gtag.js loads on first user interaction (scroll/pointerdown/keydown),
+ *    keeping ~90KB of third-party JS off the critical path. LCP is already
+ *    at risk (F5/F6/F13); analytics must not add to it.
+ *  - Exactly four events, documented in docs/analytics-events.md:
+ *      form_start            first field focus on Plan Your Trip
+ *      form_submit_success   a form's branded success state shown (primary conversion)
+ *      phone_click           any tel: link
+ *      email_click           any mailto: link
+ *    Add nothing else without updating that doc.
+ */
+const GA4_ID = "G-XXXXXXXXXX";
+---
+<script is:inline define:vars={{ GA4_ID }}>
+(function () {
+  if (location.hostname !== 'www.hymtravel.com') return;
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', GA4_ID, { send_page_view: true });
+
+  var loaded = false;
+  function loadGtag() {
+    if (loaded) return;
+    loaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+    document.head.appendChild(s);
+  }
+  ['scroll', 'pointerdown', 'keydown'].forEach(function (ev) {
+    addEventListener(ev, loadGtag, { once: true, passive: true });
+  });
+
+  /* phone_click / email_click — delegated so every tel:/mailto: link counts */
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
+    if (!a) return;
+    var isTel = a.getAttribute('href').indexOf('tel:') === 0;
+    gtag('event', isTel ? 'phone_click' : 'email_click', {
+      link_url: a.getAttribute('href'),
+      page_path: location.pathname
+    });
+  });
+
+  /* form_start — first field focus on the Plan Your Trip form, once */
+  if (location.pathname === '/plan-your-trip/') {
+    var started = false;
+    document.addEventListener('focusin', function (e) {
+      if (started) return;
+      var t = e.target;
+      if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) {
+        started = true;
+        gtag('event', 'form_start', { page_path: location.pathname });
+      }
+    });
+  }
+
+  /* form_submit_success — the branded success state appearing is the one
+     signal both forms share (#successState on Plan Your Trip, #cfSuccess on
+     Contact). Watching it means no coupling to the form scripts. Primary
+     conversion in GA4. */
+  var successEl = document.getElementById('successState') || document.getElementById('cfSuccess');
+  if (successEl && 'MutationObserver' in window) {
+    var fired = false;
+    new MutationObserver(function () {
+      if (fired) return;
+      if (successEl.classList.contains('show')) {
+        fired = true;
+        gtag('event', 'form_submit_success', { page_path: location.pathname });
+      }
+    }).observe(successEl, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+</script>
