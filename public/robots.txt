@@ -1,4 +1,103 @@
+# Hit Your Mark Travel — https://www.hymtravel.com
+# Posture: allow every crawler that can cite us in a user-facing answer.
+# Block crawlers that only harvest for training-data resale, where there is
+# no citation surface and therefore no upside.
+
+# ── Search engines ──
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# ── AI answer engines: allowed, deliberately ──
+# These retrieve and cite with attribution. Being in their index is the point.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# ── Harvest-only crawlers: no citation surface, no upside ──
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+User-agent: Timpibot
+Disallow: /
+
+User-agent: omgili
+Disallow: /
+
+User-agent: omgilibot
+Disallow: /
+
+User-agent: Webzio-Extended
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+# ── SEO crawlers: allowed but throttled ──
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: dotbot
+Crawl-delay: 10
+
+# ── Everything else ──
 User-agent: *
 Allow: /
 
+# P1-1 switches this to /sitemap-index.xml when the generated sitemap lands.
 Sitemap: https://www.hymtravel.com/sitemap.xml

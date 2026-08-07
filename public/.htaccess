@@ -49,6 +49,16 @@ ErrorDocument 404 /404.html
   ExpiresDefault "access plus 1 week"
 </IfModule>
 
+# ── Staging: block all indexing on any non-production host ──
+# Matches the Hostinger preview domain. Production (www.hymtravel.com)
+# is unaffected, so this rule can and should ship in the same .htaccess.
+<IfModule mod_setenvif.c>
+  SetEnvIf Host "hostingersite\.com$" IS_STAGING=1
+</IfModule>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
+</IfModule>
+
 # ── Security headers ──
 <IfModule mod_headers.c>
   Header set X-Content-Type-Options "nosniff"

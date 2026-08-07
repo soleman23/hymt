@@ -125,6 +125,23 @@ if (!missingAssets.length) {
   hints.push("Every missing file is under /assets/ — run `python tools/restore_images.py` (python3 on mac/linux). astro build wipes these on every run.");
 }
 
+/* ── 3b. og:image resolves to a file that exists ──
+   Every page pointed og:image at /assets/og-default.jpg while the file did
+   not exist (F12) — social shares 404'd for months. The og:image URL is
+   absolute, so the relative-asset check above never sees it. */
+const ogMissing = new Set();
+for (const file of htmlFiles) {
+  const html = await readFile(file, "utf8");
+  const og = (html.match(/<meta property="og:image" content="([^"]*)"/i)?.[1] ?? "").trim();
+  if (!og) { fail("og-image", `${urlOf(file)} has no og:image`); continue; }
+  const clean = (og.startsWith("http") ? new URL(og).pathname : og).split(/[?#]/)[0];
+  if (!(await exists(path.join(DIST, clean)))) ogMissing.add(clean);
+}
+for (const p of ogMissing) {
+  fail("og-image", `og:image target ${p} is not in dist/`);
+  if (p.startsWith("/assets/")) hints.push(`og:image ${p} lives under /assets/ — run \`python tools/restore_images.py\` (python3 on mac/linux).`);
+}
+
 /* ── 4. Head tags match the committed baseline ──
    Title, description and canonical are what search engines consume, and a
    generated-page change can alter them invisibly. Intentional edits are
@@ -175,6 +192,25 @@ if (REMOTE) {
     for (const href of [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="(\/[^"]+)"/gi)].map((m) => m[1])) {
       const asset = await fetch(REMOTE + href, { method: "HEAD" }).catch((e) => ({ ok: false, status: e.message }));
       if (!asset.ok) fail("remote", `${page} links ${href} but it returns ${asset.status} on the server`);
+    }
+  }
+  /* Staging must serve X-Robots-Tag noindex; production must never (P0-3).
+     The staging header comes from the host-scoped rule in public/.htaccess —
+     robots.txt alone prevents crawling but not indexing of discovered URLs. */
+  const host = new URL(REMOTE).hostname;
+  const isStaging = /(^|\.)hostingersite\.com$/i.test(host);
+  const front = await fetch(REMOTE + "/").catch(() => null);
+  if (!front) {
+    fail("remote", `${REMOTE}/ could not be fetched for the X-Robots-Tag check`);
+  } else {
+    const tag = front.headers.get("x-robots-tag") ?? "";
+    if (isStaging && !/noindex/i.test(tag)) {
+      fail("staging-noindex",
+        `${host} serves no "X-Robots-Tag: noindex" — staging is exposed to crawlers. Deploy the staging block in public/.htaccess.`);
+    }
+    if (!isStaging && /noindex/i.test(tag)) {
+      fail("prod-indexable",
+        `${host} serves "X-Robots-Tag: ${tag}" — production must never carry noindex.`);
     }
   }
   notes.push(`remote spot-check against ${REMOTE}`);
