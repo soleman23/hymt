@@ -149,6 +149,9 @@ Pick a low-traffic window — a weekday morning is fine for a site this size.
 Budget two hours including checks. Do not do this on a Friday.
 
 ### 4.1 Final deploy to staging (T-60 min)
+- [ ] `node tools/set-journal-dates.mjs --date <today's date>` — stamps
+      `publishDate` on all 29 journal posts per DECISIONS.md D6 (posts are
+      dated the day they go live; never backdate). Commit the result.
 - [ ] `git pull && npm install && npm run build`
 - [ ] `node tools/verify-deployment.mjs` clean
 - [ ] Upload `dist/` to Hostinger `public_html` (see `docs/hostinger-deployment.md`)

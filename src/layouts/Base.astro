@@ -16,6 +16,11 @@ interface Props {
   canonicalPath?: string;
   schemaType?: "website" | "article";
   publishDate?: string;
+  /** ISO date of last substantive update; emitted as Article.dateModified. */
+  modifiedDate?: string;
+  /** Hero image URL to preload — the LCP element on every templated page is a
+   *  CSS background-image the browser cannot discover until CSSOM is built. */
+  preloadImage?: string;
 }
 
 const {
@@ -29,12 +34,18 @@ const {
   canonicalPath = "",
   schemaType = "website",
   publishDate = "",
+  modifiedDate = "",
+  preloadImage = "",
 } = Astro.props;
 
 /* Canonicals, og:url and the JSON-LD all derive from astro.config.mjs `site`,
    which is the single place the production domain is written. Change it there
    and every tag here follows. */
 const site = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
+/* Astro.url.pathname carries NO query string — that is load-bearing, not an
+   omission (P1-7/F14). The footer links /plan-your-trip/?type=group and
+   ?type=honeymoon; both must canonical to /plan-your-trip/ or they become
+   duplicate pages. Never "improve" this to include Astro.url.search. */
 const canonical = canonicalPath || Astro.url.pathname;
 const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Your Mark Travel`;
 
@@ -59,6 +70,7 @@ const articleSchema = schemaType === "article" ? {
   "author": { "@type": "Person", "name": "Mark Sole" },
   "publisher": { "@type": "Organization", "name": "Hit Your Mark Travel", "logo": { "@type": "ImageObject", "url": `${site}/assets/logo.png` } },
   ...(publishDate ? { "datePublished": publishDate } : {}),
+  ...(publishDate ? { "dateModified": modifiedDate || publishDate } : {}),
   "mainEntityOfPage": `${site}${canonical}`
 } : null;
 ---
@@ -71,6 +83,10 @@ const articleSchema = schemaType === "article" ? {
 <meta name="description" content={description}>
 <link rel="canonical" href={`${site}${canonical}`}>
 <meta name="theme-color" content="#0d1b2a">
+
+{preloadImage && (
+  <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+)}
 
 <meta property="og:type" content={schemaType === "article" ? "article" : "website"}>
 <meta property="og:site_name" content="Hit Your Mark Travel">
@@ -86,9 +102,11 @@ const articleSchema = schemaType === "article" ? {
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/logo.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap">
+<!-- Self-hosted fonts (P1-3): declared in styles-master.css, served from
+     /assets/fonts/. Only the two families every fold uses get preloaded;
+     font preloads require crossorigin even same-origin. -->
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/raleway-var.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/dmsans-var.woff2" crossorigin>
 
 <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
 {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}

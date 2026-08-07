@@ -26,7 +26,17 @@ interface Props {
   description?: string;
   ogImage?: string;
   canonicalPath?: string;
+  /**
+   * ISO date (YYYY-MM-DD). Deliberately unset until DNS cutover: DECISIONS.md
+   * D6 dates every post the day it goes live, never earlier. The launch
+   * runbook runs `node tools/set-journal-dates.mjs --date <launch date>` to
+   * stamp all 29 posts in one pass. When set, the hero shows a real <time>
+   * element instead of the legacy display string, and Base emits
+   * Article.datePublished / dateModified.
+   */
   publishDate?: string;
+  /** ISO date of the last substantive update. Defaults to publishDate. */
+  modifiedDate?: string;
   /** Breadcrumb leaf and hero headline are separate: the crumb is usually shorter. */
   name: string;
   category: { label: string; href?: string };
@@ -41,9 +51,18 @@ interface Props {
   };
 }
 
-const { title, description, ogImage, canonicalPath, publishDate, name, category, hero } = Astro.props;
+const { title, description, ogImage, canonicalPath, publishDate, modifiedDate, name, category, hero } = Astro.props;
 const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
 const catHref = category.href ?? "/travel-journal/";
+
+/* en-US long form; parsed at UTC noon so the displayed day never shifts
+   across timezones. */
+const fmt = (iso: string) =>
+  new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", {
+    year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+  });
+const effectiveModified = modifiedDate || publishDate;
+const showUpdated = publishDate && effectiveModified && effectiveModified !== publishDate;
 ---
 <Base
   title={title}
@@ -51,7 +70,9 @@ const catHref = category.href ?? "/travel-journal/";
   ogImage={ogImage}
   canonicalPath={canonicalPath}
   publishDate={publishDate}
+  modifiedDate={effectiveModified}
   schemaType="article"
+  preloadImage={hero.image}
   active="journal"
 >
   <section class="post-hero">
@@ -60,13 +81,20 @@ const catHref = category.href ?? "/travel-journal/";
         <span class="post-hero__bg-ph" set:html={hero.placeholder} />
       )}
     </div>
-    <img src="/assets/logo.png" class="post-hero__watermark" alt="" aria-hidden="true">
+    <img src="/assets/logo.png" class="post-hero__watermark" alt="" aria-hidden="true" width="1254" height="1254" decoding="async">
     <div class="post-hero__overlay"></div>
     <div class="post-hero__content">
       <div class="post-hero__meta">
         <span class="post-hero__cat" set:html={category.label} />
         <span class="post-hero__dot"></span>
-        <span class="post-hero__date" set:html={hero.date} />
+        {publishDate ? (
+          <span class="post-hero__date">
+            <time datetime={publishDate}>{fmt(publishDate)}</time>
+            {showUpdated && <> · Updated <time datetime={effectiveModified}>{fmt(effectiveModified)}</time></>}
+          </span>
+        ) : (
+          <span class="post-hero__date" set:html={hero.date} />
+        )}
         <span class="post-hero__dot"></span>
         <span class="post-hero__read" set:html={hero.readTime} />
       </div>

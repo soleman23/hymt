@@ -65,6 +65,7 @@ const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined
   ogImage={ogImage}
   canonicalPath={canonicalPath}
   schemaType={schemaType}
+  preloadImage={hero.image}
   active="destinations"
 >
   <div class="breadcrumb">
@@ -89,7 +90,7 @@ const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined
         <span class="dest-hero__bg-ph" set:html={hero.placeholder} />
       )}
     </div>
-    <img src="/assets/logo.png" class="dest-hero__watermark" alt="" aria-hidden="true">
+    <img src="/assets/logo.png" class="dest-hero__watermark" alt="" aria-hidden="true" width="1254" height="1254" decoding="async">
     <div class="dest-hero__overlay"></div>
     <div class="dest-hero__content">
       <div class="dest-hero__left">
