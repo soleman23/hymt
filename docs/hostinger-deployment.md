@@ -61,7 +61,7 @@ ever rotate the key, change it in `src/components/Newsletter.astro`,
 then rebuild.
 
 ### 5. Post-launch
-- Google Search Console → add property → submit `https://www.hymtravel.com/sitemap.xml`.
+- Google Search Console → add property → submit `https://www.hymtravel.com/sitemap-index.xml` (the build generates `sitemap-index.xml` + `sitemap-0.xml`; there is no `sitemap.xml` anymore).
 - `robots.txt` is already in place.
 - Email: set up mark@hymtravel.com in hPanel → Emails (or point MX to Google Workspace if you prefer Gmail).
 
