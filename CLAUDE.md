@@ -42,3 +42,65 @@ This project is indexed by GitNexus as **hymt** (563 symbols, 661 relationships,
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+## SEO & AIO rules — apply to every page, always
+
+Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRARY.md`.
+
+### Domain
+- The production domain is written once, in `astro.config.mjs` → `site`.
+  Never hardcode `hymtravel.com` or the Hostinger preview host anywhere else.
+  Canonicals, `og:url` and JSON-LD all derive from `Astro.site`.
+
+### Every new page must have
+- Unique `<title>`, 30–65 chars including the `— Hit Your Mark Travel` suffix.
+- Unique meta description, 110–165 chars, with a specific in it.
+- Exactly one `<h1>`; heading levels never skip.
+- Canonical, `og:*`, `twitter:*` — inherited from `Base.astro`, do not override.
+- A per-page `og:image`, 1200×630, or the default if none exists.
+- `BreadcrumbList` schema matching the visible breadcrumb exactly.
+- The page-type schema listed in `SCHEMA-LIBRARY.md` § "Page type → schema".
+- At least two outbound internal links with descriptive anchor text.
+- A 40–70 word answer capsule under the first `<h2>` that answers the page's
+  core question directly and contains at least one specific number.
+
+### Images
+- Every `<img>`: `alt`, intrinsic `width`, intrinsic `height`, `decoding="async"`.
+- `loading="lazy"` on everything below the fold; never on the LCP image.
+- Decorative images: `alt=""` plus `aria-hidden="true"`.
+- Hero images are passed to `Base` as `preloadImage`.
+
+### Accordions and FAQ blocks
+- Questions are `<button>` inside a heading, with `aria-expanded` and
+  `aria-controls`. Answers have a matching `id` and `role="region"`.
+- Answers must be visible when JavaScript has not run. The hide rule is scoped
+  to `.js-accordion`, which `Accordion.astro` sets on `<html>`. Never move the
+  hide rule outside that scope.
+- The first sentence of every answer is a complete answer in ≤25 words.
+
+### Writing
+- Specifics over adjectives. A number beats a superlative every time.
+- Attribute factual claims to a linked authoritative source.
+- Write in Mark's first person where the experience is genuinely his.
+- Date anything time-sensitive and show the date on the page.
+- Never ship "Lorem ipsum", "TBD", "Coming soon", or a placeholder image.
+
+### Never do
+- Never reference a prior website, platform, or migration for this domain.
+  This was launched as a fresh site: no redirect maps for legacy paths, no
+  Change-of-Address submissions, no "old site" assumptions — in code, docs,
+  prompts, or commit messages. Unknown paths 404 by design.
+- Never add `AggregateRating` to HYMT-controlled reviews.
+- Never add `WebSite`+`SearchAction` sitelinks-searchbox markup (deprecated).
+- Never chase `FAQPage` or `HowTo` rich results — they no longer render.
+- Never introduce a CSS or JS framework. Astro-official integrations only.
+- Never add per-page `pageCss` under `destinations/`, `experiences/` or
+  `travel-journal/`.
+- Never fire analytics on the staging host.
+- Never change the Web3Forms access key.
+
+### Before every commit
+- `npm run build` (runs `tools/verify-deployment.mjs`) must pass.
+- `python3 tools/restore_images.py` after every build.
+- Intentional `<title>`/description/canonical changes:
+  `node tools/verify-deployment.mjs --update-baseline`, in their own commit.
