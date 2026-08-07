@@ -473,5 +473,10 @@
     "b64": "images-b64/assets__img__e-25-pebble-beach-sunset.jpg.b64",
     "target": "public/assets/img/e-25-pebble-beach-sunset.jpg",
     "bytes": 338320
+  },
+  {
+    "b64": "images-b64/assets__img__e-26-augusta-gallery-dusk.jpg.b64",
+    "target": "public/assets/img/e-26-augusta-gallery-dusk.jpg",
+    "bytes": 281027
   }
 ]
