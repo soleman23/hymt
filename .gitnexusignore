@@ -1,0 +1,4 @@
+# Base64-encoded image blobs (restored into dist/ by tools/restore-images.mjs).
+# Not code: indexing them bloats the graph and their huge single-token content
+# blows up the FTS (BM25) index build with a buffer-pool OOM.
+images-b64/
