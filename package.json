@@ -11,5 +11,8 @@
     "verify:remote": "node tools/verify-deployment.mjs --remote https://brown-goose-754147.hostingersite.com",
     "verify:prod": "node tools/verify-deployment.mjs --remote https://www.hymtravel.com"
   },
-  "dependencies": { "astro": "^5.0.0" }
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.0.0"
+  }
 }

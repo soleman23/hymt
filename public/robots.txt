@@ -99,5 +99,4 @@ Crawl-delay: 10
 User-agent: *
 Allow: /
 
-# P1-1 switches this to /sitemap-index.xml when the generated sitemap lands.
-Sitemap: https://www.hymtravel.com/sitemap.xml
+Sitemap: https://www.hymtravel.com/sitemap-index.xml
