@@ -47,7 +47,7 @@
   {
     "b64": "images-b64/assets__img__e-02-beach-golden-hour.jpg.b64",
     "target": "public/assets/img/e-02-beach-golden-hour.jpg",
-    "bytes": 323877
+    "bytes": 192366
   },
   {
     "b64": "images-b64/assets__img__e-03-grand-resort-dusk.jpg.b64",
@@ -57,7 +57,7 @@
   {
     "b64": "images-b64/assets__img__e-04-swim-up-bar.jpg.b64",
     "target": "public/assets/img/e-04-swim-up-bar.jpg",
-    "bytes": 481434
+    "bytes": 275018
   },
   {
     "b64": "images-b64/assets__img__e-05-positano-alley.jpg.b64",
@@ -67,7 +67,7 @@
   {
     "b64": "images-b64/assets__img__e-06-tuscan-landscape.jpg.b64",
     "target": "public/assets/img/e-06-tuscan-landscape.jpg",
-    "bytes": 482329
+    "bytes": 262984
   },
   {
     "b64": "images-b64/assets__img__e-07-yacht-cove.jpg.b64",
@@ -77,7 +77,7 @@
   {
     "b64": "images-b64/assets__img__e-08-river-cruise-dawn.jpg.b64",
     "target": "public/assets/img/e-08-river-cruise-dawn.jpg",
-    "bytes": 271315
+    "bytes": 150171
   },
   {
     "b64": "images-b64/assets__img__e-09-jungle-yoga-pavilion.jpg.b64",
@@ -87,7 +87,7 @@
   {
     "b64": "images-b64/assets__img__e-10-thermal-pool-mountains.jpg.b64",
     "target": "public/assets/img/e-10-thermal-pool-mountains.jpg",
-    "bytes": 337618
+    "bytes": 186772
   },
   {
     "b64": "images-b64/assets__img__e-11-elephant-herd-aerial.jpg.b64",
@@ -97,7 +97,7 @@
   {
     "b64": "images-b64/assets__img__e-12-patagonia-trek.jpg.b64",
     "target": "public/assets/img/e-12-patagonia-trek.jpg",
-    "bytes": 472013
+    "bytes": 254197
   },
   {
     "b64": "images-b64/assets__img__e-13-champagne-overwater-deck.jpg.b64",
@@ -107,7 +107,7 @@
   {
     "b64": "images-b64/assets__img__e-14-private-beach-dinner.jpg.b64",
     "target": "public/assets/img/e-14-private-beach-dinner.jpg",
-    "bytes": 305386
+    "bytes": 176944
   },
   {
     "b64": "images-b64/assets__img__e-15-children-shallow-water.jpg.b64",
@@ -117,7 +117,7 @@
   {
     "b64": "images-b64/assets__img__e-16-safari-vehicle-sunrise.jpg.b64",
     "target": "public/assets/img/e-16-safari-vehicle-sunrise.jpg",
-    "bytes": 214587
+    "bytes": 125604
   },
   {
     "b64": "images-b64/assets__img__e-17-tuscan-wine-tasting.jpg.b64",
@@ -127,7 +127,7 @@
   {
     "b64": "images-b64/assets__img__e-18-mediterranean-terrace-dinner.jpg.b64",
     "target": "public/assets/img/e-18-mediterranean-terrace-dinner.jpg",
-    "bytes": 574284
+    "bytes": 325856
   },
   {
     "b64": "images-b64/assets__img__e-19-secret-sea-cave.jpg.b64",
@@ -137,7 +137,7 @@
   {
     "b64": "images-b64/assets__img__e-20-remote-village-dawn.jpg.b64",
     "target": "public/assets/img/e-20-remote-village-dawn.jpg",
-    "bytes": 302409
+    "bytes": 163873
   },
   {
     "b64": "images-b64/assets__img__e-21-clifftop-golf.jpg.b64",
@@ -147,62 +147,62 @@
   {
     "b64": "images-b64/assets__img__e-22-heli-ski-landing.jpg.b64",
     "target": "public/assets/img/e-22-heli-ski-landing.jpg",
-    "bytes": 291237
+    "bytes": 159323
   },
   {
     "b64": "images-b64/assets__img__f-01-teal-lagoon-cta.jpg.b64",
     "target": "public/assets/img/f-01-teal-lagoon-cta.jpg",
-    "bytes": 263694
+    "bytes": 133563
   },
   {
     "b64": "images-b64/assets__img__h-01-maldives-aerial.jpg.b64",
     "target": "public/assets/img/h-01-maldives-aerial.jpg",
-    "bytes": 383687
+    "bytes": 210032
   },
   {
     "b64": "images-b64/assets__img__h-02-bora-bora-dawn.jpg.b64",
     "target": "public/assets/img/h-02-bora-bora-dawn.jpg",
-    "bytes": 490679
+    "bytes": 267046
   },
   {
     "b64": "images-b64/assets__img__h-03-seychelles-granite.jpg.b64",
     "target": "public/assets/img/h-03-seychelles-granite.jpg",
-    "bytes": 540443
+    "bytes": 283388
   },
   {
     "b64": "images-b64/assets__img__h-04-amalfi-golden-hour.jpg.b64",
     "target": "public/assets/img/h-04-amalfi-golden-hour.jpg",
-    "bytes": 622500
+    "bytes": 339145
   },
   {
     "b64": "images-b64/assets__img__i-01-maldives-season-guide.jpg.b64",
     "target": "public/assets/img/i-01-maldives-season-guide.jpg",
-    "bytes": 275548
+    "bytes": 147747
   },
   {
     "b64": "images-b64/assets__img__i-02-anniversary-table.jpg.b64",
     "target": "public/assets/img/i-02-anniversary-table.jpg",
-    "bytes": 284355
+    "bytes": 166401
   },
   {
     "b64": "images-b64/assets__img__i-03-spring-amalfi.jpg.b64",
     "target": "public/assets/img/i-03-spring-amalfi.jpg",
-    "bytes": 582179
+    "bytes": 335034
   },
   {
     "b64": "images-b64/assets__img__p-01-soneva-jani.jpg.b64",
     "target": "public/assets/img/p-01-soneva-jani.jpg",
-    "bytes": 405071
+    "bytes": 215987
   },
   {
     "b64": "images-b64/assets__img__p-02-north-island.jpg.b64",
     "target": "public/assets/img/p-02-north-island.jpg",
-    "bytes": 513832
+    "bytes": 271234
   },
   {
     "b64": "images-b64/assets__img__p-03-four-seasons-bora-bora.jpg.b64",
     "target": "public/assets/img/p-03-four-seasons-bora-bora.jpg",
-    "bytes": 292649
+    "bytes": 169794
   },
   {
     "b64": "images-b64/assets__img__u-01-specialist-portrait.jpg.b64",
@@ -217,247 +217,247 @@
   {
     "b64": "images-b64/assets__img__x-01-serengeti-elephants.jpg.b64",
     "target": "public/assets/img/x-01-serengeti-elephants.jpg",
-    "bytes": 413421
+    "bytes": 225511
   },
   {
     "b64": "images-b64/assets__img__x-02-bali-rice-terraces.jpg.b64",
     "target": "public/assets/img/x-02-bali-rice-terraces.jpg",
-    "bytes": 493532
+    "bytes": 263556
   },
   {
     "b64": "images-b64/assets__img__x-03-petra-treasury.jpg.b64",
     "target": "public/assets/img/x-03-petra-treasury.jpg",
-    "bytes": 411916
+    "bytes": 226867
   },
   {
     "b64": "images-b64/assets__img__x-04-napa-vineyard-dining.jpg.b64",
     "target": "public/assets/img/x-04-napa-vineyard-dining.jpg",
-    "bytes": 371868
+    "bytes": 216250
   },
   {
     "b64": "images-b64/assets__img__x-05-grand-teton-dawn.jpg.b64",
     "target": "public/assets/img/x-05-grand-teton-dawn.jpg",
-    "bytes": 426355
+    "bytes": 227119
   },
   {
     "b64": "images-b64/assets__img__x-06-polar-iceberg-twilight.jpg.b64",
     "target": "public/assets/img/x-06-polar-iceberg-twilight.jpg",
-    "bytes": 350795
+    "bytes": 185092
   },
   {
     "b64": "images-b64/assets__img__dh-01-antarctica-ice-cliffs.jpg.b64",
     "target": "public/assets/img/dh-01-antarctica-ice-cliffs.jpg",
-    "bytes": 447647
+    "bytes": 215292
   },
   {
     "b64": "images-b64/assets__img__dh-02-asia-temple-valley.jpg.b64",
     "target": "public/assets/img/dh-02-asia-temple-valley.jpg",
-    "bytes": 479622
+    "bytes": 211881
   },
   {
     "b64": "images-b64/assets__img__dh-03-egypt-nile-dusk.jpg.b64",
     "target": "public/assets/img/dh-03-egypt-nile-dusk.jpg",
-    "bytes": 486233
+    "bytes": 248441
   },
   {
     "b64": "images-b64/assets__img__dh-04-fiji-lagoon-aerial.jpg.b64",
     "target": "public/assets/img/dh-04-fiji-lagoon-aerial.jpg",
-    "bytes": 482100
+    "bytes": 336802
   },
   {
     "b64": "images-b64/assets__img__dh-05-france-provence-dusk.jpg.b64",
     "target": "public/assets/img/dh-05-france-provence-dusk.jpg",
-    "bytes": 494007
+    "bytes": 365951
   },
   {
     "b64": "images-b64/assets__img__dh-06-galapagos-volcanic-coast.jpg.b64",
     "target": "public/assets/img/dh-06-galapagos-volcanic-coast.jpg",
-    "bytes": 505338
+    "bytes": 334929
   },
   {
     "b64": "images-b64/assets__img__dh-07-greece-caldera-dusk.jpg.b64",
     "target": "public/assets/img/dh-07-greece-caldera-dusk.jpg",
-    "bytes": 358917
+    "bytes": 167267
   },
   {
     "b64": "images-b64/assets__img__dh-08-hawaii-napali-coast.jpg.b64",
     "target": "public/assets/img/dh-08-hawaii-napali-coast.jpg",
-    "bytes": 490821
+    "bytes": 318187
   },
   {
     "b64": "images-b64/assets__img__dh-09-iceland-glacial-lagoon.jpg.b64",
     "target": "public/assets/img/dh-09-iceland-glacial-lagoon.jpg",
-    "bytes": 412736
+    "bytes": 202364
   },
   {
     "b64": "images-b64/assets__img__dh-10-japan-kyoto-dawn.jpg.b64",
     "target": "public/assets/img/dh-10-japan-kyoto-dawn.jpg",
-    "bytes": 391386
+    "bytes": 190143
   },
   {
     "b64": "images-b64/assets__img__dh-11-middle-east-dunes.jpg.b64",
     "target": "public/assets/img/dh-11-middle-east-dunes.jpg",
-    "bytes": 342904
+    "bytes": 155100
   },
   {
     "b64": "images-b64/assets__img__dh-12-new-orleans-quarter-dusk.jpg.b64",
     "target": "public/assets/img/dh-12-new-orleans-quarter-dusk.jpg",
-    "bytes": 502499
+    "bytes": 321283
   },
   {
     "b64": "images-b64/assets__img__dh-13-new-york-skyline-dusk.jpg.b64",
     "target": "public/assets/img/dh-13-new-york-skyline-dusk.jpg",
-    "bytes": 498082
+    "bytes": 235008
   },
   {
     "b64": "images-b64/assets__img__dh-14-new-zealand-fiord-dawn.jpg.b64",
     "target": "public/assets/img/dh-14-new-zealand-fiord-dawn.jpg",
-    "bytes": 428446
+    "bytes": 205159
   },
   {
     "b64": "images-b64/assets__img__dh-15-north-america-rockies-dawn.jpg.b64",
     "target": "public/assets/img/dh-15-north-america-rockies-dawn.jpg",
-    "bytes": 504266
+    "bytes": 230950
   },
   {
     "b64": "images-b64/assets__img__dh-16-oman-wadi-fort.jpg.b64",
     "target": "public/assets/img/dh-16-oman-wadi-fort.jpg",
-    "bytes": 486218
+    "bytes": 342918
   },
   {
     "b64": "images-b64/assets__img__dh-17-peru-machu-picchu-dawn.jpg.b64",
     "target": "public/assets/img/dh-17-peru-machu-picchu-dawn.jpg",
-    "bytes": 508920
+    "bytes": 270493
   },
   {
     "b64": "images-b64/assets__img__dh-18-polar-arctic-twilight.jpg.b64",
     "target": "public/assets/img/dh-18-polar-arctic-twilight.jpg",
-    "bytes": 410914
+    "bytes": 193962
   },
   {
     "b64": "images-b64/assets__img__dh-19-portugal-douro-valley.jpg.b64",
     "target": "public/assets/img/dh-19-portugal-douro-valley.jpg",
-    "bytes": 502952
+    "bytes": 317428
   },
   {
     "b64": "images-b64/assets__img__dh-20-riviera-maya-coast.jpg.b64",
     "target": "public/assets/img/dh-20-riviera-maya-coast.jpg",
-    "bytes": 488900
+    "bytes": 303269
   },
   {
     "b64": "images-b64/assets__img__dh-21-rwanda-volcano-hills.jpg.b64",
     "target": "public/assets/img/dh-21-rwanda-volcano-hills.jpg",
-    "bytes": 499063
+    "bytes": 262872
   },
   {
     "b64": "images-b64/assets__img__dh-22-south-america-andes-lake.jpg.b64",
     "target": "public/assets/img/dh-22-south-america-andes-lake.jpg",
-    "bytes": 497807
+    "bytes": 272793
   },
   {
     "b64": "images-b64/assets__img__dh-23-spain-andalusia-dusk.jpg.b64",
     "target": "public/assets/img/dh-23-spain-andalusia-dusk.jpg",
-    "bytes": 419740
+    "bytes": 180668
   },
   {
     "b64": "images-b64/assets__img__dh-24-thailand-limestone-bay.jpg.b64",
     "target": "public/assets/img/dh-24-thailand-limestone-bay.jpg",
-    "bytes": 424194
+    "bytes": 192102
   },
   {
     "b64": "images-b64/assets__img__dh-25-uk-ireland-highland-loch.jpg.b64",
     "target": "public/assets/img/dh-25-uk-ireland-highland-loch.jpg",
-    "bytes": 441418
+    "bytes": 233768
   },
   {
     "b64": "images-b64/assets__img__jh-01-serengeti-season-plains.jpg.b64",
     "target": "public/assets/img/jh-01-serengeti-season-plains.jpg",
-    "bytes": 358612
+    "bytes": 198421
   },
   {
     "b64": "images-b64/assets__img__jh-02-borobudur-dawn-stupas.jpg.b64",
     "target": "public/assets/img/jh-02-borobudur-dawn-stupas.jpg",
-    "bytes": 504697
+    "bytes": 165490
   },
   {
     "b64": "images-b64/assets__img__jh-03-moremi-delta-channel.jpg.b64",
     "target": "public/assets/img/jh-03-moremi-delta-channel.jpg",
-    "bytes": 496571
+    "bytes": 307903
   },
   {
     "b64": "images-b64/assets__img__jh-04-european-station-concourse.jpg.b64",
     "target": "public/assets/img/jh-04-european-station-concourse.jpg",
-    "bytes": 502103
+    "bytes": 379105
   },
   {
     "b64": "images-b64/assets__img__jh-05-grand-hotel-facade-dusk.jpg.b64",
     "target": "public/assets/img/jh-05-grand-hotel-facade-dusk.jpg",
-    "bytes": 455844
+    "bytes": 259347
   },
   {
     "b64": "images-b64/assets__img__jh-06-landwasser-viaduct.jpg.b64",
     "target": "public/assets/img/jh-06-landwasser-viaduct.jpg",
-    "bytes": 490584
+    "bytes": 305720
   },
   {
     "b64": "images-b64/assets__img__jh-07-bc-powder-ridgeline.jpg.b64",
     "target": "public/assets/img/jh-07-bc-powder-ridgeline.jpg",
-    "bytes": 393648
+    "bytes": 232115
   },
   {
     "b64": "images-b64/assets__img__jh-08-suite-interior-golden-hour.jpg.b64",
     "target": "public/assets/img/jh-08-suite-interior-golden-hour.jpg",
-    "bytes": 504211
+    "bytes": 179585
   },
   {
     "b64": "images-b64/assets__img__jh-09-hill-village-lane.jpg.b64",
     "target": "public/assets/img/jh-09-hill-village-lane.jpg",
-    "bytes": 501505
+    "bytes": 318572
   },
   {
     "b64": "images-b64/assets__img__jh-10-racetrack-home-stretch.jpg.b64",
     "target": "public/assets/img/jh-10-racetrack-home-stretch.jpg",
-    "bytes": 510739
+    "bytes": 312413
   },
   {
     "b64": "images-b64/assets__img__jh-11-augusta-azalea-hole.jpg.b64",
     "target": "public/assets/img/jh-11-augusta-azalea-hole.jpg",
-    "bytes": 506232
+    "bytes": 397050
   },
   {
     "b64": "images-b64/assets__img__jh-12-mediterranean-october-coast.jpg.b64",
     "target": "public/assets/img/jh-12-mediterranean-october-coast.jpg",
-    "bytes": 487792
+    "bytes": 363450
   },
   {
     "b64": "images-b64/assets__img__jh-13-medina-alley-light.jpg.b64",
     "target": "public/assets/img/jh-13-medina-alley-light.jpg",
-    "bytes": 500754
+    "bytes": 290791
   },
   {
     "b64": "images-b64/assets__img__jh-14-east-africa-plains-dawn.jpg.b64",
     "target": "public/assets/img/jh-14-east-africa-plains-dawn.jpg",
-    "bytes": 383475
+    "bytes": 215054
   },
   {
     "b64": "images-b64/assets__img__jh-15-grumeti-river-corridor.jpg.b64",
     "target": "public/assets/img/jh-15-grumeti-river-corridor.jpg",
-    "bytes": 504048
+    "bytes": 355369
   },
   {
     "b64": "images-b64/assets__img__jh-16-empty-piazza-shoulder.jpg.b64",
     "target": "public/assets/img/jh-16-empty-piazza-shoulder.jpg",
-    "bytes": 487541
+    "bytes": 333303
   },
   {
     "b64": "images-b64/assets__img__jh-17-planning-desk-window.jpg.b64",
     "target": "public/assets/img/jh-17-planning-desk-window.jpg",
-    "bytes": 511197
+    "bytes": 168673
   },
   {
     "b64": "images-b64/assets__img__jh-18-balcony-partial-sea-view.jpg.b64",
     "target": "public/assets/img/jh-18-balcony-partial-sea-view.jpg",
-    "bytes": 315039
+    "bytes": 182483
   },
   {
     "b64": "images-b64/assets__img__e-23-wimbledon-pimms.jpg.b64",
@@ -467,7 +467,7 @@
   {
     "b64": "images-b64/assets__img__e-24-augusta-masters-flag.jpg.b64",
     "target": "public/assets/img/e-24-augusta-masters-flag.jpg",
-    "bytes": 274608
+    "bytes": 185927
   },
   {
     "b64": "images-b64/assets__img__e-25-pebble-beach-sunset.jpg.b64",
@@ -477,7 +477,7 @@
   {
     "b64": "images-b64/assets__img__e-26-augusta-gallery-dusk.jpg.b64",
     "target": "public/assets/img/e-26-augusta-gallery-dusk.jpg",
-    "bytes": 281027
+    "bytes": 260886
   },
   {
     "b64": "images-b64/assets__img__e-27-wimbledon-pimms-terrace.jpg.b64",
