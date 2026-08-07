@@ -478,5 +478,10 @@
     "b64": "images-b64/assets__img__e-26-augusta-gallery-dusk.jpg.b64",
     "target": "public/assets/img/e-26-augusta-gallery-dusk.jpg",
     "bytes": 281027
+  },
+  {
+    "b64": "images-b64/assets__img__e-27-wimbledon-pimms-terrace.jpg.b64",
+    "target": "public/assets/img/e-27-wimbledon-pimms-terrace.jpg",
+    "bytes": 30154
   }
 ]
