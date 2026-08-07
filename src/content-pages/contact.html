@@ -74,28 +74,29 @@
     <h2 class="form-title">Send a message</h2>
     <p class="form-sub">If you'd prefer to plan your trip in detail, use the <a href="/plan-your-trip/" style="color:var(--gold-500)">Plan Your Trip form</a> — it takes about five minutes and gives Mark everything he needs to put together a proposal.</p>
 
-    <div id="contactForm">
+    <form id="contactForm" novalidate>
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
       <div class="cf-row">
         <div class="cf">
           <label for="cfname">First name</label>
-          <input type="text" id="cfname" placeholder="First name">
+          <input type="text" id="cfname" name="first_name" autocomplete="given-name" placeholder="First name" required>
         </div>
         <div class="cf">
           <label for="cflname">Last name</label>
-          <input type="text" id="cflname" placeholder="Last name">
+          <input type="text" id="cflname" name="last_name" autocomplete="family-name" placeholder="Last name">
         </div>
       </div>
       <div class="cf">
         <label for="cfemail">Email</label>
-        <input type="email" id="cfemail" placeholder="your@email.com">
+        <input type="email" id="cfemail" name="email" autocomplete="email" placeholder="your@email.com" required>
       </div>
       <div class="cf">
         <label for="cfphone">Phone (optional)</label>
-        <input type="tel" id="cfphone" placeholder="+1 (___) ___-____">
+        <input type="tel" id="cfphone" name="phone" autocomplete="tel" placeholder="+1 (___) ___-____">
       </div>
       <div class="cf">
         <label for="cfsubject">What's this about?</label>
-        <select id="cfsubject">
+        <select id="cfsubject" name="topic">
           <option value="">Select an option</option>
           <option>I want to start planning a trip</option>
           <option>I have a quick question</option>
@@ -107,11 +108,12 @@
       </div>
       <div class="cf">
         <label for="cfmsg">Message</label>
-        <textarea id="cfmsg" placeholder="Tell me what's on your mind — a destination, a timing question, or just an idea you're working through."></textarea>
+        <textarea id="cfmsg" name="message" placeholder="Tell me what's on your mind — a destination, a timing question, or just an idea you're working through." required></textarea>
       </div>
-      <button class="cf-submit" onclick="submitContact()">Send Message</button>
+      <button class="cf-submit" type="submit" id="cfSubmitBtn">Send Message</button>
+      <p id="cfError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:14px" role="alert"></p>
       <p class="cf-note">By submitting you agree to be contacted by Hit Your Mark Travel. No spam, no sharing. Just a reply from Mark.</p>
-    </div>
+    </form>
     <div class="cf-success" id="cfSuccess">
       <div class="cf-success-title">Message received.</div>
       <div class="cf-success-body">Mark will reply within one business day. If it's urgent, call directly at (408) 568-1404.</div>
@@ -150,34 +152,34 @@
   </div>
   <div class="faq-grid">
 
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What do you charge?</div>
-      <div class="faq-a">There's no fee to start planning. We earn a commission from the hotels, operators, and suppliers we book — the same commission you'd forfeit by booking directly, with none of the work and none of the access. For complex itineraries, a planning fee may apply; if so, I'll tell you upfront before we proceed.</div>
+    <div class="faq-item">
+      <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="cfaq-1" id="cfaq-1-q">What do you charge?</button></h3>
+      <div class="faq-a" id="cfaq-1" role="region" aria-labelledby="cfaq-1-q">There's no fee to start planning. We earn a commission from the hotels, operators, and suppliers we book — the same commission you'd forfeit by booking directly, with none of the work and none of the access. For complex itineraries, a planning fee may apply; if so, I'll tell you upfront before we proceed.</div>
     </div>
 
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">How does the process work?</div>
-      <div class="faq-a">We start with a conversation — fifteen minutes by phone or a back-and-forth by email. I ask questions, you answer honestly. From there, I put together a proposal with specific properties, itineraries, and a cost breakdown. You approve, revise, or start over. Nothing gets booked until you're confident it's right.</div>
+    <div class="faq-item">
+      <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="cfaq-2" id="cfaq-2-q">How does the process work?</button></h3>
+      <div class="faq-a" id="cfaq-2" role="region" aria-labelledby="cfaq-2-q">We start with a conversation — fifteen minutes by phone or a back-and-forth by email. I ask questions, you answer honestly. From there, I put together a proposal with specific properties, itineraries, and a cost breakdown. You approve, revise, or start over. Nothing gets booked until you're confident it's right.</div>
     </div>
 
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">How far in advance should I reach out?</div>
-      <div class="faq-a">For most trips, six to twelve months gives us the best options. For safaris, ski chalets, or peak season bookings in popular destinations, twelve to eighteen months is better. That said, I've put together excellent last-minute trips — reach out regardless of timing and we'll tell you honestly what's possible.</div>
+    <div class="faq-item">
+      <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="cfaq-3" id="cfaq-3-q">How far in advance should I reach out?</button></h3>
+      <div class="faq-a" id="cfaq-3" role="region" aria-labelledby="cfaq-3-q">For most trips, six to twelve months gives us the best options. For safaris, ski chalets, or peak season bookings in popular destinations, twelve to eighteen months is better. That said, I've put together excellent last-minute trips — reach out regardless of timing and we'll tell you honestly what's possible.</div>
     </div>
 
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Can you handle any destination?</div>
-      <div class="faq-a">Most of them. I've personally visited destinations across six continents and maintain active relationships with hotels and operators in all of the regions we cover. For a handful of niche destinations, I work with trusted partners who have ground-level expertise. I'll always tell you when that's the case.</div>
+    <div class="faq-item">
+      <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="cfaq-4" id="cfaq-4-q">Can you handle any destination?</button></h3>
+      <div class="faq-a" id="cfaq-4" role="region" aria-labelledby="cfaq-4-q">Most of them. I've personally visited destinations across six continents and maintain active relationships with hotels and operators in all of the regions we cover. For a handful of niche destinations, I work with trusted partners who have ground-level expertise. I'll always tell you when that's the case.</div>
     </div>
 
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What makes you different from booking online?</div>
-      <div class="faq-a">Access, knowledge, and relationships. Booking engines show you what's publicly available at published rates. We access rates and perks through preferred partner programs that aren't bookable directly — room upgrades, complimentary amenities, guaranteed early check-in, and connections with hotel GMs that make a difference when things need adjusting mid-trip.</div>
+    <div class="faq-item">
+      <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="cfaq-5" id="cfaq-5-q">What makes you different from booking online?</button></h3>
+      <div class="faq-a" id="cfaq-5" role="region" aria-labelledby="cfaq-5-q">Access, knowledge, and relationships. Booking engines show you what's publicly available at published rates. We access rates and perks through preferred partner programs that aren't bookable directly — room upgrades, complimentary amenities, guaranteed early check-in, and connections with hotel GMs that make a difference when things need adjusting mid-trip.</div>
     </div>
 
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Who do you typically work with?</div>
-      <div class="faq-a">Professionals and families who value their time more than the hours it would take to research a trip properly. Most clients have a household income well above the national average and have outgrown booking sites — not because they can't use them, but because they've had one mediocre trip too many and decided the alternative is worth it.</div>
+    <div class="faq-item">
+      <h3 class="faq-q-h"><button class="faq-q" type="button" aria-expanded="false" aria-controls="cfaq-6" id="cfaq-6-q">Who do you typically work with?</button></h3>
+      <div class="faq-a" id="cfaq-6" role="region" aria-labelledby="cfaq-6-q">Professionals and families who value their time more than the hours it would take to research a trip properly. Most clients have a household income well above the national average and have outgrown booking sites — not because they can't use them, but because they've had one mediocre trip too many and decided the alternative is worth it.</div>
     </div>
 
   </div>
@@ -196,6 +198,81 @@
     <a href="https://www.linkedin.com/in/mark-sole/" target="_blank" class="social-link">LinkedIn</a>
   </div>
 </div>
+
+
+<!-- ══ CONTACT FORM SUBMIT — Web3Forms, same pattern as plan-your-trip.html -->
+<script>
+(function () {
+  var form = document.getElementById('contactForm');
+  if (!form) return;
+  var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
+  var sending = false;
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (sending) return;
+
+    var fnameEl = document.getElementById('cfname');
+    var emailEl = document.getElementById('cfemail');
+    var msgEl = document.getElementById('cfmsg');
+    var errorEl = document.getElementById('cfError');
+    var submitBtn = document.getElementById('cfSubmitBtn');
+
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+    fnameEl.style.borderColor = 'var(--border-subtle)';
+    emailEl.style.borderColor = 'var(--border-subtle)';
+    msgEl.style.borderColor = 'var(--border-subtle)';
+
+    var valid = true;
+    if (!fnameEl.value.trim()) { fnameEl.style.borderColor = 'var(--gold-500)'; valid = false; }
+    if (!emailEl.value.trim() || !emailOk(emailEl.value.trim())) { emailEl.style.borderColor = 'var(--gold-500)'; valid = false; }
+    if (!msgEl.value.trim()) { msgEl.style.borderColor = 'var(--gold-500)'; valid = false; }
+    if (!valid) {
+      if (emailEl.value.trim() && !emailOk(emailEl.value.trim())) {
+        errorEl.textContent = 'Please enter a valid email address.';
+        errorEl.style.display = 'block';
+      }
+      return;
+    }
+
+    var topic = document.getElementById('cfsubject').value;
+    var name = [fnameEl.value.trim(), document.getElementById('cflname').value.trim()].filter(Boolean).join(' ');
+    var formData = new FormData(form);
+    formData.append('access_key', '94312057-04b8-44d8-a7a8-7cb083d999b8');
+    formData.append('subject', 'HYM Contact — ' + (topic || 'New Message'));
+    formData.append('from_name', 'Hit Your Mark Travel');
+    formData.append('name', name);
+    formData.append('replyto', emailEl.value.trim());
+
+    var originalText = submitBtn.textContent;
+    sending = true;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    try {
+      var response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+      var data = {};
+      try { data = await response.json(); } catch (err) {}
+      if (response.ok && data.success) {
+        form.style.display = 'none';
+        document.getElementById('cfSuccess').classList.add('show');
+        document.getElementById('cfSuccess').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      errorEl.textContent = data.message || 'Something went wrong. Please try again or email mark@hymtravel.com.';
+      errorEl.style.display = 'block';
+    } catch (err) {
+      errorEl.textContent = 'Something went wrong. Please try again or call (408) 568-1404.';
+      errorEl.style.display = 'block';
+    } finally {
+      sending = false;
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
 
 
 <!-- ══ FOOTER ══ -->

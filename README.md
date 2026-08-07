@@ -141,8 +141,10 @@ directly instead — those are the real source now.
 ## Forms
 
 All forms (Plan Your Trip, Contact, newsletter) use [Web3Forms](https://web3forms.com).
-The live access key is already in place across all 87 form-bearing pages and
-submissions have been tested end-to-end — they deliver to mark@hymtravel.com.
+The live access key is wired in exactly three places — `Newsletter.astro` (which
+puts the newsletter form on nearly every page), `plan-your-trip.html`, and
+`contact.html` — and submissions have been tested end-to-end; they deliver to
+mark@hymtravel.com.
 
 Web3Forms access keys are public by design (they ship in client-side HTML), so the
 key lives in the source rather than in an environment variable. To rotate it,
