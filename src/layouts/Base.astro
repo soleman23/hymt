@@ -4,6 +4,7 @@ import Footer from "../components/Footer.astro";
 import Newsletter from "../components/Newsletter.astro";
 import Accordion from "../components/Accordion.astro";
 import Analytics from "../components/Analytics.astro";
+import Schema from "../components/Schema.astro";
 
 interface Props {
   title: string;
@@ -14,10 +15,11 @@ interface Props {
   extraCss?: string;
   showNewsletter?: boolean;
   canonicalPath?: string;
+  /** og:type only. JSON-LD shapes live in src/lib/schema.ts (P2-1). */
   schemaType?: "website" | "article";
-  publishDate?: string;
-  /** ISO date of last substantive update; emitted as Article.dateModified. */
-  modifiedDate?: string;
+  /** JSON-LD node(s) for this page, built with src/lib/schema.ts builders.
+   *  Base knows nothing about schema shapes — it prints what it is handed. */
+  schema?: object | object[];
   /** Hero image URL to preload — the LCP element on every templated page is a
    *  CSS background-image the browser cannot discover until CSSOM is built. */
   preloadImage?: string;
@@ -33,8 +35,7 @@ const {
   showNewsletter = true,
   canonicalPath = "",
   schemaType = "website",
-  publishDate = "",
-  modifiedDate = "",
+  schema = undefined,
   preloadImage = "",
 } = Astro.props;
 
@@ -48,31 +49,6 @@ const site = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "
    duplicate pages. Never "improve" this to include Astro.url.search. */
 const canonical = canonicalPath || Astro.url.pathname;
 const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Your Mark Travel`;
-
-const orgSchema = {
-  "@context": "https://schema.org",
-  "@type": "TravelAgency",
-  "name": "Hit Your Mark Travel",
-  "url": site,
-  "logo": `${site}/assets/logo.png`,
-  "description": "Single-agent luxury travel firm designing bespoke journeys for time-poor, taste-rich travelers.",
-  "telephone": "+1-408-568-1404",
-  "email": "mark@hymtravel.com",
-  "founder": { "@type": "Person", "name": "Mark Sole", "jobTitle": "Founder & Travel Director" },
-  "areaServed": "United States",
-  "sameAs": ["https://www.instagram.com/travelwithsoleman/"]
-};
-
-const articleSchema = schemaType === "article" ? {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": title,
-  "author": { "@type": "Person", "name": "Mark Sole" },
-  "publisher": { "@type": "Organization", "name": "Hit Your Mark Travel", "logo": { "@type": "ImageObject", "url": `${site}/assets/logo.png` } },
-  ...(publishDate ? { "datePublished": publishDate } : {}),
-  ...(publishDate ? { "dateModified": modifiedDate || publishDate } : {}),
-  "mainEntityOfPage": `${site}${canonical}`
-} : null;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -108,8 +84,7 @@ const articleSchema = schemaType === "article" ? {
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/raleway-var.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/dmsans-var.woff2" crossorigin>
 
-<script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
-{articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+{schema && <Schema schema={schema} />}
 
 <style is:global>
   @import "../styles-master.css";

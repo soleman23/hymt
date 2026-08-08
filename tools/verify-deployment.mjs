@@ -30,9 +30,9 @@ const hints = [];
 const fail = (check, detail) => failures.push({ check, detail });
 
 /* Checks whose subject matter is built in a LATER phase register here as
-   warnings until that phase lands, then flip to fail(): schema-required
-   flips in Phase 2 (P2-4); title-length and desc-length flip in Phase 3
-   (P3-1). Flipping = change softFail to fail at the call site. */
+   warnings until that phase lands, then flip to fail(): title-length and
+   desc-length flip in Phase 3 (P3-1). schema-required flipped hard at
+   P2-4. Flipping = change softFail to fail at the call site. */
 const softFailures = [];
 const softFail = (check, phase, detail) => softFailures.push({ check, phase, detail });
 
@@ -85,6 +85,17 @@ for (const { dir, layout, css } of TEMPLATED) {
     }
   }
   notes.push(`${pages.length} ${dir} pages on the shared template`);
+}
+
+/* ── 1b. All JSON-LD routes through Schema.astro (P2-1) ──
+   No page or layout hand-writes a ld+json script tag; the component is the
+   single emission point so the verifier can reason about every node. */
+for (const file of await walk(path.join(ROOT, "src"), (f) => f.endsWith(".astro") || f.endsWith(".ts"))) {
+  if (rel(file) === "src/components/Schema.astro") continue;
+  const src = await readFile(file, "utf8");
+  if (src.includes("application/ld+json")) {
+    fail("schema-source", `${rel(file)} hand-writes a ld+json script — route it through src/components/Schema.astro`);
+  }
 }
 
 /* ── 2. No double-escaped HTML entities ──
@@ -291,8 +302,53 @@ for (const file of htmlFiles) {
       }
     }
   }
+  /* schema-required — flipped hard at P2-4, extended to the full page-type
+     mapping from SCHEMA-LIBRARY.md §4. Every page type must emit its set. */
   if (html.includes('class="breadcrumb') && !schemaTypes.includes("BreadcrumbList")) {
-    softFail("schema-required", "Phase 2 / P2-4", `${url} renders breadcrumbs but emits no BreadcrumbList`);
+    fail("schema-required", `${url} renders breadcrumbs but emits no BreadcrumbList`);
+  }
+  if (!is404) {
+    const required =
+      url === "/" ? ["TravelAgency", "WebPage"] :
+      url === "/about/" ? ["Person", "AboutPage", "BreadcrumbList"] :
+      url === "/contact/" || url === "/plan-your-trip/" ? ["ContactPage", "BreadcrumbList"] :
+      url === "/destinations/" || url === "/experiences/" || url === "/travel-journal/"
+        ? ["CollectionPage", "BreadcrumbList"] :
+      url === "/faq/" ? ["FAQPage", "BreadcrumbList"] :
+      url === "/privacy-policy/" || url === "/terms-and-conditions/" ? ["WebPage", "BreadcrumbList"] :
+      url.startsWith("/destinations/") ? ["WebPage", "BreadcrumbList", "TouristDestination"] :
+      url.startsWith("/experiences/") ? ["WebPage", "BreadcrumbList", "Service"] :
+      url.startsWith("/travel-journal/") ? ["Article", "BreadcrumbList"] :
+      [];
+    for (const t of required) {
+      if (!schemaTypes.includes(t)) {
+        fail("schema-required", `${url} must emit ${t} (page-type mapping, SCHEMA-LIBRARY §4)`);
+      }
+    }
+    /* Types the plan forbids outright — see SCHEMA-LIBRARY §4 "Never emit". */
+    for (const t of ["AggregateRating", "SearchAction", "HowTo", "Product", "Offer"]) {
+      if (schemaTypes.includes(t)) {
+        fail("schema-required", `${url} emits forbidden type ${t} (SCHEMA-LIBRARY §4 "Never emit")`);
+      }
+    }
+  }
+
+  /* faq-count (P2-5): wherever a page-faq block renders, the FAQPage node
+     must exist and carry exactly one Question per pf-item. A silent zero or
+     a mismatch means the build-time extractFaq() parser broke. */
+  if (html.includes("page-faq")) {
+    const pfItems = (html.match(/class="pf-item"/g) ?? []).length;
+    let questions = 0;
+    for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)) {
+      try {
+        for (const node of [].concat(JSON.parse(m[1]))) {
+          if (node["@type"] === "FAQPage") questions += (node.mainEntity ?? []).length;
+        }
+      } catch { /* already reported by schema-valid */ }
+    }
+    if (questions === 0 || questions !== pfItems) {
+      fail("faq-count", `${url} renders ${pfItems} pf-item blocks but FAQPage carries ${questions} questions — extractFaq() and the markup disagree`);
+    }
   }
 
   /* title-length / desc-length — quality bounds from the content standards */

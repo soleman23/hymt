@@ -14,6 +14,7 @@
  * The hub at /experiences/ is a different page type and is not on this layout.
  */
 import Base from "./Base.astro";
+import { breadcrumbs, extractFaq, faq, plain, service, webPage } from "../lib/schema";
 // section-shared.css must stay first: experience.css overrides .intro-content
 // and .seasons-grid from it, and later source order is what makes that work.
 import "../styles/section-shared.css";
@@ -42,6 +43,28 @@ interface Props {
 
 const { title, description, ogImage, canonicalPath, schemaType, name, hero } = Astro.props;
 const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
+
+/* ── JSON-LD (P2-4/P2-5) — same pattern as DestinationLayout ── */
+const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
+const path = canonicalPath || Astro.url.pathname;
+const trail = [
+  { name: "Home", path: "/" },
+  { name: "Experiences", path: "/experiences/" },
+  { name },
+];
+const bodyHtml = await Astro.slots.render("default");
+const faqPairs = extractFaq(bodyHtml);
+const schema = [
+  breadcrumbs(SITE, trail.map((c) => ({ ...c, name: plain(c.name) }))),
+  webPage(SITE, { name: plain(name), description: description ?? "", path }),
+  service(SITE, {
+    name: plain(name),
+    serviceType: plain(name),
+    description: description ?? "",
+    path,
+  }),
+  faqPairs.length ? faq(faqPairs) : null,
+].filter(Boolean);
 ---
 <Base
   title={title}
@@ -49,16 +72,21 @@ const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined
   ogImage={ogImage}
   canonicalPath={canonicalPath}
   schemaType={schemaType}
+  schema={schema}
   preloadImage={hero.image}
   active="experiences"
 >
+  {/* Rendered from the SAME trail array the BreadcrumbList schema uses. */}
   <div class="breadcrumb">
     <div class="breadcrumb__inner">
-      <a class="breadcrumb__link" href="/">Home</a>
-      <span class="breadcrumb__sep">&rsaquo;</span>
-      <a class="breadcrumb__link" href="/experiences/">Experiences</a>
-      <span class="breadcrumb__sep">&rsaquo;</span>
-      <span class="breadcrumb__current" set:html={name} />
+      {trail.map((c, i) => (
+        <>
+          {i > 0 && <span class="breadcrumb__sep">&rsaquo;</span>}
+          {i < trail.length - 1
+            ? <a class="breadcrumb__link" href={c.path} set:html={c.name} />
+            : <span class="breadcrumb__current" set:html={c.name} />}
+        </>
+      ))}
     </div>
   </div>
 
@@ -83,5 +111,7 @@ const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined
     </div>
   </section>
 
-  <slot />
+  {/* The slot was already rendered above for FAQ extraction — emit that
+      capture rather than rendering the content a second time. */}
+  <Fragment set:html={bodyHtml} />
 </Base>

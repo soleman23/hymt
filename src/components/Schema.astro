@@ -1,0 +1,20 @@
+---
+/**
+ * Schema — the only place the site emits JSON-LD.
+ *
+ * Takes one object or an array of objects and prints each as its own
+ * <script type="application/ld+json">. Separate scripts rather than an
+ * @graph array: a syntax error in one node then cannot take the others
+ * down with it, and tools/verify-deployment.mjs can JSON.parse each block
+ * independently to tell you which page and which node broke.
+ *
+ * Do not hand-write a ld+json <script> anywhere else. The verifier fails
+ * the build if it finds one outside this component.
+ */
+interface Props { schema: object | object[] }
+const { schema } = Astro.props;
+const blocks = Array.isArray(schema) ? schema.filter(Boolean) : [schema];
+---
+{blocks.map((b) => (
+  <script type="application/ld+json" set:html={JSON.stringify(b)} />
+))}

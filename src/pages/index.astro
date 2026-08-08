@@ -1,10 +1,29 @@
 ---
 import Base from "../layouts/Base.astro";
 import Content from "../content-pages/home.html?raw";
+import { organization, webPage } from "../lib/schema";
+
+/* P2-2: the FULL TravelAgency node lives here and only here — every other
+   page references it by @id. Address per DECISIONS.md D3 (city/region only),
+   memberOf per D2. sameAs lists only profiles that actually exist; the
+   Google Business Profile URL joins it once D4 creates the profile. */
+const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
+const title = "Hit Your Mark Travel — Bespoke Luxury Journeys";
+const description =
+  "Hit Your Mark Travel designs bespoke journeys for the time-poor, taste-rich traveler. A lifetime of experience. A global network. And someone who actually picks up the phone.";
+const schema = [
+  organization(SITE, {
+    address: { locality: "Bend", region: "OR", country: "US" },
+    memberOf: ["Travel Leaders Network"],
+    sameAs: ["https://www.instagram.com/travelwithsoleman/"],
+  }),
+  webPage(SITE, { name: title, description, path: "/" }),
+];
 ---
 <Base
-  title="Hit Your Mark Travel — Bespoke Luxury Journeys"
-  description="Hit Your Mark Travel designs bespoke journeys for the time-poor, taste-rich traveler. A lifetime of experience. A global network. And someone who actually picks up the phone."
+  title={title}
+  description={description}
+  schema={schema}
   preloadImage="/assets/img/h-01-maldives-aerial.jpg"
   active=""
 >
