@@ -23,3 +23,11 @@ without updating this file in the same commit.
 - **D4 sequencing:** GBP is the only legitimate route to review stars
   (self-controlled reviews are ineligible per Google policy) — create it before
   the launch-week press/directory pushes in #38.
+- **P1-4 logo decision (Mark, 2026-08-07):** the 53 `mark-note__photo` slots
+  keep the site logo for launch — a conscious decision closing #15, not an
+  oversight. The images carry `alt="Hit Your Mark Travel"` (accurate: it is
+  the logo) plus full intrinsic attributes, enforced by the verifier's
+  `img-attrs` check. If a real photo of Mark arrives later it enters through
+  the image pipeline and replaces the logo in one pass; D5's
+  photo-is-publishable answer still stands for the About page and the P2-3
+  `Person` schema.
