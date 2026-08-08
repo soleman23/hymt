@@ -559,7 +559,7 @@ Contact: mark@hymtravel.com · +1 408 568 1404
 - [FAQ](https://www.hymtravel.com/faq/): fees, process, what is and is not included
 - [Destinations](https://www.hymtravel.com/destinations/): 42 destination guides across nine regions
 - [Experiences](https://www.hymtravel.com/experiences/): 12 trip types
-- [Travel Journal](https://www.hymtravel.com/travel-journal/): 29 first-hand field reports and planning guides
+- [Travel Journal](https://www.hymtravel.com/travel-journal/): 29 property assessments and planning guides
 
 ## Optional
 

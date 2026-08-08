@@ -114,9 +114,12 @@ nobody can copy Mark's actual trips.
 | Amanjiwo — honest assessment | Experiential | `/travel-journal/amanjiwo-field-report/` |
 | Singita Grumeti — what you're paying for | Experiential | `/travel-journal/singita-grumeti-field-report/` |
 
-**Add 4–6 more field reports per year.** They are the most defensible content
-type on the site and the cheapest for Mark to produce, because he is already
-taking the trips.
+**Add 4–6 more field reports per year — but only from trips that happened.**
+The format is the most defensible content type on the site precisely because
+it is first-hand, which is also why it is the most damaging when it is not.
+The six existing ones were written without a trip behind them; two claimed a
+dated stay and were reframed as property assessments in e6b13f3 and its
+follow-up. Do not commission another until Mark has a trip to write up.
 
 ### Cluster E — Advisor value and comparison `P2`
 
