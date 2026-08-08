@@ -30,9 +30,10 @@ const hints = [];
 const fail = (check, detail) => failures.push({ check, detail });
 
 /* Checks whose subject matter is built in a LATER phase register here as
-   warnings until that phase lands, then flip to fail(): title-length and
-   desc-length flip in Phase 3 (P3-1). schema-required flipped hard at
-   P2-4. Flipping = change softFail to fail at the call site. */
+   warnings until that phase lands, then flip to fail(). All have now
+   flipped: schema-required at P2-4, title-length and desc-length at P3-1.
+   The mechanism stays for future phases — call softFail(check, phase, detail)
+   for a check whose subject matter does not exist yet. */
 const softFailures = [];
 const softFail = (check, phase, detail) => softFailures.push({ check, phase, detail });
 
@@ -165,6 +166,20 @@ for (const p of ogMissing) {
    generated-page change can alter them invisibly. Intentional edits are
    accepted with --update-baseline. */
 const pick = (html, re) => (html.match(re)?.[1] ?? "").trim();
+
+/* Decode the entities Astro emits, so length checks measure the string a
+   human and a search engine actually see. Without this `&#38;` scores 5
+   characters instead of 1 and falsely fails compliant titles (P3-1 found
+   /destinations/spain/ and /destinations/uk-ireland/ flagged this way).
+   Baseline comparison deliberately still uses the RAW string — it is a
+   change-detector, and decoding there would hide a real encoding change. */
+const decodeEntities = (s) => s
+  .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(+d))
+  .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
+  .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+  .replace(/&mdash;/g, "—").replace(/&ndash;/g, "–")
+  .replace(/&rsquo;/g, "’").replace(/&lsquo;/g, "‘")
+  .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 const heads = {};
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
@@ -351,14 +366,15 @@ for (const file of htmlFiles) {
     }
   }
 
-  /* title-length / desc-length — quality bounds from the content standards */
-  const title = pick(html, /<title>([\s\S]*?)<\/title>/i);
-  if (title.length < 30 || title.length > 65) {
-    softFail("title-length", "Phase 3 / P3-1", `${url} title is ${title.length} chars: ${title.slice(0, 70)}`);
+  /* title-length / desc-length — quality bounds from the content standards.
+     Hard since P3-1. Measured on the DECODED string: see decodeEntities. */
+  const title = decodeEntities(pick(html, /<title>([\s\S]*?)<\/title>/i));
+  if (!is404 && (title.length < 30 || title.length > 65)) {
+    fail("title-length", `${url} title is ${title.length} chars (need 30-65): ${title}`);
   }
-  const desc = pick(html, /<meta name="description" content="([^"]*)"/i);
+  const desc = decodeEntities(pick(html, /<meta name="description" content="([^"]*)"/i));
   if (!is404 && (desc.length < 110 || desc.length > 165)) {
-    softFail("desc-length", "Phase 3 / P3-1", `${url} description is ${desc.length} chars`);
+    fail("desc-length", `${url} description is ${desc.length} chars (need 110-165)`);
   }
 
   /* internal-links: every same-site href must resolve to something in dist */
