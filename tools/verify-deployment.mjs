@@ -281,6 +281,15 @@ for (const file of htmlFiles) {
     } catch {
       fail("schema-valid", `${url} has an application/ld+json block that does not JSON.parse`);
     }
+    /* canonical-host, JSON-LD leg: self-referential URLs must use the
+       production host. External URLs (sameAs profiles etc.) are legitimate,
+       so only a wrong version of our own host fails: bare/apex/http
+       hymtravel.com, or a hostingersite.com staging leak. */
+    for (const u of m[1].match(/https?:\/\/[^"\\\s]+/g) ?? []) {
+      if ((/\bhymtravel\.com/i.test(u) && !u.startsWith(SITE)) || /hostingersite\.com/i.test(u)) {
+        fail("canonical-host", `${url} JSON-LD URL ${u} — site URLs in schema must start with ${SITE}`);
+      }
+    }
   }
   if (html.includes('class="breadcrumb') && !schemaTypes.includes("BreadcrumbList")) {
     softFail("schema-required", "Phase 2 / P2-4", `${url} renders breadcrumbs but emits no BreadcrumbList`);
