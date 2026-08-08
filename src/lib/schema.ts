@@ -58,8 +58,10 @@ export function organization(site: string, opts: {
         addressCountry: opts.address.country,
       },
     }),
+    /* No top-level availableLanguage: schema.org does not define it on
+       Organization/TravelAgency (validator.schema.org warns). It lives on
+       the contactPoint below, where it is a recognized property. */
     areaServed: { '@type': 'Country', name: 'United States' },
-    availableLanguage: 'en-US',
     knowsAbout: [
       'Luxury travel planning', 'African safari', 'Polar expedition cruising',
       'Antarctica travel', 'Italy travel', 'Japan travel', 'French Polynesia',
