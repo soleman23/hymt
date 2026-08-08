@@ -485,6 +485,61 @@
     "bytes": 30154
   },
   {
+    "b64": "images-b64/assets__img__africa-south-africa.jpg.b64",
+    "target": "public/assets/img/africa-south-africa.jpg",
+    "bytes": 298000
+  },
+  {
+    "b64": "images-b64/assets__img__africa-zambia-and-victoria-falls.jpg.b64",
+    "target": "public/assets/img/africa-zambia-and-victoria-falls.jpg",
+    "bytes": 283896
+  },
+  {
+    "b64": "images-b64/assets__img__africa-morocco.jpg.b64",
+    "target": "public/assets/img/africa-morocco.jpg",
+    "bytes": 366401
+  },
+  {
+    "b64": "images-b64/assets__img__alaska-denali-national-park.jpg.b64",
+    "target": "public/assets/img/alaska-denali-national-park.jpg",
+    "bytes": 270072
+  },
+  {
+    "b64": "images-b64/assets__img__alaska-inside-passage-and-southeast.jpg.b64",
+    "target": "public/assets/img/alaska-inside-passage-and-southeast.jpg",
+    "bytes": 253777
+  },
+  {
+    "b64": "images-b64/assets__img__alaska-kenai-peninsula.jpg.b64",
+    "target": "public/assets/img/alaska-kenai-peninsula.jpg",
+    "bytes": 357447
+  },
+  {
+    "b64": "images-b64/assets__img__alaska-prince-william-sound.jpg.b64",
+    "target": "public/assets/img/alaska-prince-william-sound.jpg",
+    "bytes": 247778
+  },
+  {
+    "b64": "images-b64/assets__img__alaska-kodiak-island.jpg.b64",
+    "target": "public/assets/img/alaska-kodiak-island.jpg",
+    "bytes": 330993
+  },
+  {
+    "b64": "images-b64/assets__img__alaska-arctic-alaska-and-northern-lights.jpg.b64",
+    "target": "public/assets/img/alaska-arctic-alaska-and-northern-lights.jpg",
+    "bytes": 292822
+  },
+  {
+    "b64": "images-b64/assets__img__uk-ireland-the-highlands-and-skye.jpg.b64",
+    "target": "public/assets/img/uk-ireland-the-highlands-and-skye.jpg",
+    "bytes": 288154
+  },
+  {
+    "b64": "images-b64/assets__img__uk-ireland-the-wild-atlantic-way.jpg.b64",
+    "target": "public/assets/img/uk-ireland-the-wild-atlantic-way.jpg",
+    "bytes": 320073
+  },
+  {
     "b64": "images-b64/assets__og-default.jpg.b64",
     "target": "public/assets/og-default.jpg",
     "bytes": 56216
