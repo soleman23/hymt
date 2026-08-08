@@ -242,13 +242,21 @@ for (const file of htmlFiles) {
     }
   }
 
-  /* canonical-host: nothing may point anywhere but the production host. */
+  /* canonical-host: nothing may point anywhere but the production host.
+     canonical-query (P1-7/F14): canonicals must never carry a query string.
+     /plan-your-trip/?type=group is the SAME page as /plan-your-trip/ —
+     Base.astro deliberately derives canonicals from Astro.url.pathname,
+     which has no .search. If canonical-query fires, someone "improved"
+     that derivation. */
   for (const [what, val] of [
     ["canonical", pick(html, /<link rel="canonical" href="([^"]*)"/i)],
     ["og:url", pick(html, /<meta property="og:url" content="([^"]*)"/i)],
   ]) {
     if (val && !val.startsWith(SITE)) {
       fail("canonical-host", `${url} ${what} is ${val} — must start with ${SITE}`);
+    }
+    if (val && val.includes("?")) {
+      fail("canonical-query", `${url} ${what} carries a query string: ${val}`);
     }
   }
 

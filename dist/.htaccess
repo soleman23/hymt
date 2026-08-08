@@ -6,15 +6,20 @@
 # ── Force HTTPS (after free SSL is active in hPanel) ──
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteCond %{HTTPS} off
-  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # Force apex → www.hymtravel.com (the canonical host used by every
   # <link rel="canonical">, og:url and sitemap entry on the site).
   # Scoped to hymtravel.com on purpose: a blanket www rule would send
   # preview domains (*.hostingersite.com) to a hostname that does not exist.
+  # MUST run before the HTTPS rule (P1-7): it targets https://www. directly,
+  # so http://hymtravel.com reaches the canonical host in ONE 301. With the
+  # HTTPS rule first, http://hymtravel.com would take two hops
+  # (→ https://hymtravel.com → https://www.hymtravel.com).
   RewriteCond %{HTTP_HOST} ^hymtravel\.com$ [NC]
   RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
+
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # Pretty directory URLs: /about → /about/ → /about/index.html
   RewriteCond %{REQUEST_FILENAME} !-f
