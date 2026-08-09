@@ -292,6 +292,11 @@
   letter-spacing:.14em;text-transform:uppercase;color:rgba(138,155,176,.25);
   padding:16px;text-align:center;
 }
+/* Photo variant, matching .intro-image--photo: a real photograph replaces the
+   flat placeholder and its caption text comes out of the markup. The panel
+   renders ~289x500 (0.58) beside the copy column, so a 9:16 portrait source
+   fills it with almost no crop. */
+.itin-image--photo { background-size:cover;background-position:center;padding:0 }
 .itin-body { padding:32px 28px;display:flex;flex-direction:column;justify-content:center }
 .itin-duration {
   font-family:var(--font-d);font-size:9px;font-weight:700;
