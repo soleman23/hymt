@@ -166,6 +166,33 @@
   font-family:var(--font-b);font-size:13px;color:var(--silver-300);
   line-height:1.55;margin-bottom:12px;
 }
+
+/* ── Opt-in row alignment: .places-grid--even ──
+   The card body is bottom-anchored, so the pills already line up across a
+   row. What shifts is the top of the text block: a one-line name sits lower
+   than a two-line one, and two descriptions of the same word count still
+   wrap to different line counts as the column narrows. Reserving a fixed
+   height for both holds the eyebrow, name and copy on one baseline at every
+   breakpoint.
+
+   Opt-in rather than global on purpose. Both reservations cost something on
+   a grid that does not need them: the name floor adds slack under the eyebrow
+   on the pages where every card name is one line, and the description floor
+   opens a gap between the copy and the pills on the pages whose card copy
+   runs short — about a third of the destination pages are written that way.
+   Add this modifier only to a grid whose cards are written to a common
+   length, and check the rows at 768px and up before shipping it. */
+.places-grid--even .place-card__name {
+  /* Two lines. The line-height is pinned here rather than on .place-card__name
+     because 2.3em only equals two lines if the line-height is known, and a
+     grid that has not opted in must keep the inherited one. A floor, not a
+     clamp — a name needing three lines still grows. Bottom-aligned so the
+     slack sits above the name toward the eyebrow, not as a gap between the
+     name and the description below it. */
+  line-height:1.15;min-height:2.3em;display:flex;align-items:flex-end;
+}
+/* Seven lines (7 x 1.55 line-height). */
+.places-grid--even .place-card__desc { min-height:10.85em }
 .place-card__tags { display:flex;gap:6px;flex-wrap:wrap }
 .place-tag {
   font-family:var(--font-d);font-size:8px;font-weight:700;
