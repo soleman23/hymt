@@ -181,7 +181,16 @@
    opens a gap between the copy and the pills on the pages whose card copy
    runs short — about a third of the destination pages are written that way.
    Add this modifier only to a grid whose cards are written to a common
-   length, and check the rows at 768px and up before shipping it. */
+   length, and check the rows at 768px and up before shipping it.
+
+   The two reservations are deliberately one modifier rather than two. The
+   name floor is no use on its own: everything above the pills shifts with the
+   copy, so ragged names only matter once the descriptions already land on a
+   common line count. Measuring the ten short-copy destination grids at 1440,
+   1280, 800 and 768px found no page where that held at every width — a grid
+   whose copy reads even at one width straddles a wrap boundary at the next.
+   Evening the copy is what makes a grid a candidate; the CSS cannot do it
+   alone. */
 .places-grid--even .place-card__name {
   /* Two lines. The line-height is pinned here rather than on .place-card__name
      because 2.3em only equals two lines if the line-height is known, and a
