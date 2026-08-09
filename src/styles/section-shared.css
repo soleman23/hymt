@@ -199,6 +199,24 @@
 .page-faq__more-link:hover { gap:10px }
 .page-faq__more-link::after { content:'→' }
 
+/* ── ANSWER CAPSULE (P3-2) ──
+   40–70 words directly under the first <h2> on every destination and
+   experience page: the page's core question answered factually, with at least
+   one number in it. Not a hook — the answer. This is the paragraph a reader
+   scanning decides on and the one an answer engine quotes, so it is set
+   slightly larger than the body copy that follows and carries a gold rule to
+   mark it as the lede rather than the first of several paragraphs.
+
+   Applies to both intro variants: .intro-section (53 pages) and
+   .dest-intro (/maldives/). */
+.answer-capsule {
+  font-family:var(--font-b);font-size:16px;line-height:1.8;
+  color:var(--text-primary);
+  border-left:2px solid var(--border-gold);
+  padding-left:22px;margin-bottom:26px;
+}
+@media (max-width:768px) { .answer-capsule { font-size:15px;padding-left:16px } }
+
 /* ── READ MORE FROM THE JOURNAL (P3-6) ──
    The return half of the hub-and-spoke. Journal posts link down into the
    section pages through their "Plan Your Trip" callout; this block links back
