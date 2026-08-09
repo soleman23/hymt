@@ -382,6 +382,41 @@ for (const file of htmlFiles) {
     if (!m[1].startsWith("//") && !(await linkResolves(m[1]))) deadLinks.add(m[1]);
   }
 
+  /* internal-link-floor (P3-6, finding F17): the hub-and-spoke, enforced.
+     Journal posts were terminal nodes — 18 of the 29 carried no outbound link
+     into the rest of the site at all, so the journal absorbed authority and
+     returned none of it. CONTENT-STANDARDS § 7 sets the floor at two, both
+     ways. The return leg is checked too because it is the half that rots
+     silently when a content page is regenerated from a tool in tools/.
+     Distinct hrefs only: three links to the same page is one link. The three
+     hub pages are exempt — they are index pages, not spokes.
+
+     Counted inside <main> ONLY. Footer.astro carries nine regional hubs and
+     six experience pages on every page of the site, so a whole-document count
+     scores every journal post at 15 before it links to anything — a check
+     that cannot fail, which is worse than no check. The first version of this
+     one had exactly that bug. */
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] ?? "";
+  const distinctHrefs = (re) => new Set([...main.matchAll(re)].map((m) => m[1])).size;
+  const HUBS = ["/travel-journal/", "/destinations/", "/experiences/"];
+  if (!is404 && !HUBS.includes(url)) {
+    if (!main) fail("internal-link-floor", `${url} has no <main> element to count internal links in`);
+    if (url.startsWith("/travel-journal/")) {
+      const n = distinctHrefs(/<a\b[^>]+href="(\/(?:destinations|experiences)\/[^"#?]+\/)"/gi);
+      if (n < 2) {
+        fail("internal-link-floor",
+          `${url} links out to ${n} destination/experience page${n === 1 ? "" : "s"} — CONTENT-STANDARDS § 7 requires 2`);
+      }
+    }
+    if (url.startsWith("/destinations/") || url.startsWith("/experiences/")) {
+      const n = distinctHrefs(/<a\b[^>]+href="(\/travel-journal\/[^"#?]+\/)"/gi);
+      if (n < 2) {
+        fail("internal-link-floor",
+          `${url} links to ${n} journal post${n === 1 ? "" : "s"} — CONTENT-STANDARDS § 7 requires 2 in a Read more block`);
+      }
+    }
+  }
+
   /* accordion-a11y: the P0-1 contract, kept honest forever */
   for (const m of html.matchAll(/<button\b[^>]*class="[^"]*\b(?:pf-q|faq-q)\b[^"]*"[^>]*>/gi)) {
     if (!/aria-expanded=/.test(m[0]) || !/aria-controls=/.test(m[0])) {

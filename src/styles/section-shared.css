@@ -199,6 +199,56 @@
 .page-faq__more-link:hover { gap:10px }
 .page-faq__more-link::after { content:'→' }
 
+/* ── READ MORE FROM THE JOURNAL (P3-6) ──
+   The return half of the hub-and-spoke. Journal posts link down into the
+   section pages through their "Plan Your Trip" callout; this block links back
+   out, and it is the last thing on every destination and experience page —
+   after the FAQ, per SEO-AIO-PLAN § P3-6.
+
+   Deliberately text-only. The journal's own .article-card carries a
+   photograph; repeating that here would compete with the FAQ above it and
+   would mean sourcing 54 more crops.
+
+   Sits on --bg-page, one step down from the FAQ's --bg-surface directly above
+   it. Both on --bg-surface reads as a single flat wall with a hairline in it;
+   the tone change is what separates the two blocks. */
+.read-more { padding:72px 52px;background:var(--bg-page) }
+.read-more__header { max-width:640px;margin-bottom:32px }
+.read-more__label {
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-500);margin-bottom:12px;
+}
+.read-more__title {
+  font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;
+  letter-spacing:-.02em;color:var(--text-primary);
+}
+.read-more__grid { display:grid;grid-template-columns:repeat(3,1fr);gap:3px }
+.read-more__card {
+  display:flex;flex-direction:column;gap:10px;padding:26px 28px;
+  background:var(--bg-elevated);border:1px solid var(--border-subtle);
+  text-decoration:none;transition:border-color .2s;
+}
+.read-more__card:hover { border-color:var(--border-gold) }
+.read-more__cat {
+  font-family:var(--font-d);font-size:9px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold-500);
+}
+.read-more__name {
+  font-family:var(--font-d);font-size:15px;font-weight:700;
+  color:var(--text-primary);line-height:1.35;
+}
+.read-more__desc {
+  font-family:var(--font-b);font-size:13px;color:var(--text-muted);line-height:1.65;
+}
+.read-more__cue {
+  margin-top:auto;padding-top:6px;
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);
+  display:inline-flex;align-items:center;gap:6px;transition:gap .15s;
+}
+.read-more__card:hover .read-more__cue { gap:10px }
+.read-more__cue::after { content:'→' }
+
 /* ── RESPONSIVE ──
    Base rules must precede their @media overrides in this file, and each
    section sheet loads after this one — so a section's own media block
@@ -213,4 +263,6 @@
 @media (max-width:768px) {
   .pf-grid { grid-template-columns:1fr }
   .page-faq { padding:64px 28px }
+  .read-more { padding:56px 28px }
+  .read-more__grid { grid-template-columns:1fr }
 }

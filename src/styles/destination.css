@@ -463,6 +463,18 @@
   letter-spacing:.2em;text-transform:uppercase;color:var(--gold-500);margin-bottom:4px;
 }
 .related-card__name { font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--cream-100) }
+/* The link back up to the regional hub (P3-6). CONTENT-STANDARDS § 7 is
+   explicit that the breadcrumb does not count as the child→hub link, so every
+   individual destination carries this in body copy. */
+.related-more { margin-top:32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap }
+.related-more__label { font-family:var(--font-b);font-size:14px;color:var(--text-muted) }
+.related-more__link {
+  font-family:var(--font-d);font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);
+  text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:gap .15s;
+}
+.related-more__link:hover { gap:10px }
+.related-more__link::after { content:'→' }
 
 /* ── CLOSING CTA ──
    Default is the centred block used across the destination set.
