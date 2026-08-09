@@ -223,6 +223,57 @@
 }
 .place-card:hover .place-card__arrow { opacity:1 }
 
+/* ── Opt-in photo panel: .places-grid--photo ──
+   The brand toolkit treatment. The photograph stops being a background
+   underneath the copy and takes its own 3:2 panel at full brightness; the
+   copy moves to a solid navy panel below it. No scrim, no opacity crush.
+
+   Opt-in for one reason, and it is not stylistic: the layout only works on a
+   grid where every card has a real photograph. 181 of the 230 place cards
+   across the destination pages are still a flat colour swatch carrying the
+   text "Destination Photography · <place>", which today sits invisibly
+   behind the scrim with the copy on top of it. Take the darkening away and
+   that placeholder becomes the loudest element on the card. Add this
+   modifier only once every card in the grid has an image.
+
+   Row minimum is dropped: the photo panel is a fixed ratio and the footer is
+   pinned, so a 280px floor can only add slack below the CTA. */
+.places-grid--photo { grid-auto-rows:auto }
+.places-grid--photo .place-card { justify-content:flex-start;background:var(--navy-800) }
+/* aspect-ratio holds the 3:2 panel at every column width; object-fit keeps a
+   source that is not exactly 3:2 from distorting rather than cropping. The
+   hover scale is the same motion the background version had — it stays clear
+   of the copy because .place-card__body is already position:relative;z-index:1,
+   which paints it above the transformed image. */
+.places-grid--photo .place-card__img {
+  display:block;width:100%;aspect-ratio:3/2;object-fit:cover;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.places-grid--photo .place-card:hover .place-card__img { transform:scale(1.04) }
+/* Solid, and deliberately a fixed navy rather than var(--bg-card): the card
+   copy is cream-on-dark in both themes today, and the light theme would flip
+   the panel out from under it. */
+.places-grid--photo .place-card__body {
+  flex:1;display:flex;flex-direction:column;
+  padding:24px;background:var(--navy-800);
+  border-top:1px solid transparent;
+}
+/* The pinning. Everything above is free to run to whatever length the copy
+   needs; the tag row takes the slack, so tags and the CTA land on the same
+   baseline across a row no matter how the paragraphs wrap. */
+.places-grid--photo .place-card__tags { margin-top:auto;padding-top:14px }
+/* Out of the corner and into the flow, and always visible — the absolute,
+   hover-only version had no way to appear on touch. */
+.places-grid--photo .place-card__arrow {
+  position:static;opacity:1;padding:0 24px 24px;background:var(--navy-800);
+}
+/* The description floor is what .places-grid--even reserves to line the pill
+   rows up. A pinned footer does that directly, so the reservation would only
+   open dead space between the copy and the tags. The name floor stays: the
+   panel gives every name a common top edge, and holding two lines keeps the
+   descriptions under them on one baseline too. */
+.places-grid--photo .place-card__desc { min-height:0;margin-bottom:0 }
+
 /* ── ITINERARIES ── */
 .itineraries-section {
   padding:72px 52px;background:var(--bg-surface);
