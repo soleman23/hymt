@@ -217,6 +217,59 @@
 }
 @media (max-width:768px) { .answer-capsule { font-size:15px;padding-left:16px } }
 
+/* ── WHAT IT COSTS (P3-3) ──
+   Every destination and experience page carries this block as an HTML
+   comment until Mark's verified figures land (see docs/seo/figures-worksheet.md).
+   The rules ship ahead of the content deliberately: uncommenting a filled-in
+   block is then a one-step operation with no styling work attached to it, and
+   no page can end up rendering a costs section that has been styled ad hoc.
+
+   Do not delete these rules because "nothing uses them" — 54 pages are
+   waiting on them. */
+.cost-range {
+  padding:72px 52px;background:var(--bg-surface);
+  border-top:1px solid var(--border-subtle);
+}
+.cost-range__header { max-width:640px;margin-bottom:32px }
+.cost-range__label {
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-500);margin-bottom:12px;
+}
+.cost-range__title {
+  font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;
+  letter-spacing:-.02em;color:var(--text-primary);
+}
+.cost-range__figure {
+  font-family:var(--font-d);font-size:clamp(24px,3vw,34px);font-weight:700;
+  color:var(--gold-500);line-height:1.2;margin-bottom:8px;
+}
+.cost-range__basis { font-family:var(--font-b);font-size:14px;color:var(--text-muted);margin-bottom:28px }
+.cost-range__grid { display:grid;grid-template-columns:repeat(2,1fr);gap:3px;margin-bottom:28px }
+.cost-range__col {
+  padding:24px 28px;background:var(--bg-elevated);border:1px solid var(--border-subtle);
+}
+.cost-range__col-label {
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);margin-bottom:12px;
+}
+.cost-range__list { list-style:none;margin:0;padding:0 }
+.cost-range__list li {
+  font-family:var(--font-b);font-size:14px;color:var(--text-secondary);
+  line-height:1.65;padding:6px 0 6px 18px;position:relative;
+}
+.cost-range__list li::before { content:'·';position:absolute;left:4px;color:var(--gold-500) }
+.cost-range__drivers { margin-bottom:24px }
+.cost-range__drivers .cost-range__col-label { margin-bottom:10px }
+.cost-range__note {
+  font-family:var(--font-b);font-size:13px;color:var(--text-muted);
+  line-height:1.7;border-left:2px solid var(--border-subtle);padding-left:18px;
+}
+.cost-range__note a { color:var(--gold-500) }
+@media (max-width:768px) {
+  .cost-range { padding:56px 28px }
+  .cost-range__grid { grid-template-columns:1fr }
+}
+
 /* ── READ MORE FROM THE JOURNAL (P3-6) ──
    The return half of the hub-and-spoke. Journal posts link down into the
    section pages through their "Plan Your Trip" callout; this block links back
