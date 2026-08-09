@@ -417,6 +417,34 @@ for (const file of htmlFiles) {
     }
   }
 
+  /* testimonial-attribution (P3-7, folded into #67) ──
+     Google's policy is explicit: where the entity controls the reviews about
+     itself, its pages are ineligible for star review features, and attempting
+     the markup is a structured-data violation rather than a shortcut. The
+     AggregateRating half of that is already banned outright in the forbidden
+     @type list above. This is the other half: a quote that ships must name who
+     said it.
+
+     All 53 sample testimonials were removed in 5879a18 and each slot is now a
+     NEEDS MARK comment, so this currently guards exactly one real quote — the
+     Brian S. one, which lives in two different components. It exists for when
+     the real quotes arrive: an unattributed testimonial is the failure mode
+     worth catching, and it is not one anybody would notice by eye across 53
+     pages. */
+  for (const [cls, attrCls] of [
+    ["testimonial-section", "testimonial-attr"],
+    ["testimonial-card", "testimonial-card__name"],
+    ["pull-quote", "pull-quote__attr"],
+  ]) {
+    if (!html.includes(`class="${cls}"`)) continue;
+    const attr = html.match(new RegExp(`class="${attrCls}"[^>]*>([\\s\\S]*?)<`))?.[1] ?? "";
+    if (!attr.replace(/&nbsp;|\s/g, "")) {
+      fail("testimonial-attribution",
+        `${url} renders a .${cls} with no named attribution in .${attrCls} — ` +
+          `never ship a quote without one (SEO-AIO-PLAN § P3-7)`);
+    }
+  }
+
   /* accordion-a11y: the P0-1 contract, kept honest forever */
   for (const m of html.matchAll(/<button\b[^>]*class="[^"]*\b(?:pf-q|faq-q)\b[^"]*"[^>]*>/gi)) {
     if (!/aria-expanded=/.test(m[0]) || !/aria-controls=/.test(m[0])) {
