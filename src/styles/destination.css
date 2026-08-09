@@ -200,8 +200,15 @@
      name and the description below it. */
   line-height:1.15;min-height:2.3em;display:flex;align-items:flex-end;
 }
-/* Seven lines (7 x 1.55 line-height). */
-.places-grid--even .place-card__desc { min-height:10.85em }
+/* The description reservation, counted in lines (1.55 is the line-height
+   above). Seven suits a grid whose cards are written to the full length. A
+   grid whose copy runs shorter sets a smaller count on the element itself —
+   style="--card-desc-lines:5" — so the reservation matches what the copy
+   actually fills instead of opening a block of dead space beneath it. Ten of
+   the destination grids have no pill row at all and copy in the 200-300
+   character range; those are the ones that need a lower count. */
+.places-grid--even { --card-desc-lines:7 }
+.places-grid--even .place-card__desc { min-height:calc(var(--card-desc-lines) * 1.55em) }
 .place-card__tags { display:flex;gap:6px;flex-wrap:wrap }
 .place-tag {
   font-family:var(--font-d);font-size:8px;font-weight:700;
