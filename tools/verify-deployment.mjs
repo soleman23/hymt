@@ -152,6 +152,35 @@ if (!missingAssets.length) {
   hints.push("Every missing file is under /assets/ — run `npm run restore`. astro build wipes these on every run; `npm run build` restores them automatically.");
 }
 
+/* ── 3a. Every asset the SOURCE references is in the image pipeline ──
+   The dist check above cannot see this class: public/assets is gitignored, so
+   an image only survives a fresh clone via its base64 twin and MANIFEST entry
+   — but a stale copy left in this machine's dist/ makes the dist check pass
+   anyway. Eleven images were shipping that way when #87 found them; a fresh
+   clone would have built a site with eleven broken images. So check the
+   source, not the artifact. */
+{
+  const manifest = JSON.parse(await readFile(path.join(ROOT, "images-b64", "MANIFEST.json"), "utf8"));
+  const known = new Set(manifest.map((m) => m.target));
+  const srcRefs = new Map(); // asset -> first source file referencing it
+  for (const file of await walk(path.join(ROOT, "src"), (f) => /\.(html|astro)$/.test(f) && !f.includes(".bak"))) {
+    const text = await readFile(file, "utf8");
+    for (const m of text.matchAll(/\/assets\/[A-Za-z0-9._/-]+\.(?:jpe?g|png|webp|svg)/g)) {
+      if (!srcRefs.has(m[0])) srcRefs.set(m[0], rel(file));
+    }
+  }
+  let orphans = 0;
+  for (const [asset, from] of srcRefs) {
+    if (known.has(`public${asset}`)) continue;
+    if (await exists(path.join(ROOT, "public", asset.replace(/^\//, "")))) continue;
+    orphans++;
+    fail("source-asset-coverage",
+      `${asset} (referenced by ${from}) is in neither images-b64/MANIFEST.json nor public/ — ` +
+        `it will 404 on a fresh clone. Run \`node tools/adopt-orphan-assets.mjs\`.`);
+  }
+  if (!orphans) notes.push(`${srcRefs.size} source-referenced assets all in the image pipeline`);
+}
+
 /* ── 3b. og:image resolves to a file that exists ──
    Every page pointed og:image at /assets/og-default.jpg while the file did
    not exist (F12) — social shares 404'd for months. The og:image URL is
@@ -264,20 +293,18 @@ const linkResolves = async (p) => {
 /* Runbook §2.4 gates launch at 1.5 MB initial load. Images are effectively
    all of it — see the eager-image-budget check below.
 
-   EAGER_IMAGE_DEBT is a ratchet, not an exemption. #72 fixed the homepage;
-   the check it shipped with then found the same defect on four pages the #31
-   dry-run never measured, two of them far worse than the homepage ever was.
-   Fixing those is its own tracked work, so their current weight is recorded
-   here: a listed page may only ever get smaller, and any page NOT listed is
-   held to the full budget. Delete an entry the moment its page comes under
-   1.5 MB — the check tells you when that happens. */
+   EAGER_IMAGE_DEBT is a ratchet, not an exemption: a listed page may only
+   ever get smaller, any page NOT listed is held to the full budget, a listed
+   page that drops under budget fails until its entry is deleted, and an entry
+   for a page the build no longer produces fails too.
+
+   It is empty because it worked. #72 fixed the homepage; the check it shipped
+   with immediately found the same defect on four more pages the #31 dry-run
+   had never measured. Those were recorded here, fixed in #87, and the check
+   then demanded its own entries back out. Every page is held to the full
+   1.5 MB again — which is the state this should always return to. */
 const EAGER_IMAGE_BUDGET = 1.5 * 1024 * 1024;
-const EAGER_IMAGE_DEBT = {
-  "/destinations/": 8_965_230,               // 41 inline background-image cards
-  "/travel-journal/": 8_250_845,             // 32 inline background-image cards
-  "/about/": 3_043_744,                      // family-amalfi.png is 2.6 MB on its own
-  "/destinations/north-america/": 2_039_670, // 5 itinerary card backgrounds
-};
+const EAGER_IMAGE_DEBT = {};
 let eagerPeak = 0;
 const eagerDebtSeen = new Set();
 

@@ -78,7 +78,7 @@
 }
 /* Photo variant: a real photograph replaces the flat placeholder. The caption
    <span> comes out of the markup; .intro-image-label stays. */
-.intro-image--photo { background-size:cover;background-position:center }
+.intro-image--photo { background-size:cover;background-position:center;position:relative;overflow:hidden }
 .intro-image-label {
   position:absolute;bottom:20px;left:24px;
   font-family:var(--font-d);font-size:9px;font-weight:700;
