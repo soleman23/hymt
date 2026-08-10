@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { pageLastmod } from './tools/git-lastmod.mjs';
 
 export default defineConfig({
   site: 'https://www.hymtravel.com',
@@ -19,7 +20,18 @@ export default defineConfig({
       // 94 lines of noise that imply a freshness signal we are not honouring.
       changefreq: undefined,
       priority: undefined,
-      lastmod: new Date(),
+      // lastmod comes from git, per page (#70): the last commit touching the
+      // page's own sources, via tools/git-lastmod.mjs. The old value here was
+      // `new Date()`, which stamped all 97 URLs with the build moment — a
+      // freshness signal that moved in lockstep on every build and therefore
+      // carried none. A page whose date cannot be determined gets no lastmod
+      // at all rather than a fabricated one.
+      serialize(item) {
+        const lastmod = pageLastmod(new URL(item.url).pathname);
+        if (lastmod) item.lastmod = lastmod;
+        else delete item.lastmod;
+        return item;
+      },
     }),
   ],
 });
