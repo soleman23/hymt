@@ -1,0 +1,28 @@
+---
+import JournalLayout from "../../../layouts/JournalLayout.astro";
+import Content from "../../../content-pages/travel-journal__aspen-book-early.html?raw";
+---
+<JournalLayout
+  title="Why We Book Aspen Early — Hit Your Mark Travel Journal"
+  description="The mountain is identical whether you booked in March or last week. The chalet, the table and the instructor are not. What booking early actually buys."
+  name={"Why We Book Aspen Early"}
+  category={{ label: "Adventure", href: "/travel-journal/" }}
+  hero={{
+    /* NEEDS IMAGE: an Aspen winter hero — town core under snow at dusk, or a
+       ski-in chalet exterior; golden-hour editorial grade, 16:9, no faces, no
+       people, no text, no signage (the brand rules in
+       docs/seo/photography-needed.md). Nothing honest exists in the library:
+       the only mountain-winter images on disk are British Columbia (jh-07,
+       e-22) and Grand Teton (x-05), and captioning another mountain as Aspen
+       is not an option. The placeholder plate ships until then, per
+       NEW-CONTENT-PROMPT § 1. When #40 (the Aspen destination page) gets its
+       dh-26 hero, a crop of it likely serves here too. */
+    placeholder: "Article Photography · Aspen",
+    headline: "Why We Always Book Aspen Early — and What That Actually Gets You",
+    deck: "The mountain is the same whether you book three months out or three weeks out. The chalet, the restaurant table, and the private ski instructor are not. What the early-booking discipline actually buys, and who genuinely needs it.",
+    date: "January 2026",
+    readTime: "6 min read",
+  }}
+>
+  <Fragment set:html={Content} />
+</JournalLayout>

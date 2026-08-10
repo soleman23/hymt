@@ -1,0 +1,19 @@
+---
+import JournalLayout from "../../../layouts/JournalLayout.astro";
+import Content from "../../../content-pages/travel-journal__kyoto-april-vs-november.html?raw";
+---
+<JournalLayout
+  title="Kyoto in April vs. November — Hit Your Mark Travel Journal"
+  description="Cherry blossom books the best ryokan twelve months out; November's foliage is quieter and nearly as fine. The honest month-by-month comparison."
+  name={"Kyoto: April vs. November"}
+  category={{ label: "Asia", href: "/travel-journal/" }}
+  hero={{
+    image: "/assets/img/dh-10-japan-kyoto-dawn.jpg",
+    headline: "Kyoto in April vs. November: An Honest Comparison",
+    deck: "Cherry blossom season is extraordinary. It is also among the most crowded travel experiences on earth. November — the autumn color season — is quieter, equally beautiful, and considerably easier to navigate. Which one is your trip?",
+    date: "February 2026",
+    readTime: "7 min read",
+  }}
+>
+  <Fragment set:html={Content} />
+</JournalLayout>

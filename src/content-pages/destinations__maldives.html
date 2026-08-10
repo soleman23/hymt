@@ -3,6 +3,15 @@
   <div class="dest-intro__content">
     <div class="label" style="margin-bottom:14px">Why the Maldives</div>
     <h2 class="dest-intro__title">Not Every Overwater Villa<br>Is the Same</h2>
+    <p class="answer-capsule">The Maldives' dry season runs November through April. Most trips run 7–10 nights. The atoll and the villa category decide the holiday far more than the star rating does: a house reef forty steps from the deck is a different trip from a lagoon that has been grazed bare. Ask which way the villa faces and what the lagoon depth is at low tide.</p>
+    <!-- NEEDS MARK: first-hand detail. CONTENT-STANDARDS § 6 wants one genuine
+         first-hand sentence here — a month and year, a named property, or a
+         specific observation from this destination. The model of the sentence is
+         "I was last in the Serengeti in June 2025." The page currently has
+         practice-voice first person ("I recommend", "I have sent") which does
+         not carry the same signal. If Mark has not been, § 6 says say so
+         plainly and name the on-the-ground partner instead — that is stronger
+         than leaving the gap. Never invent this. -->
     <p class="dest-intro__body">
       The photographs are accurate. The water is that colour, the villas do sit over it, and the silence in the early morning is as complete as it looks. What the photographs can't show is the difference between an atoll with a functioning house reef forty steps from your deck and one where the marine life has been grazed to nothing.
     </p>
@@ -178,40 +187,46 @@
 </section>
 
 
-<!-- ══ RELATED DESTINATIONS ══ -->
-<section class="related-section">
+<!-- ══ RELATED DESTINATIONS (P3-6) ══ -->
+<section class="related-section" data-p3-6>
   <div style="margin-bottom:36px">
     <div class="label" style="margin-bottom:10px">You Might Also Consider</div>
-    <h2 style="font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary)">Similar Destinations</h2>
+    <h2 style="font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary)">Destinations Worth Comparing</h2>
   </div>
   <div class="related-grid">
-    <a href="/destinations/" class="related-card">
-      <div class="related-card__ph" style="background:#1a3038">Destination Photography · Seychelles</div>
-      <div class="related-card__overlay"></div>
-      <div class="related-card__body">
-        <div class="related-card__region">Africa · Indian Ocean</div>
-        <div class="related-card__name">Seychelles</div>
-      </div>
-    </a>
-    <a href="/destinations/" class="related-card">
-      <div class="related-card__ph" style="background:#1a2c40">Destination Photography · Bora Bora</div>
+    <a href="/destinations/french-polynesia/" class="related-card">
+      <img class="related-card__img" src="/assets/img/rc-h-02-bora-bora-dawn.jpg" alt="" aria-hidden="true"
+           width="760" height="435" loading="lazy" decoding="async">
       <div class="related-card__overlay"></div>
       <div class="related-card__body">
         <div class="related-card__region">South Pacific</div>
-        <div class="related-card__name">Bora Bora</div>
+        <div class="related-card__name">French Polynesia</div>
       </div>
     </a>
-    <a href="/destinations/" class="related-card">
-      <div class="related-card__ph" style="background:#182230">Destination Photography · Bali</div>
+    <a href="/destinations/fiji/" class="related-card">
+      <img class="related-card__img" src="/assets/img/rc-dh-04-fiji-lagoon-aerial.jpg" alt="" aria-hidden="true"
+           width="760" height="435" loading="lazy" decoding="async">
       <div class="related-card__overlay"></div>
       <div class="related-card__body">
-        <div class="related-card__region">Asia · Indonesia</div>
-        <div class="related-card__name">Bali</div>
+        <div class="related-card__region">South Pacific</div>
+        <div class="related-card__name">Fiji</div>
+      </div>
+    </a>
+    <a href="/destinations/turks-caicos/" class="related-card">
+      <img class="related-card__img" src="/assets/img/rc-d-02-grace-bay.jpg" alt="" aria-hidden="true"
+           width="760" height="435" loading="lazy" decoding="async">
+      <div class="related-card__overlay"></div>
+      <div class="related-card__body">
+        <div class="related-card__region">Caribbean &amp; Mexico</div>
+        <div class="related-card__name">Turks &amp; Caicos</div>
       </div>
     </a>
   </div>
+  <div class="related-more">
+    <span class="related-more__label">Every destination in the region:</span>
+    <a href="/destinations/asia/" class="related-more__link">All Asia Destinations</a>
+  </div>
 </section>
-
 
 <!-- ══ MARK CTA ══ -->
 <section class="dest-cta dest-cta--split">
@@ -246,6 +261,67 @@
 <!-- ══ NEWSLETTER ══ -->
 
 <!-- ══ PAGE FAQ ══ -->
+<!-- ══ WHAT IT COSTS (P3-3) — NOT YET LIVE ══════════════════════════════
+     The structure below is final. Every number is a NEEDS FIGURE placeholder.
+
+     To ship it: fill this page's row in docs/seo/figures-worksheet.md, then
+     replace each NEEDS FIGURE with the verified number, set the datetime and the
+     visible month on the time element to the date it was verified, add the
+     P3-5 source link named in the worksheet, and delete these comment
+     markers so the section renders.
+
+     Do NOT uncomment this with placeholders still in it. A costs section
+     with no cost in it is worse than no section, and the build's
+     placeholder-copy check will not catch it — that check strips comments
+     and only reads visible text, which is precisely why this is safe to
+     ship commented and unsafe to ship half-filled.
+
+<section class="cost-range">
+  <div class="cost-range__header">
+    <div class="cost-range__label">What It Costs</div>
+    <h2 class="cost-range__title">What the Maldives Actually Costs</h2>
+  </div>
+
+  <div class="cost-range__figure">NEEDS FIGURE: low end to high end, in USD</div>
+  <div class="cost-range__basis">per person, per night. Ranges, not quotes.</div>
+
+  <div class="cost-range__grid">
+    <div class="cost-range__col">
+      <div class="cost-range__col-label">What that includes</div>
+      <ul class="cost-range__list">
+        <li>NEEDS FIGURE: accommodation tier the range assumes</li>
+        <li>NEEDS FIGURE: meals and drinks included at that tier</li>
+        <li>NEEDS FIGURE: guiding, transfers and activities included</li>
+      </ul>
+    </div>
+    <div class="cost-range__col">
+      <div class="cost-range__col-label">What it does not</div>
+      <ul class="cost-range__list">
+        <li>NEEDS FIGURE: international airfare position</li>
+        <li>NEEDS FIGURE: internal flights, permits and park fees</li>
+        <li>NEEDS FIGURE: anything else excluded, stated plainly</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cost-range__drivers">
+    <div class="cost-range__col-label">The two or three things that move it most</div>
+    <ul class="cost-range__list">
+      <li>NEEDS FIGURE: driver 1, with the size of its effect</li>
+      <li>NEEDS FIGURE: driver 2, with the size of its effect</li>
+      <li>NEEDS FIGURE: driver 3, if there is a third worth naming</li>
+    </ul>
+  </div>
+
+  <p class="cost-range__note">
+    Ranges verified <time datetime="NEEDS FIGURE-YYYY-MM-DD">NEEDS FIGURE: Month Year</time>.
+    Rates, permit costs and park fees change; confirm before booking.
+    Source: NEEDS FIGURE: P3-5 authority link from the worksheet.
+  </p>
+</section>
+
+     ══ end WHAT IT COSTS ══ -->
+
 <section class="page-faq">
   <div class="page-faq__header">
     <div class="page-faq__label">Common Questions</div>
@@ -271,7 +347,7 @@
     </div>
     <div class="pf-item">
       <h3 class="pf-q-h"><button class="pf-q" type="button" aria-expanded="false" aria-controls="pf-maldives-5" id="pf-maldives-5-q"><span class="pf-q__text">Do I need to be able to dive or swim to enjoy the Maldives?</span><span class="pf-q__icon" aria-hidden="true">+</span></button></h3>
-      <div class="pf-a" id="pf-maldives-5" role="region" aria-labelledby="pf-maldives-5-q">No. Snorkeling with a life jacket provides access to extraordinary marine life at virtually every resort — reef sharks, manta rays, sea turtles, and hundreds of fish species. Non-swimmers can fully enjoy the overwater villa experience, spa, sunset cruises, and sandbank excursions. Scuba adds depth, but it is not required for a meaningful trip.</div>
+      <div class="pf-a" id="pf-maldives-5" role="region" aria-labelledby="pf-maldives-5-q">No. Snorkeling with a life jacket provides access to extraordinary marine life at virtually every resort. Reef sharks, manta rays, sea turtles, and hundreds of fish species. Non-swimmers can fully enjoy the overwater villa experience, spa, sunset cruises, and sandbank excursions. Scuba adds depth, but it is not required for a meaningful trip.</div>
     </div>
     <div class="pf-item">
       <h3 class="pf-q-h"><button class="pf-q" type="button" aria-expanded="false" aria-controls="pf-maldives-6" id="pf-maldives-6-q"><span class="pf-q__text">How do seaplane transfers work?</span><span class="pf-q__icon" aria-hidden="true">+</span></button></h3>
@@ -296,3 +372,31 @@
 
 
 <!-- ══ FOOTER ══ -->
+
+<!-- ══ READ MORE FROM THE JOURNAL (P3-6) ══ -->
+<section class="read-more">
+  <div class="read-more__header">
+    <div class="read-more__label">From the Journal</div>
+    <h2 class="read-more__title">Read More on the Maldives</h2>
+  </div>
+  <div class="read-more__grid">
+    <a class="read-more__card" href="/travel-journal/maldives-overwater-vs-beach-villa/">
+      <span class="read-more__cat">Beach &amp; Islands</span>
+      <span class="read-more__name">Overwater or Beach Villa?</span>
+      <span class="read-more__desc">The overwater villa is the image. The beach villa wins more often than the feed suggests — the reef decides.</span>
+      <span class="read-more__cue">Read the post</span>
+    </a>
+    <a class="read-more__card" href="/travel-journal/what-hotel-descriptions-actually-mean/">
+      <span class="read-more__cat">Insider Tips</span>
+      <span class="read-more__name">What Hotel Descriptions Mean</span>
+      <span class="read-more__desc">A translation guide: what the words signal, what they hide, and what to ask before booking.</span>
+      <span class="read-more__cue">Read the post</span>
+    </a>
+    <a class="read-more__card" href="/travel-journal/five-star-problem/">
+      <span class="read-more__cat">Opinion</span>
+      <span class="read-more__name">The Five-Star Problem</span>
+      <span class="read-more__desc">The rating stopped meaning anything specific. What actually signals an exceptional hotel.</span>
+      <span class="read-more__cue">Read the post</span>
+    </a>
+  </div>
+</section>

@@ -56,6 +56,16 @@
 .post-body ul, .post-body ol { padding-left:0;list-style:none;margin-bottom:24px; display:flex;flex-direction:column;gap:10px; }
 .post-body ul li, .post-body ol li { font-size:16px;color:var(--text-secondary);line-height:1.7; padding-left:20px;position:relative; }
 .post-body ul li::before { content:'';position:absolute;left:0;top:11px; width:5px;height:1px;background:var(--gold-500); }
+/* Answer capsule (P3-2) — the same class the destination and experience pages
+   use, restyled at journal scale because this sheet deliberately does not
+   import section-shared.css. Sits as the first paragraph of the first
+   .post-body: 40–70 words that answer the post's question with a number in
+   them, set apart from body copy by the gold rule. */
+.post-body .answer-capsule {
+  font-size:17px;line-height:1.8;color:var(--text-primary);
+  border-left:2px solid var(--border-gold);
+  padding-left:22px;margin-bottom:28px;
+}
 .post-pullquote { grid-column:2;border-left:2px solid var(--gold-500); padding:8px 0 8px 32px;margin:44px 0; }
 .post-pullquote p { font-family:var(--font-d);font-size:clamp(18px,2vw,24px);font-weight:600; font-style:italic;letter-spacing:-.01em;line-height:1.4; color:var(--text-primary);margin-bottom:0; }
 .post-callout { grid-column:2; background:var(--bg-elevated);border:1px solid var(--border-gold); padding:32px 36px;margin:40px 0; }

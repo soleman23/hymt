@@ -199,6 +199,129 @@
 .page-faq__more-link:hover { gap:10px }
 .page-faq__more-link::after { content:'→' }
 
+/* ── ANSWER CAPSULE (P3-2) ──
+   40–70 words directly under the first <h2> on every destination and
+   experience page: the page's core question answered factually, with at least
+   one number in it. Not a hook — the answer. This is the paragraph a reader
+   scanning decides on and the one an answer engine quotes, so it is set
+   slightly larger than the body copy that follows and carries a gold rule to
+   mark it as the lede rather than the first of several paragraphs.
+
+   Applies to both intro variants: .intro-section (53 pages) and
+   .dest-intro (/maldives/). */
+.answer-capsule {
+  font-family:var(--font-b);font-size:16px;line-height:1.8;
+  color:var(--text-primary);
+  border-left:2px solid var(--border-gold);
+  padding-left:22px;margin-bottom:26px;
+}
+@media (max-width:768px) { .answer-capsule { font-size:15px;padding-left:16px } }
+
+/* ── WHAT IT COSTS (P3-3) ──
+   Every destination and experience page carries this block as an HTML
+   comment until Mark's verified figures land (see docs/seo/figures-worksheet.md).
+   The rules ship ahead of the content deliberately: uncommenting a filled-in
+   block is then a one-step operation with no styling work attached to it, and
+   no page can end up rendering a costs section that has been styled ad hoc.
+
+   Do not delete these rules because "nothing uses them" — 54 pages are
+   waiting on them. */
+.cost-range {
+  padding:72px 52px;background:var(--bg-surface);
+  border-top:1px solid var(--border-subtle);
+}
+.cost-range__header { max-width:640px;margin-bottom:32px }
+.cost-range__label {
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-500);margin-bottom:12px;
+}
+.cost-range__title {
+  font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;
+  letter-spacing:-.02em;color:var(--text-primary);
+}
+.cost-range__figure {
+  font-family:var(--font-d);font-size:clamp(24px,3vw,34px);font-weight:700;
+  color:var(--gold-500);line-height:1.2;margin-bottom:8px;
+}
+.cost-range__basis { font-family:var(--font-b);font-size:14px;color:var(--text-muted);margin-bottom:28px }
+.cost-range__grid { display:grid;grid-template-columns:repeat(2,1fr);gap:3px;margin-bottom:28px }
+.cost-range__col {
+  padding:24px 28px;background:var(--bg-elevated);border:1px solid var(--border-subtle);
+}
+.cost-range__col-label {
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);margin-bottom:12px;
+}
+.cost-range__list { list-style:none;margin:0;padding:0 }
+.cost-range__list li {
+  font-family:var(--font-b);font-size:14px;color:var(--text-secondary);
+  line-height:1.65;padding:6px 0 6px 18px;position:relative;
+}
+.cost-range__list li::before { content:'·';position:absolute;left:4px;color:var(--gold-500) }
+.cost-range__drivers { margin-bottom:24px }
+.cost-range__drivers .cost-range__col-label { margin-bottom:10px }
+.cost-range__note {
+  font-family:var(--font-b);font-size:13px;color:var(--text-muted);
+  line-height:1.7;border-left:2px solid var(--border-subtle);padding-left:18px;
+}
+.cost-range__note a { color:var(--gold-500) }
+@media (max-width:768px) {
+  .cost-range { padding:56px 28px }
+  .cost-range__grid { grid-template-columns:1fr }
+}
+
+/* ── READ MORE FROM THE JOURNAL (P3-6) ──
+   The return half of the hub-and-spoke. Journal posts link down into the
+   section pages through their "Plan Your Trip" callout; this block links back
+   out, and it is the last thing on every destination and experience page —
+   after the FAQ, per SEO-AIO-PLAN § P3-6.
+
+   Deliberately text-only. The journal's own .article-card carries a
+   photograph; repeating that here would compete with the FAQ above it and
+   would mean sourcing 54 more crops.
+
+   Sits on --bg-page, one step down from the FAQ's --bg-surface directly above
+   it. The tone step carries the separation in the dark theme; in the light
+   theme those two values are #faf8f4 against #ffffff — near-invisible — so
+   the border-top does the work there. Both cues, because neither works in
+   both themes alone. */
+.read-more { padding:72px 52px;background:var(--bg-page);border-top:1px solid var(--border-subtle) }
+.read-more__header { max-width:640px;margin-bottom:32px }
+.read-more__label {
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-500);margin-bottom:12px;
+}
+.read-more__title {
+  font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;
+  letter-spacing:-.02em;color:var(--text-primary);
+}
+.read-more__grid { display:grid;grid-template-columns:repeat(3,1fr);gap:3px }
+.read-more__card {
+  display:flex;flex-direction:column;gap:10px;padding:26px 28px;
+  background:var(--bg-elevated);border:1px solid var(--border-subtle);
+  text-decoration:none;transition:border-color .2s;
+}
+.read-more__card:hover { border-color:var(--border-gold) }
+.read-more__cat {
+  font-family:var(--font-d);font-size:9px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold-500);
+}
+.read-more__name {
+  font-family:var(--font-d);font-size:15px;font-weight:700;
+  color:var(--text-primary);line-height:1.35;
+}
+.read-more__desc {
+  font-family:var(--font-b);font-size:13px;color:var(--text-muted);line-height:1.65;
+}
+.read-more__cue {
+  margin-top:auto;padding-top:6px;
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);
+  display:inline-flex;align-items:center;gap:6px;transition:gap .15s;
+}
+.read-more__card:hover .read-more__cue { gap:10px }
+.read-more__cue::after { content:'→' }
+
 /* ── RESPONSIVE ──
    Base rules must precede their @media overrides in this file, and each
    section sheet loads after this one — so a section's own media block
@@ -213,4 +336,6 @@
 @media (max-width:768px) {
   .pf-grid { grid-template-columns:1fr }
   .page-faq { padding:64px 28px }
+  .read-more { padding:56px 28px }
+  .read-more__grid { grid-template-columns:1fr }
 }

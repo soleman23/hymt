@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **hymt** (847 symbols, 1009 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **hymt** (993 symbols, 1228 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -101,6 +101,10 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 
 ### Before every commit
 - `npm run build` must pass. It is self-contained: astro build, then the image
-  restore (`node tools/restore-images.mjs`), then `tools/verify-deployment.mjs`.
+  restore (`node tools/restore-images.mjs`), then the check fixtures
+  (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
+- A new verifier check must come with fixtures in `tools/verify-checks.test.mjs`
+  proving it fails on the broken shape, not only that the build stays green — a
+  check that cannot go red is worse than no check, and two shipped that way.
 - Intentional `<title>`/description/canonical changes:
   `node tools/verify-deployment.mjs --update-baseline`, in their own commit.

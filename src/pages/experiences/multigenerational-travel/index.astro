@@ -8,7 +8,19 @@ import Content from "../../../content-pages/experiences__multigenerational-trave
   schemaType="website"
   name={"Multigenerational Travel"}
   hero={{
-    placeholder: "Hero Photography · Multigenerational Travel",
+    /* Interim hero from the existing library (#66). This was the only one of
+       the 83 templated pages with no photograph, so it was the only one
+       falling back to the placeholder plate — which CLAUDE.md forbids
+       shipping — and the only one emitting no LCP preload.
+
+       x-04 is 1600x823, the same production batch and exact dimensions as
+       e-18 already in use on another experience page, and it clears the
+       brand rules in docs/seo/photography-needed.md: golden hour, no faces,
+       no people, no text, no signage. Its subject is a long table set for a
+       shared meal, which is this page's whole argument — everyone at one
+       table, one trip. Swap in a purpose-shot photograph when one exists;
+       it is this one line and nothing else. */
+    image: "/assets/img/x-04-napa-vineyard-dining.jpg",
     eyebrow: "Three Generations. One Trip.",
     headline: "Travel That Works<br>for Everyone",
     sub: "Grandparents, parents, and kids all share the same trip — and all have different definitions of a perfect day. Getting a multigenerational trip right means planning for all of them at once, without designing the itinerary around the most demanding voice in the room.",

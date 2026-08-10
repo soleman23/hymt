@@ -12,6 +12,10 @@ import { readFile, writeFile, readdir, access } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+/* Fixture-tested in tools/verify-checks.test.mjs. Both of these were written
+   inline here first and both were wrong in ways a passing build could not
+   show — see that file's header. */
+import { linkFloor, testimonialAttribution } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DIST = path.join(ROOT, "dist");
@@ -380,6 +384,58 @@ for (const file of htmlFiles) {
   /* internal-links: every same-site href must resolve to something in dist */
   for (const m of html.matchAll(/<a\b[^>]+href="(\/[^"#?]*)/gi)) {
     if (!m[1].startsWith("//") && !(await linkResolves(m[1]))) deadLinks.add(m[1]);
+  }
+
+  /* internal-link-floor (P3-6, finding F17) and testimonial-attribution
+     (P3-7, folded into #67). Both predicates live in ./content-checks.mjs and
+     are fixture-tested in ./verify-checks.test.mjs — see that file for why
+     neither could be trusted to a passing build alone.
+
+     link floor: journal posts were terminal nodes. 18 of the 29 carried no
+     outbound link into the rest of the site at all, so the journal absorbed
+     authority and returned none of it. CONTENT-STANDARDS § 7 sets the floor at
+     two, BOTH ways; the return leg is checked because it is the half that rots
+     silently when a content page is regenerated from a tool in tools/. The
+     three hub pages are exempt — they are index pages, not spokes.
+
+     attribution: Google's policy is explicit that where the entity controls
+     the reviews about itself its pages are ineligible for star review
+     features, so attempting that markup is a structured-data violation rather
+     than a shortcut. AggregateRating is already banned outright in the
+     forbidden @type list above; this is the other half — a quote that ships
+     must name who said it. Today it guards one real quote, the Brian S. one.
+     It exists for when the other 53 arrive, because an unattributed
+     testimonial is not something anyone catches by eye at that count. */
+  const HUBS = ["/travel-journal/", "/destinations/", "/experiences/"];
+  if (!is404 && !HUBS.includes(url)) {
+    const kind = url.startsWith("/travel-journal/") ? "journal"
+      : (url.startsWith("/destinations/") || url.startsWith("/experiences/")) ? "section"
+      : null;
+    if (kind) {
+      const n = linkFloor(html, kind);
+      if (n === "no-main") {
+        /* Reported as its own cause: without <main> every count is zero and
+           would stack a second, misleading failure on top of this one. */
+        fail("internal-link-floor", `${url} has no <main> element to count internal links in`);
+      } else if (n < 2) {
+        const what = kind === "journal"
+          ? `links out to ${n} destination/experience page${n === 1 ? "" : "s"}`
+          : `links to ${n} journal post${n === 1 ? "" : "s"}`;
+        fail("internal-link-floor", `${url} ${what} — CONTENT-STANDARDS § 7 requires 2`);
+      }
+    }
+  }
+
+  for (const [cls, attrCls] of [
+    ["testimonial-section", "testimonial-attr"],
+    ["testimonial-card", "testimonial-card__name"],
+    ["pull-quote", "pull-quote__attr"],
+  ]) {
+    if (testimonialAttribution(html, cls, attrCls) === "FAIL") {
+      fail("testimonial-attribution",
+        `${url} renders a .${cls} with no named attribution in .${attrCls} — ` +
+          `never ship a quote without one (SEO-AIO-PLAN § P3-7)`);
+    }
   }
 
   /* accordion-a11y: the P0-1 contract, kept honest forever */
