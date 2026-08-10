@@ -535,7 +535,7 @@
 
 /* ── RESPONSIVE ──
    The page-gutter batch below deliberately restates padding on
-   .seasons-strip, .testimonial-section and .mark-note, which are defined
+   .seasons-strip and .testimonial-section, which are defined
    in section-shared.css. That sheet loads first, so these win. */
 @media (max-width:900px) {
   .dest-hero__content { grid-template-columns:1fr;padding:0 28px 56px }
@@ -555,7 +555,7 @@
   .dest-cta--split { grid-template-columns:1fr;gap:40px }
   .dest-cta__aside { padding-left:0;border-left:none;border-top:1px solid var(--border-gold);padding-top:28px }
   .intro-section,.places-section,.itineraries-section,.why-section,.dest-exp-section,
-  .seasons-strip,.stay-section,.practical-section,.testimonial-section,.mark-note,
+  .seasons-strip,.stay-section,.practical-section,.testimonial-section,
   .related-section,.dest-cta { padding-left:28px;padding-right:28px }
 }
 @media (max-width:540px) {

@@ -15,7 +15,10 @@ import { fileURLToPath } from "node:url";
 /* Fixture-tested in tools/verify-checks.test.mjs. Both of these were written
    inline here first and both were wrong in ways a passing build could not
    show — see that file's header. */
-import { linkFloor, testimonialAttribution, faqFirstSentenceOver } from "./content-checks.mjs";
+import {
+  linkFloor, testimonialAttribution, faqFirstSentenceOver,
+  unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
+} from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DIST = path.join(ROOT, "dist");
@@ -458,24 +461,27 @@ for (const file of htmlFiles) {
   }
 
   /* placeholder-copy: visible text only — scripts, comments and tags are
-     stripped first, so the sanctioned <!-- NEEDS MARK --> markers and the
-     GA4 placeholder ID never trip it, but shipped copy does. */
+     stripped first (see visibleText), so the sanctioned <!-- NEEDS MARK -->
+     markers and the GA4 placeholder ID never trip it, but shipped copy does.
+     The stripping and the token list live in content-checks.mjs behind
+     fixtures since SEC-8. */
   if (!is404) {
-    const text = html
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<!--[\s\S]*?-->/g, " ")
-      .replace(/<[^>]+>/g, " ");
-    for (const [name, re] of [
-      ["Lorem ipsum", /lorem ipsum/i],
-      ["TBD", /\bTBD\b/],
-      ["Coming soon", /coming soon/i],
-      ["TODO", /\bTODO\b/],
-      ["XXX", /\bXXX\b/],
-      ["Placeholder", /placeholder/i],
-    ]) {
+    const text = visibleText(html);
+    for (const [name, re] of PLACEHOLDER_PATTERNS) {
       if (re.test(text)) fail("placeholder-copy", `${url} ships the placeholder text "${name}"`);
     }
+  }
+
+  /* unsafe-href / inert-cost-section (SEC-8, #81): content pages render via
+     set:html with no runtime sanitizer, so what an automated insert writes is
+     what ships. Dangerous URL schemes fail everywhere; the .cost-range
+     sections — the one surface a script writes from worksheet data — must
+     additionally stay free of script tags and inline event handlers. */
+  for (const bad of unsafeHrefs(html)) {
+    fail("unsafe-href", `${url} carries a dangerous URL scheme: ${bad}`);
+  }
+  for (const kind of inertCostSections(html)) {
+    fail("inert-cost-section", `${url} has a ${kind} inside a .cost-range section — the insert surface must stay inert (SEC-8)`);
   }
 }
 for (const link of deadLinks) fail("internal-links", `internal href ${link} resolves to nothing in dist/`);
