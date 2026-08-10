@@ -45,6 +45,10 @@
   position:relative;background:var(--bg-card);min-height:500px;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
+/* #87: was a 2.6 MB PNG background-image; now a lazy JPEG the panel can defer. */
+.story__photo-img {
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
 .story__photo-ph {
   font-family:var(--font-d);font-size:10px;font-weight:600;
   letter-spacing:.16em;text-transform:uppercase;color:rgba(138,155,176,.3);
@@ -267,7 +271,7 @@ body.theme-light .pull-quote__text { color:var(--navy-800) }
 
 <!-- ══ STORY ══ -->
 <section class="story">
-  <div class="story__photo" style="background-image:url('/assets/family-amalfi.png');background-size:cover;background-position:center">
+  <div class="story__photo"><img class="story__photo-img" src="/assets/img/sp-family-amalfi.jpg" alt="Mark Sole" width="900" height="1150" loading="lazy" decoding="async">
     <div class="story__photo-caption">Mark Sole — Founder &amp; Travel Director</div>
   </div>
   <div class="story__content">
