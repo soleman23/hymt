@@ -55,13 +55,16 @@ const POSTS = {
   "what-a-travel-advisor-actually-does": { cat: "Planning Advice", title: "What a Travel Advisor Actually Does", desc: "The honest answer, and why the right one pays for itself on a genuinely complicated trip." },
   "what-hotel-descriptions-actually-mean": { cat: "Insider Tips", title: "What Hotel Descriptions Mean", desc: "A translation guide: what the words signal, what they hide, and what to ask before booking." },
   "willamette-valley-winery-route": { cat: "Food &amp; Wine", title: "The Willamette Valley Route", desc: "Dundee Hills, Ribbon Ridge and Eola-Amity — the wineries that made Oregon Pinot worth the trip." },
+  "kyoto-april-vs-november": { cat: "Asia", title: "Kyoto: April vs. November", desc: "The bloom books ryokan 12 months out; November's color is quieter and nearly as fine. The honest comparison." },
+  "maldives-overwater-vs-beach-villa": { cat: "Beach &amp; Islands", title: "Overwater or Beach Villa?", desc: "The overwater villa is the image. The beach villa wins more often than the feed suggests — the reef decides." },
+  "aspen-book-early": { cat: "Adventure", title: "Why We Book Aspen Early", desc: "The mountain is the same at 3 months out or 3 weeks. The chalet, the table and the instructor are not." },
 };
 
 /* file stem → [heading, ...three post slugs] */
 const PAGES = {
   // ── destinations: regional hubs ──
   "destinations__africa": ["Read More on Planning Africa", ["africa-destination-guide", "african-safari-calendar", "safari-planning-12-questions"]],
-  "destinations__asia": ["Read More on Planning Asia", ["asia-destination-guide", "amanjiwo-field-report", "private-guide-advantage"]],
+  "destinations__asia": ["Read More on Planning Asia", ["asia-destination-guide", "kyoto-april-vs-november", "amanjiwo-field-report"]],
   "destinations__caribbean-mexico": ["Read More on the Caribbean &amp; Mexico", ["caribbean-mexico-destination-guide", "five-star-problem", "what-hotel-descriptions-actually-mean"]],
   "destinations__europe": ["Read More on Planning Europe", ["europe-destination-guide", "european-grand-tour-mistake", "mediterranean-october"]],
   "destinations__middle-east": ["Read More on the Middle East", ["middle-east-destination-guide", "private-guide-advantage", "the-case-for-shoulder-season"]],
@@ -75,7 +78,7 @@ const PAGES = {
   "destinations__antarctica": ["Read More on Antarctica", ["polar-destination-guide", "what-a-travel-advisor-actually-does", "the-case-for-shoulder-season"]],
   "destinations__bali": ["Read More on Planning Bali", ["asia-destination-guide", "amanjiwo-field-report", "in-defense-of-slow-travel"]],
   "destinations__botswana": ["Read More on Planning Botswana", ["botswana-shoulder-season", "african-safari-calendar", "safari-planning-12-questions"]],
-  "destinations__canadian-rockies": ["Read More on the Canadian Rockies", ["heli-ski-field-report", "north-america-destination-guide", "the-case-for-shoulder-season"]],
+  "destinations__canadian-rockies": ["Read More on the Canadian Rockies", ["heli-ski-field-report", "aspen-book-early", "north-america-destination-guide"]],
   "destinations__egypt": ["Read More on Planning Egypt", ["middle-east-destination-guide", "private-guide-advantage", "what-a-travel-advisor-actually-does"]],
   "destinations__fiji": ["Read More on Planning Fiji", ["south-pacific-destination-guide", "five-star-problem", "in-defense-of-slow-travel"]],
   "destinations__france": ["Read More on Planning France", ["europe-destination-guide", "european-grand-tour-mistake", "mediterranean-october"]],
@@ -85,10 +88,10 @@ const PAGES = {
   "destinations__hawaii": ["Read More on Planning Hawaii", ["north-america-destination-guide", "in-defense-of-slow-travel", "five-star-problem"]],
   "destinations__iceland": ["Read More on Planning Iceland", ["polar-destination-guide", "the-case-for-shoulder-season", "what-a-travel-advisor-actually-does"]],
   "destinations__italy": ["Read More on Planning Italy", ["mediterranean-october", "in-defense-of-slow-travel", "private-guide-advantage"]],
-  "destinations__japan": ["Read More on Planning Japan", ["asia-destination-guide", "private-guide-advantage", "in-defense-of-slow-travel"]],
+  "destinations__japan": ["Read More on Planning Japan", ["kyoto-april-vs-november", "asia-destination-guide", "private-guide-advantage"]],
   "destinations__jordan": ["Read More on Planning Jordan", ["middle-east-destination-guide", "private-guide-advantage", "the-case-for-shoulder-season"]],
   "destinations__kenya-tanzania": ["Read More on Kenya &amp; Tanzania", ["singita-grumeti-field-report", "african-safari-calendar", "safari-planning-12-questions"]],
-  "destinations__maldives": ["Read More on the Maldives", ["what-hotel-descriptions-actually-mean", "five-star-problem", "asia-destination-guide"]],
+  "destinations__maldives": ["Read More on the Maldives", ["maldives-overwater-vs-beach-villa", "what-hotel-descriptions-actually-mean", "five-star-problem"]],
   "destinations__napa-sonoma": ["Read More on Napa &amp; Sonoma", ["napa-sonoma-winery-route", "willamette-valley-winery-route", "north-america-destination-guide"]],
   "destinations__new-orleans": ["Read More on New Orleans", ["north-america-destination-guide", "what-a-travel-advisor-actually-does", "private-guide-advantage"]],
   "destinations__new-york": ["Read More on Planning New York", ["north-america-destination-guide", "how-hotel-upgrades-work", "five-star-problem"]],
@@ -106,7 +109,7 @@ const PAGES = {
   "destinations__uk-ireland": ["Read More on the UK &amp; Ireland", ["europe-destination-guide", "european-grand-tour-mistake", "in-defense-of-slow-travel"]],
 
   // ── experiences ──
-  "experiences__adventure-active-travel": ["Read More on Active Travel", ["heli-ski-field-report", "polar-destination-guide", "south-america-destination-guide"]],
+  "experiences__adventure-active-travel": ["Read More on Active Travel", ["heli-ski-field-report", "aspen-book-early", "polar-destination-guide"]],
   "experiences__all-inclusive-vacations": ["Read More on All-Inclusive Travel", ["five-star-problem", "what-hotel-descriptions-actually-mean", "caribbean-mexico-destination-guide"]],
   "experiences__beach-island-escapes": ["Read More on Island Travel", ["what-hotel-descriptions-actually-mean", "five-star-problem", "south-pacific-destination-guide"]],
   "experiences__cruises": ["Read More on Travel by Water and Rail", ["polar-destination-guide", "glacier-express-field-report", "what-a-travel-advisor-actually-does"]],
@@ -114,7 +117,7 @@ const PAGES = {
   "experiences__family-travel": ["Read More on Family Travel", ["north-america-destination-guide", "in-defense-of-slow-travel", "what-a-travel-advisor-actually-does"]],
   "experiences__food-wine-travel": ["Read More on Food &amp; Wine Travel", ["napa-sonoma-winery-route", "willamette-valley-winery-route", "mediterranean-october"]],
   "experiences__multigenerational-travel": ["Read More on Group Travel", ["what-a-travel-advisor-actually-does", "in-defense-of-slow-travel", "north-america-destination-guide"]],
-  "experiences__romance-celebration-travel": ["Read More on Celebration Travel", ["how-hotel-upgrades-work", "five-star-problem", "south-pacific-destination-guide"]],
+  "experiences__romance-celebration-travel": ["Read More on Celebration Travel", ["maldives-overwater-vs-beach-villa", "how-hotel-upgrades-work", "five-star-problem"]],
   "experiences__safari-wildlife-travel": ["Read More on Safari Planning", ["safari-planning-12-questions", "african-safari-calendar", "singita-grumeti-field-report"]],
   "experiences__sports-event-travel": ["Read More on Event Travel", ["masters-field-report", "kentucky-derby-field-report", "north-america-destination-guide"]],
   "experiences__wellness-retreat-travel": ["Read More on Wellness Travel", ["amanjiwo-field-report", "in-defense-of-slow-travel", "asia-destination-guide"]],
