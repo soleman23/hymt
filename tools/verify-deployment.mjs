@@ -8,7 +8,7 @@
  * Each check exists because the matching mistake has actually been made in
  * this repo. Add to them rather than relying on remembering the convention.
  */
-import { readFile, writeFile, readdir, access } from "node:fs/promises";
+import { readFile, writeFile, readdir, access, stat } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
-  unsafeBlankLinks,
+  unsafeBlankLinks, eagerImageRefs,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -261,6 +261,26 @@ const linkResolves = async (p) => {
          (await exists(path.join(DIST, noSlash)));
 };
 
+/* Runbook §2.4 gates launch at 1.5 MB initial load. Images are effectively
+   all of it — see the eager-image-budget check below.
+
+   EAGER_IMAGE_DEBT is a ratchet, not an exemption. #72 fixed the homepage;
+   the check it shipped with then found the same defect on four pages the #31
+   dry-run never measured, two of them far worse than the homepage ever was.
+   Fixing those is its own tracked work, so their current weight is recorded
+   here: a listed page may only ever get smaller, and any page NOT listed is
+   held to the full budget. Delete an entry the moment its page comes under
+   1.5 MB — the check tells you when that happens. */
+const EAGER_IMAGE_BUDGET = 1.5 * 1024 * 1024;
+const EAGER_IMAGE_DEBT = {
+  "/destinations/": 8_965_230,               // 41 inline background-image cards
+  "/travel-journal/": 8_250_845,             // 32 inline background-image cards
+  "/about/": 3_043_744,                      // family-amalfi.png is 2.6 MB on its own
+  "/destinations/north-america/": 2_039_670, // 5 itinerary card backgrounds
+};
+let eagerPeak = 0;
+const eagerDebtSeen = new Set();
+
 const deadLinks = new Set();
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
@@ -491,9 +511,53 @@ for (const file of htmlFiles) {
   for (const a of unsafeBlankLinks(html)) {
     fail("blank-link-rel", `${url} opens a new tab without rel="noopener": ${a}`);
   }
+
+  /* eager-image-budget (#72): runbook §2.4 gates launch at 1.5 MB of initial
+     load, and the homepage failed it at 5.72 MB because 22 full-size heroes
+     were inline background-images, which cannot be lazy. This counts what a
+     browser fetches before any scrolling and holds the line. Images only —
+     HTML, CSS and fonts are small and stable here, so the image total is what
+     moves the number. */
+  {
+    let bytes = 0;
+    const biggest = [];
+    for (const ref of eagerImageRefs(html)) {
+      const size = await stat(path.join(DIST, ref)).then((s) => s.size, () => 0);
+      bytes += size;
+      biggest.push([ref, size]);
+    }
+    const debt = EAGER_IMAGE_DEBT[url];
+    const ceiling = debt ?? EAGER_IMAGE_BUDGET;
+    const mb = (n) => (n / 1024 / 1024).toFixed(2);
+    if (bytes > ceiling) {
+      const top = biggest.sort((a, b) => b[1] - a[1]).slice(0, 3)
+        .map(([r, s]) => `${r} ${(s / 1024).toFixed(0)}KB`).join(", ");
+      fail("eager-image-budget",
+        `${url} fetches ${mb(bytes)} MB of images before any scroll (limit ${mb(ceiling)} MB` +
+          `${debt ? ", its recorded debt — a listed page may only shrink" : ""}). Biggest: ${top}. ` +
+          `Lazy the below-fold ones and crop them to the box they render into.`);
+    } else if (debt && bytes <= EAGER_IMAGE_BUDGET) {
+      fail("eager-image-budget",
+        `${url} is now ${mb(bytes)} MB, under the ${mb(EAGER_IMAGE_BUDGET)} MB budget — ` +
+          `delete its EAGER_IMAGE_DEBT entry in tools/verify-deployment.mjs so the budget holds it from here.`);
+    }
+    if (debt) eagerDebtSeen.add(url);
+    eagerPeak = Math.max(eagerPeak, bytes);
+  }
 }
 for (const link of deadLinks) fail("internal-links", `internal href ${link} resolves to nothing in dist/`);
 notes.push("page-quality gates checked (P1-6)");
+/* A stale debt entry means the page was renamed or removed; drop it rather
+   than leaving a permanent hole in the budget. */
+for (const url of Object.keys(EAGER_IMAGE_DEBT)) {
+  if (!eagerDebtSeen.has(url)) {
+    fail("eager-image-budget", `EAGER_IMAGE_DEBT lists ${url}, which the build no longer produces — remove the entry.`);
+  }
+}
+notes.push(
+  `heaviest page fetches ${(eagerPeak / 1024 / 1024).toFixed(2)} MB of images before scroll ` +
+  `(budget 1.5 MB, ${Object.keys(EAGER_IMAGE_DEBT).length} pages carrying recorded debt)`
+);
 
 /* ── 5. Optional: confirm a deploy actually landed ──
    The FTP account does not land in the web root, so an upload can report

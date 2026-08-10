@@ -46,7 +46,7 @@ const t = (name, actual, expected) => {
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
-  unsafeBlankLinks,
+  unsafeBlankLinks, eagerImageRefs,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -229,6 +229,47 @@ t("blank-rel: EVERY offending link is reported, not just the first",
   unsafeBlankLinks(
     `<a href="https://a.com/" target="_blank">a</a><a href="https://b.com/" target="_blank">b</a>`
   ).length, 2);
+
+/* ── eager-image-budget (#72) ── */
+
+t("eager: a lazy <img> is not counted",
+  eagerImageRefs(`<img src="/assets/img/a.jpg" loading="lazy">`).length, 0);
+
+t("eager: an <img> with no loading attribute IS counted",
+  eagerImageRefs(`<img src="/assets/img/a.jpg">`).length, 1);
+
+t("eager: loading=eager is counted",
+  eagerImageRefs(`<img src="/assets/img/a.jpg" loading="eager">`).length, 1);
+
+t("eager: an inline background-image is counted — it cannot be lazy",
+  eagerImageRefs(`<div style="background-image:url('/assets/img/a.jpg');background-size:cover"></div>`).length, 1);
+
+t("eager: the exact shape the homepage shipped is caught",
+  eagerImageRefs(
+    `<div class="ig-post" style="background-image:url('/assets/img/e-05-positano-alley.jpg');background-size:cover;background-position:center"></div>`
+  )[0], "/assets/img/e-05-positano-alley.jpg");
+
+t("eager: the same asset twice counts once, like the browser cache",
+  eagerImageRefs(`<img src="/a.jpg"><img src="/a.jpg">`).length, 1);
+
+t("eager: query strings collapse to one asset",
+  eagerImageRefs(`<img src="/a.jpg?v=1"><img src="/a.jpg?v=2">`).length, 1);
+
+t("eager: data: URIs are not a second fetch",
+  eagerImageRefs(`<img src="data:image/png;base64,iVBORw0KGgo=">`).length, 0);
+
+t("eager: a remote image is not our budget to spend",
+  eagerImageRefs(`<img src="https://cdn.example.com/a.jpg">`).length, 0);
+
+t("eager: a background-image in a <style> block is NOT counted (may never paint)",
+  eagerImageRefs(`<style>.x{background-image:url('/assets/img/a.jpg')}</style>`).length, 0);
+
+t("eager: the post-fix homepage hero pattern counts slide 1 only",
+  eagerImageRefs(
+    `<div class="hero__slide is-active" style="background-image:url('/assets/img/h-01.jpg');background-size:cover"></div>` +
+    `<div class="hero__slide" style="background-size:cover" data-bg="/assets/img/h-02.jpg"></div>` +
+    `<div class="hero__slide" style="background-size:cover" data-bg="/assets/img/h-03.jpg"></div>`
+  ).length, 1);
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 
