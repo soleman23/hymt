@@ -103,14 +103,46 @@ const cropName = (src, prefix) =>
 const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
 const byTarget = new Map(manifest.map((m) => [m.target, m]));
 
-let built = 0, skipped = 0, rewritten = 0, before = 0, after = 0;
+/** Register a crop that already exists as a file or .b64 twin but may be
+ *  absent from MANIFEST — e.g. after an aborted run, or a re-run once the
+ *  markup is already converted and `find` matches nothing. */
+const ensureManifest = async (out) => {
+  const target = `public/assets/img/${out}`;
+  if (byTarget.has(target)) return false;
+  const b64Path = path.join(B64, `assets__img__${out}.b64`);
+  const outPath = path.join(IMG, out);
+  let buf;
+  try { buf = await readFile(outPath); }
+  catch {
+    try { buf = Buffer.from(await readFile(b64Path, "utf8"), "base64"); }
+    catch { return false; }
+  }
+  await writeFile(b64Path, buf.toString("base64"), "utf8");
+  const added = { b64: `images-b64/assets__img__${out}.b64`, target, bytes: buf.length };
+  manifest.push(added);
+  byTarget.set(target, added);
+  return true;
+};
+
+let built = 0, skipped = 0, rewritten = 0, before = 0, after = 0, registered = 0;
 const counted = new Set();
 
 for (const job of JOBS) {
   const file = path.join(ROOT, job.file);
   let html = await readFile(file, "utf8");
   const hits = [...html.matchAll(job.find)];
-  if (!hits.length) { console.log(`  ${job.name}: nothing to do`); continue; }
+  if (!hits.length) {
+    /* Markup already converted — still register any existing crops so a
+       re-run cannot leave .b64 twins orphaned from MANIFEST. */
+    const cropRe = new RegExp(String.raw`/assets/img/${job.prefix}-[A-Za-z0-9._-]+\.jpg`, "g");
+    let n = 0;
+    for (const m of html.matchAll(cropRe)) {
+      if (await ensureManifest(path.basename(m[0]))) n++;
+    }
+    registered += n;
+    console.log(`  ${job.name}: nothing to do` + (n ? ` (registered ${n} orphan crops)` : ""));
+    continue;
+  }
 
   for (const m of hits) {
     /* Sources live under /assets/img/ except the about portrait, which sits
@@ -136,13 +168,7 @@ for (const job of JOBS) {
       after += buf.length;
       /* A crop can exist on disk from an aborted run without ever having been
          written to the MANIFEST. Skipping the resize must not skip that. */
-      const target = `public/assets/img/${out}`;
-      if (!byTarget.has(target)) {
-        await writeFile(path.join(B64, `assets__img__${out}.b64`), buf.toString("base64"), "utf8");
-        const added = { b64: `images-b64/assets__img__${out}.b64`, target, bytes: buf.length };
-        manifest.push(added);
-        byTarget.set(target, added);
-      }
+      if (await ensureManifest(out)) registered++;
       skipped++;
     } else {
       await sharp(srcPath)
@@ -183,6 +209,6 @@ if (about.includes('class="story__photo-img"') && !about.includes("Mark Sole —
   throw new Error("about.html story caption changed — recheck the portrait's alt text");
 }
 
-console.log(`\ncrops built ${built}, skipped ${skipped}; markup rewritten ${rewritten}`);
+console.log(`\ncrops built ${built}, skipped ${skipped}; markup rewritten ${rewritten}; orphans registered ${registered}`);
 console.log(`sources: ${(before / 1024 / 1024).toFixed(2)} MB  ->  crops: ${(after / 1024 / 1024).toFixed(2)} MB`);
 console.log(`MANIFEST.json now has ${manifest.length} entries`);
