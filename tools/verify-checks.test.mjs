@@ -43,7 +43,10 @@ const t = (name, actual, expected) => {
 /* Imported, not re-implemented. An earlier draft of this file copied the
    predicates, which would have let the tests stay green while the verifier
    drifted — the exact failure mode these tests exist to prevent. */
-import { linkFloor, testimonialAttribution, faqFirstSentenceOver } from "./content-checks.mjs";
+import {
+  linkFloor, testimonialAttribution, faqFirstSentenceOver,
+  unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
+} from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
 /* ── internal-link-floor ── */
@@ -135,6 +138,65 @@ t("faq lead: only the offending answer is reported, not its neighbours",
     faq("Short and fine. Rest.") +
     faq("This second answer rambles on well past the twenty-five word limit because it wants to explain every consideration before it ever commits to anything at all, sadly. Rest.")
   ).length, 1);
+
+/* ── unsafe-href (SEC-8) ── */
+
+t("unsafe-href: a javascript: link fails",
+  unsafeHrefs(`<a href="javascript:alert(1)">x</a>`).length, 1);
+
+t("unsafe-href: numeric-entity obfuscation still fails",
+  unsafeHrefs(`<a href="&#106;avascript:alert(1)">x</a>`).length, 1);
+
+t("unsafe-href: whitespace-split scheme still fails",
+  unsafeHrefs(`<a href="java\tscript:alert(1)">x</a>`).length, 1);
+
+t("unsafe-href: vbscript: on src fails",
+  unsafeHrefs(`<img src="vbscript:msgbox(1)">`).length, 1);
+
+t("unsafe-href: data:text/html on a link fails",
+  unsafeHrefs(`<a href="data:text/html,<script>1</script>">x</a>`).length, 1);
+
+t("unsafe-href: normal https, mailto and relative links pass",
+  unsafeHrefs(`<a href="https://kws.go.ke/">x</a><a href="mailto:mark@hymtravel.com">m</a><a href="/plan-your-trip/">p</a>`).length, 0);
+
+t("unsafe-href: a data:image src is legitimate and passes",
+  unsafeHrefs(`<img src="data:image/png;base64,iVBORw0KGgo=">`).length, 0);
+
+/* ── inert-cost-section (SEC-8) ── */
+
+const cost = (inner) =>
+  `<section class="cost-range"><div class="cost-range__grid"><div>${inner}</div></div></section>`;
+
+t("inert: a clean cost section passes",
+  inertCostSections(cost(`<ul><li>Luxury camp, all meals</li></ul>`)).length, 0);
+
+t("inert: a script tag inside the cost section fails",
+  inertCostSections(cost(`<script>fetch('/x')</script>`)).length, 1);
+
+t("inert: an inline event handler inside the cost section fails",
+  inertCostSections(cost(`<a href="/x/" onclick="track()">x</a>`)).length, 1);
+
+t("inert: a page script OUTSIDE the cost section is not this check's business",
+  inertCostSections(cost(`<li>fine</li>`) + `<script>legit()</script>`).length, 0);
+
+t("inert: nested divs do not truncate the scan before the violation",
+  inertCostSections(cost(`<div><div></div><script>late()</script></div>`)).length, 1);
+
+/* ── placeholder-copy tokens (SEC-8 extension) ── */
+
+const phHits = (html) => PLACEHOLDER_PATTERNS.filter(([, re]) => re.test(visibleText(html))).length;
+
+t("placeholder: NEEDS FIGURE inside a comment is sanctioned and passes",
+  phHits(`<p>real copy</p><!-- NEEDS FIGURE: low end to high end -->`), 0);
+
+t("placeholder: NEEDS FIGURE in visible copy fails",
+  phHits(`<div class="cost-range__figure">NEEDS FIGURE: low end to high end</div>`), 1);
+
+t("placeholder: NEEDS MARK in visible copy fails",
+  phHits(`<p>NEEDS MARK: a real client testimonial</p>`), 1);
+
+t("placeholder: the pre-existing tokens still fail",
+  phHits(`<p>TBD</p>`), 1);
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 
