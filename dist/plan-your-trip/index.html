@@ -284,11 +284,11 @@
         <p class="step-sub">Not just the destination — the feeling. The more specific you are, the better the trip.</p>
         <div class="field">
           <label for="dest-idea">Destinations in mind (if any)</label>
-          <input type="text" id="dest-idea" placeholder="A place, a region, or just a vibe — anything helps">
+          <input type="text" id="dest-idea" maxlength="500" placeholder="A place, a region, or just a vibe — anything helps">
         </div>
         <div class="field">
           <label for="vision">Describe the trip you're imagining</label>
-          <textarea id="vision" placeholder="The kind of morning you want, whether you want silence or a city, what your ideal dinner looks like. Anything that helps me understand what would make this exceptional for you."></textarea>
+          <textarea id="vision" maxlength="3000" placeholder="The kind of morning you want, whether you want silence or a city, what your ideal dinner looks like. Anything that helps me understand what would make this exceptional for you."></textarea>
           <div class="field-hint">The most useful thing you can write: what would make this trip a failure. We design around that.</div>
         </div>
         <div class="field">
@@ -321,23 +321,24 @@
         <div class="label" style="margin-bottom:10px">Step 4 of 4</div>
         <h2 class="step-title">Almost there</h2>
         <p class="step-sub">Where should Mark send your reply?</p>
+        <input type="checkbox" id="plan-botcheck" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
         <div class="field-row">
           <div class="field" style="margin-bottom:0">
             <label for="fname">First name</label>
-            <input type="text" id="fname" placeholder="First name" autocomplete="given-name">
+            <input type="text" id="fname" maxlength="100" placeholder="First name" autocomplete="given-name">
           </div>
           <div class="field" style="margin-bottom:0">
             <label for="lname">Last name</label>
-            <input type="text" id="lname" placeholder="Last name" autocomplete="family-name">
+            <input type="text" id="lname" maxlength="100" placeholder="Last name" autocomplete="family-name">
           </div>
         </div>
         <div class="field">
           <label for="email">Email address</label>
-          <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+          <input type="email" id="email" maxlength="254" placeholder="your@email.com" autocomplete="email">
         </div>
         <div class="field">
           <label for="phone">Phone (optional)</label>
-          <input type="tel" id="phone" placeholder="+1 (___) ___-____" autocomplete="tel">
+          <input type="tel" id="phone" maxlength="40" placeholder="+1 (___) ___-____" autocomplete="tel">
         </div>
         <div class="field">
           <label for="referral">How did you hear about us?</label>
@@ -397,13 +398,18 @@
 (function(){
   var params = new URLSearchParams(window.location.search);
   var t = params.get('type');
-  if (t) {
-    var el = document.querySelector('.cat-grid input[data-type="'+t+'"]');
-    if (el) el.checked = true;
-    if (t === 'honeymoon') {
-      var o = document.getElementById('o1');
-      if (o) o.checked = true;
-    }
+  /* Kebab-case only, checked BEFORE the value reaches a selector: a quote or
+     a CSS meta-character in ?type= would otherwise break out of the attribute
+     selector and match a node this was never meant to touch. Same guard the
+     destinations hub uses in regionFromUrl. The allowlist is implicit and
+     self-maintaining — a validated value still has to match a real input. */
+  if (!t || !/^[a-z0-9-]+$/.test(t)) return;
+  var el = document.querySelector('.cat-grid input[data-type="' + t + '"]');
+  if (!el) return;
+  el.checked = true;
+  if (t === 'honeymoon') {
+    var o = document.getElementById('o1');
+    if (o) o.checked = true;
   }
 })();
 
@@ -473,8 +479,11 @@ async function submitForm() {
   var whenParts = [document.getElementById('month').value, document.getElementById('year').value].filter(Boolean);
   var when = whenParts.length ? whenParts.join(' ') : 'Not specified';
   var duration = document.getElementById('duration').value || 'Not specified';
-  var destination = document.getElementById('dest-idea').value.trim() || 'Not specified';
-  var vision = document.getElementById('vision').value.trim() || 'Not specified';
+  /* The maxlength attributes are the real limit; these mirror them so a
+     stripped-markup or scripted submit still cannot post an unbounded body. */
+  var cap = function(v, n){ return v.length > n ? v.slice(0, n) : v; };
+  var destination = cap(document.getElementById('dest-idea').value.trim(), 500) || 'Not specified';
+  var vision = cap(document.getElementById('vision').value.trim(), 3000) || 'Not specified';
 
   var message = [
     'New Plan Your Trip inquiry',
@@ -504,7 +513,10 @@ async function submitForm() {
   formData.append('phone', phone);
   formData.append('message', message);
   formData.append('experiences', experiences.join(', '));
-  formData.append('destination', document.getElementById('dest-idea').value.trim());
+  formData.append('destination', cap(document.getElementById('dest-idea').value.trim(), 500));
+  /* Honeypot, same contract as Contact and Newsletter: a real user never sees
+     this field, so anything filling it is a bot and Web3Forms rejects it. */
+  formData.append('botcheck', document.getElementById('plan-botcheck').checked ? 'true' : '');
   formData.append('budget', budget);
   formData.append('newsletter', newsletter);
 
