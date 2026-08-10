@@ -4,16 +4,22 @@ import Content from "../../content-pages/about.html?raw";
 import { breadcrumbs, person, webPage } from "../../lib/schema";
 
 /* P2-3: the Person node lives here and only here — Articles reference it
-   by @id. The visible pairing is already in the page copy: the photo
-   (assets/family-amalfi.png), the Travel Leaders Network affiliation, and
-   the three Seller of Travel numbers in the body. */
+   by @id. The visible pairing is already in the page copy: the photo, the
+   Travel Leaders Network affiliation, and the three Seller of Travel
+   numbers in the body.
+
+   image points at the same crop the page displays (#87). It used to name
+   the 1024x1536 PNG, which stopped being rendered when the story panel moved
+   to a lazy JPEG — leaving the one image we hand Google as a 2.6 MB PNG that
+   no visitor ever loaded. Keep these two in step: if the story photo
+   changes, this changes with it. */
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
 const description =
   "Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone.";
 const schema = [
   person(SITE, {
     sameAs: ["https://www.instagram.com/travelwithsoleman/"],
-    image: "/assets/family-amalfi.png",
+    image: "/assets/img/sp-family-amalfi.jpg",
   }),
   webPage(SITE, { type: "AboutPage", name: "About Mark Sole", description, path: "/about/" }),
   breadcrumbs(SITE, [{ name: "Home", path: "/" }, { name: "About" }]),
