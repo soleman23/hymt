@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeBlankLinks,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -482,6 +483,13 @@ for (const file of htmlFiles) {
   }
   for (const kind of inertCostSections(html)) {
     fail("inert-cost-section", `${url} has a ${kind} inside a .cost-range section — the insert surface must stay inert (SEC-8)`);
+  }
+
+  /* blank-link-rel (SEC-5, #80): a new-tab link without noopener leaves the
+     opened page a window.opener handle back to ours. Six links shipped that
+     way; this is what stops the seventh. */
+  for (const a of unsafeBlankLinks(html)) {
+    fail("blank-link-rel", `${url} opens a new tab without rel="noopener": ${a}`);
   }
 }
 for (const link of deadLinks) fail("internal-links", `internal href ${link} resolves to nothing in dist/`);
