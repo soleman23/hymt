@@ -260,7 +260,7 @@
 }
 
 /* The page-gutter batch below deliberately restates padding on
-   .seasons-strip, .testimonial-section and .mark-note, which are defined
+   .seasons-strip and .testimonial-section, which are defined
    in section-shared.css. That sheet loads first, so these win. */
 @media(max-width:900px){
   .intro-content { padding:48px 28px }
@@ -272,7 +272,7 @@
   .inclusions-grid { grid-template-columns:repeat(2,1fr) }
   .sports-grid { grid-template-columns:repeat(2,1fr) }
   .seasons-grid { grid-template-columns:1fr }
-  .countries-section,.sports-section,.events-section,.inclusions-section,.seasons-strip,.testimonial-section,.mark-note,.exp-cta { padding-left:28px;padding-right:28px }
+  .countries-section,.sports-section,.events-section,.inclusions-section,.seasons-strip,.testimonial-section,.exp-cta { padding-left:28px;padding-right:28px }
   .exp-hero__content { padding:0 28px }
 }
 @media(max-width:540px){
