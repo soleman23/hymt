@@ -41,21 +41,21 @@
       <div class="contact-method">
         <span class="contact-method-label">Web</span>
         <div class="contact-method-val">
-          <a href="https://www.hymtravel.com" target="_blank">hymtravel.com</a>
+          <a href="https://www.hymtravel.com" target="_blank" rel="noopener noreferrer">hymtravel.com</a>
           <small>Destination guides, the Journal, and more</small>
         </div>
       </div>
       <div class="contact-method">
         <span class="contact-method-label">Instagram</span>
         <div class="contact-method-val">
-          <a href="https://www.instagram.com/travelwithsoleman/" target="_blank">@travelwithsoleman</a>
+          <a href="https://www.instagram.com/travelwithsoleman/" target="_blank" rel="noopener noreferrer">@travelwithsoleman</a>
           <small>Destination photos and travel notes</small>
         </div>
       </div>
       <div class="contact-method">
         <span class="contact-method-label">LinkedIn</span>
         <div class="contact-method-val">
-          <a href="https://www.linkedin.com/in/mark-sole/" target="_blank">linkedin.com/in/mark-sole</a>
+          <a href="https://www.linkedin.com/in/mark-sole/" target="_blank" rel="noopener noreferrer">linkedin.com/in/mark-sole</a>
           <small>Professional background and recommendations</small>
         </div>
       </div>
@@ -79,20 +79,20 @@
       <div class="cf-row">
         <div class="cf">
           <label for="cfname">First name</label>
-          <input type="text" id="cfname" name="first_name" autocomplete="given-name" placeholder="First name" required>
+          <input type="text" id="cfname" name="first_name" maxlength="100" autocomplete="given-name" placeholder="First name" required>
         </div>
         <div class="cf">
           <label for="cflname">Last name</label>
-          <input type="text" id="cflname" name="last_name" autocomplete="family-name" placeholder="Last name">
+          <input type="text" id="cflname" name="last_name" maxlength="100" autocomplete="family-name" placeholder="Last name">
         </div>
       </div>
       <div class="cf">
         <label for="cfemail">Email</label>
-        <input type="email" id="cfemail" name="email" autocomplete="email" placeholder="your@email.com" required>
+        <input type="email" id="cfemail" name="email" maxlength="254" autocomplete="email" placeholder="your@email.com" required>
       </div>
       <div class="cf">
         <label for="cfphone">Phone (optional)</label>
-        <input type="tel" id="cfphone" name="phone" autocomplete="tel" placeholder="+1 (___) ___-____">
+        <input type="tel" id="cfphone" name="phone" maxlength="40" autocomplete="tel" placeholder="+1 (___) ___-____">
       </div>
       <div class="cf">
         <label for="cfsubject">What's this about?</label>
@@ -108,7 +108,7 @@
       </div>
       <div class="cf">
         <label for="cfmsg">Message</label>
-        <textarea id="cfmsg" name="message" placeholder="Tell me what's on your mind — a destination, a timing question, or just an idea you're working through." required></textarea>
+        <textarea id="cfmsg" name="message" maxlength="3000" placeholder="Tell me what's on your mind — a destination, a timing question, or just an idea you're working through." required></textarea>
       </div>
       <button class="cf-submit" type="submit" id="cfSubmitBtn">Send Message</button>
       <p id="cfError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:14px" role="alert"></p>
@@ -194,8 +194,8 @@
     <p class="social-strip__sub">Destination photography, travel notes, and the occasional opinion on where to go — and why.</p>
   </div>
   <div class="social-links">
-    <a href="https://www.instagram.com/travelwithsoleman/" target="_blank" class="social-link">Instagram</a>
-    <a href="https://www.linkedin.com/in/mark-sole/" target="_blank" class="social-link">LinkedIn</a>
+    <a href="https://www.instagram.com/travelwithsoleman/" target="_blank" rel="noopener noreferrer" class="social-link">Instagram</a>
+    <a href="https://www.linkedin.com/in/mark-sole/" target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn</a>
   </div>
 </div>
 
@@ -238,6 +238,9 @@
 
     var topic = document.getElementById('cfsubject').value;
     var name = [fnameEl.value.trim(), document.getElementById('cflname').value.trim()].filter(Boolean).join(' ');
+    /* maxlength is the real limit; this mirrors it, because FormData(form)
+       reads whatever is in the DOM and the attribute can be edited away. */
+    if (msgEl.value.length > 3000) msgEl.value = msgEl.value.slice(0, 3000);
     var formData = new FormData(form);
     formData.append('access_key', '94312057-04b8-44d8-a7a8-7cb083d999b8');
     formData.append('subject', 'HYM Contact — ' + (topic || 'New Message'));
