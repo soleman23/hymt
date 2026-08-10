@@ -97,7 +97,11 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 # ── Block access to sensitive files ──
-<FilesMatch "(^\.|\.(log|md|json|lock|sh|py)$)">
+# Defence in depth for anything that lands in public_html by accident — the
+# deploy scripts, a stray .env, an editor backup. The build itself ships no
+# file of any type listed here, so this can only ever deny a mistake.
+# Extensions beyond the original log/md/json/lock/sh/py set added for SEC-7 (#78).
+<FilesMatch "(^\.|\.(log|md|json|lock|sh|py|env|ya?ml|toml|ps1|pem|key|bak)$)">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

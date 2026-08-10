@@ -6,6 +6,12 @@
  * placeholder "G-XXXXXXXXXX" is safe to ship: the script only ever runs on
  * www.hymtravel.com, and gtag requests with a placeholder ID are no-ops.
  *
+ * The disclosure gate (SEC-2, #75) is CLEARED: the privacy policy names GA4,
+ * the four events below, and Google's policy as of August 2026. Swapping the
+ * placeholder for a real ID no longer creates a disclosure mismatch. If the
+ * event list here ever changes, the policy's Cookies & Analytics section has
+ * to change with it — that is the whole point of the gate.
+ *
  * Deliberate constraints — do not "improve" them away:
  *  - Never fires on staging or localhost: hard hostname gate below.
  *  - gtag.js loads on first user interaction (scroll/pointerdown/keydown),

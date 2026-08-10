@@ -46,6 +46,7 @@ const t = (name, actual, expected) => {
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeBlankLinks,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -197,6 +198,37 @@ t("placeholder: NEEDS MARK in visible copy fails",
 
 t("placeholder: the pre-existing tokens still fail",
   phHits(`<p>TBD</p>`), 1);
+
+/* ── blank-link-rel (SEC-5) ── */
+
+t("blank-rel: target=_blank with no rel at all fails",
+  unsafeBlankLinks(`<a href="https://instagram.com/x" target="_blank">IG</a>`).length, 1);
+
+t("blank-rel: the house pattern passes",
+  unsafeBlankLinks(`<a href="https://x.com/" target="_blank" rel="noopener noreferrer">x</a>`).length, 0);
+
+t("blank-rel: noopener alone passes",
+  unsafeBlankLinks(`<a href="https://x.com/" target="_blank" rel="noopener">x</a>`).length, 0);
+
+t("blank-rel: noreferrer alone passes — it severs the handle too",
+  unsafeBlankLinks(`<a href="https://x.com/" target="_blank" rel="noreferrer">x</a>`).length, 0);
+
+t("blank-rel: an unrelated rel value does not satisfy it",
+  unsafeBlankLinks(`<a href="https://x.com/" target="_blank" rel="nofollow">x</a>`).length, 1);
+
+t("blank-rel: rel before target is still seen",
+  unsafeBlankLinks(`<a rel="noopener" href="https://x.com/" target="_blank">x</a>`).length, 0);
+
+t("blank-rel: unquoted target is still caught",
+  unsafeBlankLinks(`<a href="https://x.com/" target=_blank>x</a>`).length, 1);
+
+t("blank-rel: a same-tab link is not this check's business",
+  unsafeBlankLinks(`<a href="/plan-your-trip/">plan</a>`).length, 0);
+
+t("blank-rel: EVERY offending link is reported, not just the first",
+  unsafeBlankLinks(
+    `<a href="https://a.com/" target="_blank">a</a><a href="https://b.com/" target="_blank">b</a>`
+  ).length, 2);
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 
