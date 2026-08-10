@@ -281,9 +281,11 @@
    would mean sourcing 54 more crops.
 
    Sits on --bg-page, one step down from the FAQ's --bg-surface directly above
-   it. Both on --bg-surface reads as a single flat wall with a hairline in it;
-   the tone change is what separates the two blocks. */
-.read-more { padding:72px 52px;background:var(--bg-page) }
+   it. The tone step carries the separation in the dark theme; in the light
+   theme those two values are #faf8f4 against #ffffff — near-invisible — so
+   the border-top does the work there. Both cues, because neither works in
+   both themes alone. */
+.read-more { padding:72px 52px;background:var(--bg-page);border-top:1px solid var(--border-subtle) }
 .read-more__header { max-width:640px;margin-bottom:32px }
 .read-more__label {
   font-family:var(--font-d);font-size:10px;font-weight:700;

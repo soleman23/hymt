@@ -105,16 +105,26 @@ const RELATED = {
 const H2 = `font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary)`;
 const FAQ_OPEN = '<section class="page-faq">';
 
+/* Cards use the rc-* crops, not the full heroes. DEST above stays the single
+   source of truth for which hero belongs to which destination; the crop name
+   derives from it, so the two cannot drift. Dimensions match
+   tools/make-related-card-crops.mjs and are emitted as intrinsic width/height
+   because the verifier's img-attrs check requires them. */
+const CROP_W = 760;
+const CROP_H = 435;
+const cardCrop = (heroPath) =>
+  heroPath.replace(/([^/]+)\.(jpe?g|png|webp)$/i, "rc-$1.jpg");
+
+/* Photographs here are decorative: the card's accessible name already comes
+   from .related-card__region and .related-card__name, so descriptive alt text
+   would only repeat the destination — which CONTENT-STANDARDS § 8 rules out
+   directly. § 8 says decorative images take alt="" plus aria-hidden="true". */
+
 let changed = 0;
 
 for (const [slug, siblings] of Object.entries(RELATED)) {
   const file = path.join(DIR, `destinations__${slug}.html`);
   let html = await readFile(file, "utf8");
-
-  if (html.includes("data-p3-6")) {
-    console.log(`  skip  ${slug}`);
-    continue;
-  }
 
   const [, hubLabel, hubSlug] = DEST[slug];
 
@@ -122,7 +132,8 @@ for (const [slug, siblings] of Object.entries(RELATED)) {
     const [name, region, , img] = DEST[s];
     return (
       `    <a href="/destinations/${s}/" class="related-card">\n` +
-      `      <div class="related-card__ph" style="background-image:url('${img}');background-size:cover;background-position:center"></div>\n` +
+      `      <img class="related-card__img" src="${cardCrop(img)}" alt="" aria-hidden="true"\n` +
+      `           width="${CROP_W}" height="${CROP_H}" loading="lazy" decoding="async">\n` +
       `      <div class="related-card__overlay"></div>\n` +
       `      <div class="related-card__body">\n` +
       `        <div class="related-card__region">${region}</div>\n` +
@@ -146,11 +157,18 @@ for (const [slug, siblings] of Object.entries(RELATED)) {
     `  </div>\n` +
     `</section>\n\n`;
 
-  /* The Maldives already had a related-section. Replace it in place rather
-     than shipping two, so the stale Seychelles / Bora Bora cards go with it. */
-  const stale = html.match(/<!-- ══ RELATED DESTINATIONS ══ -->\s*<section class="related-section">[\s\S]*?<\/section>\s*/);
-  if (stale) {
-    html = html.replace(stale[0], block);
+  /* Rewrite in place if a block is already there, rather than skipping.
+     Two cases both land here: the original hand-written /maldives/ block
+     (whose three cards pointed at /destinations/ and named two places with no
+     page), and any earlier run of this script. Regenerating has to be able to
+     change what it already wrote — the switch from CSS background-images to
+     lazy <img> crops was exactly that, and a skip-if-present guard would have
+     silently no-opped the whole fix. */
+  const existing = html.match(
+    /<!-- ══ RELATED DESTINATIONS[^>]*══ -->\s*<section class="related-section"[^>]*>[\s\S]*?<\/section>\s*/
+  );
+  if (existing) {
+    html = html.replace(existing[0], block);
   } else {
     if (!html.includes(FAQ_OPEN)) throw new Error(`${slug}: no page-faq to insert before`);
     html = html.replace(FAQ_OPEN, block + FAQ_OPEN);
@@ -158,7 +176,7 @@ for (const [slug, siblings] of Object.entries(RELATED)) {
 
   await writeFile(file, html, "utf8");
   changed++;
-  console.log(`  ok    ${slug}${stale ? " (replaced the stale block)" : ""}`);
+  console.log(`  ok    ${slug}${existing ? " (rewrote in place)" : ""}`);
 }
 
 console.log(`\n${changed} destination pages given a related-destinations block and a hub link.`);

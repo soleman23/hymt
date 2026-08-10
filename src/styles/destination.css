@@ -449,6 +449,17 @@
   transition:transform .4s cubic-bezier(.16,1,.3,1);
 }
 .related-card:hover .related-card__ph { transform:scale(1.04) }
+/* The photograph, as a real <img> rather than a CSS background. A background
+   cannot carry loading="lazy", and these sit at the foot of the page: shipping
+   three full-size heroes eagerly cost 699 KB per destination page and they
+   were measured fetching alongside the LCP hero. Sources are the rc-* crops
+   from tools/make-related-card-crops.mjs, 760x435 for a 385x220 box. */
+.related-card__img {
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.related-card:hover .related-card__img { transform:scale(1.04) }
 .related-card__overlay {
   position:absolute;inset:0;
   background:linear-gradient(0deg,rgba(8,15,26,.88) 0%,rgba(8,15,26,.15) 60%,transparent 100%);

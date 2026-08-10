@@ -126,7 +126,10 @@ for (const [stem, [heading, slugs]] of Object.entries(PAGES)) {
   const file = path.join(DIR, `${stem}.html`);
   let html = await readFile(file, "utf8");
 
-  if (html.includes('class="read-more"')) {
+  /* Class matched as a token, not as the whole attribute — an exact match
+     would stop recognising the block the moment it gained a modifier class,
+     and this script would then append a duplicate on its next run. */
+  if (/class="[^"]*\bread-more\b/.test(html)) {
     console.log(`  skip  ${stem}`);
     continue;
   }

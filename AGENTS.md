@@ -101,6 +101,10 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 
 ### Before every commit
 - `npm run build` must pass. It is self-contained: astro build, then the image
-  restore (`node tools/restore-images.mjs`), then `tools/verify-deployment.mjs`.
+  restore (`node tools/restore-images.mjs`), then the check fixtures
+  (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
+- A new verifier check must come with fixtures in `tools/verify-checks.test.mjs`
+  proving it fails on the broken shape, not only that the build stays green — a
+  check that cannot go red is worse than no check, and two shipped that way.
 - Intentional `<title>`/description/canonical changes:
   `node tools/verify-deployment.mjs --update-baseline`, in their own commit.
