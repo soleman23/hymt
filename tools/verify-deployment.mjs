@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 /* Fixture-tested in tools/verify-checks.test.mjs. Both of these were written
    inline here first and both were wrong in ways a passing build could not
    show — see that file's header. */
-import { linkFloor, testimonialAttribution } from "./content-checks.mjs";
+import { linkFloor, testimonialAttribution, faqFirstSentenceOver } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DIST = path.join(ROOT, "dist");
@@ -436,6 +436,17 @@ for (const file of htmlFiles) {
         `${url} renders a .${cls} with no named attribution in .${attrCls} — ` +
           `never ship a quote without one (SEO-AIO-PLAN § P3-7)`);
     }
+  }
+
+  /* faq-first-sentence (P3-2, CONTENT-STANDARDS § 3.3 "non-negotiable"):
+     every FAQ answer opens with a complete answer in ≤25 words. The site
+     reached 0-of-408 over the limit on 2026-08-09 — 50 mechanical em-dash
+     splits plus 36 hand rewrites — and this keeps it there, one answer at a
+     time, instead of depending on anyone re-running the audit script. */
+  for (const { question, words } of faqFirstSentenceOver(html)) {
+    fail("faq-first-sentence",
+      `${url} answer to "${question.slice(0, 60)}" opens with a ${words}-word sentence — ` +
+        `the first sentence must be a complete answer in ≤25 words (CONTENT-STANDARDS § 3.3)`);
   }
 
   /* accordion-a11y: the P0-1 contract, kept honest forever */
