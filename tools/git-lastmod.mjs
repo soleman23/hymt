@@ -1,0 +1,123 @@
+/**
+ * Per-page sitemap lastmod, derived from git (#70).
+ *
+ * The sitemap used to stamp every URL with the moment of the build, which
+ * made lastmod pure noise: all 97 dates moved in lockstep on every build, so
+ * crawlers learn to ignore the field (Google has said publicly it ignores
+ * lastmod where it is demonstrably unreliable — this was the textbook case),
+ * and every content commit carried a spurious two-file sitemap diff because
+ * dist/ is committed.
+ *
+ * A page's date is now the last commit that touched its SOURCES:
+ *
+ *   /destinations/italy/  ->  src/pages/destinations/italy/index.astro
+ *                             src/content-pages/destinations__italy.html
+ *   /                     ->  src/pages/index.astro
+ *                             src/content-pages/home.html
+ *
+ * That convention (path segments joined by "__"; root is home.html) holds for
+ * all 97 routes today. Deliberately content-scoped: a layout or stylesheet
+ * commit re-renders every page but does not change what any page SAYS, and
+ * lastmod is a statement about content. DECISIONS.md D6 journal dating is
+ * untouched — this reads commit history, not the publishDate props the launch
+ * runbook stamps.
+ *
+ * Collection hubs are an exception: /destinations/ and /experiences/ build
+ * their CollectionPage ItemList from a glob of each child index.astro, so
+ * adding or removing a child route changes the hub's deployed JSON-LD without
+ * touching the hub's own two source files. Those hubs therefore also include
+ * every live child index.astro in their source set.
+ *
+ * One `git log` walks the whole history once (newest first; the first time a
+ * file appears is its last modification). Files with uncommitted changes get
+ * their filesystem mtime — stable across two consecutive builds, which is the
+ * property that matters. If git is unavailable entirely, every page gets no
+ * lastmod at all: a sitemap without the field beats one that lies.
+ */
+import { execFileSync } from "node:child_process";
+import { readdirSync, statSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
+
+/** Hubs whose ItemList is discovered via a child-page glob. */
+const CHILD_GLOB_HUBS = new Set(["destinations", "experiences"]);
+
+/** file (repo-relative, /-separated) -> YYYY-MM-DD of its last commit. */
+let committed = null;
+/** files with uncommitted modifications (or untracked), same key shape. */
+let dirty = null;
+
+function load() {
+  if (committed) return;
+  committed = new Map();
+  dirty = new Set();
+  try {
+    // %x00 date sentinel, then the commit's file list. Newest-first, so only
+    // the first sighting of each path is recorded.
+    const log = execFileSync(
+      "git",
+      ["log", "--format=%x00%cI", "--name-only", "--", "src/pages", "src/content-pages"],
+      { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }
+    );
+    let date = "";
+    for (const line of log.split("\n")) {
+      if (line.startsWith("\x00")) date = line.slice(1, 11); // YYYY-MM-DD
+      else if (line.trim() && !committed.has(line.trim())) committed.set(line.trim(), date);
+    }
+    const status = execFileSync("git", ["status", "--porcelain", "--", "src/pages", "src/content-pages"],
+      { cwd: ROOT, encoding: "utf8" });
+    for (const line of status.split("\n")) {
+      const f = line.slice(3).trim();
+      if (f) dirty.add(f.replace(/\\/g, "/"));
+    }
+  } catch {
+    committed = new Map(); // git unavailable -> everything resolves undefined
+    dirty = new Set();
+  }
+}
+
+/** Child index.astro files a Collection hub glob will pick up this build. */
+function childHubSources(hub) {
+  try {
+    return readdirSync(path.join(ROOT, "src/pages", hub), { withFileTypes: true })
+      .filter((ent) => ent.isDirectory())
+      .map((ent) => `src/pages/${hub}/${ent.name}/index.astro`);
+  } catch {
+    return [];
+  }
+}
+
+/** Candidate source files for a route pathname, repo-relative. */
+function sourcesOf(pathname) {
+  const segs = pathname.replace(/^\/|\/$/g, "").split("/").filter(Boolean);
+  if (segs.length === 0) return ["src/pages/index.astro", "src/content-pages/home.html"];
+  const own = [
+    `src/pages/${segs.join("/")}/index.astro`,
+    `src/content-pages/${segs.join("__")}.html`,
+  ];
+  if (segs.length === 1 && CHILD_GLOB_HUBS.has(segs[0])) {
+    return [...own, ...childHubSources(segs[0])];
+  }
+  return own;
+}
+
+/**
+ * YYYY-MM-DD the page's content last changed, or undefined when unknowable.
+ * @param {string} pathname  e.g. "/destinations/italy/"
+ */
+export function pageLastmod(pathname) {
+  load();
+  let latest;
+  for (const f of sourcesOf(pathname)) {
+    let d;
+    if (dirty.has(f)) {
+      try { d = statSync(path.join(ROOT, f)).mtime.toISOString().slice(0, 10); } catch { /* gone */ }
+    } else {
+      d = committed.get(f);
+    }
+    if (d && (!latest || d > latest)) latest = d;
+  }
+  return latest;
+}

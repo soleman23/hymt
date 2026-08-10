@@ -43,7 +43,7 @@ const t = (name, actual, expected) => {
 /* Imported, not re-implemented. An earlier draft of this file copied the
    predicates, which would have let the tests stay green while the verifier
    drifted — the exact failure mode these tests exist to prevent. */
-import { linkFloor, testimonialAttribution } from "./content-checks.mjs";
+import { linkFloor, testimonialAttribution, faqFirstSentenceOver } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
 /* ── internal-link-floor ── */
@@ -111,6 +111,30 @@ t("attribution: an extra class on the attribution element still passes",
 
 t("attribution: a page with no testimonial at all is not a failure",
   attribution(`<main><p>nothing</p></main>`, "testimonial-card", "testimonial-card__name"), "no-blocks");
+
+/* ── faq-first-sentence ── */
+
+const faq = (answer) =>
+  `<div class="pf-item"><h3 class="pf-q-h"><button class="pf-q"><span class="pf-q__text">Test question?</span></button></h3>` +
+  `<div class="pf-a" id="x" role="region">${answer}</div></div>`;
+
+t("faq lead: a short complete answer passes",
+  faqFirstSentenceOver(faq("Yes. The elaboration follows here and can run as long as it likes without tripping anything.")).length, 0);
+
+t("faq lead: 26+ words before the first period fails",
+  faqFirstSentenceOver(faq("The answer to this question is one that depends on a very large number of considerations that we will now enumerate at truly excessive length before concluding. Sorry.")).length, 1);
+
+t("faq lead: a decimal number does not end the sentence",
+  faqFirstSentenceOver(faq("The flight takes 2.5 hours in most conditions. More detail follows."))[0]?.words ?? 0, 0);
+
+t("faq lead: markup inside the answer is ignored for counting",
+  faqFirstSentenceOver(faq("<strong>Yes</strong> — and here is why, briefly. Elaboration.")).length, 0);
+
+t("faq lead: only the offending answer is reported, not its neighbours",
+  faqFirstSentenceOver(
+    faq("Short and fine. Rest.") +
+    faq("This second answer rambles on well past the twenty-five word limit because it wants to explain every consideration before it ever commits to anything at all, sadly. Rest.")
+  ).length, 1);
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 
