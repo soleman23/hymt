@@ -225,20 +225,17 @@
   <p class="exp-cta__note">No booking fees &nbsp;·&nbsp; Response within 24 hours &nbsp;·&nbsp; Fully bespoke</p>
 </section>
 
-<!-- ══ WHAT IT COSTS (P3-3) — NOT YET LIVE ══════════════════════════════
-     The structure below is final. Every number is a NEEDS FIGURE placeholder.
+<!-- ══ WHAT IT COSTS (P3-3) — HELD ══════════════════════════════════════
+     A researched band exists for this page (docs/seo/research-backfill-2026-08-09.md
+     and tools/cost-ranges-data.mjs) but its confidence sits below the launch
+     bar: Medium-low — dynamic rates, and event budgets price separately.
+     To ship it: confirm the band against a supplier quote, replace this
+     page's `held` entry in tools/cost-ranges-data.mjs with the confirmed
+     data, and re-run `node tools/p3-8-cost-insert.mjs`.
 
-     To ship it: fill this page's row in docs/seo/figures-worksheet.md, then
-     replace each NEEDS FIGURE with the verified number, set the datetime and the
-     visible month on the time element to the date it was verified, add the
-     P3-5 source link named in the worksheet, and delete these comment
-     markers so the section renders.
-
-     Do NOT uncomment this with placeholders still in it. A costs section
-     with no cost in it is worse than no section, and the build's
-     placeholder-copy check will not catch it — that check strips comments
-     and only reads visible text, which is precisely why this is safe to
-     ship commented and unsafe to ship half-filled.
+     Do NOT hand-uncomment this with placeholders still in it. The build's
+     placeholder check reads visible text only, which is why this is safe
+     commented and unsafe half-filled.
 
 <section class="cost-range">
   <div class="cost-range__header">
