@@ -60,6 +60,25 @@ ever rotate the key, change it in `src/components/Newsletter.astro`,
 `src/content-pages/plan-your-trip.html` and `src/content-pages/contact.html`,
 then rebuild.
 
+#### 4a. Web3Forms dashboard hardening (SEC-1, #74) — human step, ~10 minutes
+
+Because the key is public, anyone can script POSTs straight at the API and
+flood the inbox or burn the quota. The code side is done — all three forms now
+carry the honeypot and length caps — but the controls that actually stop a
+scripted flood live in the Web3Forms dashboard and need a login:
+
+1. **Restrict allowed domains** to `www.hymtravel.com` (add the apex too if the
+   UI requires it). This is the single highest-value setting: it rejects
+   submissions that did not originate on the site.
+2. **Enable a CAPTCHA** — Cloudflare Turnstile is the least intrusive. If you
+   turn this on, the forms need a matching widget added to the markup, so tell
+   the next session before enabling it.
+3. **Enable rate limiting / spam filtering** if the plan offers it.
+
+Verify afterwards: a bare `curl -X POST https://api.web3forms.com/submit -d
+"access_key=<key>&message=test"` from outside the site should be rejected, while
+Contact, Plan Your Trip and the newsletter all still deliver.
+
 ### 5. Post-launch
 - Google Search Console → add property → submit `https://www.hymtravel.com/sitemap-index.xml` (the build generates `sitemap-index.xml` + `sitemap-0.xml`; there is no `sitemap.xml` anymore).
 - `robots.txt` is already in place.
