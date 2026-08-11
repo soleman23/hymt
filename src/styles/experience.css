@@ -57,59 +57,122 @@
    64px inner gutter where destinations run 52px, so this one stays here. */
 .intro-content { padding:72px 64px }
 
-/* COUNTRIES GRID */
-.countries-section { padding:72px 52px;background:var(--bg-page) }
+/* ── EXPERIENCE CARD GRID ──
+   The one 6-card component every /experiences/<slug>/ page uses, and the
+   sibling of .place-card in destination.css. The two are kept deliberately in
+   step: same element names, same modifiers, same semantics, so a change made
+   to the card treatment on one page type transfers to the other by reading
+   across rather than by re-deriving it.
+
+   It replaces two forks. Eleven pages ran .country-card and Sports & Event
+   Travel ran its own .sport-card, which had picked up neither the body scrim
+   nor the auto row height: its copy overflowed a fixed 260px row and printed
+   on top of the placeholder caption underneath. There is no page-specific
+   card any more. A page that needs something different gets a modifier here. */
+.exp-cards-section { padding:72px 52px;background:var(--bg-page) }
 /* minmax, not a fixed track — see the same note on .places-grid in
    destination.css. A fixed row clipped the card name off the top of any
    card whose copy ran long. */
-.countries-grid {
-  display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(280px,auto);gap:3px;
+.exp-cards {
+  display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(280px,auto);gap:3px;
 }
-.country-card {
+.exp-card {
   position:relative;overflow:hidden;cursor:pointer;background:var(--bg-card);
-  display:flex;flex-direction:column;justify-content:flex-end;
+  display:flex;flex-direction:column;justify-content:flex-end;text-decoration:none;
 }
-.country-card--featured { grid-column:span 1 }
-.country-card__ph {
+.exp-card__ph {
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-family:var(--font-d);font-size:10px;font-weight:600;
   letter-spacing:.14em;text-transform:uppercase;color:rgba(138,155,176,.25);
   transition:transform .5s cubic-bezier(.16,1,.3,1);
 }
-.country-card:hover .country-card__ph { transform:scale(1.04) }
-.country-card__overlay {
+.exp-card:hover .exp-card__ph { transform:scale(1.04) }
+.exp-card__overlay {
   position:absolute;inset:0;
   background:linear-gradient(0deg,rgba(8,15,26,.92) 0%,rgba(8,15,26,.2) 50%,transparent 100%);
   transition:opacity .3s;
 }
-.country-card:hover .country-card__overlay { opacity:.7 }
+.exp-card:hover .exp-card__overlay { opacity:.7 }
 /* Bottom-anchored scrim so the copy stays legible at any card height —
    see the same note on .place-card__body in destination.css. */
-.country-card__body {
+.exp-card__body {
   position:relative;z-index:1;padding:44px 24px 24px;
   background:linear-gradient(to top,rgba(8,15,26,.92) calc(100% - 40px),rgba(8,15,26,0) 100%);
   border-top:1px solid transparent;transition:border-color .3s;
 }
-.country-card:hover .country-card__body { border-color:rgba(201,168,76,.35) }
-.country-card__region {
+.exp-card:hover .exp-card__body { border-color:rgba(201,168,76,.35) }
+.exp-card__region {
   font-family:var(--font-d);font-size:9px;font-weight:700;
   letter-spacing:.22em;text-transform:uppercase;color:var(--gold-500);margin-bottom:6px;
 }
-.country-card__name {
+.exp-card__name {
   font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--cream-100);margin-bottom:8px;
 }
-.country-card--featured .country-card__name { font-size:30px }
-.country-card__desc {
+.exp-card__desc {
   font-family:var(--font-b);font-size:13px;color:var(--silver-300);
   line-height:1.55;margin-bottom:12px;
 }
-.country-card__tags { display:flex;gap:6px;flex-wrap:wrap }
-.country-tag {
+.exp-card__tags { display:flex;gap:6px;flex-wrap:wrap }
+.exp-tag {
   font-family:var(--font-d);font-size:8px;font-weight:700;
   letter-spacing:.14em;text-transform:uppercase;
   padding:3px 8px;background:rgba(201,168,76,.12);
   border:1px solid rgba(201,168,76,.25);color:var(--gold-400);
 }
+.exp-card__arrow {
+  position:absolute;bottom:24px;right:24px;z-index:2;
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);
+  opacity:0;transition:opacity .2s;
+}
+.exp-card:hover .exp-card__arrow { opacity:1 }
+
+/* ── Opt-in row alignment: .exp-cards--even ──
+   The port of .places-grid--even. Read the long note in destination.css for
+   why both reservations are one modifier and why it is opt-in; the condition
+   is the same here and it is a copy condition, not a CSS one. A grid only
+   qualifies once its six descriptions are written to a common length.
+
+   None of the twelve experience grids qualifies today. Their card copy runs
+   from 133 characters a card on Sports & Event Travel to 566 on Food & Wine,
+   and the spread inside a single page reaches 209 characters — Alaska, the
+   reference grid, holds all six between 282 and 292. Turning this on before
+   the copy is evened reserves height the short cards cannot fill. */
+.exp-cards--even .exp-card__name {
+  line-height:1.15;min-height:2.3em;display:flex;align-items:flex-end;
+}
+.exp-cards--even { --card-desc-lines:7 }
+.exp-cards--even .exp-card__desc { min-height:calc(var(--card-desc-lines) * 1.55em) }
+
+/* ── Opt-in photo panel: .exp-cards--photo ──
+   The port of .places-grid--photo, and the treatment the destination pages
+   call the brand toolkit one: the photograph takes its own 3:2 panel at full
+   brightness and the copy moves to a solid navy panel below it.
+
+   Same hard precondition as on destinations, and it is why no experience grid
+   carries this yet: the layout only works where EVERY card in the grid has a
+   real photograph. All 72 cards across the twelve pages are still the flat
+   colour swatch reading "Destination Photography · <name>", which today sits
+   invisibly behind the scrim. Take the darkening away and that placeholder
+   becomes the loudest element on the card. Add the modifier per page, only
+   once all six of that page's cards have an image. */
+.exp-cards--photo { grid-auto-rows:auto }
+.exp-cards--photo .exp-card { justify-content:flex-start;background:var(--navy-800) }
+.exp-cards--photo .exp-card__img {
+  display:block;width:100%;aspect-ratio:3/2;object-fit:cover;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.exp-cards--photo .exp-card:hover .exp-card__img { transform:scale(1.04) }
+.exp-cards--photo .exp-card__body {
+  flex:1;display:flex;flex-direction:column;
+  padding:24px;background:var(--navy-800);
+  border-top:1px solid transparent;
+}
+.exp-cards--photo .exp-card__tags { margin-top:auto;padding-top:14px }
+.exp-cards--photo .exp-card__arrow {
+  position:static;opacity:1;padding:0 24px 24px;background:var(--navy-800);
+}
+.exp-cards--photo .exp-card__desc { min-height:0;margin-bottom:0 }
 
 /* SIGNATURE EXPERIENCES */
 .events-section {
@@ -211,75 +274,23 @@
   margin-top:16px;letter-spacing:.04em;
 }
 
-/* ── SPORTS & EVENT TRAVEL ──
-   Only /experiences/sports-event-travel/ uses these; every other experience
-   page uses the countries grid above. Kept here rather than in a page-level
-   <style> so the whole set still renders from one sheet. Must stay above the
-   media queries below, which override .sports-grid at narrow widths. */
-.sports-section { padding:72px 52px;background:var(--bg-page) }
-.sports-grid {
-  display:grid;grid-template-columns:repeat(3,1fr);
-  grid-auto-rows:260px;gap:3px;
-}
-.sport-card {
-  position:relative;overflow:hidden;cursor:pointer;background:var(--bg-card);
-  display:flex;flex-direction:column;justify-content:flex-end;
-}
-.sport-card__ph {
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-d);font-size:10px;font-weight:600;
-  letter-spacing:.14em;text-transform:uppercase;color:rgba(138,155,176,.25);
-  transition:transform .5s cubic-bezier(.16,1,.3,1);
-}
-.sport-card:hover .sport-card__ph { transform:scale(1.04) }
-.sport-card__overlay {
-  position:absolute;inset:0;
-  background:linear-gradient(0deg,rgba(8,15,26,.92) 0%,rgba(8,15,26,.2) 50%,transparent 100%);
-  transition:opacity .3s;
-}
-.sport-card:hover .sport-card__overlay { opacity:.7 }
-.sport-card__body {
-  position:relative;z-index:1;padding:22px;
-  border-top:1px solid transparent;transition:border-color .3s;
-}
-.sport-card:hover .sport-card__body { border-color:rgba(201,168,76,.35) }
-.sport-card__name {
-  font-family:var(--font-d);font-size:20px;font-weight:700;
-  color:var(--cream-100);margin-bottom:6px;
-}
-.sport-card__desc {
-  font-family:var(--font-b);font-size:12px;color:var(--silver-300);
-  line-height:1.5;margin-bottom:10px;
-}
-.sport-card__tags { display:flex;gap:6px;flex-wrap:wrap }
-.sport-tag {
-  font-family:var(--font-d);font-size:8px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;
-  padding:3px 8px;background:rgba(201,168,76,.12);
-  border:1px solid rgba(201,168,76,.25);color:var(--gold-400);
-}
-
 /* The page-gutter batch below deliberately restates padding on
    .seasons-strip and .testimonial-section, which are defined
    in section-shared.css. That sheet loads first, so these win. */
 @media(max-width:900px){
   .intro-content { padding:48px 28px }
-  .countries-grid { grid-template-columns:1fr 1fr }
-  .country-card--featured { grid-column:span 1 }
+  .exp-cards { grid-template-columns:repeat(2,1fr) }
   .events-grid { grid-template-columns:1fr }
   .event-card { grid-template-columns:1fr }
   .event-image { min-height:180px }
   .inclusions-grid { grid-template-columns:repeat(2,1fr) }
-  .sports-grid { grid-template-columns:repeat(2,1fr) }
   .seasons-grid { grid-template-columns:1fr }
-  .countries-section,.sports-section,.events-section,.inclusions-section,.seasons-strip,.testimonial-section,.exp-cta { padding-left:28px;padding-right:28px }
+  .exp-cards-section,.events-section,.inclusions-section,.seasons-strip,.testimonial-section,.exp-cta { padding-left:28px;padding-right:28px }
   .exp-hero__content { padding:0 28px }
 }
 @media(max-width:540px){
-  .countries-grid { grid-template-columns:1fr;grid-auto-rows:minmax(240px,auto) }
-  .country-card--featured { grid-column:span 1 }
+  .exp-cards { grid-template-columns:1fr;grid-auto-rows:minmax(240px,auto) }
   .inclusions-grid { grid-template-columns:1fr }
-  .sports-grid { grid-template-columns:1fr }
 }
 
 /* The page FAQ, including its 768px breakpoint, is in section-shared.css. */
