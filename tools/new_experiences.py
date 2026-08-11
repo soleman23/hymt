@@ -11,16 +11,21 @@ HEADER = lambda eyebrow, title, sub: f'''  <div style="margin-bottom:40px">
   </div>'''
 
 def build(d):
+    # The 6-card grid. One shape for every experience page — see the
+    # .exp-card block in styles/experience.css. Tags are required: a card
+    # without them leaves a hole where the pill row sits on every other page.
     countries = "\n".join(f'''
-    <div class="country-card{" country-card--featured" if c.get("featured") else ""}">
-      <div class="country-card__ph" style="background:{c["bg"]}">{c["ph"]}</div>
-      <div class="country-card__overlay"></div>
-      <div class="country-card__body">
-        <div class="country-card__region">{c["region"]}</div>
-        <div class="country-card__name">{c["name"]}</div>
-        <div class="country-card__desc">{c["desc"]}</div>
+    <a class="exp-card" href="/plan-your-trip/">
+      <div class="exp-card__ph" style="background:{c["bg"]}">{c["ph"]}</div>
+      <div class="exp-card__overlay"></div>
+      <div class="exp-card__body">
+        <div class="exp-card__region">{c["region"]}</div>
+        <div class="exp-card__name">{c["name"]}</div>
+        <div class="exp-card__desc">{c["desc"]}</div>
+        <div class="exp-card__tags">{"".join(f'<span class="exp-tag">{t}</span>' for t in c["tags"])}</div>
       </div>
-    </div>''' for c in d["countries"])
+      <div class="exp-card__arrow">Explore &rarr;</div>
+    </a>''' for c in d["countries"])
 
     events = "\n".join(f'''
     <div class="event-card">
@@ -91,9 +96,9 @@ def build(d):
   <div class="intro-image">{d["intro_image_ph"]}<span class="intro-image-label">{d["intro_image_label"]}</span></div>
 </section>
 
-<section class="countries-section" id="destinations">
+<section class="exp-cards-section" id="destinations">
 {HEADER("Where to Go", d["countries_title"], d["countries_sub"])}
-  <div class="countries-grid">{countries}
+  <div class="exp-cards">{countries}
   </div>
 </section>
 
