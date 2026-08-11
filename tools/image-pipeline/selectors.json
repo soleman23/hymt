@@ -1,0 +1,128 @@
+{
+  "_comment": [
+    "higgsfield.ai DOM selectors, kept out of the code so they can be corrected",
+    "without touching pipeline logic. Each entry is a list of CANDIDATES tried in",
+    "order; the first one that resolves to a visible element wins. That shape is",
+    "deliberate: this file was authored without access to the live site, so it",
+    "guesses several plausible spellings of each control rather than betting on one.",
+    "",
+    "Run `node run.mjs --probe` to dump the real panel's DOM and a screenshot into",
+    "probe/, then fix whichever lists came up empty. The probe prints, for every",
+    "entry below, whether at least one candidate matched — so a wrong guess shows",
+    "up as a named failure rather than a mystery timeout mid-run."
+  ],
+
+  "loggedInMarker": [
+    "[data-testid='user-menu']",
+    "button:has(img[alt*='avatar' i])",
+    "header [role='button']:has(img)",
+    "a[href*='/account']",
+    "a[href*='/profile']"
+  ],
+
+  "loginMarker": [
+    "a[href*='/login']",
+    "button:has-text('Log in')",
+    "button:has-text('Sign in')",
+    "text=/^(log ?in|sign ?in)$/i"
+  ],
+
+  "promptInput": [
+    "textarea[placeholder*='prompt' i]",
+    "textarea[placeholder*='describe' i]",
+    "textarea[name='prompt']",
+    "[data-testid='prompt-input']",
+    "[contenteditable='true'][role='textbox']",
+    "textarea"
+  ],
+
+  "modelSelector": [
+    "[data-testid='model-selector']",
+    "button:has-text('Seedream')",
+    "button:has-text('Model')",
+    "[aria-label*='model' i]"
+  ],
+
+  "modelOption": [
+    "[role='option']:has-text('{{model}}')",
+    "[role='menuitem']:has-text('{{model}}')",
+    "li:has-text('{{model}}')",
+    "button:has-text('{{model}}')",
+    "div[data-value='{{model}}']"
+  ],
+
+  "unlimitedToggle": [
+    "[data-testid='unlimited-toggle']",
+    "[role='switch'][aria-label*='unlimited' i]",
+    "button[aria-label*='unlimited' i]",
+    "label:has-text('Unlimited') [role='switch']",
+    "label:has-text('Unlimited') input[type='checkbox']",
+    "button:has-text('Unlimited')"
+  ],
+
+  "unlimitedActiveMarker": [
+    "[data-testid='unlimited-toggle'][aria-checked='true']",
+    "[role='switch'][aria-label*='unlimited' i][aria-checked='true']",
+    "[role='switch'][aria-label*='unlimited' i][data-state='checked']",
+    "label:has-text('Unlimited') input[type='checkbox']:checked",
+    "[data-testid='unlimited-badge']",
+    "text=/unlimited (mode )?(is )?(on|active|enabled)/i"
+  ],
+
+  "aspectRatioSelector": [
+    "[data-testid='aspect-ratio-selector']",
+    "button:has-text('Aspect')",
+    "[aria-label*='aspect' i]",
+    "button:has-text('16:9')"
+  ],
+
+  "aspectRatioOption": [
+    "[role='option']:has-text('{{ratio}}')",
+    "[role='menuitem']:has-text('{{ratio}}')",
+    "button:has-text('{{ratio}}')",
+    "li:has-text('{{ratio}}')"
+  ],
+
+  "resolutionSelector": [
+    "[data-testid='resolution-selector']",
+    "button:has-text('Resolution')",
+    "[aria-label*='resolution' i]",
+    "button:has-text('1K')",
+    "button:has-text('2K')"
+  ],
+
+  "resolutionOption": [
+    "[role='option']:has-text('{{resolution}}')",
+    "[role='menuitem']:has-text('{{resolution}}')",
+    "button:has-text('{{resolution}}')",
+    "li:has-text('{{resolution}}')"
+  ],
+
+  "generateButton": [
+    "[data-testid='generate-button']",
+    "button:has-text('Generate')",
+    "button:has-text('Create')",
+    "button[type='submit']:not([disabled])"
+  ],
+
+  "resultImage": [
+    "[data-testid='generation-result'] img",
+    "[data-testid='result-image']",
+    "figure img[src*='http']",
+    "main img[src*='cdn']",
+    "img[alt*='generated' i]"
+  ],
+
+  "downloadButton": [
+    "[data-testid='download-button']",
+    "button[aria-label*='download' i]",
+    "a[download]",
+    "button:has-text('Download')"
+  ],
+
+  "errorMarker": [
+    "[role='alert']",
+    "[data-testid='error-message']",
+    "text=/(generation )?failed|something went wrong|try again|insufficient credits/i"
+  ]
+}
