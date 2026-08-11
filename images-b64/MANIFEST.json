@@ -1308,5 +1308,10 @@
   "b64": "images-b64/assets__img__sp-family-amalfi.jpg.b64",
   "target": "public/assets/img/sp-family-amalfi.jpg",
   "bytes": 175429
+ },
+ {
+  "b64": "images-b64/assets__img__sp-mark-sole-portrait.jpg.b64",
+  "target": "public/assets/img/sp-mark-sole-portrait.jpg",
+  "bytes": 253280
  }
 ]
