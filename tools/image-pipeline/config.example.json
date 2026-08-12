@@ -11,7 +11,8 @@
   "protectedStatuses": ["complete", "image approved"],
   "completedStatus": "Complete",
 
-  "higgsfieldUrl": "https://higgsfield.ai/create/image",
+  "_higgsfieldUrl_note": "/create/image 301s here, and this URL then 307s to ?model=nano-banana-pro. Landing state is therefore always Nano Banana Pro, the one model the router never picks on its own -- every row switches model before generating. generateImage() calls selectOption unconditionally and it throws SelectorNotFoundError when the option is missing, so a failed switch stops the run rather than quietly generating on the wrong model.",
+  "higgsfieldUrl": "https://higgsfield.ai/ai/image",
   "aspectRatio": "16:9",
   "resolution": "2K",
   "batchSize": 1,
