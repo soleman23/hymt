@@ -9,7 +9,11 @@
     "verified by clicking the pickers open (ratio/resolution: [role='option']",
     "in a listbox portal; models: button rows in a [role='dialog']).",
     "unlimitedToggle/unlimitedActiveMarker/loggedInMarker still need a signed-in",
-    "dump: the only 'unlimited' control logged out is a promo banner, excluded below."
+    "dump: the only 'unlimited' control logged out is a promo banner, excluded below.",
+    "2026-08-11: probe-diag used /ai/image while config pointed at /create/image,",
+    "which 301s here; config now matches what was probed. /ai/image then 307s to",
+    "?model=nano-banana-pro, so modelSelector is always read off a Nano Banana Pro",
+    "button on arrival - the candidate regex already covers that spelling."
   ],
   "loggedInMarker": [
     "[data-testid='user-menu']",
