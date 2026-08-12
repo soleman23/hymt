@@ -36,10 +36,23 @@ dependency tree is untouched and `npm run build` at the repo root is unaffected.
 Needs a token that can write the sheet and upload to the folder. It acts as you,
 so anything you can already open in a browser works.
 
+Do all of this signed in as **the account that owns the tracker sheet**, and
+only that account. The images in column I are not link-public and Drive
+permissions are per-file, so a token minted by a neighbouring work account
+authorises fine and then cannot see a single image. Sign the others out first.
+
 1. In the [Google Cloud console](https://console.cloud.google.com/), create (or
    pick) a project and enable **Google Sheets API** and **Google Drive API**.
 2. Under *APIs & Services → Credentials*, create an **OAuth client ID** of type
-   **Desktop app**. Note the client ID and secret.
+   **Web application**, and under *Authorized redirect URIs* add exactly:
+   ```
+   https://developers.google.com/oauthplayground
+   ```
+   Note the client ID and secret.
+
+   Not **Desktop app**: the Playground route in step 3 needs its own redirect
+   URI registered on the client, and Desktop clients only accept loopback
+   redirects. Pairing the two returns `redirect_uri_mismatch`.
 3. Mint a refresh token with both scopes. The quickest route is the
    [OAuth Playground](https://developers.google.com/oauthplayground/):
    - gear icon → tick *Use your own OAuth credentials*, paste the ID and secret
@@ -49,6 +62,12 @@ so anything you can already open in a browser works.
      ```
    - authorise as the account that owns the tracker, then *Exchange authorization
      code for tokens* and copy the **refresh token**
+
+   Check the consent screen's publishing status before you rely on the token.
+   While it reads **Testing**, Google expires refresh tokens after **7 days** —
+   long enough to get through a pilot and fail somewhere in the middle of the
+   229-tile batch, which reads like a pipeline bug and is not one. Set it to
+   **In production**, or plan to re-mint.
 4. Put all three somewhere the pipeline can read them — either environment
    variables:
    ```bash
@@ -56,7 +75,11 @@ so anything you can already open in a browser works.
    export GOOGLE_CLIENT_SECRET=...
    export GOOGLE_REFRESH_TOKEN=...
    ```
-   or `tools/image-pipeline/.secrets.json`:
+   (PowerShell has no inline export; it is `$env:GOOGLE_CLIENT_ID = "..."`, and
+   the values last only for that window.)
+
+   or `tools/image-pipeline/.secrets.json`, which is shell-agnostic and
+   survives a reboot — the better choice on any machine you will come back to:
    ```json
    { "client_id": "...", "client_secret": "...", "refresh_token": "..." }
    ```
@@ -65,6 +88,25 @@ so anything you can already open in a browser works.
 these three values.** The pipeline checks the granted scopes on its first token
 refresh and stops with a clear message if one is missing, rather than failing on
 the first write after the images have been generated.
+
+Environment variables win over the file when both are set. A *malformed*
+`.secrets.json` is an error rather than a fallback — silently treating it as
+absent would send you hunting through OAuth config for a stray comma.
+
+### 2a. Make the Drive folder reachable
+
+`drive.file` is deliberately the narrow scope: it grants access to files this
+client creates, not the whole Drive. The destination folder is therefore **not**
+visible by default. Confirm the authorising account can open
+`config.driveFolderId` in a browser and holds **Editor** on it.
+
+`assertFolderWritable()` checks this before a run generates anything, so a wrong
+folder id or a read-only share costs a round trip rather than a batch of images:
+
+| Message | Cause |
+| --- | --- |
+| `not visible to this token` | wrong account, or a folder id the account has never opened |
+| `can see "…" but cannot add files to it` | needs Editor, currently Viewer or Commenter |
 
 ### 3. Higgsfield session
 
