@@ -35,3 +35,15 @@ tools/hero-masters/
 # converted into images-b64/. Same rule as tools/hero-masters/: originals
 # stay local, only the base64 web derivatives are tracked.
 incoming-sports/
+
+# Place-card image pipeline (tools/image-pipeline/). This repository is public,
+# so the Google OAuth client secret and refresh token must never be committed:
+# .secrets.json holds them locally and config.json holds the resolved ids, while
+# only config.example.json is tracked. The browser profile carries a live
+# higgsfield.ai session cookie, which is a credential in its own right.
+tools/image-pipeline/.secrets.json
+tools/image-pipeline/config.json
+tools/image-pipeline/.browser-profile/
+tools/image-pipeline/downloads/
+tools/image-pipeline/probe/
+tools/image-pipeline/*.jsonl

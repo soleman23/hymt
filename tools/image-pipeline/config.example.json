@@ -1,0 +1,22 @@
+{
+  "_comment": "Copy to config.json (gitignored) and adjust. Ids below are the live HYMT tracker and place-card image folder.",
+
+  "spreadsheetId": "1GQouSplv-2A3aPBAe0k5Rm_oIv_Rty6QV9nV3Y3fBIE",
+  "sheetTab": "Tiles",
+  "readRange": "A1:K1000",
+
+  "driveFolderId": "1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo",
+
+  "qualifyingStatus": "prompt written",
+  "protectedStatuses": ["complete", "image approved"],
+  "completedStatus": "Complete",
+
+  "higgsfieldUrl": "https://higgsfield.ai/create/image",
+  "aspectRatio": "16:9",
+  "resolution": "2K",
+  "batchSize": 1,
+
+  "generationTimeoutMs": 300000,
+  "maxAttemptsPerRow": 3,
+  "pauseBetweenRowsMs": 4000
+}

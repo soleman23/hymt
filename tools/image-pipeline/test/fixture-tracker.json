@@ -1,0 +1,51 @@
+{
+  "_comment": [
+    "A miniature of the real Tiles tab, shaped to exercise every branch the",
+    "pipeline can take. Committed so `node run.mjs --dry-run` works with no",
+    "network, no credentials and no browser, and so the tracker tests assert",
+    "against the same data the dry run prints.",
+    "",
+    "Deliberate features, each one a test:",
+    "  row 2  Complete, and its prompt is blank    -> protected beats unusable",
+    "  row 5  three human words, all in negatives  -> must NOT route to Soul 2.0",
+    "  row 6  entirely blank                       -> spacing, not a tile",
+    "  row 9  qualifying, blank prompt             -> unusable, reported not dropped",
+    "  row 10 qualifying, blank filename           -> unusable, and it is Italy's",
+    "         first row, so row 11 must become Italy's hero instead",
+    "  row 11 status in the wrong case             -> still qualifies",
+    "  row 15 fewer than 11 cells                  -> the API drops trailing empties"
+  ],
+  "values": [
+    ["#", "Destination Page", "Tile Name", "Region / Subtitle", "Placeholder Art Direction", "Suggested Filename", "Image Prompt", "Status", "Image URL", "Notes", "Page URL"],
+
+    ["1", "Africa", "Kenya & Tanzania", "East Africa", "Destination Photography", "africa-kenya-and-tanzania.jpg", "", "Complete", "https://drive.google.com/file/d/1aaaaaaaaaaaaaaaaaaaaaaaaaaa/view?usp=drive_link", "", "https://example.test/destinations/africa/#places"],
+
+    ["2", "Africa", "South Africa", "Southern Africa", "Destination Photography", "africa-south-africa.jpg", "Photorealistic wide cinematic photograph of the Twelve Apostles range above Camps Bay, Cape Town, in the last hour before sunset, the ribbed sandstone wall of Table Mountain raked apricot-gold by low oblique sun, low olive fynbos on the lower slopes, wet mirror-reflective quartz sand in the foreground, shot on medium format at f/8, fynbos not savanna, no acacia, no turquoise lagoon, no cableway, no people, no text.", "Prompt written", "", "", "https://example.test/destinations/africa/#places"],
+
+    ["3", "Africa", "Botswana", "Southern Africa", "Destination Photography", "africa-botswana.jpg", "Photorealistic wide cinematic photograph of a papyrus channel in the Okavango Delta, Moremi, Botswana, at first light, still black water holding a mirror of the reed wall, day water lilies open on the surface, shot on medium format at f/8, no people, no boats, no text.", "Prompt written", "", "", "https://example.test/destinations/africa/#places"],
+
+    ["4", "Africa", "Namibia", "Southern Africa", "Destination Photography", "africa-namibia.jpg", "Photorealistic photograph of the dune field at Sossusvlei at sunrise, a knife-edge crest dividing apricot-lit sand from deep blue shadow, pale cracked clay pan on the valley floor, absolute stillness, shot at f/11, no people, no crowd, no vendor, no footprints, no vehicles, no text.", "Prompt written", "", "", "https://example.test/destinations/africa/#places"],
+
+    [],
+
+    ["5", "Greece", "Santorini", "Cyclades", "Destination Photography", "greece-santorini.jpg", "Editorial travel photograph, Santorini caldera at golden hour, whitewashed terraces stepping down to the deep blue Aegean, warm low sun, natural light, shallow depth of field, no people, no text.", "Prompt written", "", "", "https://example.test/destinations/greece/#places"],
+
+    ["6", "Greece", "Mykonos", "Cyclades", "Destination Photography", "greece-mykonos.jpg", "Editorial fashion photograph, a model wearing flowing linen on a Mykonos rooftop at golden hour, styled lifestyle portrait, warm rim light, shallow depth of field, no text.", "Prompt written", "", "", "https://example.test/destinations/greece/#places"],
+
+    ["7", "Greece", "Crete", "Crete", "Destination Photography", "greece-crete.jpg", "", "Prompt written", "", "Prompt still to be written", "https://example.test/destinations/greece/#places"],
+
+    ["8", "Italy", "Amalfi Coast", "Campania", "Destination Photography", "", "Sweeping cinematic photograph of the Amalfi Coast from a cliffside terrace at golden hour, lemon-yellow and terracotta buildings stacked on the cliff face above the cobalt Tyrrhenian Sea, no people, no text.", "Prompt written", "", "Filename still to be agreed", "https://example.test/destinations/italy/#places"],
+
+    ["9", "Italy", "Tuscany", "Central Italy", "Destination Photography", "italy-tuscany.jpg", "Photorealistic photograph of a cypress-lined ridge in Val d'Orcia at first light, low mist in the hollows between ploughed ridges, a single farmhouse on the crest, shot at f/8, no people, no cars, no text.", "PROMPT WRITTEN", "", "", "https://example.test/destinations/italy/#places"],
+
+    ["10", "Italy", "Venice", "Veneto", "Destination Photography", "italy-venice.jpg", "Photorealistic photograph of a quiet Cannaregio canal at dawn, no people, no text.", "Image approved", "https://drive.google.com/file/d/1bbbbbbbbbbbbbbbbbbbbbbbbbbb/view?usp=drive_link", "", "https://example.test/destinations/italy/#places"],
+
+    ["11", "Japan", "Kyoto", "Kansai", "Destination Photography", "japan-kyoto.jpg", "Photorealistic photograph of a moss garden in eastern Kyoto after rain, dark wet stone path, maple canopy in early colour, soft overcast light, no people, no text.", "Prompt written", "", "", "https://example.test/destinations/japan/#places"],
+
+    ["12", "Japan", "Mount Fuji", "Chubu", "Destination Photography", "japan-mount-fuji.jpg", "Photorealistic photograph of Mount Fuji seen across Lake Kawaguchi at dawn, the symmetrical snow-capped cone mirrored in still water, band of low cloud at the treeline, no people, no boats, no text.", "Prompt written", "", "", "https://example.test/destinations/japan/#places"],
+
+    ["13", "Japan", "Hakone", "Chubu", "Destination Photography", "japan-hakone.jpg", "Photorealistic photograph of a cedar-lined stone stairway in Hakone under low cloud, wet moss on the treads, soft diffused light.", "Prompt written"],
+
+    ["14", "Iceland", "Reykjavik", "Capital Region", "Destination Photography", "iceland-reykjavik.jpg", "Photorealistic photograph of corrugated-iron houses in central Reykjavik under a low winter sun, no people, no text.", "In progress", "", "", "https://example.test/destinations/iceland/#places"]
+  ]
+}
