@@ -1,0 +1,16 @@
+import { chromium } from "playwright";
+import { writeFile } from "node:fs/promises";
+const profile = decodeURIComponent(new URL("./.browser-profile/", import.meta.url).pathname).replace(/^\/([A-Za-z]:)/, "$1");
+const ctx = await chromium.launchPersistentContext(profile, { headless: false, viewport: { width: 1600, height: 1000 } });
+const page = ctx.pages()[0] ?? await ctx.newPage();
+await page.goto("https://higgsfield.ai/ai/image", { waitUntil: "domcontentloaded" });
+await page.waitForTimeout(8000);
+const chip = page.locator("button:has-text('Nano Banana Pro')");
+console.log("model chip count:", await chip.count(), "visible:", await chip.first().isVisible());
+await chip.first().click({ timeout: 8000, force: false });
+await page.waitForTimeout(1500);
+await writeFile("probe/open-model.html", await page.content(), "utf8");
+await page.screenshot({ path: "probe/open-model.png" });
+const opts = await page.locator("[role='option'], [role='menuitem'], [role='dialog'] button, [role='listbox'] *").allTextContents();
+console.log("options-ish:", JSON.stringify(opts.slice(0, 30)));
+await ctx.close();
