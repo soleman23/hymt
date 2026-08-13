@@ -1,0 +1,175 @@
+[
+ {
+  "id": "hub-01",
+  "slug": "asia",
+  "file": "asia-india.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of the Taj Mahal at first light from across the Yamuna river, the white marble taking a warm rose and amber cast from the low sun, the dome and minarets mirrored in still water in the middle distance, layered river mist softening the treeline behind, foreground of dark wet sand catching a thin band of gold, sky graded from pale apricot at the horizon to cool blue above, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no boats, no text"
+ },
+ {
+  "id": "hub-02",
+  "slug": "asia",
+  "file": "asia-sri-lanka.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of the Sri Lankan hill country tea terraces at golden hour, contour-planted rows of deep green tea bushes sweeping across steep ridges in the middle distance, layered blue valley mist filling the ravines below, a distant ridgeline of peaks under warm low sun, foreground of tea rows in sharp detail falling away, sky pale gold shading to soft grey-blue, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-03",
+  "slug": "asia",
+  "file": "asia-vietnam-and-southeast-asia.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of Ha Long Bay at dawn, limestone karst towers receding in layered silhouettes through soft sea mist from near-black in the foreground to pale silver at the horizon, glass-still jade water holding the reflections, a warm apricot break of light low between two karsts, foreground water surface catching thin gold, shot on medium format at f/11, cinematic cool colour grade with warm horizon light, ultra high detail, no people, no boats, no text",
+  "note": "Replaced a weak pairing rather than an empty slot: the card's only library candidate was dh-02-asia-temple-valley.jpg, which is the Asia hub's own hero image."
+ },
+ {
+  "id": "hub-04",
+  "slug": "south-america",
+  "file": "south-america-brazil.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of Rio de Janeiro at dusk from an elevated viewpoint, Sugarloaf Mountain rising dark against Guanabara Bay, the water holding the last amber and rose of the sun, forested headlands layered into blue haze in the distance, city lights beginning to warm the shoreline in the middle distance, sky graded deep indigo above to burnt orange at the horizon, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-05",
+  "slug": "south-america",
+  "file": "south-america-argentina.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of the Mendoza vineyards at golden hour, ordered rows of vines running toward the middle distance in deep green and autumn gold, the snow-capped Andes rising sharp and immense along the whole horizon behind them, warm low sun raking across the rows and casting long shadows between them, foreground vine leaves in crisp detail, sky clear pale gold to deep blue, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-06",
+  "slug": "south-america",
+  "file": "south-america-colombia.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of a Cartagena old town street at golden hour, colonial facades in saturated ochre, coral and deep blue with carved wooden balconies spilling magenta bougainvillea, warm low sun striking the upper storeys and leaving the lane in cool shadow, the walled city cathedral tower visible at the end of the street in the distance, worn stone underfoot in the foreground, shot on medium format at f/8, cinematic warm colour grade, ultra high detail, no people, no text, no signage"
+ },
+ {
+  "id": "hub-07",
+  "slug": "south-pacific",
+  "file": "south-pacific-australia.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of Uluru at sunrise from the open desert, the monolith flank burning deep orange-red where the first light strikes it, its ridged and weathered surface in sharp relief, foreground of red sand and spinifex grass catching warm side light, the vast flat desert plain receding to a clean horizon, sky graded from soft rose at the base to deep clear blue above, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no vehicles, no text"
+ },
+ {
+  "id": "hub-08",
+  "slug": "south-pacific",
+  "file": "south-pacific-cook-islands.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic aerial drone photograph of the Aitutaki lagoon at golden hour, the water shading from pale aquamarine over white sand shallows through jade to deep sapphire in the channel, a curving uninhabited motu of white sand and palms in the middle distance, coral formations visible through the clear water, warm low sun gilding the surface with soft specular highlights, sky warm gold at the horizon, shot on medium format, cinematic colour grade, ultra high detail, no people, no boats, no text"
+ },
+ {
+  "id": "hub-09",
+  "slug": "south-pacific",
+  "file": "south-pacific-vanuatu-and-beyond.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of Mount Yasur volcano on Tanna Island at blue hour, the crater rim glowing deep molten orange against a darkening cobalt sky, an incandescent arc of ejected lava tracing above the rim, volcanic ash slopes falling away in the foreground lit faintly warm by the crater, drifting sulphur haze catching the glow, sky graded from ember orange at the crater to deep indigo above, shot on medium format at f/5.6, cinematic colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-10",
+  "slug": "middle-east",
+  "file": "middle-east-israel.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of the Jerusalem Old City skyline at golden hour from an elevated viewpoint, warm pale limestone walls and domes taking a deep honey and amber cast from the low sun, layered rooftops and stone arches receding into the middle distance, the Mount of Olives ridge soft behind in blue haze, foreground of an ancient stone parapet in sharp detail, sky graded warm gold to soft violet, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no flags, no text",
+  "note": "Deliberately architectural and unpeopled: the card's copy concerns contested ground, so the frame carries no people and no flags."
+ },
+ {
+  "id": "hub-11",
+  "slug": "middle-east",
+  "file": "middle-east-uae-and-the-gulf.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of the Sheikh Zayed Grand Mosque at blue hour, white marble domes and minarets lit warm against a deep cobalt sky, the reflecting pool in the foreground holding the full symmetry of the facade in still water, the colonnade receding in sharp perspective to the middle distance, warm architectural light against cool ambient dusk, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-12",
+  "slug": "middle-east",
+  "file": "middle-east-georgia-and-armenia.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of Tbilisi old town at golden hour from an elevated viewpoint, tiered timber balconied houses in weathered ochre and umber stacked up the hillside, the Narikala fortress ridge dark against the low sun behind, an Orthodox cathedral dome catching warm light in the middle distance, the Mtkvari river valley falling away in blue haze, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-13",
+  "slug": "caribbean-mexico",
+  "file": "caribbean-mexico-jamaica.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of the Jamaican Blue Mountains at dawn, forested ridgelines receding in layered blue and green silhouettes through valley mist, the nearest ridge in sharp detail with dense tropical canopy, warm apricot light breaking low across the layers from the left, deep shadowed ravines filled with cloud below, sky graded pale gold to soft blue-grey, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-14",
+  "slug": "caribbean-mexico",
+  "file": "caribbean-mexico-barbados-and-eastern-caribbean.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of the St. Lucia Pitons at golden hour from the water, the two volcanic spires rising steep and densely forested from the Caribbean Sea, warm low sun raking their flanks and leaving deep shadow in the col between, calm turquoise water in the foreground shading to deep blue, soft haze softening the base where the slopes meet the sea, sky warm gold to clear blue, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no boats, no text"
+ },
+ {
+  "id": "hub-15",
+  "slug": "caribbean-mexico",
+  "file": "caribbean-mexico-dominican-republic.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of a Samana Peninsula beach at golden hour, a wide crescent of pale sand backed by leaning coconut palms, warm low sun behind the palms casting long shadows across the sand toward the viewer, calm turquoise water breaking in a thin white line in the middle distance, a forested green headland closing the bay in the distance, sky warm amber to soft blue, shot on medium format at f/11, cinematic warm colour grade, ultra high detail, no people, no text"
+ },
+ {
+  "id": "hub-16",
+  "slug": "polar-regions",
+  "file": "polar-regions-arctic-norway-and-northern-lights.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of the Lofoten Islands under the aurora borealis, green and faintly violet auroral curtains sweeping across a clear star-dense sky above sharp snow-covered granite peaks, a still dark fjord in the middle distance mirroring the light, snow-dusted boulders in the foreground lit cool by the aurora, the whole scene in deep blues and greens with no artificial light, shot on medium format at f/2.8, cinematic cool colour grade, ultra high detail, no people, no buildings, no text"
+ },
+ {
+  "id": "hub-17",
+  "slug": "polar-regions",
+  "file": "polar-regions-svalbard.jpg",
+  "ratio": "16:9",
+  "res": "4K",
+  "model": "seedream_v5_lite",
+  "prompt": "Photorealistic wide cinematic photograph of a Svalbard tidewater glacier under low midnight sun, a mile-wide blue-white calving face meeting glass-still Arctic water, brash ice scattered across the foreground catching warm low light, dark scree-flanked Arctic mountains rising behind the glacier, sky pale rose and cold silver at the horizon, the scale immense and utterly silent, shot on medium format at f/11, cinematic cool colour grade with warm horizon light, ultra high detail, no people, no ships, no text"
+ },
+ {
+  "id": "hub-18",
+  "slug": "polar-regions",
+  "file": "polar-regions-greenland.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of the Ilulissat Icefjord at low Arctic sun, vast tabular icebergs packed across Disko Bay with sculpted wind-carved flanks in blue-white and pale gold, dark still water threading between them in the middle distance, low warm light raking the ice from the left, distant ice sheet edge along the horizon, foreground ice in sharp textural detail, sky graded rose to cold silver, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no boats, no text"
+ },
+ {
+  "id": "hub-19",
+  "slug": "polar-regions",
+  "file": "polar-regions-falklands-and-south-georgia.jpg",
+  "ratio": "16:9",
+  "res": "2K",
+  "model": "seedream_v5_pro",
+  "prompt": "Photorealistic wide cinematic photograph of a South Georgia king penguin colony at golden hour, a vast dense colony of king penguins filling the beach and tussock flats into the middle distance, their orange-gold ear patches catching warm low sun, a glaciated mountain ridge rising steep behind under soft cloud, foreground tussock grass and dark volcanic sand in sharp detail, sky warm amber to cold grey, shot on medium format at f/11, cinematic colour grade, ultra high detail, no people, no buildings, no text"
+ }
+]
