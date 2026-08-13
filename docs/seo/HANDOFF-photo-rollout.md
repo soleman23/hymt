@@ -27,8 +27,8 @@ Drive folder (source of truth, approved images):
   https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
   "My Drive > Hit Your Mark Travel > New Images to add"
 
-Current state: 30 of 43 destination pages are on the .places-grid--photo
-layout. 12 pages remain on flat placeholder swatches (66 cards), and none
+Current state: 31 of 43 destination pages are on the .places-grid--photo
+layout. 11 pages remain on flat placeholder swatches (61 cards), and none
 of them has Drive coverage.
 
 Treat that last clause with suspicion — the previous handoff said the same
@@ -38,8 +38,10 @@ exhaustive check described under "Finding what exists" below, not a prefix
 search.
 
 Pick up with whichever the user asks for. If they leave it open, the next
-step is the 12 uncovered pages: get concepts approved first, and check the
-tracker spreadsheet before starting.
+step is the 11 uncovered pages: get concepts approved first. The tracker
+spreadsheet has nothing for them -- all 60 tracked rows are "Not started"
+with an empty prompt column, verified 2026-08-13 -- so concepts have to be
+written from the card copy, as spain's were.
 
   (drive-image-skips.md § A — the borrowed-hero swaps — is CLOSED as of
    2026-08-13. It turned out to be 6, not 5: caribbean-mexico's St. Barth's
@@ -55,27 +57,30 @@ for an FTP password). Ask them to run it, then verify the live site.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `75e1cc2` on `main`.
+**Repo:** clean, all work pushed. HEAD = `119a091` on `main`.
 
 | | |
 |---|---|
 | Destination pages | 43 |
-| On the photo panel | **30** |
-| Still on placeholders | **12** (66 cards) |
+| On the photo panel | **31** |
+| Still on placeholders | **11** (61 cards) |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **286.7** |
+| Higgsfield credits | **280.7** |
 
-### The 12 pages still on placeholders
+### The 11 pages still on placeholders
 
 ```
 india 6   jordan 6   kenya-tanzania 6   new-zealand 6   oman 6
 patagonia 6   peru 6   portugal 5   riviera-maya-los-cabos 4
-rwanda 6   spain 5   st-barths 4
+rwanda 6   st-barths 4
 ```
 
-No Drive coverage found for any of these, as of an exhaustive check on
-2026-08-13 (all 13 page prefixes, plus a full `mimeType = 'image/png'`
-sweep). ~66 cards at Lite's 1 credit each is ~66 credits against 286.7.
+No Drive coverage for any of these. Verified 2026-08-13 by a complete
+enumeration: `image/png` (41 files) plus `image/jpeg` partitioned into
+three `createdTime` windows (34 + 50 + 25 = 109), none of which returned a
+continuation token. 150 files total, and the folder holds nothing for
+these pages. Budget ~61 credits against 280.7, plus a re-roll allowance
+for landmark cards (see below).
 
 Careful with `patagonia` and `peru`: Drive holds `south-america-patagonia`
 and `south-america-peru`, but those are **hub cards** on
@@ -225,10 +230,38 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
 3. Photographed `/destinations/antarctica/` — all 4 cards from Drive, zero
    credits. This page was documented as having no coverage; it had held all
    four frames since 2026-08-08. Found by sweeping `mimeType = 'image/png'`.
-4. Corrected the card-crop geometry note below, which had the cropped axis
+4. Photographed `/destinations/spain/` — the generation pilot, 6 credits
+   (5 cards + 1 re-roll). See "What the pilot proved" below.
+5. Corrected the card-crop geometry note below, which had the cropped axis
    backwards.
 
-Total spend: **1 credit** for 16 cards across 4 pages.
+Total spend: **7 credits** for 21 cards across 5 pages.
+
+---
+
+## What the pilot proved
+
+Spain was run as Wave 1 on 2026-08-13: five regions of one country, which
+is the consistency test the rest of the backlog turns on. The hubs were not
+that test — their cards were whole countries that already owned a hero.
+
+**The house style holds at sub-destination granularity.** The five came back
+distinct in subject, palette and hour with no prompting beyond the standard
+recipe. Concepts were written from each card's own description, which is
+what made them specific.
+
+Two things worth carrying into every later wave:
+
+- **Check what the sibling hub card already shows.** Spain's Basque card
+  deliberately avoids San Sebastián's La Concha bay because that is exactly
+  `europe-spain.jpg`. The obvious subject for a region is often already
+  spent on the hub.
+- **Built landmarks render less reliably than landscape.** Barcelona needed
+  two attempts; the first rendered the Sagrada Família as an indistinct mass
+  with a second structure crossing its outline. Fixed by naming the landmark
+  as the dominant subject, giving it a fraction of the frame, and demanding
+  it be "unobstructed and cleanly separated against open sky". Budget a
+  re-roll for **peru** (Machu Picchu, Cusco, Lima) and **jordan** (Petra).
 
 ---
 
