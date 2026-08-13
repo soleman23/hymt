@@ -1,7 +1,8 @@
 # Handoff — place-card photo rollout
 
-Written 2026-08-12 at the end of a long session. Paste the "Prompt" section
-below into a new Claude Code session in this repo to pick up exactly here.
+Started 2026-08-12, updated at the end of every session since. Paste the
+"Prompt" section below into a new Claude Code session in this repo to pick up
+exactly here. **Update this file before you finish**, including the Prompt.
 
 ---
 
@@ -10,59 +11,90 @@ below into a new Claude Code session in this repo to pick up exactly here.
 ```
 Continue the place-card photo rollout on the HYMT site.
 
-Read these first, in this order:
-  1. docs/seo/HANDOFF-photo-rollout.md   (this file — state, workflow, gotchas)
-  2. docs/seo/drive-image-skips.md       (images deliberately not swapped)
-  3. docs/seo/photography-plan.md        (the workstream plan; parts are now stale —
-                                          it predates the discovery that most images
-                                          already exist in Drive)
-  4. CLAUDE.md § "SEO & AIO rules"       (non-negotiable page rules)
+READ FIRST, in this order — do not start work until you have:
+  1. docs/seo/HANDOFF-photo-rollout.md   (this file: state, workflow, every
+                                          failure mode found so far)
+  2. docs/seo/drive-image-skips.md       (§ A closed; § B still open)
+  3. CLAUDE.md § "SEO & AIO rules"       (non-negotiable page rules)
+  (docs/seo/photography-plan.md and photography-needed.md are both STALE —
+   see Open items. Read them only for the A-before-B sequencing argument.)
 
-THE SINGLE MOST IMPORTANT RULE: check the Google Drive folder BEFORE generating
-any image. Roughly 19 images were generated in this session that already existed
-in Drive, some dated four days earlier. Generation is the last resort, not the
-first move.
+STATE, verified against the repo on 2026-08-13 at HEAD 8449977:
+  38 destination pages on .places-grid--photo
+   4 still on placeholder swatches — india, jordan, new-zealand, oman (6 each,
+     24 cards)
+   1 (maldives) has no places-grid section at all
+  38 + 4 + 1 = 43. Higgsfield credits: 243.1.
+  Re-verify with the snippet under "The 4 pages still on placeholders" rather
+  than trusting this number — every handoff before 2026-08-13 quoted counts
+  that silently summed to 42.
 
-Drive folder (source of truth, approved images):
-  https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
-  "My Drive > Hit Your Mark Travel > New Images to add"
+WHAT IS LEFT, suggested order:
+  1. jordan + oman   — desert and ancient, one batch of 12
+  2. new-zealand     — 6
+  3. india           — 6, LAST. It is needs-mark blocked on Mark's first-hand
+                       line and cost figures, so photographing it unblocks
+                       nothing.
+  ~24 credits plus re-rolls. PETRA IS THE LAST BIG LANDMARK IN THE SET —
+  budget a re-roll and use the landmark wording under "What the pilot proved".
 
-Current state: 38 destination pages are on the .places-grid--photo layout,
-4 remain on flat placeholder swatches (24 cards), and 1 (maldives) has no
-places-grid section at all. 38 + 4 + 1 = 43. None of the 4 has Drive
-coverage.
+BEFORE GENERATING ANYTHING, two checks. Both have caught free images:
+  1. Drive — BOTH MIME sweeps (image/png AND image/jpeg). The folder CANNOT be
+     enumerated by paging; a pageToken returns a near-duplicate of the previous
+     page. A prefix search alone is not evidence of absence: that mistake hid
+     all four antarctica frames, which had been sitting in Drive for five days.
+  2. The repo — public/assets/img/<page>-<slug>.jpg. kenya-tanzania-serengeti
+     already existed there at exactly the right size and slug, unused. Free.
+  Drive folder: https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
+  The tracker spreadsheet has nothing for the remaining pages — all 60 tracked
+  rows read "Not started" with an empty prompt column (verified 2026-08-13).
+  Concepts have to be written from each card's own copy.
 
-Treat that last clause with suspicion — the previous handoff said the same
-thing about antarctica and was wrong; all four of its frames had been in
-Drive since 2026-08-08. Before generating anything for a page, run the
-exhaustive check described under "Finding what exists" below, not a prefix
-search.
+BEFORE CHOOSING A SUBJECT for any card, open the page's own hero AND its
+sibling regional-hub card and look at them. Across portugal, st-barths,
+riviera, kenya-tanzania, rwanda, peru and patagonia this caught 12 collisions
+in 38 cards — nearly one card in three. The obvious subject for a region is
+usually already spent on the hero or the hub.
 
-Pick up with whichever the user asks for. If they leave it open, the next
-step is the 4 uncovered pages: get concepts approved first. The tracker
-spreadsheet has nothing for them -- all 60 tracked rows are "Not started"
-with an empty prompt column, verified 2026-08-13 -- so concepts have to be
-written from the card copy, as spain's and portugal's were.
+PER PAGE, the loop that works:
+  a. read every card's name, region and description from
+     src/content-pages/destinations__<page>.html
+  b. run the two pre-generation checks above
+  c. look at the hero + hub card for collisions
+  d. write one concept per card FROM ITS OWN COPY, and get them approved
+     before spending any credits. The user has asked for this repeatedly.
+  e. generate — seedream_v5_lite, 16:9, one generate_image_batch (caps at 12;
+     two back-to-back returns 429)
+  f. review EVERY frame at its true 3:2 card crop, and check mean luminance
+     across the set — shipped pages sit around 120–190, and one dark tile in a
+     row is conspicuous because the panel is full-brightness by design
+  g. python tools/place-card-intake.py <srcdir> <page> <grid-style|EMPTY> \
+       <file>:<slug> ...
+     Does intake + conversion + every assertion in one pass. Check the real
+     grid tag first:
+       grep -o '<div class="places-grid[^>]*>' src/content-pages/destinations__<page>.html
+  h. npm run build   (must pass; it is self-contained)
+  i. verify in the browser at 1440, 768 and 375: panels exactly 3:2, card
+     heights uniform WITHIN each row, CTA baselines aligned, no horizontal
+     overflow, no leftovers, every image loaded. Set loading='eager' before
+     measuring or lazy images report as broken.
+  j. commit — stage deliberately, never git add -A: GitNexus rewrites a
+     symbol-count line in CLAUDE.md and AGENTS.md and it should not ride along
+  k. update THIS FILE — counts, credits, HEAD, and anything new you learned
 
-Before choosing a subject for any card, look at the page's own hero AND
-its sibling regional-hub card. On portugal that caught 2 collisions out of
-5; across portugal, st-barths and riviera it caught 6 out of 13.
-
-  (drive-image-skips.md § A — the borrowed-hero swaps — is CLOSED as of
-   2026-08-13. It turned out to be 6, not 5: caribbean-mexico's St. Barth's
-   card was also borrowing a library frame and Drive had a purpose-made one
-   under the non-obvious slug `caribbean-mexico-st-barth-s.jpg`.
-   § B has NOT had a full comparison and still needs one.)
-
-Do not deploy. The user runs deploy-to-hostinger.ps1 themselves (it prompts
-for an FTP password). Ask them to run it, then verify the live site.
+DO NOT DEPLOY. The user runs deploy-to-hostinger.ps1 themselves (it prompts
+for an FTP password). It targets the DEV site,
+brown-goose-754147.hostingersite.com, not the production domain in
+astro.config.mjs. Ask them to run it, then verify the live site: page 200s,
+every card image 200, live HTML byte-identical to local dist/, and the
+markup assertions. Deploy is not reliably automatic — never promise a time.
 ```
 
 ---
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `f426116` on `main`.
+**Repo:** clean, all work pushed. HEAD = `8449977` on `main`.
 
 | | |
 |---|---|
@@ -98,7 +130,7 @@ Mark, since every other destination page has one.
 Reproduce the count with:
 
 ```python
-# 34 photo + 8 placeholder + 1 no-grid = 43
+# 38 photo + 4 placeholder + 1 no-grid = 43  (as of 2026-08-13)
 for f in glob.glob('src/content-pages/destinations__*.html'):
     s = open(f, encoding='utf-8').read()
     'places-grid--photo' in s      # photographed
@@ -113,11 +145,9 @@ continuation token. 150 files total, and the folder holds nothing for
 these pages. Budget ~24 credits against 243.1, plus a re-roll allowance
 for landmark cards (see below).
 
-Careful with `patagonia` and `peru`: Drive holds `south-america-patagonia`
-and `south-america-peru`, but those are **hub cards** on
-/destinations/south-america/ and are already in use. The standalone
-/destinations/patagonia/ and /destinations/peru/ pages need six frames each
-of their own.
+The same trap will recur: a `<hub>-<page>.jpg` in Drive is the **hub card**,
+not a set for that page's own six cards. patagonia and peru both hit it and
+both are now done, but check the distinction before assuming coverage.
 
 Note `india` — that page was created this session (issue #54) and ships with
 its own six placeholder cards. Every new M7 destination page adds ~6 more.
@@ -196,7 +226,10 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
    - The Chrome tab dies often; re-fetch `tabs_context_mcp` and retry.
    - `fetch()` from the Drive page is CORS-blocked. Anchor clicks only.
 
-4. **Intake** — 4 steps, all required (`public/assets/img/` is gitignored):
+4. **Intake** — 4 steps, all required (`public/assets/img/` is gitignored).
+   **`tools/place-card-intake.py` does all four plus the page conversion in
+   one pass, with assertions at every step** — use it rather than hand-rolling
+   this again. What it does, and why each step matters:
    - `public/assets/img/<slug>.jpg` — if already ≤1600px wide, **keep the
      approved bytes unmodified**; only re-encode when wider (1600px, q85,
      progressive).
@@ -347,9 +380,10 @@ Two things worth carrying into every later wave:
   two attempts; the first rendered the Sagrada Família as an indistinct mass
   with a second structure crossing its outline. Fixed by naming the landmark
   as the dominant subject, giving it a fraction of the frame, and demanding
-  it be "unobstructed and cleanly separated against open sky". Budget a
-  re-roll for **peru** (Machu Picchu, Cusco, Lima) and **jordan** (Petra).
-  Porto's Dom Luís bridge came out clean first time using that wording.
+  it be "unobstructed and cleanly separated against open sky". Porto's Dom
+  Luís bridge and Cusco's cathedral both came out clean first time using that
+  wording. **Petra, on jordan, is the last big landmark left** — budget a
+  re-roll for it.
 - **Say "bright" and name a bright hour.** Porto was specced at blue hour
   and came back the darkest frame on its page; re-specced to "warm evening,
   bright and clearly lit rather than dark", it came back the *brightest*.
@@ -393,7 +427,7 @@ Two things worth carrying into every later wave:
 
 ---
 
-## Gotchas that cost time this session
+## Gotchas that cost time (2026-08-12 and 08-13)
 
 - **Counting coverage:** a `.place-card__ph` can carry a real photo as
   `style="background-image:url(...)"`. Only the *unfilled* form is
@@ -436,7 +470,7 @@ Two things worth carrying into every later wave:
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
 - **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is 13 pages / 70 cards, and
-  its "1 of 163 slots comes free" line no longer holds — 99 of them came free
-  from Drive across the two sessions. Its sequencing argument (A before B)
-  still stands.
+  lists 30 pages / 162 images; the real remainder is **4 pages / 24 cards**,
+  and its "1 of 163 slots comes free" line no longer holds — 99 came free from
+  Drive and 1 more from the repo. Its sequencing argument (A before B) still
+  stands. Worth rewriting or deleting once the last four pages ship.
