@@ -1593,5 +1593,25 @@
   "b64": "images-b64/assets__img__dc-japan-kyoto.jpg.b64",
   "target": "public/assets/img/dc-japan-kyoto.jpg",
   "bytes": 109230
+ },
+ {
+  "b64": "images-b64/assets__img__kenya-tanzania-serengeti.jpg.b64",
+  "target": "public/assets/img/kenya-tanzania-serengeti.jpg",
+  "bytes": 263014
+ },
+ {
+  "b64": "images-b64/assets__img__french-polynesia-bora-bora.jpg.b64",
+  "target": "public/assets/img/french-polynesia-bora-bora.jpg",
+  "bytes": 503282
+ },
+ {
+  "b64": "images-b64/assets__img__dc-kenya-tanzania-serengeti.jpg.b64",
+  "target": "public/assets/img/dc-kenya-tanzania-serengeti.jpg",
+  "bytes": 55465
+ },
+ {
+  "b64": "images-b64/assets__img__dc-french-polynesia-bora-bora.jpg.b64",
+  "target": "public/assets/img/dc-french-polynesia-bora-bora.jpg",
+  "bytes": 111267
  }
 ]
