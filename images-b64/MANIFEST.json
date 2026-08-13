@@ -2083,5 +2083,35 @@
   "b64": "images-b64/assets__img__europe-uk-and-ireland.jpg.b64",
   "target": "public/assets/img/europe-uk-and-ireland.jpg",
   "bytes": 381697
+ },
+ {
+  "b64": "images-b64/assets__img__south-america-patagonia.jpg.b64",
+  "target": "public/assets/img/south-america-patagonia.jpg",
+  "bytes": 334411
+ },
+ {
+  "b64": "images-b64/assets__img__south-america-peru.jpg.b64",
+  "target": "public/assets/img/south-america-peru.jpg",
+  "bytes": 243980
+ },
+ {
+  "b64": "images-b64/assets__img__south-america-galapagos-and-ecuador.jpg.b64",
+  "target": "public/assets/img/south-america-galapagos-and-ecuador.jpg",
+  "bytes": 339398
+ },
+ {
+  "b64": "images-b64/assets__img__caribbean-mexico-turks-and-caicos.jpg.b64",
+  "target": "public/assets/img/caribbean-mexico-turks-and-caicos.jpg",
+  "bytes": 286745
+ },
+ {
+  "b64": "images-b64/assets__img__caribbean-mexico-riviera-maya-and-los-cabos.jpg.b64",
+  "target": "public/assets/img/caribbean-mexico-riviera-maya-and-los-cabos.jpg",
+  "bytes": 357922
+ },
+ {
+  "b64": "images-b64/assets__img__caribbean-mexico-st-barth-s.jpg.b64",
+  "target": "public/assets/img/caribbean-mexico-st-barth-s.jpg",
+  "bytes": 300127
  }
 ]
