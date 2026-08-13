@@ -2143,5 +2143,25 @@
   "b64": "images-b64/assets__img__fiji-kadavu-and-the-great-astrolabe-reef.jpg.b64",
   "target": "public/assets/img/fiji-kadavu-and-the-great-astrolabe-reef.jpg",
   "bytes": 388757
+ },
+ {
+  "b64": "images-b64/assets__img__antarctica-the-antarctic-peninsula.jpg.b64",
+  "target": "public/assets/img/antarctica-the-antarctic-peninsula.jpg",
+  "bytes": 283624
+ },
+ {
+  "b64": "images-b64/assets__img__antarctica-south-georgia-and-the-falklands.jpg.b64",
+  "target": "public/assets/img/antarctica-south-georgia-and-the-falklands.jpg",
+  "bytes": 320180
+ },
+ {
+  "b64": "images-b64/assets__img__antarctica-fly-the-drake.jpg.b64",
+  "target": "public/assets/img/antarctica-fly-the-drake.jpg",
+  "bytes": 233893
+ },
+ {
+  "b64": "images-b64/assets__img__antarctica-the-ross-sea-and-east-antarctica.jpg.b64",
+  "target": "public/assets/img/antarctica-the-ross-sea-and-east-antarctica.jpg",
+  "bytes": 271043
  }
 ]
