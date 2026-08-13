@@ -27,9 +27,9 @@ Drive folder (source of truth, approved images):
   https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
   "My Drive > Hit Your Mark Travel > New Images to add"
 
-Current state: 34 destination pages are on the .places-grid--photo layout,
-8 remain on flat placeholder swatches (48 cards), and 1 (maldives) has no
-places-grid section at all. 34 + 8 + 1 = 43. None of the 8 has Drive
+Current state: 36 destination pages are on the .places-grid--photo layout,
+6 remain on flat placeholder swatches (36 cards), and 1 (maldives) has no
+places-grid section at all. 36 + 6 + 1 = 43. None of the 6 has Drive
 coverage.
 
 Treat that last clause with suspicion — the previous handoff said the same
@@ -39,7 +39,7 @@ exhaustive check described under "Finding what exists" below, not a prefix
 search.
 
 Pick up with whichever the user asks for. If they leave it open, the next
-step is the 8 uncovered pages: get concepts approved first. The tracker
+step is the 6 uncovered pages: get concepts approved first. The tracker
 spreadsheet has nothing for them -- all 60 tracked rows are "Not started"
 with an empty prompt column, verified 2026-08-13 -- so concepts have to be
 written from the card copy, as spain's and portugal's were.
@@ -62,25 +62,29 @@ for an FTP password). Ask them to run it, then verify the live site.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `ceeaef4` on `main`.
+**Repo:** clean, all work pushed. HEAD = `4bea55e` on `main`.
 
 | | |
 |---|---|
 | Destination pages | 43 |
-| On the photo panel | **34** |
-| Still on placeholders | **8** (48 cards) |
+| On the photo panel | **36** |
+| Still on placeholders | **6** (36 cards) |
 | No places-grid at all | **1** (maldives) |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **267.1** |
+| Higgsfield credits | **256.1** |
 
-### The 8 pages still on placeholders
+### The 6 pages still on placeholders
 
 ```
-india 6   jordan 6   kenya-tanzania 6   new-zealand 6
-oman 6   patagonia 6   peru 6   rwanda 6
+india 6   jordan 6   new-zealand 6   oman 6   patagonia 6   peru 6
 ```
 
-Every one needs exactly 6, so the remainder is a clean 48 cards.
+Every one needs exactly 6, so the remainder is a clean 36 cards.
+
+Sensible remaining groupings: **Andes** (peru, patagonia), **desert and
+ancient** (jordan, oman), then **new-zealand**, and **india** last —
+india is `needs-mark` blocked on Mark's first-hand line and cost figures,
+so photographing it unblocks nothing.
 
 **Counting note, corrected 2026-08-13.** Every previous version of this
 handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
@@ -105,7 +109,7 @@ No Drive coverage for any of these. Verified 2026-08-13 by a complete
 enumeration: `image/png` (41 files) plus `image/jpeg` partitioned into
 three `createdTime` windows (34 + 50 + 25 = 109), none of which returned a
 continuation token. 150 files total, and the folder holds nothing for
-these pages. Budget ~48 credits against 267.1, plus a re-roll allowance
+these pages. Budget ~36 credits against 256.1, plus a re-roll allowance
 for landmark cards (see below).
 
 Careful with `patagonia` and `peru`: Drive holds `south-america-patagonia`
@@ -261,10 +265,37 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
 5. Photographed `/destinations/portugal/` (5), `/destinations/st-barths/`
    (4) and `/destinations/riviera-maya-los-cabos/` (4) — 13 credits, plus
    ~0.6 wasted on a model detour (see "The model briefly vanished").
-6. Corrected the card-crop geometry note below, which had the cropped axis
-   backwards.
+6. Photographed `/destinations/kenya-tanzania/` (6) and
+   `/destinations/rwanda/` (6) — 12 cards for **11** credits, because one
+   already existed (see below).
+7. Corrected the card-crop geometry note below, which had the cropped axis
+   backwards, and a page count that had never added up.
 
-Total spend: **~20.6 credits** for 38 cards across 8 pages.
+Total spend: **~31.6 credits** for 50 cards across 10 pages.
+
+---
+
+## Check the repo before generating, not just Drive
+
+`kenya-tanzania-serengeti.jpg` already existed at exactly 1600×900, under
+exactly the slug its card needed — generated on 2026-08-12 for the index
+duplicate fix, and referenced ever since only through its `dc-` crop. The
+full-size original was sitting unused in `public/assets/img/`. That card
+cost nothing.
+
+**So the pre-generation check is two steps, not one:**
+
+1. the Drive folder (both MIME sweeps), and
+2. `public/assets/img/<page>-<slug>.jpg` — the asset may already be on
+   disk from index-crop or hub work.
+
+Re-running intake on an existing ≤1600px JPEG is byte-identical and safe,
+so the cheap move is simply to try it. Other index-crop slugs from
+2026-08-12 that may be sitting unused the same way: `france-provence`,
+`greece-santorini`, `italy-amalfi-coast`, `japan-kyoto`,
+`french-polynesia-bora-bora` — all listed in `drive-image-skips.md` § B.
+Their pages are already photographed, so this only matters if a card is
+ever re-cut.
 
 ---
 
@@ -326,7 +357,21 @@ Two things worth carrying into every later wave:
   beaches on one small island. Four different camera treatments — ground
   level, close macro, clifftop looking down, high road view — separate them
   completely. Reach for this before concluding a page's cards are doomed to
-  look alike.
+  look alike. Rwanda repeated the trick on three water cards: warm ground
+  level wetland, wide lake from a height, and crater lakes straight down.
+- **Animals work, with the landmark wording.** The Volcanoes NP silverback
+  was the flagged risk of the safari batch and came back clean first time.
+  What worked was the same phrasing that fixed Barcelona: name the subject
+  as dominant, place it in the frame, require it "unobstructed and clearly
+  separated", and add "anatomically correct". Foliage across the hands is a
+  free win — hands are where these models fail.
+- **When a subject appears on two pages, split it by aspect.** Akagera is a
+  card on both kenya-tanzania and rwanda. One took the dry savanna and the
+  rhino, the other Lake Ihema and the hippos. Neither reads as a repeat.
+- **Some subjects should not be generated at all.** Kigali's card copy calls
+  the Genocide Memorial essential. The image is the city on its hills. A
+  generated travel photograph of a memorial to the dead of 1994 would be
+  the wrong call, and should stay the wrong call.
 
 ---
 

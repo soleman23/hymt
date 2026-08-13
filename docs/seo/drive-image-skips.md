@@ -60,7 +60,13 @@ Drive version is older and may be the approved one.
 
 Also generated on 2026-08-12 for the duplicate-image fix, and worth the same
 check: `france-provence`, `greece-santorini`, `italy-amalfi-coast`,
-`japan-kyoto`, `kenya-tanzania-serengeti`, `french-polynesia-bora-bora`.
+`japan-kyoto`, `french-polynesia-bora-bora`.
+
+`kenya-tanzania-serengeti` was on that list and is now **resolved**: the
+2026-08-13 sweep found no `kenya-tanzania` files in Drive at all, so there
+is no rival version. The generated frame was adopted as the Serengeti place
+card at zero cost — it had been sitting unused at full size, referenced only
+through its `dc-` index crop.
 
 **Why this happened:** the hub rollout generated images without checking the
 Drive folder first. The lesson is in [[hymt-drive-image-tracker]]: check Drive
@@ -79,12 +85,12 @@ The omission had the same cause as the St. Barth's row in § A — a survey
 built from prefix searches over a folder that cannot be reliably paged. The
 fix is a per-MIME-type sweep; see the handoff's "Finding what exists".
 
-The 8 pages still on placeholder plates have no Drive coverage under that
+The 6 pages still on placeholder plates have no Drive coverage under that
 exhaustive check — a complete enumeration on 2026-08-13 of 150 files, by
 MIME type, with `image/jpeg` partitioned into three `createdTime` windows so
 that no query needed a continuation token. The free-import phase is
-finished; they need generated photography. Spain, portugal, st-barths and
-riviera-maya-los-cabos were done on 2026-08-13.
+finished; they need generated photography. Spain, portugal, st-barths,
+riviera-maya-los-cabos, kenya-tanzania and rwanda were done on 2026-08-13.
 
 Two files in the folder are named `ChatGPT Image Aug 9, 2026, ...` and match
 no token search. Both are 941×1672 **portrait** New Orleans French Quarter
