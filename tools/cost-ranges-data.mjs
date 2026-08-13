@@ -840,6 +840,7 @@ export const COST_RANGES = {
   /* ── Held — research confidence below the launch bar (#30) ── */
   "destinations__caribbean-mexico.html": { held: "Medium-low — transient island rates are date-gated; re-shop before publishing" },
   "destinations__bali.html": { held: "Medium-low — hotel and villa pricing varies too widely without live quotes" },
+  "destinations__india.html": { held: "Medium-low — the spread across palace stays, tiger lodges and city five-stars is too wide to band without live quotes" },
   "destinations__hawaii.html": { held: "Medium-low — resort rates are live and dynamic" },
   "destinations__napa-sonoma.html": { held: "Medium-low — hotel pricing is live and seasonal" },
   "destinations__new-orleans.html": { held: "Medium-low — stable public hotel rates are limited" },
