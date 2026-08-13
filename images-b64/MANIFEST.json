@@ -2253,5 +2253,60 @@
   "b64": "images-b64/assets__img__riviera-maya-los-cabos-yucatan-and-merida.jpg.b64",
   "target": "public/assets/img/riviera-maya-los-cabos-yucatan-and-merida.jpg",
   "bytes": 350636
+ },
+ {
+  "b64": "images-b64/assets__img__kenya-tanzania-masai-mara-conservancies.jpg.b64",
+  "target": "public/assets/img/kenya-tanzania-masai-mara-conservancies.jpg",
+  "bytes": 315380
+ },
+ {
+  "b64": "images-b64/assets__img__kenya-tanzania-amboseli.jpg.b64",
+  "target": "public/assets/img/kenya-tanzania-amboseli.jpg",
+  "bytes": 232371
+ },
+ {
+  "b64": "images-b64/assets__img__kenya-tanzania-ngorongoro-crater.jpg.b64",
+  "target": "public/assets/img/kenya-tanzania-ngorongoro-crater.jpg",
+  "bytes": 416300
+ },
+ {
+  "b64": "images-b64/assets__img__kenya-tanzania-laikipia-plateau.jpg.b64",
+  "target": "public/assets/img/kenya-tanzania-laikipia-plateau.jpg",
+  "bytes": 366005
+ },
+ {
+  "b64": "images-b64/assets__img__kenya-tanzania-rwanda-and-akagera.jpg.b64",
+  "target": "public/assets/img/kenya-tanzania-rwanda-and-akagera.jpg",
+  "bytes": 372613
+ },
+ {
+  "b64": "images-b64/assets__img__rwanda-volcanoes-national-park.jpg.b64",
+  "target": "public/assets/img/rwanda-volcanoes-national-park.jpg",
+  "bytes": 305219
+ },
+ {
+  "b64": "images-b64/assets__img__rwanda-nyungwe-forest.jpg.b64",
+  "target": "public/assets/img/rwanda-nyungwe-forest.jpg",
+  "bytes": 302334
+ },
+ {
+  "b64": "images-b64/assets__img__rwanda-akagera-national-park.jpg.b64",
+  "target": "public/assets/img/rwanda-akagera-national-park.jpg",
+  "bytes": 345957
+ },
+ {
+  "b64": "images-b64/assets__img__rwanda-kigali.jpg.b64",
+  "target": "public/assets/img/rwanda-kigali.jpg",
+  "bytes": 395404
+ },
+ {
+  "b64": "images-b64/assets__img__rwanda-lake-kivu.jpg.b64",
+  "target": "public/assets/img/rwanda-lake-kivu.jpg",
+  "bytes": 387302
+ },
+ {
+  "b64": "images-b64/assets__img__rwanda-musanze-and-surrounds.jpg.b64",
+  "target": "public/assets/img/rwanda-musanze-and-surrounds.jpg",
+  "bytes": 404835
  }
 ]
