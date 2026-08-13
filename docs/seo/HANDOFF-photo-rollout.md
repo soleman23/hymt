@@ -27,9 +27,9 @@ Drive folder (source of truth, approved images):
   https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
   "My Drive > Hit Your Mark Travel > New Images to add"
 
-Current state: 36 destination pages are on the .places-grid--photo layout,
-6 remain on flat placeholder swatches (36 cards), and 1 (maldives) has no
-places-grid section at all. 36 + 6 + 1 = 43. None of the 6 has Drive
+Current state: 38 destination pages are on the .places-grid--photo layout,
+4 remain on flat placeholder swatches (24 cards), and 1 (maldives) has no
+places-grid section at all. 38 + 4 + 1 = 43. None of the 4 has Drive
 coverage.
 
 Treat that last clause with suspicion — the previous handoff said the same
@@ -39,7 +39,7 @@ exhaustive check described under "Finding what exists" below, not a prefix
 search.
 
 Pick up with whichever the user asks for. If they leave it open, the next
-step is the 6 uncovered pages: get concepts approved first. The tracker
+step is the 4 uncovered pages: get concepts approved first. The tracker
 spreadsheet has nothing for them -- all 60 tracked rows are "Not started"
 with an empty prompt column, verified 2026-08-13 -- so concepts have to be
 written from the card copy, as spain's and portugal's were.
@@ -62,29 +62,30 @@ for an FTP password). Ask them to run it, then verify the live site.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `4bea55e` on `main`.
+**Repo:** clean, all work pushed. HEAD = `f426116` on `main`.
 
 | | |
 |---|---|
 | Destination pages | 43 |
-| On the photo panel | **36** |
-| Still on placeholders | **6** (36 cards) |
+| On the photo panel | **38** |
+| Still on placeholders | **4** (24 cards) |
 | No places-grid at all | **1** (maldives) |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **256.1** |
+| Higgsfield credits | **243.1** |
 
-### The 6 pages still on placeholders
+### The 4 pages still on placeholders
 
 ```
-india 6   jordan 6   new-zealand 6   oman 6   patagonia 6   peru 6
+india 6   jordan 6   new-zealand 6   oman 6
 ```
 
-Every one needs exactly 6, so the remainder is a clean 36 cards.
+Every one needs exactly 6, so the remainder is a clean 24 cards.
 
-Sensible remaining groupings: **Andes** (peru, patagonia), **desert and
-ancient** (jordan, oman), then **new-zealand**, and **india** last —
-india is `needs-mark` blocked on Mark's first-hand line and cost figures,
-so photographing it unblocks nothing.
+Suggested order: **desert and ancient** (jordan, oman) together, then
+**new-zealand**, and **india** last — india is `needs-mark` blocked on
+Mark's first-hand line and cost figures, so photographing it unblocks
+nothing. **Petra is the last big landmark in the set**; budget a re-roll
+and use the wording under "Generating" that fixed Barcelona.
 
 **Counting note, corrected 2026-08-13.** Every previous version of this
 handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
@@ -109,7 +110,7 @@ No Drive coverage for any of these. Verified 2026-08-13 by a complete
 enumeration: `image/png` (41 files) plus `image/jpeg` partitioned into
 three `createdTime` windows (34 + 50 + 25 = 109), none of which returned a
 continuation token. 150 files total, and the folder holds nothing for
-these pages. Budget ~36 credits against 256.1, plus a re-roll allowance
+these pages. Budget ~24 credits against 243.1, plus a re-roll allowance
 for landmark cards (see below).
 
 Careful with `patagonia` and `peru`: Drive holds `south-america-patagonia`
@@ -268,10 +269,12 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
 6. Photographed `/destinations/kenya-tanzania/` (6) and
    `/destinations/rwanda/` (6) — 12 cards for **11** credits, because one
    already existed (see below).
-7. Corrected the card-crop geometry note below, which had the cropped axis
+7. Photographed `/destinations/peru/` (6) and `/destinations/patagonia/`
+   (6) — 13 credits, one re-roll on the whale.
+8. Corrected the card-crop geometry note below, which had the cropped axis
    backwards, and a page count that had never added up.
 
-Total spend: **~31.6 credits** for 50 cards across 10 pages.
+Total spend: **~44.6 credits** for 62 cards across 12 pages.
 
 ---
 
@@ -359,15 +362,30 @@ Two things worth carrying into every later wave:
   completely. Reach for this before concluding a page's cards are doomed to
   look alike. Rwanda repeated the trick on three water cards: warm ground
   level wetland, wide lake from a height, and crater lakes straight down.
-- **Animals work, with the landmark wording.** The Volcanoes NP silverback
-  was the flagged risk of the safari batch and came back clean first time.
-  What worked was the same phrasing that fixed Barcelona: name the subject
-  as dominant, place it in the frame, require it "unobstructed and clearly
-  separated", and add "anatomically correct". Foliage across the hands is a
-  free win — hands are where these models fail.
+- **Animals work, with the landmark wording — but only one at a time.**
+  The Volcanoes NP silverback came back clean first time using the phrasing
+  that fixed Barcelona: name the subject as dominant, place it in the frame,
+  require it "unobstructed and clearly separated", add "anatomically
+  correct". Foliage across the hands is a free win.
+  **Pairs and groups of large animals fuse.** Peninsula Valdés asked for a
+  southern right whale mother *and calf* and got two bodies merged into one,
+  with a second baleen-bearing head emerging from mid-body — at card size it
+  read as a dead whale. The fix was to stop asking for two animals and pick a
+  simpler silhouette: a single raised tail fluke, "one clean unbroken
+  symmetrical shape", "exactly one whale in the frame and no second animal".
+  Clean first try. Small animals in numbers are safe (macaws on a clay lick,
+  penguins on an islet) because no single body carries the frame; it is the
+  two-big-animals case that breaks.
 - **When a subject appears on two pages, split it by aspect.** Akagera is a
   card on both kenya-tanzania and rwanda. One took the dry savanna and the
   rhino, the other Lake Ihema and the hippos. Neither reads as a repeat.
+- **When the hero owns a subject the card cannot avoid, change the hour.**
+  patagonia's hero is Fitz Roy in warm light with a trekker; the El Chaltén
+  card is the same mountain at blue hour, dark, mirrored and empty. Same
+  place, unmistakably a different photograph. Where even that is not enough
+  — Machu Picchu, whose classic vista is spent on both the hero *and* the
+  hub card — move the camera somewhere else entirely: the Sun Gate, with the
+  citadel small and distant. Distance also lowers the landmark render risk.
 - **Some subjects should not be generated at all.** Kigali's card copy calls
   the Genocide Memorial essential. The image is the city on its hills. A
   generated travel photograph of a memorial to the dead of 1994 would be

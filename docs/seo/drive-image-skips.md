@@ -85,12 +85,13 @@ The omission had the same cause as the St. Barth's row in § A — a survey
 built from prefix searches over a folder that cannot be reliably paged. The
 fix is a per-MIME-type sweep; see the handoff's "Finding what exists".
 
-The 6 pages still on placeholder plates have no Drive coverage under that
+The 4 pages still on placeholder plates have no Drive coverage under that
 exhaustive check — a complete enumeration on 2026-08-13 of 150 files, by
 MIME type, with `image/jpeg` partitioned into three `createdTime` windows so
 that no query needed a continuation token. The free-import phase is
 finished; they need generated photography. Spain, portugal, st-barths,
-riviera-maya-los-cabos, kenya-tanzania and rwanda were done on 2026-08-13.
+riviera-maya-los-cabos, kenya-tanzania, rwanda, peru and patagonia were all
+done on 2026-08-13.
 
 Two files in the folder are named `ChatGPT Image Aug 9, 2026, ...` and match
 no token search. Both are 941×1672 **portrait** New Orleans French Quarter
