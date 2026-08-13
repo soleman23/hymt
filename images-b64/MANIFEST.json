@@ -2113,5 +2113,35 @@
   "b64": "images-b64/assets__img__caribbean-mexico-st-barth-s.jpg.b64",
   "target": "public/assets/img/caribbean-mexico-st-barth-s.jpg",
   "bytes": 300127
+ },
+ {
+  "b64": "images-b64/assets__img__fiji-yasawa-islands.jpg.b64",
+  "target": "public/assets/img/fiji-yasawa-islands.jpg",
+  "bytes": 227318
+ },
+ {
+  "b64": "images-b64/assets__img__fiji-mamanuca-islands.jpg.b64",
+  "target": "public/assets/img/fiji-mamanuca-islands.jpg",
+  "bytes": 362663
+ },
+ {
+  "b64": "images-b64/assets__img__fiji-vanua-levu-and-taveuni.jpg.b64",
+  "target": "public/assets/img/fiji-vanua-levu-and-taveuni.jpg",
+  "bytes": 343972
+ },
+ {
+  "b64": "images-b64/assets__img__fiji-lau-group.jpg.b64",
+  "target": "public/assets/img/fiji-lau-group.jpg",
+  "bytes": 329647
+ },
+ {
+  "b64": "images-b64/assets__img__fiji-coral-coast-and-pacific-harbour.jpg.b64",
+  "target": "public/assets/img/fiji-coral-coast-and-pacific-harbour.jpg",
+  "bytes": 418353
+ },
+ {
+  "b64": "images-b64/assets__img__fiji-kadavu-and-the-great-astrolabe-reef.jpg.b64",
+  "target": "public/assets/img/fiji-kadavu-and-the-great-astrolabe-reef.jpg",
+  "bytes": 388757
  }
 ]
