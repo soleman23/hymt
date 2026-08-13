@@ -2213,5 +2213,45 @@
   "b64": "images-b64/assets__img__portugal-the-algarve-western-end.jpg.b64",
   "target": "public/assets/img/portugal-the-algarve-western-end.jpg",
   "bytes": 411307
+ },
+ {
+  "b64": "images-b64/assets__img__st-barths-flamands.jpg.b64",
+  "target": "public/assets/img/st-barths-flamands.jpg",
+  "bytes": 262222
+ },
+ {
+  "b64": "images-b64/assets__img__st-barths-gustavia-and-shell-beach.jpg.b64",
+  "target": "public/assets/img/st-barths-gustavia-and-shell-beach.jpg",
+  "bytes": 354003
+ },
+ {
+  "b64": "images-b64/assets__img__st-barths-colombier-and-anse-des-cayes.jpg.b64",
+  "target": "public/assets/img/st-barths-colombier-and-anse-des-cayes.jpg",
+  "bytes": 398964
+ },
+ {
+  "b64": "images-b64/assets__img__st-barths-lurin-gouverneur-and-saline.jpg.b64",
+  "target": "public/assets/img/st-barths-lurin-gouverneur-and-saline.jpg",
+  "bytes": 356376
+ },
+ {
+  "b64": "images-b64/assets__img__riviera-maya-los-cabos-playa-del-carmen-to-tulum.jpg.b64",
+  "target": "public/assets/img/riviera-maya-los-cabos-playa-del-carmen-to-tulum.jpg",
+  "bytes": 392140
+ },
+ {
+  "b64": "images-b64/assets__img__riviera-maya-los-cabos-los-cabos-and-the-corridor.jpg.b64",
+  "target": "public/assets/img/riviera-maya-los-cabos-los-cabos-and-the-corridor.jpg",
+  "bytes": 393486
+ },
+ {
+  "b64": "images-b64/assets__img__riviera-maya-los-cabos-todos-santos-and-the-east-cape.jpg.b64",
+  "target": "public/assets/img/riviera-maya-los-cabos-todos-santos-and-the-east-cape.jpg",
+  "bytes": 211036
+ },
+ {
+  "b64": "images-b64/assets__img__riviera-maya-los-cabos-yucatan-and-merida.jpg.b64",
+  "target": "public/assets/img/riviera-maya-los-cabos-yucatan-and-merida.jpg",
+  "bytes": 350636
  }
 ]
