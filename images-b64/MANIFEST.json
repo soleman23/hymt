@@ -2308,5 +2308,65 @@
   "b64": "images-b64/assets__img__rwanda-musanze-and-surrounds.jpg.b64",
   "target": "public/assets/img/rwanda-musanze-and-surrounds.jpg",
   "bytes": 404835
+ },
+ {
+  "b64": "images-b64/assets__img__peru-machu-picchu.jpg.b64",
+  "target": "public/assets/img/peru-machu-picchu.jpg",
+  "bytes": 327635
+ },
+ {
+  "b64": "images-b64/assets__img__peru-sacred-valley.jpg.b64",
+  "target": "public/assets/img/peru-sacred-valley.jpg",
+  "bytes": 462547
+ },
+ {
+  "b64": "images-b64/assets__img__peru-cusco.jpg.b64",
+  "target": "public/assets/img/peru-cusco.jpg",
+  "bytes": 361511
+ },
+ {
+  "b64": "images-b64/assets__img__peru-lake-titicaca.jpg.b64",
+  "target": "public/assets/img/peru-lake-titicaca.jpg",
+  "bytes": 394717
+ },
+ {
+  "b64": "images-b64/assets__img__peru-amazon.jpg.b64",
+  "target": "public/assets/img/peru-amazon.jpg",
+  "bytes": 332844
+ },
+ {
+  "b64": "images-b64/assets__img__peru-lima.jpg.b64",
+  "target": "public/assets/img/peru-lima.jpg",
+  "bytes": 329946
+ },
+ {
+  "b64": "images-b64/assets__img__patagonia-torres-del-paine.jpg.b64",
+  "target": "public/assets/img/patagonia-torres-del-paine.jpg",
+  "bytes": 348684
+ },
+ {
+  "b64": "images-b64/assets__img__patagonia-perito-moreno-glacier.jpg.b64",
+  "target": "public/assets/img/patagonia-perito-moreno-glacier.jpg",
+  "bytes": 324406
+ },
+ {
+  "b64": "images-b64/assets__img__patagonia-el-chalten-and-fitz-roy.jpg.b64",
+  "target": "public/assets/img/patagonia-el-chalten-and-fitz-roy.jpg",
+  "bytes": 175817
+ },
+ {
+  "b64": "images-b64/assets__img__patagonia-tierra-del-fuego-and-ushuaia.jpg.b64",
+  "target": "public/assets/img/patagonia-tierra-del-fuego-and-ushuaia.jpg",
+  "bytes": 378589
+ },
+ {
+  "b64": "images-b64/assets__img__patagonia-peninsula-valdes.jpg.b64",
+  "target": "public/assets/img/patagonia-peninsula-valdes.jpg",
+  "bytes": 267224
+ },
+ {
+  "b64": "images-b64/assets__img__patagonia-chilean-fjords-and-carretera-austral.jpg.b64",
+  "target": "public/assets/img/patagonia-chilean-fjords-and-carretera-austral.jpg",
+  "bytes": 352562
  }
 ]
