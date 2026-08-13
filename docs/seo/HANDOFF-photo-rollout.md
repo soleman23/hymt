@@ -27,9 +27,10 @@ Drive folder (source of truth, approved images):
   https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
   "My Drive > Hit Your Mark Travel > New Images to add"
 
-Current state: 31 of 43 destination pages are on the .places-grid--photo
-layout. 11 pages remain on flat placeholder swatches (61 cards), and none
-of them has Drive coverage.
+Current state: 34 destination pages are on the .places-grid--photo layout,
+8 remain on flat placeholder swatches (48 cards), and 1 (maldives) has no
+places-grid section at all. 34 + 8 + 1 = 43. None of the 8 has Drive
+coverage.
 
 Treat that last clause with suspicion — the previous handoff said the same
 thing about antarctica and was wrong; all four of its frames had been in
@@ -38,10 +39,14 @@ exhaustive check described under "Finding what exists" below, not a prefix
 search.
 
 Pick up with whichever the user asks for. If they leave it open, the next
-step is the 11 uncovered pages: get concepts approved first. The tracker
+step is the 8 uncovered pages: get concepts approved first. The tracker
 spreadsheet has nothing for them -- all 60 tracked rows are "Not started"
 with an empty prompt column, verified 2026-08-13 -- so concepts have to be
-written from the card copy, as spain's were.
+written from the card copy, as spain's and portugal's were.
+
+Before choosing a subject for any card, look at the page's own hero AND
+its sibling regional-hub card. On portugal that caught 2 collisions out of
+5; across portugal, st-barths and riviera it caught 6 out of 13.
 
   (drive-image-skips.md § A — the borrowed-hero swaps — is CLOSED as of
    2026-08-13. It turned out to be 6, not 5: caribbean-mexico's St. Barth's
@@ -57,29 +62,50 @@ for an FTP password). Ask them to run it, then verify the live site.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `119a091` on `main`.
+**Repo:** clean, all work pushed. HEAD = `ceeaef4` on `main`.
 
 | | |
 |---|---|
 | Destination pages | 43 |
-| On the photo panel | **31** |
-| Still on placeholders | **11** (61 cards) |
+| On the photo panel | **34** |
+| Still on placeholders | **8** (48 cards) |
+| No places-grid at all | **1** (maldives) |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **280.7** |
+| Higgsfield credits | **267.1** |
 
-### The 11 pages still on placeholders
+### The 8 pages still on placeholders
 
 ```
-india 6   jordan 6   kenya-tanzania 6   new-zealand 6   oman 6
-patagonia 6   peru 6   portugal 5   riviera-maya-los-cabos 4
-rwanda 6   st-barths 4
+india 6   jordan 6   kenya-tanzania 6   new-zealand 6
+oman 6   patagonia 6   peru 6   rwanda 6
+```
+
+Every one needs exactly 6, so the remainder is a clean 48 cards.
+
+**Counting note, corrected 2026-08-13.** Every previous version of this
+handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
+29+13, 30+12, 31+11 all miss by one. The missing page is **maldives**,
+which has no `places-grid` section at all and so was never in either
+bucket. It is not a defect and not part of this workstream, but whether
+maldives *should* carry a places-grid is a real content question for
+Mark, since every other destination page has one.
+
+Reproduce the count with:
+
+```python
+# 34 photo + 8 placeholder + 1 no-grid = 43
+for f in glob.glob('src/content-pages/destinations__*.html'):
+    s = open(f, encoding='utf-8').read()
+    'places-grid--photo' in s      # photographed
+    elif 'places-grid' in s        # placeholder
+    else                           # no grid (maldives)
 ```
 
 No Drive coverage for any of these. Verified 2026-08-13 by a complete
 enumeration: `image/png` (41 files) plus `image/jpeg` partitioned into
 three `createdTime` windows (34 + 50 + 25 = 109), none of which returned a
 continuation token. 150 files total, and the folder holds nothing for
-these pages. Budget ~61 credits against 280.7, plus a re-roll allowance
+these pages. Budget ~48 credits against 267.1, plus a re-roll allowance
 for landmark cards (see below).
 
 Careful with `patagonia` and `peru`: Drive holds `south-america-patagonia`
@@ -232,10 +258,37 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
    four frames since 2026-08-08. Found by sweeping `mimeType = 'image/png'`.
 4. Photographed `/destinations/spain/` — the generation pilot, 6 credits
    (5 cards + 1 re-roll). See "What the pilot proved" below.
-5. Corrected the card-crop geometry note below, which had the cropped axis
+5. Photographed `/destinations/portugal/` (5), `/destinations/st-barths/`
+   (4) and `/destinations/riviera-maya-los-cabos/` (4) — 13 credits, plus
+   ~0.6 wasted on a model detour (see "The model briefly vanished").
+6. Corrected the card-crop geometry note below, which had the cropped axis
    backwards.
 
-Total spend: **7 credits** for 21 cards across 5 pages.
+Total spend: **~20.6 credits** for 38 cards across 8 pages.
+
+---
+
+## The model briefly vanished — read before you panic
+
+On 2026-08-13 a `generate_image_batch` call failed with
+`unknown model "seedream_v5_lite"` on every request. The Higgsfield MCP
+server had reconnected mid-session and its model registry briefly did not
+list it. **Nothing was submitted and nothing was charged** (`submitted 0/5`).
+It resolved by itself within minutes.
+
+If it happens again: re-run `models_explore(action:'list', type:'image')`
+and check before assuming the model is gone for good. Do not re-plan the
+workstream around a different model on the strength of one failed call.
+
+That detour did produce one genuinely useful finding, so it is recorded
+rather than buried: **`soul_location`** costs **0.12 credits** a frame
+against seedream's 1, and supports a **native 3:2** aspect, which would
+remove the 7.9% side crop entirely. It was rejected anyway, deliberately.
+Its output is softer, hazier and darker than the 31 pages already shipped
+— its Porto came back dark enough to sit in the grid as a near-black tile.
+Consistency across the site beat a saving that was not needed at 280
+credits. If the budget ever gets tight, it is the obvious lever, and the
+five Portugal frames generated on it are the evidence to judge from.
 
 ---
 
@@ -262,6 +315,18 @@ Two things worth carrying into every later wave:
   as the dominant subject, giving it a fraction of the frame, and demanding
   it be "unobstructed and cleanly separated against open sky". Budget a
   re-roll for **peru** (Machu Picchu, Cusco, Lima) and **jordan** (Petra).
+  Porto's Dom Luís bridge came out clean first time using that wording.
+- **Say "bright" and name a bright hour.** Porto was specced at blue hour
+  and came back the darkest frame on its page; re-specced to "warm evening,
+  bright and clearly lit rather than dark", it came back the *brightest*.
+  The `--photo` panel is full-brightness by design, so one dark tile in a
+  row is conspicuous. Check mean luminance across a page's set before
+  wiring it in — the shipped pages sit around 120–190.
+- **Repetition is beaten by treatment, not subject.** st-barths is four
+  beaches on one small island. Four different camera treatments — ground
+  level, close macro, clifftop looking down, high road view — separate them
+  completely. Reach for this before concluding a page's cards are doomed to
+  look alike.
 
 ---
 
