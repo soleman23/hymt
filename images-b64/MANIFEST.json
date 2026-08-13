@@ -1543,5 +1543,55 @@
   "b64": "images-b64/assets__img__dc-polar-regions-falklands-and-south-georgia.jpg.b64",
   "target": "public/assets/img/dc-polar-regions-falklands-and-south-georgia.jpg",
   "bytes": 74899
+ },
+ {
+  "b64": "images-b64/assets__img__france-provence.jpg.b64",
+  "target": "public/assets/img/france-provence.jpg",
+  "bytes": 343560
+ },
+ {
+  "b64": "images-b64/assets__img__france-french-riviera.jpg.b64",
+  "target": "public/assets/img/france-french-riviera.jpg",
+  "bytes": 378168
+ },
+ {
+  "b64": "images-b64/assets__img__greece-santorini.jpg.b64",
+  "target": "public/assets/img/greece-santorini.jpg",
+  "bytes": 244049
+ },
+ {
+  "b64": "images-b64/assets__img__italy-amalfi-coast.jpg.b64",
+  "target": "public/assets/img/italy-amalfi-coast.jpg",
+  "bytes": 321113
+ },
+ {
+  "b64": "images-b64/assets__img__japan-kyoto.jpg.b64",
+  "target": "public/assets/img/japan-kyoto.jpg",
+  "bytes": 497260
+ },
+ {
+  "b64": "images-b64/assets__img__dc-greece-santorini.jpg.b64",
+  "target": "public/assets/img/dc-greece-santorini.jpg",
+  "bytes": 60393
+ },
+ {
+  "b64": "images-b64/assets__img__dc-france-french-riviera.jpg.b64",
+  "target": "public/assets/img/dc-france-french-riviera.jpg",
+  "bytes": 71518
+ },
+ {
+  "b64": "images-b64/assets__img__dc-italy-amalfi-coast.jpg.b64",
+  "target": "public/assets/img/dc-italy-amalfi-coast.jpg",
+  "bytes": 54178
+ },
+ {
+  "b64": "images-b64/assets__img__dc-france-provence.jpg.b64",
+  "target": "public/assets/img/dc-france-provence.jpg",
+  "bytes": 82525
+ },
+ {
+  "b64": "images-b64/assets__img__dc-japan-kyoto.jpg.b64",
+  "target": "public/assets/img/dc-japan-kyoto.jpg",
+  "bytes": 109230
  }
 ]
