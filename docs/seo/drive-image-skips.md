@@ -68,17 +68,34 @@ before generating anything.
 
 ## C · Not skipped — simply not reached yet
 
-Drive also holds place-card sets for pages still on placeholder plates: bali,
-botswana, egypt, fiji, france, french-polynesia, galapagos, greece, iceland,
-italy, japan, thailand, turks-caicos. Those are the remaining import backlog,
-not conflicts, and they need no new generation.
+**Empty as of 2026-08-13.** This section listed bali, botswana, egypt, fiji,
+france, french-polynesia, galapagos, greece, iceland, italy, japan, thailand
+and turks-caicos as an import backlog. All of them have now been imported —
+the first twelve on 2026-08-12, fiji on 2026-08-13.
+
+The list was also incomplete: it omitted **antarctica**, whose four frames
+had been in Drive since 2026-08-08. That page was imported on 2026-08-13 too.
+The omission had the same cause as the St. Barth's row in § A — a survey
+built from prefix searches over a folder that cannot be reliably paged. The
+fix is a per-MIME-type sweep; see the handoff's "Finding what exists".
+
+The 12 pages still on placeholder plates have no Drive coverage under that
+exhaustive check. The free-import phase is finished; they need generated
+photography.
 
 ## Completeness
 
-Section A was re-derived on 2026-08-13 from a full enumeration of the folder,
-not from prefix samples, which is how the St. Barth's row surfaced. Section A
-is now believed complete: no hub card is still carrying a borrowed library
-frame while Drive holds a purpose-made one.
+Section A was re-derived on 2026-08-13 against both MIME sweeps
+(`image/jpeg` and `image/png`) plus per-page prefix queries — not from
+prefix samples alone, which is how the St. Barth's row surfaced. Section A
+is believed complete: no hub card is still carrying a borrowed library frame
+while Drive holds a purpose-made one.
+
+Caveat on method: the folder **cannot be enumerated by paging**. Passing a
+`pageToken` returns a result set that largely repeats the previous page, so
+a "full listing" assembled that way is silently partial — that is what hid
+the antarctica set. Sweep by `mimeType` instead, and treat any single query
+as a sample until two independent queries agree.
 
 Section B has **not** had that treatment. It is still a sample-derived list of
 same-slug collisions, and the real count may be higher.

@@ -27,21 +27,25 @@ Drive folder (source of truth, approved images):
   https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
   "My Drive > Hit Your Mark Travel > New Images to add"
 
-Current state: 28 of 43 destination pages are on the .places-grid--photo
-layout. 14 pages remain on flat placeholder swatches (76 cards). Of those,
-only fiji has any Drive coverage — 5 of 6, missing "Mamanuca Islands".
-The other 13 pages have nothing in Drive.
+Current state: 30 of 43 destination pages are on the .places-grid--photo
+layout. 12 pages remain on flat placeholder swatches (66 cards), and none
+of them has Drive coverage.
 
-Pick up with whichever the user asks for. If they leave it open, the highest
-value next steps are, in order:
-  1. Fiji's one missing image (Mamanuca Islands) — unblocks a whole page.
-  2. The 13 uncovered pages — this DOES need generation; get concepts
-     approved first, and check the tracker spreadsheet before starting.
+Treat that last clause with suspicion — the previous handoff said the same
+thing about antarctica and was wrong; all four of its frames had been in
+Drive since 2026-08-08. Before generating anything for a page, run the
+exhaustive check described under "Finding what exists" below, not a prefix
+search.
+
+Pick up with whichever the user asks for. If they leave it open, the next
+step is the 12 uncovered pages: get concepts approved first, and check the
+tracker spreadsheet before starting.
 
   (drive-image-skips.md § A — the borrowed-hero swaps — is CLOSED as of
    2026-08-13. It turned out to be 6, not 5: caribbean-mexico's St. Barth's
    card was also borrowing a library frame and Drive had a purpose-made one
-   under the non-obvious slug `caribbean-mexico-st-barth-s.jpg`.)
+   under the non-obvious slug `caribbean-mexico-st-barth-s.jpg`.
+   § B has NOT had a full comparison and still needs one.)
 
 Do not deploy. The user runs deploy-to-hostinger.ps1 themselves (it prompts
 for an FTP password). Ask them to run it, then verify the live site.
@@ -51,33 +55,40 @@ for an FTP password). Ask them to run it, then verify the live site.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `5c3bbb8` on `main`.
+**Repo:** clean, all work pushed. HEAD = `75e1cc2` on `main`.
 
 | | |
 |---|---|
 | Destination pages | 43 |
-| On the photo panel | **28** |
-| Still on placeholders | **14** (76 cards) |
+| On the photo panel | **30** |
+| Still on placeholders | **12** (66 cards) |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **287.7** |
+| Higgsfield credits | **286.7** |
 
-### The 14 pages still on placeholders
+### The 12 pages still on placeholders
 
 ```
-antarctica 4   fiji 6   india 6   jordan 6   kenya-tanzania 6
-new-zealand 6  oman 6   patagonia 6   peru 6   portugal 5
-riviera-maya-los-cabos 4   rwanda 6   spain 5   st-barths 4
+india 6   jordan 6   kenya-tanzania 6   new-zealand 6   oman 6
+patagonia 6   peru 6   portugal 5   riviera-maya-los-cabos 4
+rwanda 6   spain 5   st-barths 4
 ```
 
-Only **fiji** has Drive coverage (5 of 6 — needs *Mamanuca Islands*).
-The other 13 need new photography.
+No Drive coverage found for any of these, as of an exhaustive check on
+2026-08-13 (all 13 page prefixes, plus a full `mimeType = 'image/png'`
+sweep). ~66 cards at Lite's 1 credit each is ~66 credits against 286.7.
+
+Careful with `patagonia` and `peru`: Drive holds `south-america-patagonia`
+and `south-america-peru`, but those are **hub cards** on
+/destinations/south-america/ and are already in use. The standalone
+/destinations/patagonia/ and /destinations/peru/ pages need six frames each
+of their own.
 
 Note `india` — that page was created this session (issue #54) and ships with
 its own six placeholder cards. Every new M7 destination page adds ~6 more.
 
 ---
 
-## What this session did
+## What the 2026-08-12 session did
 
 1. Converted the six regional hubs to `--photo` (PR #102, 37 cards).
 2. Photographed the `/destinations/` index — 24 placeholder plates → real
@@ -95,10 +106,25 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
 
 ### Importing from Drive (preferred — free, approved images)
 
-1. **Find what exists.** Use the Drive MCP `search_files` with
-   `parentId = '1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo' and mimeType = 'image/jpeg'
-   and (title contains '<page>-' or ...)`. Query by page-prefix groups; the
-   metadata is verbose so don't list the whole folder at once.
+1. **Finding what exists — do this exhaustively.** Two separate misses have
+   now been traced to a partial survey (St. Barth's; all four antarctica
+   frames). Prefix searches alone are not sufficient:
+
+   - Paging the folder with `parentId = '...'` and a `pageToken` returns
+     **heavily overlapping result sets** — page 2 repeats most of page 1.
+     You cannot enumerate the folder that way and must not assume you have.
+   - The reliable sweep is **by MIME type**:
+     `parentId = '...' and mimeType = 'image/png'` returns the older
+     2026-08-08/09/11 batch (41 files) that the jpeg-only and prefix queries
+     never showed. Run the `image/jpeg` sweep too.
+   - `title contains 'foo-'` is **token** matching, not substring: it matches
+     `europe-portugal.jpg` for `'portugal-'`. Useful, but it means a negative
+     result is only trustworthy if the token is right.
+   - Extensions lie. `south-america-galapagos-and-ecuador.jpg` and
+     `antarctica-*.png` are all PNG bytes; check `mimeType`, not the name.
+
+   Only after both MIME sweeps come back empty for a subject is it safe to
+   say Drive does not have it.
 
 2. **Compute what each page needs.** Card name → filename is:
    ```python
@@ -171,9 +197,38 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
 - 16:9 for place cards. **9:16 for intro/itinerary panels** — those are
   portrait crops (`np` 900×1520, `ni` 600×1000). A landscape source there is
   the Botswana mistake at scale.
+- **Which edges a place card actually eats — corrected 2026-08-13.**
+  `destination.css:248` sets `aspect-ratio:3/2; object-fit:cover`. A 16:9
+  source (1.778) is *wider* than a 3:2 panel (1.5), so `cover` scales it to
+  fill the height and crops **7.9% off each side**. It does **not** lose
+  ~12% top and bottom — an earlier version of this doc said that, and it is
+  backwards. Compose to protect the **left and right** edges; the horizon is
+  safe. Hover adds `scale(1.04)`, so keep ~2% more clear all round.
 - Review every frame at its target crop before wiring it in.
+- The "no people, no text" house rule is a *generation* convention, not a
+  site rule. Several approved Drive frames contain people or boats
+  (fiji-yasawa snorkelers, fiji-vanua-levu a diver, fiji-coral-coast a raft).
+  Approved images win; do not "fix" them.
 - `generate_image_batch` caps at 12; two batches back-to-back returns 429.
 - Get concepts approved before generating. The user has asked for this twice.
+
+---
+
+## What the 2026-08-13 session did
+
+1. Closed `drive-image-skips.md` § A — six hub cards (south-america ×3,
+   caribbean-mexico ×3) off borrowed library frames and onto purpose-made
+   ones. Pure import, zero credits. The sixth, St. Barth's, was found only
+   by enumerating the folder.
+2. Photographed `/destinations/fiji/` — 5 approved Drive images plus **one**
+   generated frame (Mamanuca Islands, 1 credit).
+3. Photographed `/destinations/antarctica/` — all 4 cards from Drive, zero
+   credits. This page was documented as having no coverage; it had held all
+   four frames since 2026-08-08. Found by sweeping `mimeType = 'image/png'`.
+4. Corrected the card-crop geometry note below, which had the cropped axis
+   backwards.
+
+Total spend: **1 credit** for 16 cards across 4 pages.
 
 ---
 
@@ -219,3 +274,8 @@ its own six placeholder cards. Every new M7 destination page adds ~6 more.
 - **`docs/seo/photography-needed.md` is stale** — it lists 25 missing heroes;
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
+- **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
+  lists 30 pages / 162 images; the real remainder is 13 pages / 70 cards, and
+  its "1 of 163 slots comes free" line no longer holds — 99 of them came free
+  from Drive across the two sessions. Its sequencing argument (A before B)
+  still stands.
