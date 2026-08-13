@@ -2053,5 +2053,35 @@
   "b64": "images-b64/assets__img__turks-caicos-grand-turk.jpg.b64",
   "target": "public/assets/img/turks-caicos-grand-turk.jpg",
   "bytes": 344775
+ },
+ {
+  "b64": "images-b64/assets__img__europe-italy.jpg.b64",
+  "target": "public/assets/img/europe-italy.jpg",
+  "bytes": 371648
+ },
+ {
+  "b64": "images-b64/assets__img__europe-france.jpg.b64",
+  "target": "public/assets/img/europe-france.jpg",
+  "bytes": 520839
+ },
+ {
+  "b64": "images-b64/assets__img__europe-spain.jpg.b64",
+  "target": "public/assets/img/europe-spain.jpg",
+  "bytes": 275074
+ },
+ {
+  "b64": "images-b64/assets__img__europe-portugal.jpg.b64",
+  "target": "public/assets/img/europe-portugal.jpg",
+  "bytes": 425946
+ },
+ {
+  "b64": "images-b64/assets__img__europe-greece-and-the-aegean.jpg.b64",
+  "target": "public/assets/img/europe-greece-and-the-aegean.jpg",
+  "bytes": 257876
+ },
+ {
+  "b64": "images-b64/assets__img__europe-uk-and-ireland.jpg.b64",
+  "target": "public/assets/img/europe-uk-and-ireland.jpg",
+  "bytes": 381697
  }
 ]

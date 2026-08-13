@@ -21,17 +21,15 @@ purpose-made image was known to exist. Several of those **do** exist in Drive.
 | south-america | Patagonia | `e-12-patagonia-trek.jpg` | `south-america-patagonia.png` |
 | south-america | Peru | `dh-17-peru-machu-picchu-dawn.jpg` | `south-america-peru.png` |
 | south-america | Galápagos & Ecuador | `dh-06-galapagos-volcanic-coast.jpg` | `south-america-galapagos-and-ecuador.jpg` |
-| europe | Italy | `h-04-amalfi-golden-hour.jpg` | `europe-italy.jpg` |
-| europe | France | `dh-05-france-provence-dusk.jpg` | `europe-france.jpg` |
-| europe | Spain | `dh-23-spain-andalusia-dusk.jpg` | `europe-spain.jpg` |
-| europe | Portugal | `dh-19-portugal-douro-valley.jpg` | `europe-portugal.jpg` |
-| europe | Greece & the Aegean | `dh-07-greece-caldera-dusk.jpg` | `europe-greece-and-the-aegean.jpg` |
-| europe | UK & Ireland | `dh-25-uk-ireland-highland-loch.jpg` | `europe-uk-and-ireland.jpg` |
 | caribbean-mexico | Turks & Caicos | `d-02-grace-bay.jpg` | `caribbean-mexico-turks-and-caicos.jpg` |
 | caribbean-mexico | Riviera Maya & Los Cabos | `dh-20-riviera-maya-coast.jpg` | `caribbean-mexico-riviera-maya-and-los-cabos.jpg` |
 
-The europe row matters most: six cards on one hub all currently borrow a
-destination hero, and Drive has a purpose-made frame for every one of them.
+> **Europe: done.** All six europe hub cards were swapped onto their
+> purpose-made frames on 2026-08-12 — `europe-italy`, `europe-france`,
+> `europe-spain`, `europe-portugal`, `europe-greece-and-the-aegean`,
+> `europe-uk-and-ireland`. The heroes they had been borrowing stay in place and
+> still serve their own destination pages, so nothing was orphaned.
+> The south-america and caribbean-mexico rows above are the same fix, still open.
 
 ## B · Same slug live and in Drive — two versions of the same subject
 
