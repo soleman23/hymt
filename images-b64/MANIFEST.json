@@ -1613,5 +1613,120 @@
   "b64": "images-b64/assets__img__dc-french-polynesia-bora-bora.jpg.b64",
   "target": "public/assets/img/dc-french-polynesia-bora-bora.jpg",
   "bytes": 111267
+ },
+ {
+  "b64": "images-b64/assets__img__canadian-rockies-banff-and-lake-louise.jpg.b64",
+  "target": "public/assets/img/canadian-rockies-banff-and-lake-louise.jpg",
+  "bytes": 328380
+ },
+ {
+  "b64": "images-b64/assets__img__canadian-rockies-the-icefields-parkway.jpg.b64",
+  "target": "public/assets/img/canadian-rockies-the-icefields-parkway.jpg",
+  "bytes": 305964
+ },
+ {
+  "b64": "images-b64/assets__img__canadian-rockies-jasper.jpg.b64",
+  "target": "public/assets/img/canadian-rockies-jasper.jpg",
+  "bytes": 336817
+ },
+ {
+  "b64": "images-b64/assets__img__canadian-rockies-the-rocky-mountaineer.jpg.b64",
+  "target": "public/assets/img/canadian-rockies-the-rocky-mountaineer.jpg",
+  "bytes": 359923
+ },
+ {
+  "b64": "images-b64/assets__img__hawaii-maui.jpg.b64",
+  "target": "public/assets/img/hawaii-maui.jpg",
+  "bytes": 299277
+ },
+ {
+  "b64": "images-b64/assets__img__hawaii-kauai.jpg.b64",
+  "target": "public/assets/img/hawaii-kauai.jpg",
+  "bytes": 393062
+ },
+ {
+  "b64": "images-b64/assets__img__hawaii-big-island.jpg.b64",
+  "target": "public/assets/img/hawaii-big-island.jpg",
+  "bytes": 104354
+ },
+ {
+  "b64": "images-b64/assets__img__hawaii-lanai.jpg.b64",
+  "target": "public/assets/img/hawaii-lanai.jpg",
+  "bytes": 322154
+ },
+ {
+  "b64": "images-b64/assets__img__hawaii-oahu-and-honolulu.jpg.b64",
+  "target": "public/assets/img/hawaii-oahu-and-honolulu.jpg",
+  "bytes": 337051
+ },
+ {
+  "b64": "images-b64/assets__img__hawaii-inter-island-hawaii.jpg.b64",
+  "target": "public/assets/img/hawaii-inter-island-hawaii.jpg",
+  "bytes": 193349
+ },
+ {
+  "b64": "images-b64/assets__img__napa-sonoma-the-valley-floor.jpg.b64",
+  "target": "public/assets/img/napa-sonoma-the-valley-floor.jpg",
+  "bytes": 377258
+ },
+ {
+  "b64": "images-b64/assets__img__napa-sonoma-the-sonoma-coast-and-russian-river.jpg.b64",
+  "target": "public/assets/img/napa-sonoma-the-sonoma-coast-and-russian-river.jpg",
+  "bytes": 330971
+ },
+ {
+  "b64": "images-b64/assets__img__napa-sonoma-healdsburg.jpg.b64",
+  "target": "public/assets/img/napa-sonoma-healdsburg.jpg",
+  "bytes": 431608
+ },
+ {
+  "b64": "images-b64/assets__img__new-orleans-the-french-quarter-early.jpg.b64",
+  "target": "public/assets/img/new-orleans-the-french-quarter-early.jpg",
+  "bytes": 374972
+ },
+ {
+  "b64": "images-b64/assets__img__new-orleans-frenchmen-street.jpg.b64",
+  "target": "public/assets/img/new-orleans-frenchmen-street.jpg",
+  "bytes": 170523
+ },
+ {
+  "b64": "images-b64/assets__img__new-orleans-the-garden-district-and-magazine-street.jpg.b64",
+  "target": "public/assets/img/new-orleans-the-garden-district-and-magazine-street.jpg",
+  "bytes": 552089
+ },
+ {
+  "b64": "images-b64/assets__img__new-orleans-the-bayou-and-river-road.jpg.b64",
+  "target": "public/assets/img/new-orleans-the-bayou-and-river-road.jpg",
+  "bytes": 507157
+ },
+ {
+  "b64": "images-b64/assets__img__new-york-manhattan-neighborhoods.jpg.b64",
+  "target": "public/assets/img/new-york-manhattan-neighborhoods.jpg",
+  "bytes": 470795
+ },
+ {
+  "b64": "images-b64/assets__img__new-york-manhattan-food-circuit.jpg.b64",
+  "target": "public/assets/img/new-york-manhattan-food-circuit.jpg",
+  "bytes": 211580
+ },
+ {
+  "b64": "images-b64/assets__img__new-york-brooklyn.jpg.b64",
+  "target": "public/assets/img/new-york-brooklyn.jpg",
+  "bytes": 397797
+ },
+ {
+  "b64": "images-b64/assets__img__new-york-hudson-valley.jpg.b64",
+  "target": "public/assets/img/new-york-hudson-valley.jpg",
+  "bytes": 315412
+ },
+ {
+  "b64": "images-b64/assets__img__new-york-the-hamptons.jpg.b64",
+  "target": "public/assets/img/new-york-the-hamptons.jpg",
+  "bytes": 475562
+ },
+ {
+  "b64": "images-b64/assets__img__new-york-upstate-and-finger-lakes.jpg.b64",
+  "target": "public/assets/img/new-york-upstate-and-finger-lakes.jpg",
+  "bytes": 304513
  }
 ]
