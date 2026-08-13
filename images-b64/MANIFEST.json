@@ -2188,5 +2188,30 @@
   "b64": "images-b64/assets__img__spain-galicia.jpg.b64",
   "target": "public/assets/img/spain-galicia.jpg",
   "bytes": 283537
+ },
+ {
+  "b64": "images-b64/assets__img__portugal-lisbon.jpg.b64",
+  "target": "public/assets/img/portugal-lisbon.jpg",
+  "bytes": 370489
+ },
+ {
+  "b64": "images-b64/assets__img__portugal-the-douro-valley.jpg.b64",
+  "target": "public/assets/img/portugal-the-douro-valley.jpg",
+  "bytes": 402007
+ },
+ {
+  "b64": "images-b64/assets__img__portugal-porto.jpg.b64",
+  "target": "public/assets/img/portugal-porto.jpg",
+  "bytes": 311183
+ },
+ {
+  "b64": "images-b64/assets__img__portugal-the-alentejo.jpg.b64",
+  "target": "public/assets/img/portugal-the-alentejo.jpg",
+  "bytes": 427306
+ },
+ {
+  "b64": "images-b64/assets__img__portugal-the-algarve-western-end.jpg.b64",
+  "target": "public/assets/img/portugal-the-algarve-western-end.jpg",
+  "bytes": 411307
  }
 ]
