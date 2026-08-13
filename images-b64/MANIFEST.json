@@ -2163,5 +2163,30 @@
   "b64": "images-b64/assets__img__antarctica-the-ross-sea-and-east-antarctica.jpg.b64",
   "target": "public/assets/img/antarctica-the-ross-sea-and-east-antarctica.jpg",
   "bytes": 271043
+ },
+ {
+  "b64": "images-b64/assets__img__spain-basque-country.jpg.b64",
+  "target": "public/assets/img/spain-basque-country.jpg",
+  "bytes": 239868
+ },
+ {
+  "b64": "images-b64/assets__img__spain-andalusia.jpg.b64",
+  "target": "public/assets/img/spain-andalusia.jpg",
+  "bytes": 381602
+ },
+ {
+  "b64": "images-b64/assets__img__spain-barcelona-and-the-costa-brava.jpg.b64",
+  "target": "public/assets/img/spain-barcelona-and-the-costa-brava.jpg",
+  "bytes": 313051
+ },
+ {
+  "b64": "images-b64/assets__img__spain-rioja-and-the-interior.jpg.b64",
+  "target": "public/assets/img/spain-rioja-and-the-interior.jpg",
+  "bytes": 416461
+ },
+ {
+  "b64": "images-b64/assets__img__spain-galicia.jpg.b64",
+  "target": "public/assets/img/spain-galicia.jpg",
+  "bytes": 283537
  }
 ]
