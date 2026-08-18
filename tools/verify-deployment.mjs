@@ -19,7 +19,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers, linklessCards, inlineHandlers,
+  undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -436,6 +436,15 @@ for (const file of htmlFiles) {
         `${url} carries ${count} inline ${name}= handler${count === 1 ? "" : "s"}, ` +
           `which script-src 'unsafe-inline' has to permit (#100)`);
     }
+  }
+
+  /* field-maxlength (#74): every field a visitor can type into carries a
+     length cap. All three forms POST straight to Web3Forms from the client,
+     so maxlength is the only in-repo limit on a submission's size. The
+     Newsletter shipped without one on 94 pages while the deployment guide
+     said all three forms were capped; nothing could see it. */
+  for (const tag of uncappedFields(html)) {
+    fail("field-maxlength", `${url} has a user-editable field with no maxlength: ${tag.slice(0, 90)}…`);
   }
 
   /* img-attrs: intrinsic dimensions prevent CLS; alt is non-negotiable. */

@@ -385,12 +385,13 @@
    </main> <section class="newsletter" id="newsletter"> <div> <h2 class="newsletter__title">Travel insights.<br>Delivered quietly.</h2> <p class="newsletter__body">
 Destination notes, shoulder-season tips, and the occasional
       remarkable find. No spam, no urgency. Unsubscribe whenever.
-</p> </div> <div> <form class="newsletter__form" id="nlForm" action="https://api.web3forms.com/submit" method="POST"> <input type="hidden" name="access_key" value="94312057-04b8-44d8-a7a8-7cb083d999b8"> <input type="hidden" name="subject" value="Newsletter signup — hymtravel.com"> <input type="hidden" name="from_name" value="HYM Travel Website"> <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off"> <input type="email" name="email" class="newsletter__input" placeholder="Your email address" required aria-label="Email address"> <button type="submit" class="newsletter__submit">Subscribe</button> </form> <div class="newsletter__success" id="nlSuccess" role="status"> <strong class="newsletter__success-title">You're on the list.</strong> <span class="newsletter__success-body">Notes arrive occasionally, never on a schedule. Unsubscribe from any of them.</span> </div> <p class="newsletter__error" id="nlError" role="alert"></p> <p class="newsletter__fine">By subscribing you agree to receive occasional emails from Hit Your Mark Travel. Unsubscribe anytime.</p> </div> </section> <script>
+</p> </div> <div> <form class="newsletter__form" id="nlForm" action="https://api.web3forms.com/submit" method="POST"> <input type="hidden" name="access_key" value="94312057-04b8-44d8-a7a8-7cb083d999b8"> <input type="hidden" name="subject" value="Newsletter signup — hymtravel.com"> <input type="hidden" name="from_name" value="HYM Travel Website"> <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none"> <input type="email" name="email" class="newsletter__input" maxlength="254" placeholder="Your email address" required aria-label="Email address"> <button type="submit" class="newsletter__submit">Subscribe</button> </form> <div class="newsletter__success" id="nlSuccess" role="status"> <strong class="newsletter__success-title">You're on the list.</strong> <span class="newsletter__success-body">Notes arrive occasionally, never on a schedule. Unsubscribe from any of them.</span> </div> <p class="newsletter__error" id="nlError" role="alert"></p> <p class="newsletter__fine">By subscribing you agree to receive occasional emails from Hit Your Mark Travel. Unsubscribe anytime.</p> </div> </section> <script>
   (function () {
     var form = document.getElementById('nlForm');
     if (!form) return;
 
     var btn = form.querySelector('.newsletter__submit');
+    var emailEl = form.querySelector('.newsletter__input');
     var errorEl = document.getElementById('nlError');
     var successEl = document.getElementById('nlSuccess');
     var sending = false;
@@ -409,6 +410,9 @@ Destination notes, shoulder-season tips, and the occasional
       errorEl.textContent = '';
       errorEl.style.display = 'none';
 
+      /* maxlength is the real limit; this mirrors it, because FormData(form)
+         reads whatever is in the DOM and the attribute can be edited away. */
+      if (emailEl.value.length > 254) emailEl.value = emailEl.value.slice(0, 254);
       var formData = new FormData(form);
       var original = btn.textContent;
       sending = true;

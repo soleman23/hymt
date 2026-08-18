@@ -38,8 +38,8 @@
       <input type="hidden" name="access_key" value="94312057-04b8-44d8-a7a8-7cb083d999b8" />
       <input type="hidden" name="subject" value="Newsletter signup — hymtravel.com" />
       <input type="hidden" name="from_name" value="HYM Travel Website" />
-      <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" />
-      <input type="email" name="email" class="newsletter__input" placeholder="Your email address" required aria-label="Email address">
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+      <input type="email" name="email" class="newsletter__input" maxlength="254" placeholder="Your email address" required aria-label="Email address">
       <button type="submit" class="newsletter__submit">Subscribe</button>
     </form>
     <div class="newsletter__success" id="nlSuccess" role="status">
@@ -57,6 +57,7 @@
     if (!form) return;
 
     var btn = form.querySelector('.newsletter__submit');
+    var emailEl = form.querySelector('.newsletter__input');
     var errorEl = document.getElementById('nlError');
     var successEl = document.getElementById('nlSuccess');
     var sending = false;
@@ -75,6 +76,9 @@
       errorEl.textContent = '';
       errorEl.style.display = 'none';
 
+      /* maxlength is the real limit; this mirrors it, because FormData(form)
+         reads whatever is in the DOM and the attribute can be edited away. */
+      if (emailEl.value.length > 254) emailEl.value = emailEl.value.slice(0, 254);
       var formData = new FormData(form);
       var original = btn.textContent;
       sending = true;

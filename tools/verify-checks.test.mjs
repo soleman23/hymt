@@ -20,9 +20,9 @@
  * specific broken shape fails.
  *
  * The predicates are imported from ./content-checks.mjs, the same module
- * verify-deployment.mjs imports, so there is no copy here to drift. The last
- * five tests additionally run them against real dist/ output, so a fixture
- * that stops resembling the site fails too.
+ * verify-deployment.mjs imports, so there is no copy here to drift. The final
+ * block additionally runs them against real dist/ output, so a fixture that
+ * stops resembling the site fails too.
  *
  * Runs as part of `npm run build`, before the verifier itself.
  */
@@ -47,7 +47,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers, linklessCards, inlineHandlers,
+  undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -511,6 +511,52 @@ t("inline: the stretched-link card that replaced the 35 is clean",
 t("inline: a page with no handlers at all reports nothing",
   inlineHandlers(`<main><a href="/plan-your-trip/">Ask Mark</a></main>`).length, 0);
 
+/* ── field-maxlength (#74) ── */
+
+/* The shipped defect, verbatim from dist/index.html before the fix. This is
+   the fixture that proves the check would have caught the live bug; if it
+   ever passes, the check has stopped seeing the newsletter. */
+t("maxlength: the uncapped newsletter email input as it shipped on 94 pages",
+  uncappedFields(`<input type="email" name="email" class="newsletter__input" placeholder="Your email address" required aria-label="Email address">`).length, 1);
+
+t("maxlength: the same input capped is clean",
+  uncappedFields(`<input type="email" name="email" class="newsletter__input" maxlength="254" placeholder="Your email address" required aria-label="Email address">`).length, 0);
+
+t("maxlength: a capped textarea is clean",
+  uncappedFields(`<textarea id="cfmsg" name="message" maxlength="3000" placeholder="Tell me" required></textarea>`).length, 0);
+
+/* A textarea has no type attribute. A predicate keyed on type= would skip
+   every textarea and pass the 3000-char message field vacuously. */
+t("maxlength: an uncapped textarea is caught",
+  uncappedFields(`<textarea id="cfmsg" name="message" required></textarea>`).length, 1);
+
+t("maxlength: an input with no type is text, and is caught",
+  uncappedFields(`<input id="dest-idea" placeholder="A place">`).length, 1);
+
+/* False-positive guards: the three non-text inputs every form carries. */
+t("maxlength: the hidden access_key input is not a field",
+  uncappedFields(`<input type="hidden" name="access_key" value="94312057-04b8-44d8-a7a8-7cb083d999b8" />`).length, 0);
+
+t("maxlength: the botcheck honeypot checkbox is not a field",
+  uncappedFields(`<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">`).length, 0);
+
+/* Plan Your Trip's steppers, verbatim: readonly, and no type at all. Without
+   the readonly exemption the check ships red on the conversion path. */
+t("maxlength: the readonly stepper display is exempt",
+  uncappedFields(`<input class="stepper-val" id="adults" value="2" readonly>`).length, 0);
+
+t("maxlength: a disabled input is exempt",
+  uncappedFields(`<input type="text" id="x" disabled>`).length, 0);
+
+t("maxlength: two uncapped fields on one page are two, not one",
+  uncappedFields(`<input type="text" id="a"><input type="tel" id="b" maxlength="40"><textarea id="c"></textarea>`).length, 2);
+
+t("maxlength: maxlength with spaces round the = still counts",
+  uncappedFields(`<input type="text" id="a" maxlength = "100">`).length, 0);
+
+t("maxlength: a page with no fields reports nothing",
+  uncappedFields(`<main><p>No forms here.</p></main>`).length, 0);
+
 /* ── the real build, so these predicates cannot drift from the site ── */
 
 const dist = path.join(ROOT, "dist");
@@ -535,8 +581,20 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   const plan = await readFile(path.join(dist, "plan-your-trip", "index.html"), "utf8");
   t("real /plan-your-trip/ carries no inline handlers",
     inlineHandlers(plan).length, 0);
+
+  /* Every field on every form. The home page carries the newsletter (the one
+     that shipped uncapped); Plan Your Trip carries the readonly steppers that
+     the exemption exists for. */
+  const home = await readFile(path.join(dist, "index.html"), "utf8");
+  t("real / has no uncapped field (the newsletter is capped)",
+    uncappedFields(home).length, 0);
+  const contact = await readFile(path.join(dist, "contact", "index.html"), "utf8");
+  t("real /contact/ has no uncapped field",
+    uncappedFields(contact).length, 0);
+  t("real /plan-your-trip/ has no uncapped field (steppers exempt)",
+    uncappedFields(plan).length, 0);
 } else {
-  console.log("  (dist/ absent — skipped the 3 real-output tests; run `npm run build` first)");
+  console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
 
 /* ── report ── */
