@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
-  unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches,
+  unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -289,6 +289,25 @@ const linkResolves = async (p) => {
   return (await exists(path.join(DIST, noSlash, "index.html"))) ||
          (await exists(path.join(DIST, noSlash)));
 };
+
+/* hero-stat-rail: runbook § 2.5 gates on this, and until #94 it was a gate at
+   0% that nothing could detect. The rail renders only the stats a page supplies
+   and is hidden below 900px, so a page missing one looks fine in review and
+   builds green. Every destination page must carry Best Season AND Best For.
+   Flight Time is deliberately not required -- see #94 and the worksheet header. */
+{
+  const REQUIRED = ["Best Season", "Best For"];
+  for (const file of htmlFiles) {
+    const rel = path.relative(DIST, file).split(path.sep).join("/");
+    if (!/^destinations\/[^/]+\/index\.html$/.test(rel)) continue;
+    const labels = heroStatLabels(await readFile(file, "utf8"));
+    for (const need of REQUIRED) {
+      if (!labels.includes(need)) {
+        fail("hero-stat-rail", `/${rel.replace(/index\.html$/, "")} has no "${need}" stat (found: ${labels.join(", ") || "none"})`);
+      }
+    }
+  }
+}
 
 /* llms-txt: the file is a hand-authored map of the site for AI assistants
    (#36), which makes it the one shipped page nothing else re-derives. The

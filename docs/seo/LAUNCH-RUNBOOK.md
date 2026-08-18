@@ -136,8 +136,15 @@ confirming the numbers still hold. See #95.
       six of them past the shorter grep
 - [ ] The About page contains real copy from Mark, not scaffolding (F20/P0-3c)
 - [ ] `grep -rn "NEEDS MARK" src/` — every one resolved or consciously deferred
-- [ ] `docs/hero-stat-rail-worksheet.csv` filled in — several destination pages
-      have TODO comments about missing "Best For" and "Flight Time" stats
+- [x] Hero stat rail — **done 2026-08-17 (#94).** All 43 destination pages
+      carry Best Season **and** Best For; the TODO comments are gone from
+      every page, and `hero-stat-rail-worksheet.csv` is now a record of what
+      ships rather than a to-do list. Enforced by `hero-stat-rail` in
+      `tools/verify-deployment.mjs`, so it cannot silently regress and a new
+      destination page cannot ship without both stats.
+      **Flight Time was dropped on purpose** and is not part of this gate: it
+      is not derivable from the repo, and the worked example everything was to
+      be copied from was wrong by roughly double. See #94.
 - [ ] Privacy policy reflects the actual analytics and forms in use
 
 ---

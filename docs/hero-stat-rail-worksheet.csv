@@ -1,48 +1,64 @@
-# Hero stat rail copy. Fill best_for_FILL and flight_time_FILL for each destination.
-# Origins vary by destination - use whichever departure points are most relevant to that trip.
-# Format follows the maldives row. Use <br> for a line break and &amp; for an ampersand.
-# Leave a cell blank to omit that stat; the layout renders only the stats a page supplies.
+# Hero stat rail copy. FILLED 2026-08-17 (#94) - this is now a record of what
+# ships, not a to-do. The live values are in each
+# src/pages/destinations/<slug>/index.astro `stats` array; regenerate this file
+# from those rather than editing it and expecting the site to follow.
+#
+# best_for is derived from each page's own hero sub and answer capsule, so no
+# claim here is researched or invented. Use <br> for a line break and &amp; for
+# an ampersand.
+#
+# THE flight_time COLUMN WAS DELETED, DELIBERATELY. It is not derivable from
+# the repo, and the one worked example this worksheet told everyone to copy was
+# wrong: maldives shipped "~10h from NYC" when there is no nonstop JFK-MLE at
+# all and the real journey is ~18-20h with a connection. Publishing 43 more
+# figures in that pattern would have put 43 wrong numbers on a travel advisor's
+# site. If flight times are ever wanted, they need a named origin, a real
+# source per destination, and Mark's eye before they ship - not this file.
+#
+# The rail renders only the stats a page supplies, so it is two stats deep
+# everywhere today and a third would appear on its own if one were added.
 
-slug,destination,best_season_existing,best_for_FILL,flight_time_FILL
-africa,Africa,July – October,,
-alaska,Alaska,June – August,,
-antarctica,Antarctica,December – January,,
-asia,Asia,March – May & October – November,,
-bali,Bali,May – October,,
-botswana,Botswana,June – October,,
-canadian-rockies,Canadian Rockies,Mid-June – Early September,,
-caribbean-mexico,Caribbean & Mexico,December – April,,
-egypt,Egypt,October – April,,
-europe,Europe,April – June & September – October,,
-fiji,Fiji,May – October,,
-france,France,May – June,,
-french-polynesia,French Polynesia,May – October,,
-galapagos,Galápagos,June – November,,
-greece,Greece,September – October,,
-hawaii,Hawaii,April – June,,
-iceland,Iceland,June – August,,
-italy,Italy,May – June,,
-japan,Japan,Late March – Early April,,
-jordan,Jordan,October – April,,
-kenya-tanzania,Kenya & Tanzania,July – October,,
-middle-east,Middle East,October – April,,
-napa-sonoma,Napa & Sonoma,September – October,,
-new-orleans,New Orleans,October – April,,
-new-york,New York,May – June,,
-new-zealand,New Zealand,November – April,,
-north-america,North America,September – November,,
-oman,Oman,October – March,,
-patagonia,Patagonia,November – March,,
-peru,Peru,May – October,,
-polar-regions,Polar Regions,November – March,,
-portugal,Portugal,May – June · Sept – Oct,,
-riviera-maya-los-cabos,Riviera Maya & Los Cabos,November – April,,
-rwanda,Rwanda,June – September,,
-south-america,South America,October – April,,
-south-pacific,South Pacific,May – October,,
-spain,Spain,April – June · Sept – Oct,,
-st-barths,St. Barth's,January – April,,
-thailand,Thailand,November – April,,
-maldives,The Maldives,Nov – Apr,Honeymoons & Couples,~10h from NYC<br>~9h from LHR
-turks-caicos,Turks & Caicos,December – April,,
-uk-ireland,UK & Ireland,May – September,,
+slug,destination,best_season,best_for
+africa,Africa,July – October,First Safaris<br>&amp; Big Game
+alaska,Alaska,June – August,Wilderness<br>&amp; Small Ships
+antarctica,Antarctica,December &ndash; January,Expedition<br>Cruising
+asia,Asia,March – May &amp; October – November,Culture<br>&amp; Cuisine
+bali,Bali,May – October,Wellness<br>&amp; Culture
+botswana,Botswana,June – October,Low-Volume<br>Safari
+canadian-rockies,Canadian Rockies,Mid-June – Early September,Mountain Scenery<br>&amp; Families
+caribbean-mexico,Caribbean &amp; Mexico,December – April,Beaches<br>&amp; Resorts
+egypt,Egypt,October – April,Ancient History<br>&amp; the Nile
+europe,Europe,April – June &amp; September – October,"Culture, Food<br>&amp; Wine"
+fiji,Fiji,May – October,Island Resorts<br>&amp; Diving
+france,France,May – June,"Food, Wine<br>&amp; Regions"
+french-polynesia,French Polynesia,May – October,Honeymoons<br>&amp; Overwater
+galapagos,Galápagos,June – November,Wildlife<br>&amp; Liveaboards
+greece,Greece,September – October,Islands<br>&amp; Antiquity
+hawaii,Hawaii,April – June,Families<br>&amp; Island-Hopping
+iceland,Iceland,June &ndash; August,Landscape<br>&amp; Aurora
+india,India,Oct – March,Culture<br>&amp; Grand Touring
+italy,Italy,May – June,"Art, Food<br>&amp; Coastline"
+japan,Japan,Late March – Early April,"Food, Craft<br>&amp; Ryokan"
+jordan,Jordan,October – April,Ancient Sites<br>&amp; Desert
+kenya-tanzania,Kenya &amp; Tanzania,July – October,Migration<br>&amp; Big Cats
+maldives,The Maldives,Nov – Apr,Honeymoons<br>&amp; Couples
+middle-east,Middle East,October – April,History<br>&amp; Hospitality
+napa-sonoma,Napa & Sonoma,September – October,Wine<br>&amp; Harvest
+new-orleans,New Orleans,October – April,Food<br>&amp; Music
+new-york,New York,May – June,Dining<br>&amp; City Breaks
+new-zealand,New Zealand,November – April,Self-Drive<br>&amp; Lodges
+north-america,North America,September – November,Short Trips<br>&amp; National Parks
+oman,Oman,October – March,Road Trips<br>&amp; Desert
+patagonia,Patagonia,November – March,Hiking<br>&amp; Glaciers
+peru,Peru,May – October,Ancient Sites<br>&amp; Food
+polar-regions,Polar Regions,November – March,Expeditions<br>&amp; Wildlife
+portugal,Portugal,May – June · Sept – Oct,"Food, Wine<br>&amp; Value"
+riviera-maya-los-cabos,Riviera Maya &amp; Los Cabos,November &ndash; April,"Beaches, Cenotes<br>&amp; Golf"
+rwanda,Rwanda,June – September,Gorilla Trekking
+south-america,South America,October – April,Landscape<br>&amp; Ancient Sites
+south-pacific,South Pacific,May – October,Long-Haul<br>Island Escapes
+spain,Spain,April – June · Sept – Oct,"Food, Wine<br>&amp; Architecture"
+st-barths,St. Barth&#39;s,January &ndash; April,Beaches<br>&amp; Villas
+thailand,Thailand,November – April,Food<br>&amp; Islands
+turks-caicos,Turks &amp; Caicos,December – April,Families<br>&amp; Villas
+uk-ireland,UK & Ireland,May – September,Country Houses<br>&amp; Driving Tours
