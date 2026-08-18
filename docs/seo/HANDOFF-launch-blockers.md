@@ -592,12 +592,11 @@ apex and www.
   experience on 6 pages), and those need photography that does not exist in
   the repo — the seven subjects are listed in `photography-plan.md`.
 
-- **`og:image:alt`, `og:image:width` and `og:image:height` are on 0 of 98
-  pages.** `CONTENT-STANDARDS.md` § OG image asks for alt and
-  `SCHEMA-LIBRARY.md:594` shows all three. Now that 83 pages carry a real
-  per-page image, the missing alt is more visible, not less. One change to
-  `Base.astro`'s head block; deliberately not bundled with the 70-blob crop
-  commit.
+- ~~`og:image:alt`, `og:image:width` and `og:image:height` are on 0 of 98
+  pages~~ — landed in `c29a96e`, with `og:locale` too. The alt describes the
+  IMAGE: a page on the crest plate keeps "Hit Your Mark Travel", and only a
+  page using a real crop gets a description. og-image now reads each
+  target's header and fails if the declared 1200×630 is not true.
 
 - **`/destinations/alaska/` ships a frame containing about six recognisable
   people** on a viewing platform, which the no-faces brand rule would
