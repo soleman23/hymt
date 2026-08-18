@@ -39,7 +39,10 @@ WHAT IS ACTUALLY LEFT, and who can do it:
       job. See § CSP.
 
   HUMAN-ONLY (do not attempt; surface and stop)
-    - #74  Web3Forms dashboard: domain restriction, CAPTCHA, rate limits
+    - #74  Web3Forms dashboard. FIRST: form submissions are delivered to the
+           wrong address — every inquiry goes to devinp.sole@gmail.com and
+           none to mark@hymtravel.com. That is a launch blocker, not
+           hardening. Then: domain restriction, CAPTCHA, rate limits
     - #96  GSC Domain property + Bing, via DNS TXT, BEFORE cutover
     - #99  lower DNS TTL, snapshot every record
     - #32  the DNS cutover itself
@@ -262,9 +265,46 @@ against a 1.5 MB budget is the real figure rather than an optimistic one.
 
 ---
 
-## #74 — Web3Forms hardening
+## #74 — Web3Forms
 
-**Dashboard-only, and the issue is wrong about which parts.**
+### The submissions go to the wrong person. Fix this before anything else here.
+
+Verified 2026-08-18 by submitting a real inquiry through the staging UI. Web3Forms
+accepted it and the mail arrived one second later, intact — and its **only**
+recipient was `devinp.sole@gmail.com`. No CC. Nothing reached
+`mark@hymtravel.com`.
+
+This is account-level, not a one-off: a Newsletter signup earlier the same day
+landed at the same address, so **all three forms** are affected. If the site
+went live as it stands, every client inquiry would go to the site owner's
+personal Gmail and Mark would never see one — silently, with the form showing
+its branded success state every time.
+
+**It cannot be fixed in code, and the key must not be touched.** `submitForm`
+sends no recipient field; its 13 `append` calls are `access_key`, `subject`,
+`from_name`, `name`, `email`, `replyto`, `phone`, `message`, `experiences`,
+`destination`, `botcheck`, `budget`, `newsletter`. Web3Forms delivers to the
+address the access key is registered to, so the fix is the recipient setting in
+the dashboard. Per CLAUDE.md the access key does not change — do **not** "fix"
+this by minting a new key.
+
+**What runbook § 2.3 actually has, and has not, proved:**
+
+- Proved: the form works end to end. Every field round-tripped — experiences,
+  timing, `1 adults, 0 children` from the steppers, budget, both free-text
+  fields, occasion, advisor experience, `NEWSLETTER: No`. Honeypot clean,
+  delivered to Inbox rather than spam, and it ran *before* any domain
+  restriction, which is the required order.
+- Not proved: **that mail reaches `mark@hymtravel.com` at all.** That address
+  has never received a submission. The live Google Workspace MX (§ 3 below)
+  makes it likely, but likely is not tested. Re-run the gate after fixing the
+  recipient, and check Mark's spam on the first one — it will be the first
+  delivery from this sender.
+
+---
+
+**The rest of #74 is hardening. Dashboard-only, and the issue is wrong about
+which parts.**
 
 Correct in the issue: all three forms POST the public key to
 `api.web3forms.com` from client JS with no CAPTCHA, no rate limit, no proxy. The
@@ -417,11 +457,15 @@ apex and www.
 ## Definition of done for this handoff
 
 - [x] Staging current and verified, CDN purged, 60/60 images byte-matching
-- [ ] #74's dashboard settings are on. Runbook § 2.3's E2E gate has **already
-      run** — a real inquiry was submitted and accepted on 2026-08-18, while no
-      domain restriction was in place, which is the correct order. Enabling the
-      restriction now invalidates nothing; confirm the mail arrived (check spam,
-      it is the first delivery from this sender) before turning it on
+- [ ] **#74's recipient address is fixed so submissions reach
+      `mark@hymtravel.com`.** They currently do not — see § #74. This outranks
+      every other item in this list: it is the one that loses real business
+      after launch, and it does so silently
+- [ ] Runbook § 2.3's E2E gate re-run *after* that fix and *before* the domain
+      restriction. The 2026-08-18 run proved the form works but was delivered
+      to the wrong address, so the gate is half-satisfied, not done
+- [ ] #74's remaining dashboard settings are on (domain restriction, CAPTCHA,
+      rate limits)
 - [ ] #96 complete: Domain property on `hymtravel.com`, Bing imported, staging
       submitted nowhere
 - [ ] #99's record snapshot exists, MX included, TTL lowered
