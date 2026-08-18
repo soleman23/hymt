@@ -120,32 +120,35 @@ ErrorDocument 404 /404.html
   # the specific thing to watch in the report-only console review before #100
   # flips this to enforcing.**
   Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"
-  # Long-cache immutable hint for static assets.
+  # ── Static asset caching ──
   #
-  # no-transform here for the same reason it is on .html below, and it should
-  # have been added at the same time (#107). #95 proved this CDN transforms
-  # payloads; that fix covered HTML and left every image exposed, so the edge
-  # has been re-encoding all 474 of them.
+  # NOT `immutable`, deliberately (#107). `immutable` is a promise that the URL
+  # will never change content, and it is only safe when the filename is
+  # content-addressed. Astro hashes what it emits under /_astro/; everything
+  # under /assets/img/ is hand-managed with stable names, so the same URL DOES
+  # change content whenever an image is re-cut or replaced.
   #
-  # The symptom, measured 2026-08-18 on the staging host after a clean 582/582
-  # upload, on a file that had just been re-uploaded successfully:
+  # It had `immutable, max-age=31536000` and the consequence was measured on
+  # staging 2026-08-18: uploads landed at origin and never reached anyone.
   #
-  #   local  1600x900  288,154 B  ffd8ffe0  APP0/JFIF  PROGRESSIVE  no EXIF
-  #   live   1600x900  295,047 B  ffd8ffe1  APP1/EXIF  BASELINE     +EXIF
+  #   HEAD -> x-hcdn-cache-status: MISS, Content-Length: 288,154  (new file)
+  #   GET  -> x-hcdn-cache-status: HIT,  Content-Length: 295,047  (year-old copy)
   #
-  # Same photo, same dimensions, ~6% heavier over 25 of 25 sampled images. Not
-  # a cache (x-hcdn-cache-status: MISS, and a cache-busted fetch is identical),
-  # not FTP corruption (JPEG structure intact, LF count does not match the
-  # delta). The tell is the RESPONSE: images come back with no Last-Modified
-  # and no ETag, which is what a generated payload looks like, while .html --
-  # which already carries no-transform -- comes back DYNAMIC and byte-exact.
+  # The GET also came back carrying the PREVIOUS Cache-Control value, which is
+  # what gives it away: the edge was replaying a whole cached response. It
+  # ignored `Cache-Control: no-cache` and `Pragma: no-cache` request headers,
+  # because `immutable` tells a cache not to revalidate and it was obeying.
   #
-  # Progressive-to-baseline re-encoding also explains the direction of the
-  # difference: our pipeline (tools/cap-image-width.py) writes progressive at
-  # q85 with metadata stripped, which is SMALLER than the baseline the edge
-  # hands back. We are being served a worse version of our own optimisation.
+  # Two earlier conclusions were wrong and are recorded so they are not redone:
+  # a `?query=` cache-bust "proved" it was not caching (this CDN keys static
+  # assets without the query string), and a HEAD showing MISS "proved" the
+  # origin was stale (HEAD reaches origin, GET is served from edge). Diagnose
+  # this class of bug with a GET, and read x-hcdn-cache-status.
+  #
+  # A month is long enough to be worth having and short enough that a mistake
+  # ages out on its own. Revalidation still makes repeat views free.
   <FilesMatch "\.(jpg|jpeg|png|webp|svg|woff2?)$">
-    Header set Cache-Control "public, max-age=31536000, immutable, no-transform"
+    Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
 
   # no-transform: Hostinger's CDN (server: hcdn) re-compresses HTML on the
