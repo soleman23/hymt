@@ -44,6 +44,14 @@
 .share-btn { width:34px;height:34px;display:flex;align-items:center;justify-content:center; border:1px solid var(--border-subtle);background:transparent;cursor:pointer; color:var(--silver-400);transition:all .15s; }
 .share-btn:hover { border-color:var(--border-gold);color:var(--gold-400) }
 .share-btn svg { width:14px;height:14px }
+/* #104: the copy confirmation. The buttons shipped with no behaviour and no
+   feedback, so a working copy and a silent failure looked identical. */
+.share-status {
+  font-family:var(--font-b);font-size:11px;color:var(--gold-400);
+  margin-left:10px;opacity:0;transition:opacity .15s;
+  white-space:nowrap;pointer-events:none;
+}
+.share-status.is-shown { opacity:1 }
 .post-body { grid-column:2; font-family:var(--font-b);font-size:17px;color:var(--text-secondary);line-height:1.8; }
 .post-body p { margin-bottom:24px }
 .post-body p:last-child { margin-bottom:0 }

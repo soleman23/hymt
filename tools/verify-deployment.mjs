@@ -19,6 +19,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
+  undefinedInlineHandlers,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -290,6 +291,25 @@ const linkResolves = async (p) => {
          (await exists(path.join(DIST, noSlash)));
 };
 
+/* dead-inline-handler: an inline handler that calls a function nothing defines
+   (#104). This shipped and survived because every other signal was green — the
+   markup is valid, the build is clean, and a dead button looks exactly like a
+   live one. 82 of them across the journal: copyLink() on 64, shareArticle() on
+   18, defined nowhere.
+
+   DEAD_HANDLER_DEBT is a ratchet, not an exemption, on the same terms as
+   EAGER_IMAGE_DEBT above: a listed name may only ever appear FEWER times, an
+   unlisted one fails outright, and an entry that drops to zero fails until it
+   is deleted. Every entry must name the issue that removes it. */
+const DEAD_HANDLER_DEBT = {
+  /* 13 category buttons on /travel-journal/. Unlike copyLink these were never
+     implementable as written: the article cards carry no category hook to
+     filter on, so this is an unbuilt feature rather than a lost function.
+     Tracked in its own issue with #loadMore, which is dead the same way. */
+  filterArticles: 13,
+};
+const deadHandlerSeen = new Map();
+
 /* hero-stat-rail: runbook § 2.5 gates on this, and until #94 it was a gate at
    0% that nothing could detect. The rail renders only the stats a page supplies
    and is hidden below 900px, so a page missing one looks fine in review and
@@ -374,6 +394,15 @@ for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const url = urlOf(file);
   const is404 = file.endsWith("404.html");
+
+  /* dead-inline-handler (#104) — see DEAD_HANDLER_DEBT above. */
+  for (const { name, count } of undefinedInlineHandlers(html)) {
+    const allowed = DEAD_HANDLER_DEBT[name];
+    deadHandlerSeen.set(name, (deadHandlerSeen.get(name) ?? 0) + count);
+    if (allowed === undefined) {
+      fail("dead-inline-handler", `${url} calls ${name}() from an inline handler ${count}\u00d7, and nothing defines it`);
+    }
+  }
 
   /* img-attrs: intrinsic dimensions prevent CLS; alt is non-negotiable. */
   for (const img of html.match(/<img\b[^>]*>/gi) ?? []) {
@@ -634,6 +663,23 @@ for (const file of htmlFiles) {
   }
 }
 for (const link of deadLinks) fail("internal-links", `internal href ${link} resolves to nothing in dist/`);
+
+/* The dead-handler ratchet (#104). A recorded name may only ever shrink; when
+   it reaches zero its entry has to go, or the hole stays open for the next one. */
+for (const [name, allowed] of Object.entries(DEAD_HANDLER_DEBT)) {
+  const seen = deadHandlerSeen.get(name) ?? 0;
+  if (seen === 0) {
+    fail("dead-inline-handler",
+      `DEAD_HANDLER_DEBT lists ${name}, which no page calls any more — delete the entry.`);
+  } else if (seen > allowed) {
+    fail("dead-inline-handler",
+      `${name}() is called ${seen}× from inline handlers but DEAD_HANDLER_DEBT allows ${allowed}. ` +
+        `Recorded debt may only shrink — define it or remove the new call sites.`);
+  } else if (seen < allowed) {
+    fail("dead-inline-handler",
+      `${name}() is down to ${seen}× from ${allowed} — lower its DEAD_HANDLER_DEBT entry to ${seen} so it cannot creep back.`);
+  }
+}
 notes.push("page-quality gates checked (P1-6)");
 /* A stale debt entry means the page was renamed or removed; drop it rather
    than leaving a permanent hole in the budget. */

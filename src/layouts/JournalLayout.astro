@@ -148,4 +148,89 @@ const schema = [
   {/* The slot was already rendered above for the word count — emit that
       capture rather than rendering the content a second time. */}
   <Fragment set:html={bodyHtml} />
+
+  {/* #104: the share buttons were markup only. Every journal page called
+      copyLink() and shareArticle('facebook') from inline onclick attributes,
+      and neither function existed anywhere in the repo or the built site — 64
+      and 18 buttons that threw ReferenceError and did nothing, while carrying
+      aria-labels that announce them as working controls.
+
+      Delegated from one listener on the layout rather than restored as window
+      globals, so the pages keep no inline handlers at all. That is 82 fewer
+      for #100 to deal with before the CSP can drop 'unsafe-inline'. */}
+  <script is:inline>
+    (function () {
+      /* Confirmation is the point. A copy button that silently succeeds looks
+         exactly like one that silently fails, which is how this survived: the
+         buttons have always looked live. */
+      function announce(btn, message) {
+        var box = btn.parentNode;
+        var el = box.querySelector(".share-status");
+        if (!el) {
+          el = document.createElement("span");
+          el.className = "share-status";
+          el.setAttribute("role", "status");
+          el.setAttribute("aria-live", "polite");
+          box.appendChild(el);
+        }
+        el.textContent = message;
+        el.classList.add("is-shown");
+        clearTimeout(el._t);
+        el._t = setTimeout(function () {
+          el.classList.remove("is-shown");
+          el.textContent = "";
+        }, 2600);
+      }
+
+      /* navigator.clipboard needs a secure context and can still reject on a
+         permissions policy, so the execCommand path is a real fallback rather
+         than legacy decoration. */
+      function copy(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text).then(function () { return true; },
+                                                          function () { return legacy(text); });
+        }
+        return Promise.resolve(legacy(text));
+      }
+
+      function legacy(text) {
+        try {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          var ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest ? e.target.closest("[data-share]") : null;
+        if (!btn) return;
+        var kind = btn.getAttribute("data-share");
+        var url = location.href;
+
+        if (kind === "facebook") {
+          /* noopener/noreferrer: the share window must not get a handle back
+             onto this one. */
+          window.open(
+            "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url),
+            "hymt-share",
+            "noopener,noreferrer,width=600,height=540"
+          );
+          return;
+        }
+
+        copy(url).then(function (ok) {
+          announce(btn, ok ? "Link copied" : "Press Ctrl+C to copy — it is in your address bar");
+        });
+      });
+    })();
+  </script>
 </Base>

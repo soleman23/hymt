@@ -47,6 +47,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
+  undefinedInlineHandlers,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -349,6 +350,63 @@ t("rail: labels come back in document order",
 
 t("rail: markup inside a label does not leak into the name",
   heroStatLabels(hRail(hStat("Best&nbsp;For", "x")))[0], "Best For");
+
+/* ── dead inline handlers (#104) ──
+   Reproduces the shipped bug: a share button calling a function nothing
+   defines. The false-positive cases matter as much as the true one — a check
+   that cries wolf on `window.location.href='/x/'` gets its finding ignored,
+   and there are 35 of those on the site. */
+
+const SHARE_BTN = '<button class="share-btn" aria-label="Copy link" ' +
+  'onclick="copyLink()"><svg></svg></button>';
+
+t("handlers: the exact shipped bug is caught",
+  undefinedInlineHandlers(SHARE_BTN)[0].name, "copyLink");
+
+t("handlers: it counts every call site on the page, not just the first",
+  undefinedInlineHandlers(SHARE_BTN + SHARE_BTN)[0].count, 2);
+
+t("handlers: defining it in an inline script clears it",
+  undefinedInlineHandlers(
+    "<script>function copyLink(){}</script>" + SHARE_BTN).length, 0);
+
+t("handlers: window.copyLink = ... also counts as defined",
+  undefinedInlineHandlers(
+    "<script>window.copyLink = function(){}</script>" + SHARE_BTN).length, 0);
+
+t("handlers: const arrow form also counts as defined",
+  undefinedInlineHandlers(
+    "<script>const copyLink = () => {}</script>" + SHARE_BTN).length, 0);
+
+/* 35 of these ship today. Flagging them would bury the real finding. */
+t("handlers: a member expression is not a bare call",
+  undefinedInlineHandlers(
+    `<div onclick="window.location.href='/plan-your-trip/'">x</div>`).length, 0);
+
+t("handlers: a qualified method call is not ours to resolve",
+  undefinedInlineHandlers(`<button onclick="history.back()">x</button>`).length, 0);
+
+t("handlers: control-flow keywords are not function calls",
+  undefinedInlineHandlers(
+    `<button onclick="if(x){go()}">x</button>`).map((h) => h.name).join(","), "go");
+
+t("handlers: callable browser globals are allowed, unknown bare calls are not",
+  undefinedInlineHandlers(
+    `<button onclick="alert('hi');f()">x</button>`).map((h) => h.name).join(","), "f");
+
+/* A bare identifier PASSED to something is not a call, so it is not this
+   check's business — resolving it would need real scope analysis. */
+t("handlers: an identifier passed as an argument is not treated as a call",
+  undefinedInlineHandlers(
+    `<button onclick="setTimeout(whatever,1)">x</button>`).length, 0);
+
+t("handlers: two different missing functions are reported separately",
+  undefinedInlineHandlers(
+    `<button onclick="copyLink()">a</button><button onclick="shareArticle('facebook')">b</button>`
+  ).length, 2);
+
+t("handlers: a page with no inline handlers at all is clean",
+  undefinedInlineHandlers("<button class=\"share-btn\" data-share=\"copy\"></button>").length, 0);
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 
