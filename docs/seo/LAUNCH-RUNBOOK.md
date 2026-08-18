@@ -282,8 +282,19 @@ done
       matching the wrong host. Fix immediately; this is the single most
       damaging possible mistake at this step.
 - [ ] `curl -sI https://www.hymtravel.com/nonexistent` — 404
-- [ ] Submit a real inquiry through Plan Your Trip; confirm it arrives
+- [ ] Submit a real inquiry through Plan Your Trip; confirm it arrives **at
+      `mark@hymtravel.com`** — not only that it arrives. Every submission before
+      launch went to `devinp.sole@gmail.com` (#74); check Mark's spam folder on
+      this first delivery.
 - [ ] GA4 realtime shows the visit
+- [ ] [Rich Results Test](https://search.google.com/test/rich-results) by URL
+      on one page per type — home, a destination, an experience, a journal post,
+      the FAQ — now that Googlebot is allowed on the production host (it cannot
+      test staging, by design). Pass = each page-type schema and
+      `BreadcrumbList` detected, 0 errors. A missing-date *recommendation* on
+      `Article` before § 4.1's stamp is expected; an error is not. This fills
+      the RRT column in `docs/seo/validation-log.md`, which has no other route
+      to completion.
 
 ### 4.5 Search engines (T+60)
 - [ ] Confirm the GSC Domain property is still verified after the DNS change

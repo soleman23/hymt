@@ -50,9 +50,11 @@ Two ways to complete this column:
    → **TEST CODE**. Pass = `Article` and `BreadcrumbList` each detected with
    0 errors / 0 warnings.
 2. **At launch, by URL.** Once DNS points at production, `robots.txt` allows
-   Googlebot and RRT works normally on the real URLs. This is already scheduled
-   in the launch runbook **§4.3–4.4** (post-cutover verification), which is the
-   more meaningful test anyway — it validates what Google actually fetches.
+   Googlebot and RRT works normally on the real URLs. This is a checklist item
+   in the launch runbook **§ 4.4** (post-cutover verification) as of
+   2026-08-18 — it was not before, despite this file saying so, which is how a
+   deliverable ends up owned by nobody. It is the more meaningful test anyway:
+   it validates what Google actually fetches.
 
 Recommendation: fill the RRT column at cutover via route 2. The SMV column
 already proves the markup is valid and warning-free; RRT adds "Google sees a

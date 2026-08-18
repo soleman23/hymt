@@ -4,7 +4,9 @@ Paste the block below as the first message of the next session. Everything the
 task needs is in it or in the sections under it.
 
 Written 2026-08-17, updated 2026-08-18 at `71e7aa1` with the deploy findings
-(§ 4 of the hazards). Every number here was derived on those dates and then
+(§ 4 of the hazards), and again later on 2026-08-18 after a six-dimension
+adversarial audit of the whole backlog (see § "Closed after that handoff"
+below). Every number here was derived on those dates and then
 **adversarially re-verified by a second pass** — the corrections that pass
 produced are folded in. Anything you are about to trust, re-derive anyway: this
 repo's defining failure mode is a number that was true once.
@@ -31,8 +33,12 @@ pass today, before any cutover. Use the title discriminator in runbook § 4.3.
 WHAT IS ACTUALLY LEFT, and who can do it:
 
   AGENT-DOABLE NOW
-    - nothing is blocking. The pre-launch polish milestone is down to items
-      that need Mark, a dashboard login, or DNS.
+    - nothing LAUNCH-BLOCKING. The pre-launch polish milestone is down to
+      items that need Mark, a dashboard login, or DNS. But "nothing" was
+      the wrong word last time: an audit on 2026-08-18 found 41 agent-doable
+      items behind that claim, and landed the important ones (§ "Closed
+      2026-08-18"). What remains is listed under § "Open items", last bullet
+      - image/photo work and two small verifier checks.
     - the #100 groundwork is DONE, both halves. All 46 inline handlers are
       gone (`inline-handler` holds it at zero), AND script-src now names the
       site's 10 distinct inline <script> bodies by sha256 with no
@@ -102,9 +108,47 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\reach\OneDrive\Pictures\Deskt
 | Destination pages | 43, all with Best Season **and** Best For |
 | Experience pages | 12 |
 | Journal posts | 32 |
-| Check fixtures | 110 |
+| Check fixtures | 215 (derive: `node tools/verify-checks.test.mjs`) |
 | Open issues | 41 |
 | Inline event handlers | 0, enforced by `inline-handler` |
+| Inline scripts under `'unsafe-inline'` | 0 — 10 sha256 hashes, enforced by `csp-script-src` |
+
+### Closed 2026-08-18 (later session) — the audit and what it turned up
+
+The claim at the top of this file's prompt used to read "AGENT-DOABLE NOW:
+nothing is blocking." A six-dimension audit (doc rot, form hardening,
+verifier gaps, issue rot, images, CSP), every finding re-derived by an
+adversarial second agent, found 41 things that were. The ones that landed,
+in commit order — `git log 229d3c6..` for the messages, which carry the
+evidence:
+
+- **Newsletter email cap** (`b8ddcd1`) — the only uncapped user input on the
+  site, on 94 pages, while the deploy guide said all three forms were
+  capped. `field-maxlength` check.
+- **The two operator docs no longer say submissions reach Mark** (`2e620fb`)
+  — README and the deploy guide asserted it; `229d3c6` had disproved it and
+  corrected only this file.
+- **Journal hub ItemList 33 → 32** (`99b9627`) — the featured post parsed
+  twice; one URL at two positions. `schema-itemlist` check.
+- **Logo `<img>` 1254×1254 → 256×256** on 94 tags (`1a9b785`) — a number true
+  of an earlier file. `img-ratio` check reads image headers.
+- **CSP `script-src` by hash, no `'unsafe-inline'`** (`8f41e80`) — see § CSP.
+  `csp-script-src` regenerates the list every build. Verified enforcing.
+- **Nine docs' rotted counts and GSC shape** (`4dba331`).
+- **Three CLAUDE.md rules held in the build** (`4a0ad29`) —
+  `analytics-host-gate`, `accordion-noscript`, and `decoding` joins
+  `img-attrs`.
+- **Web3Forms key pinned, honeypot on every form** (`e26683d`) — `web3forms`
+  check; a partial rotation or a "fix #74 with a new key" goes red.
+
+Every new check was driven red against real output before being trusted,
+and three of them caught a bug in *themselves* on the first fixture run
+(JPEG dims key order; `@media`-wrapped accordion rule; and the fixture
+count in the dist-absent message). The pattern holds.
+
+Issue threads updated with the derived facts: #100 (step 2 done, how),
+#74 (recipient first; corrections to body and 08-10 comment), #31 (delta
+against the 08-09 dry-run; criterion 2 is the wrong shape).
 
 ### What this session closed
 
@@ -508,12 +552,24 @@ apex and www.
   `git rev-list --count 8449977..HEAD`; the number written here rotted from
   12 to 28 in one session). Its photo counts are still
   accurate; only the commit reference rotted.
-- **`docs/hostinger-deployment.md` and `README.md` carry stale counts** — "93
-  pages", "87 pages", "three places" for the key. Same family as #98.
+- ~~`docs/hostinger-deployment.md` and `README.md` carry stale counts~~ —
+  fixed in `4dba331`. "Three places" for the key was correct and stays.
 - **`docs/seo/photography-needed.md` and `photography-plan.md` are stale
-  enough to mislead** — see #92's comment thread for the verified numbers.
-- **`docs/seo/validation-log.md` has an unlisted #33 deliverable** — the Rich
-  Results Test column, scheduled to §§ 4.3–4.4 but in no issue checklist.
+  enough to mislead** — see #92's and #93's comment threads for the verified
+  numbers (all 43 destination heroes ship; 24 swatch cards remain, on 4
+  pages: india, jordan, new-zealand, oman). **#92's and #93's titles still
+  carry the old counts** ("25 missing heroes", "181 of 230 cards") — retitle
+  or close is the owner's call; the threads have the truth.
+- ~~`docs/seo/validation-log.md` has an unlisted #33 deliverable~~ — the Rich
+  Results Test is now a checklist item in runbook § 4.4, and the log says
+  so truthfully.
 - **The GA4 measurement ID is still `G-XXXXXXXXXX`**, so runbook § 2.5's
   placeholder grep can only go green once a real property exists. The grep is
   now scoped so it does not also report 127 binary assets.
+- **Audit findings not yet acted on, all agent-doable, none launch-blocking:**
+  a `--photo` grid may not contain a swatch (verifier check); report
+  never-referenced MANIFEST assets as a build note; photograph
+  `experiences/family-travel` from assets already in the repo (no generation);
+  crop the portrait Botswana frame to 3:2 for the Africa hub card; cut
+  per-page 1200×630 `og:image` crops from the heroes that already ship;
+  assert the non-CSP security headers in `dist/.htaccess`.
