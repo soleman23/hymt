@@ -3,8 +3,9 @@
 Paste the block below as the first message of the next session. Everything the
 task needs is in it or in the sections under it.
 
-Written 2026-08-17 at `50f5ac5`. Every number here was derived on that date and
-then **adversarially re-verified by a second pass** — the corrections that pass
+Written 2026-08-17, updated 2026-08-18 at `71e7aa1` with the deploy findings
+(§ 4 of the hazards). Every number here was derived on those dates and then
+**adversarially re-verified by a second pass** — the corrections that pass
 produced are folded in. Anything you are about to trust, re-derive anyway: this
 repo's defining failure mode is a number that was true once.
 
@@ -50,9 +51,18 @@ WHAT IS ACTUALLY LEFT, and who can do it:
     - #100 CSP enforcing. The Google origins in the policy have never been
            exercised, because Analytics hard-gates on the production hostname.
 
+UPLOADING IS NOT DEPLOYING. Hostinger fronts the site with a CDN. After any
+upload that changes an asset, the CDN cache must be purged in hPanel or
+visitors keep the old file. Two clean 582/582 deploys once changed nothing at
+all. Diagnose with a GET and read x-hcdn-cache-status -- a HEAD reaches origin
+and will cheerfully report the new file while everyone is served the old one.
+See § The CDN cache, and #107.
+
 BEFORE YOU COMMIT: npm run build must pass, and it is self-contained.
 BEFORE YOU BUILD: stop any astro preview server — it holds dist/ open on
 Windows and the build wipes dist/ before failing.
+DO NOT touch the repo while the user is running a deploy. Rebuilding mid-deploy
+empties dist/ under the uploader and fails a file; that has happened.
 NEVER git add -A: GitNexus rewrites a symbol-count line in CLAUDE.md and
 AGENTS.md that must not ride along.
 
@@ -64,12 +74,13 @@ correct only because they were explicitly authorised.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. `HEAD = 50f5ac5` on `main`, tracking
+**Repo:** clean, all work pushed. `HEAD = 71e7aa1` on `main`, tracking
 `origin/main`.
 
-**Staging is BEHIND.** The last deploy was at `d93bf5f`. Three commits have
-landed since and are **not deployed**: `25d1d0b`, `5e97e4b`, `50f5ac5` — the
-whole journal-index rebuild. The user runs the deploy:
+**Staging is CURRENT and verified**, including the CDN purge. Re-verified after
+it: 60 of 60 sampled images byte-match local, journal index at 32 cards and 12
+filters, `llms.txt` 200, CSP report-only present, staging `noindex` intact.
+The user runs the deploy:
 
 ```
 powershell -ExecutionPolicy Bypass -File "C:\Users\reach\OneDrive\Pictures\Desktop\hymt-site\deploy-to-hostinger.ps1"
@@ -82,24 +93,29 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\reach\OneDrive\Pictures\Deskt
 | Experience pages | 12 |
 | Journal posts | 32 |
 | Check fixtures | 96 |
-| Open issues | 42 |
+| Open issues | 41 |
 
 ### What this session closed
 
-`#36` llms.txt · `#83` newsletter fetch · `#94` hero stat rail · `#95` CDN
-no-transform · `#98` page counts · `#104` dead share buttons · `#105` journal
-index filters/Load More/count · `#106` linkless cards.
+`#36` llms.txt · `#54` India page (already shipped, so M7 is 25 not 26) ·
+`#82` CSP report-only · `#83` newsletter fetch · `#94` hero stat rail · `#95`
+CDN no-transform · `#98` page counts · `#104` dead share buttons · `#105`
+journal index filters/Load More/count · `#106` linkless cards · `#107` image
+cache.
 
 Four verifier checks were added, each with fixtures that go red: `llms-txt`,
 `hero-stat-rail`, `dead-inline-handler` (with a debt ratchet, now empty), and
-`linkless-card`.
+`linkless-card`. Three of the four caught a bug in **themselves** on their
+first run against real output — which is the argument for the fixture rule,
+not a coincidence.
 
 ---
 
 ## The cutover hazards nobody had written down
 
-These came out of a verification sweep on 2026-08-17 and are the highest-value
-content in this file. None of them is in any issue.
+These came out of a verification sweep on 2026-08-17, plus the deploy
+investigation on 08-18, and are the highest-value content in this file. Only
+the last one has an issue (#107); the rest are in none.
 
 ### 1. The domain already answers, and it breaks the gate
 
@@ -135,6 +151,48 @@ this first, and § 1.2's DNS TXT for GSC has to go at the *current* host.
 Five records, `aspmx.l` plus `alt1`–`alt4`, with an SPF TXT. #99's warning about
 MX is not theoretical: a nameserver move that drops them kills Mark's email
 silently. Snapshot before touching anything.
+
+### 4. The CDN cache — uploading is not deploying
+
+**Two clean `582/582` deploys changed nothing a visitor could see.** Only a CDN
+purge in hPanel did. This is now the single most likely way for a future change
+to appear to ship and not ship.
+
+The cause, fixed in `237e654` / `940c7c7`: `/assets/img/` carried
+`Cache-Control: public, max-age=31536000, immutable`. `immutable` promises a
+URL's content never changes, which is only true of content-addressed filenames.
+Astro hashes what it emits under `/_astro/`; those image names are hand-managed
+and stable, so the same URL genuinely does change content whenever an image is
+re-cut. It is now `max-age=2592000, no-transform` — a month, with revalidation.
+
+**The consequence was larger than the symptom that surfaced it.** Since that
+header shipped, no image change had ever reached a visitor. Every photo landed
+by the rollout work sat behind a cached copy and would have stayed there for up
+to a year, production included.
+
+**Fixing the header does not evict what is already cached.** The purge is a
+permanent part of any asset change, not a one-off cleanup. Runbook § 4.2b and
+`docs/hostinger-deployment.md` § 1b now carry it.
+
+**Diagnose with a GET, never a HEAD.** This is the part that cost the most
+time — it produced a confident wrong root cause and a wrong fix before the
+right one:
+
+```
+HEAD -> x-hcdn-cache-status: MISS, Content-Length: 288,154   (origin, correct)
+GET  -> x-hcdn-cache-status: HIT,  Content-Length: 295,047   (edge, year-old)
+```
+
+A HEAD reaches origin. Every real visitor gets the GET. Two further traps in
+the same family: a `?cachebust=1` fetch proves nothing, because this CDN keys
+static assets **without** the query string; and the cached GET replays the
+**previous `Cache-Control` value**, so the header you read may not be the header
+that is configured.
+
+Also note `eager-image-budget` measures **local** bytes while runbook § 2.4
+gates on PageSpeed against the **live** host. Those disagreed by 6% until this
+was fixed. They now agree exactly (delta 0 bytes), so the check's 1.38 MB
+against a 1.5 MB budget is the real figure rather than an optimistic one.
 
 ---
 
@@ -263,12 +321,16 @@ apex and www.
    *itself* during its first real run.
 6. **Never quote a page count.** Derive it. `grep -o "<loc>" dist/sitemap-0.xml
    | wc -l` — `grep -c` returns 1, because the sitemap has no newlines.
+7. **Purge the CDN after any asset change, and verify with a GET.** A deploy
+   alone does not change what is served. See § The CDN cache.
+8. **Never run a build while the user is deploying.** The build clears `dist/`
+   and the uploader reads from it.
 
 ---
 
 ## Definition of done for this handoff
 
-- [ ] The three undeployed commits are live on staging and verified
+- [x] Staging current and verified, CDN purged, 60/60 images byte-matching
 - [ ] #74's dashboard settings are on, and runbook § 2.3's E2E gate ran
       **before** the domain restriction
 - [ ] #96 complete: Domain property on `hymtravel.com`, Bing imported, staging
