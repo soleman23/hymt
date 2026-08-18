@@ -1,3 +1,30 @@
+---
+/**
+ * Site-wide newsletter signup (rendered by Base.astro on every page that does
+ * not opt out with `showNewsletter={false}`).
+ *
+ * SEC-10 (#83): this used to be a native form POST, so subscribing navigated
+ * the browser to Web3Forms' own HTML response — the visitor left the domain
+ * mid-interaction and landed on an unbranded third-party page. Contact and
+ * Plan Your Trip already used `fetch` with an in-page success state; this now
+ * mirrors that.
+ *
+ * `action` and `method` are deliberately KEPT. The submit handler calls
+ * preventDefault, so they never fire when JS runs, but without them a visitor
+ * with JS disabled or broken gets a button that silently does nothing. The
+ * attributes cost nothing and are the difference between degraded and dead.
+ *
+ * The honeypot (`botcheck`) is unchanged: an unchecked checkbox is not
+ * submitted, so FormData carries it only when something automated ticked it,
+ * which is exactly what Web3Forms rejects on.
+ *
+ * Not wired to GA4 `form_submit_success` on purpose. That event is the primary
+ * conversion and means "someone asked Mark to plan a trip"; folding a
+ * newsletter signup into the same number would corrupt it. The success node is
+ * `#nlSuccess`, deliberately NOT one of the two IDs Analytics.astro observes.
+ * See docs/analytics-events.md.
+ */
+---
 <section class="newsletter" id="newsletter">
   <div>
     <h2 class="newsletter__title">Travel insights.<br>Delivered quietly.</h2>
@@ -7,14 +34,70 @@
     </p>
   </div>
   <div>
-    <form class="newsletter__form" action="https://api.web3forms.com/submit" method="POST">
+    <form class="newsletter__form" id="nlForm" action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="94312057-04b8-44d8-a7a8-7cb083d999b8" />
       <input type="hidden" name="subject" value="Newsletter signup — hymtravel.com" />
       <input type="hidden" name="from_name" value="HYM Travel Website" />
-      <input type="checkbox" name="botcheck" class="hidden" style="display:none" />
+      <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" />
       <input type="email" name="email" class="newsletter__input" placeholder="Your email address" required aria-label="Email address">
       <button type="submit" class="newsletter__submit">Subscribe</button>
     </form>
+    <div class="newsletter__success" id="nlSuccess" role="status">
+      <strong class="newsletter__success-title">You're on the list.</strong>
+      <span class="newsletter__success-body">Notes arrive occasionally, never on a schedule. Unsubscribe from any of them.</span>
+    </div>
+    <p class="newsletter__error" id="nlError" role="alert"></p>
     <p class="newsletter__fine">By subscribing you agree to receive occasional emails from Hit Your Mark Travel. Unsubscribe anytime.</p>
   </div>
 </section>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById('nlForm');
+    if (!form) return;
+
+    var btn = form.querySelector('.newsletter__submit');
+    var errorEl = document.getElementById('nlError');
+    var successEl = document.getElementById('nlSuccess');
+    var sending = false;
+
+    /* textContent, never innerHTML: `data.message` is a third-party string and
+       has no business being parsed as markup. */
+    function showError(text) {
+      errorEl.textContent = text;
+      errorEl.style.display = 'block';
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (sending) return;
+
+      errorEl.textContent = '';
+      errorEl.style.display = 'none';
+
+      var formData = new FormData(form);
+      var original = btn.textContent;
+      sending = true;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        var response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+        var data = {};
+        try { data = await response.json(); } catch (err) {}
+        if (response.ok && data.success) {
+          form.style.display = 'none';
+          successEl.classList.add('show');
+          return;
+        }
+        showError(data.message || 'Something went wrong. Please try again or email mark@hymtravel.com.');
+      } catch (err) {
+        showError('Something went wrong. Please try again or email mark@hymtravel.com.');
+      } finally {
+        sending = false;
+        btn.textContent = original;
+        btn.disabled = false;
+      }
+    });
+  })();
+</script>

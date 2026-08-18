@@ -30,6 +30,23 @@ Paste the real ID into the `GA4_ID` constant at the top of
 **Primary conversion:** `form_submit_success`. Mark it as a key event in the
 GA4 property once created (Admin → Events → toggle "Mark as key event").
 
+### The newsletter is deliberately not counted here
+
+SEC-10 (#83) moved the newsletter off a native form POST and onto `fetch` with
+an in-page success state, so it now has a branded success node exactly like the
+other two forms. It is still **not** wired to `form_submit_success`, and that is
+a decision rather than an oversight.
+
+`form_submit_success` is the primary conversion and means *someone asked Mark to
+plan a trip*. A newsletter signup is a far cheaper action; folding both into one
+number would inflate the conversion rate and make it useless for judging whether
+the site is working.
+
+The mechanism that keeps them apart is the element ID. `Analytics.astro` observes
+`#successState` (Plan Your Trip) or `#cfSuccess` (Contact); the newsletter's node
+is `#nlSuccess`, which nothing observes. **If newsletter signups ever should be
+counted, add a separate event — do not rename that node into the observed pair.**
+
 ## Setup still owed by a human (P0-5)
 
 - Create the GA4 property; paste the measurement ID as above.

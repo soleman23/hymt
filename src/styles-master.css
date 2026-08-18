@@ -467,6 +467,28 @@ body.theme-light .newsletter__input {
   font-family:var(--font-b);font-size:11px;color:var(--silver-400);
   margin-top:10px;line-height:1.5;
 }
+/* SEC-10 (#83): the newsletter posts with fetch and reports in place rather
+   than navigating to Web3Forms' own HTML response. Both nodes ship hidden and
+   are revealed by the component's script; they mirror .cf-success on Contact
+   so the two forms read as one system. */
+.newsletter__success {
+  display:none;margin-top:14px;padding:18px 20px;
+  background:var(--accent-subtle);border:1px solid var(--border-gold);
+}
+.newsletter__success.show { display:block }
+.newsletter__success-title {
+  display:block;font-family:var(--font-d);font-size:14px;font-weight:700;
+  color:var(--cream-100);margin-bottom:4px;
+}
+body.theme-light .newsletter__success-title { color:var(--navy-800) }
+.newsletter__success-body {
+  font-family:var(--font-b);font-size:13px;color:var(--silver-300);line-height:1.6;
+}
+body.theme-light .newsletter__success-body { color:var(--navy-500) }
+.newsletter__error {
+  display:none;font-family:var(--font-b);font-size:12px;color:#c45c5c;
+  margin-top:10px;line-height:1.5;
+}
 
 /* ── FOOTER ── */
 .footer {
