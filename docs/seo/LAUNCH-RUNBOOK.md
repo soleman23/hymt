@@ -18,11 +18,28 @@ it goes well.
 
 ## 0. The shape of this launch
 
-A 94-page static site going live on its domain in one step. Because nothing is
-being carried over, the entire risk profile is forward-looking: **getting 94
-pages discovered, crawled and indexed properly, from nothing.** Weight the
+A static site going live on its domain in one step. Because nothing is
+being carried over, the entire risk profile is forward-looking: **getting every
+page discovered, crawled and indexed properly, from nothing.** Weight the
 post-launch indexing work accordingly — that is where launches like this
 succeed or fail.
+
+> **The page count is derived, never quoted.** It moves whenever M7 lands
+> another destination page — it went 94 → 96 → 97 while this runbook still
+> said 94, and #98 was filed because a verifier reading a stale literal at the
+> gate has to decide, live, whether the mismatch is drift or a defect. So every
+> count below reads "every URL in the sitemap" and you establish the number
+> once, here, on the day:
+>
+> ```bash
+> npm run build   # reports the page count it just built
+> grep -c "<loc>" dist/sitemap-0.xml
+> ```
+>
+> `sitemap-parity` in `tools/verify-deployment.mjs` already fails the build if
+> those two disagree, so one number is enough. **At the time of writing
+> (2026-08-17) it was 98 built pages / 97 sitemap URLs.** That line is dated
+> because it is a snapshot, not a criterion.
 
 Unknown paths on the domain 404 by design. The custom `/404.html` and the
 `.htaccess` `ErrorDocument` rule handle that; anything a search engine may have
@@ -64,12 +81,16 @@ Nothing proceeds until all of these pass.
 - [ ] All Phase 0–3 tasks in `SEO-AIO-PLAN.md` complete
 
 ### 2.2 Crawl the staging site
-Screaming Frog's free tier covers 500 URLs; 94 fits comfortably.
+Screaming Frog's free tier covers 500 URLs, which the site fits comfortably
+inside. Establish N from the sitemap first (see § 0) and hold every count below
+to it.
 
 - [ ] 0 × 4xx, 0 × 5xx
 - [ ] 0 redirect chains, 0 redirect loops
-- [ ] 94 pages with a canonical, all pointing at `https://www.hymtravel.com/...`
-- [ ] 94 unique titles, 94 unique descriptions
+- [ ] Every crawled page has a canonical, all pointing at
+      `https://www.hymtravel.com/...`
+- [ ] Titles and descriptions are unique across the crawl — as many distinct
+      values as there are pages, with zero duplicates reported
 - [ ] 0 pages with a missing or duplicate `<h1>`
 - [ ] 0 images without `alt`, `width`, `height`
 - [ ] 0 broken internal links, 0 broken external links
@@ -101,10 +122,13 @@ destination page, and one journal post.
 - [ ] INP ≤ 200 ms
 - [ ] Total page weight under 1.5 MB
 
-Note the `no-transform` header in `.htaccess` means HTML ships uncompressed
-(~40 KB rather than ~12 KB). That is a deliberate workaround for a Hostinger CDN
-bug documented in the file. It will cost some LCP. Accept it for launch and
-re-test it in month 2.
+The `no-transform` header in `.htaccess` is a workaround for a Hostinger CDN
+bug documented in that file. It was long assumed to cost ~28 KB a page by
+forcing HTML to ship uncompressed. **Retested 2026-08-17: it does not.** The
+edge still negotiates compression with the header in place, and a destination
+page ships at ~13.5 KB (br) against 51,355 B identity, decompressing intact.
+There is no LCP debt here to accept, and nothing to re-test in month 2 beyond
+confirming the numbers still hold. See #95.
 
 ### 2.5 Content
 - [ ] `grep -ri "lorem\|TBD\|coming soon\|TODO\|XXX\|placeholder:" dist/`
@@ -112,8 +136,15 @@ re-test it in month 2.
       six of them past the shorter grep
 - [ ] The About page contains real copy from Mark, not scaffolding (F20/P0-3c)
 - [ ] `grep -rn "NEEDS MARK" src/` — every one resolved or consciously deferred
-- [ ] `docs/hero-stat-rail-worksheet.csv` filled in — several destination pages
-      have TODO comments about missing "Best For" and "Flight Time" stats
+- [x] Hero stat rail — **done 2026-08-17 (#94).** All 43 destination pages
+      carry Best Season **and** Best For; the TODO comments are gone from
+      every page, and `hero-stat-rail-worksheet.csv` is now a record of what
+      ships rather than a to-do list. Enforced by `hero-stat-rail` in
+      `tools/verify-deployment.mjs`, so it cannot silently regress and a new
+      destination page cannot ship without both stats.
+      **Flight Time was dropped on purpose** and is not part of this gate: it
+      is not derivable from the repo, and the worked example everything was to
+      be copied from was wrong by roughly double. See #94.
 - [ ] Privacy policy reflects the actual analytics and forms in use
 
 ---
@@ -190,7 +221,8 @@ done
 - [ ] Spot-check 15 URLs by hand across all page types
 - [ ] `curl -s https://www.hymtravel.com/robots.txt` — the production version,
       pointing at `/sitemap-index.xml`
-- [ ] `curl -s https://www.hymtravel.com/sitemap-index.xml` — 94 URLs
+- [ ] `curl -s https://www.hymtravel.com/sitemap-index.xml` — same URL count
+      as the local build (§ 0), and every URL 200s
 - [ ] `curl -sI https://www.hymtravel.com/ | grep -i x-robots` — **no
       `noindex`**. If this returns `noindex`, the staging `X-Robots-Tag` rule is
       matching the wrong host. Fix immediately; this is the single most
@@ -228,7 +260,7 @@ deployment are untouched and simply stop being reachable.
 
 **Do not roll back for:** a slow start in impressions (expected — the site is
 starting from zero), pages showing as `Discovered – currently not indexed`
-(normal for a new 94-page site), or the sitemap showing "Couldn't fetch" for
+(normal for a new site of this size), or the sitemap showing "Couldn't fetch" for
 the first few hours.
 
 **Do roll back for:** the site not loading, SSL errors, forms not delivering,
@@ -246,7 +278,8 @@ minutes.
 - [ ] `npm run verify:prod`
 
 ### Days 7–30 — weekly
-- [ ] All 94 URLs indexed (GSC Pages report). Chase anything stuck.
+- [ ] Every URL in the sitemap indexed (GSC Pages report). Chase anything
+      stuck. Compare the GSC total against § 0, not against a number typed here.
 - [ ] Distinguish `Discovered – currently not indexed` (normal, wait) from
       `Crawled – currently not indexed` (a quality signal — that page needs
       more substance or better internal links)
@@ -254,10 +287,15 @@ minutes.
 - [ ] Core Web Vitals field data begins around day 28
 
 ### Month 2
-- [ ] **Re-test the Hostinger CDN compression bug.**
-      `curl --compressed -s https://www.hymtravel.com/destinations/caribbean-mexico/ | wc -c`
-      If it returns the full document, remove `no-transform` from `.htaccess`
-      and cut roughly 28 KB from every page.
+- [ ] **Re-confirm the Hostinger CDN compression finding.** Done once already
+      on 2026-08-17 (#95): compression is negotiated and correct *with*
+      `no-transform` in place, so the workaround costs nothing and stays.
+      Re-run only to confirm that still holds:
+      `curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}
+' https://www.hymtravel.com/destinations/caribbean-mexico/`
+      Expect `Content-Encoding: br` and a wire size near 13.5 KB. Do **not**
+      pipe `--compressed` into `wc -c` — curl decompresses, so that byte count
+      reports the full document no matter what the edge did.
 - [ ] Full CWV review against field data
 - [ ] Ship `llms.txt`
 - [ ] Begin the monthly AI-visibility log
@@ -274,8 +312,8 @@ minutes.
 ## 7. Things that will look alarming and are not
 
 - **Near-zero impressions in week 1.** The site starts from nothing; Google has
-  to discover, crawl, index and then rank 94 new pages. Weeks, not days.
-- **Only 20 of 94 pages indexed after a week.** New sites get crawled in waves.
+  to discover, crawl, index and then rank every page. Weeks, not days.
+- **Only a fifth of the site indexed after a week.** New sites get crawled in waves.
   Internal linking and the sitemap are what accelerate it; panic does not.
 - **The sitemap says "Couldn't fetch" for a day.** Common right after
   submission. Re-submit once, then wait.

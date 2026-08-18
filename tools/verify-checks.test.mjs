@@ -46,7 +46,7 @@ const t = (name, actual, expected) => {
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
-  unsafeBlankLinks, eagerImageRefs,
+  unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -270,6 +270,85 @@ t("eager: the post-fix homepage hero pattern counts slide 1 only",
     `<div class="hero__slide" style="background-size:cover" data-bg="/assets/img/h-02.jpg"></div>` +
     `<div class="hero__slide" style="background-size:cover" data-bg="/assets/img/h-03.jpg"></div>`
   ).length, 1);
+
+/* ── llms-txt claims ──
+   The whole point of this check is that it goes red when the site grows past
+   what llms.txt says. These fixtures assert that it does — a count check that
+   only ever passes is the SCHEMA-LIBRARY template all over again. */
+
+const LLMS = [
+  "- [Destinations](https://www.hymtravel.com/destinations/): 43 destination guides, grouped by region",
+  "- [Experiences](https://www.hymtravel.com/experiences/): 12 trip types",
+  "- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 field reports and planning guides",
+].join("\n");
+
+const TRUTH = { destinations: 43, experiences: 12, journal: 32 };
+
+t("llms: every claim true against the built site passes",
+  llmsClaimMismatches(LLMS, TRUTH).length, 0);
+
+t("llms: one destination page added and the file is now wrong",
+  llmsClaimMismatches(LLMS, { ...TRUTH, destinations: 44 }).length, 1);
+
+t("llms: M7 landing all 26 destination pages is caught",
+  llmsClaimMismatches(LLMS, { ...TRUTH, destinations: 69 })[0],
+  "destinations: llms.txt claims 43, the built site has 69");
+
+t("llms: a new journal post is caught",
+  llmsClaimMismatches(LLMS, { ...TRUTH, journal: 33 }).length, 1);
+
+t("llms: a new experience page is caught",
+  llmsClaimMismatches(LLMS, { ...TRUTH, experiences: 13 }).length, 1);
+
+t("llms: all three drifting reports all three",
+  llmsClaimMismatches(LLMS, { destinations: 44, experiences: 13, journal: 33 }).length, 3);
+
+t("llms: deleting the phrase does not silently disarm the check",
+  llmsClaimMismatches("- [Destinations](https://www.hymtravel.com/destinations/): lots of guides",
+    TRUTH).length, 3);
+
+t("llms: the count must be the one in the phrase, not any number on the line",
+  llmsClaimMismatches("- [Experiences](https://www.hymtravel.com/experiences/2026/): 12 trip types",
+    TRUTH).length, 2);
+
+/* ── hero stat rail (#94) ──
+   The rail was a launch gate sitting at 0% that no check could see: the layout
+   drops any stat without a value and hides the rail below 900px, so 42 of 43
+   pages shipping one stat looked fine and built green.
+
+   The multi-stat cases are not padding. The first version of this predicate
+   used a non-greedy regex for the rail, stopped at the first nested </div> and
+   reported ONE stat on a page carrying three -- which would have passed every
+   page in the site while checking nothing. */
+
+const hStat = (label, val) =>
+  `<div><span class="dest-hero__stat-label">${label}</span>` +
+  `<div class="dest-hero__stat-val">${val}</div></div>`;
+const hRail = (...stats) =>
+  `<section class="dest-hero"><div class="dest-hero__content">` +
+  `<div class="dest-hero__left"><h1>x</h1></div>` +
+  `<div class="dest-hero__right">${stats.join("")}</div></div></section>`;
+
+t("rail: the shipped two-stat shape reports both",
+  heroStatLabels(hRail(hStat("Best Season", "July – October"),
+                       hStat("Best For", "Migration<br>&amp; Big Cats"))).join("|"),
+  "Best Season|Best For");
+
+t("rail: a third stat is not swallowed by the first nested </div>",
+  heroStatLabels(hRail(hStat("Best Season", "a"), hStat("Best For", "b"),
+                       hStat("Flight Time", "c"))).length, 3);
+
+t("rail: the pre-#94 one-stat page is caught",
+  heroStatLabels(hRail(hStat("Best Season", "July – October"))).includes("Best For"), false);
+
+t("rail: a page that lost its rail entirely reports nothing",
+  heroStatLabels("<section class=\"dest-hero\"><h1>x</h1></section>").length, 0);
+
+t("rail: labels come back in document order",
+  heroStatLabels(hRail(hStat("Best For", "b"), hStat("Best Season", "a")))[0], "Best For");
+
+t("rail: markup inside a label does not leak into the name",
+  heroStatLabels(hRail(hStat("Best&nbsp;For", "x")))[0], "Best For");
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 

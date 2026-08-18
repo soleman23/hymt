@@ -70,6 +70,56 @@ ErrorDocument 404 /404.html
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # ── SEC-9 (#82): Content-Security-Policy, REPORT-ONLY ──
+  # Report-only on purpose. It is a latent-XSS mitigation for author-controlled
+  # static HTML, so it is hardening rather than a cutover blocker, and shipping
+  # it enforcing without a browse first is how you find out at launch that the
+  # inquiry form no longer submits. Violations surface in the browser console;
+  # there is no report endpoint because a static host has nothing to receive
+  # one. Switching to enforcing is #100, and only after a clean browse of the
+  # homepage, a destination page, a journal post, Contact and Plan Your Trip.
+  #
+  # Inventory this was built from, against dist/ on 2026-08-17:
+  #   'unsafe-inline' script  - every page carries inline <script>, and there
+  #                             are 141 inline onclick= handlers. Removing it
+  #                             means nonces or external files; that is the
+  #                             work #100 has to cost, and it is why this
+  #                             starts report-only rather than pretending a
+  #                             strict policy is one header away.
+  #   googletagmanager.com    - Analytics.astro injects gtag.js at runtime.
+  #                             There is no <script src> in the HTML at all.
+  #   api.web3forms.com       - connect-src for the three forms' fetch, and
+  #                             form-action because the newsletter keeps a
+  #                             native action= as its no-JS fallback (#83).
+  #   'self' fonts            - Raleway and DM Sans are self-hosted under
+  #                             /assets/fonts/. No Google Fonts origin needed.
+  #   data: img               - none in the HTML today; allowed because it is
+  #                             a common analytics beacon shape and costs
+  #                             nothing to permit.
+  #
+  # Hostinger's edge already sends its own `Content-Security-Policy:
+  # upgrade-insecure-requests`. This is a DIFFERENT header, so the two do not
+  # merge or conflict — do not "consolidate" them.
+  #
+  # VERIFIED 2026-08-17 before shipping. dist/ was served locally with this
+  # exact policy applied as *enforcing* — deliberately stricter than what ships
+  # — and browsed: home, Contact, Plan Your Trip, a destination page. Zero
+  # violations. 11 inline onclick handlers fired, 7 accordions toggled, 6
+  # self-hosted fonts loaded, 12 images, 3 stylesheets, all clean.
+  #
+  # The controls matter more than the clean run: a fetch to an unlisted origin
+  # was refused by `connect-src` and an unlisted <script src> by
+  # `script-src-elem`, which is what proves the policy was actually live rather
+  # than silently inert. api.web3forms.com was NOT blocked.
+  #
+  # ONE GAP, on purpose: gtag.js could not be exercised locally, because
+  # Analytics.astro gates itself on `location.hostname === 'www.hymtravel.com'`
+  # and does nothing anywhere else. The googletagmanager and google-analytics
+  # entries above are therefore reasoned from the code, not observed. **That is
+  # the specific thing to watch in the report-only console review before #100
+  # flips this to enforcing.**
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"
   # Long-cache immutable hint for static assets
   <FilesMatch "\.(jpg|jpeg|png|webp|svg|woff2?)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
@@ -85,12 +135,29 @@ ErrorDocument 404 /404.html
   # and a CDN purge.
   #
   # RFC 9111 5.2.2.6: no-transform forbids an intermediary from altering
-  # the payload, which takes their compressor out of the path for pages.
-  # HTML then ships uncompressed — roughly 40 KB per page rather than 12 KB.
-  # That is the deliberate trade: slower pages beat blank ones.
+  # the payload. That is the deliberate trade: slower pages beat blank ones.
   #
-  # Remove this once Hostinger confirms the CDN bug is fixed, and re-test
-  # with: curl --compressed -s <url> | wc -c
+  # RETESTED 2026-08-17 against the staging host, on the same URL that
+  # originally broke. The stated cost is NOT being paid: with this header in
+  # place the edge still negotiates compression, and the body decompresses to
+  # the complete document.
+  #
+  #   Accept-Encoding: (none)  51,355 B   identity
+  #   Accept-Encoding: gzip    15,084 B   Content-Encoding: gzip
+  #   Accept-Encoding: br      13,498 B   Content-Encoding: br
+  #   curl --compressed        14,230 B   Content-Encoding: zstd
+  #                                       -> decompressed to 51,355 B, intact
+  #
+  # So the header is NOT holding HTML at ~40 KB — pages already ship at
+  # ~13.5 KB on the wire — and the 13-byte corruption does not reproduce.
+  # Removing it would therefore buy nothing measurable while re-exposing a
+  # bug whose failure mode is a blank page. KEEP IT until there is a reason
+  # better than a saving that is already banked. See #95.
+  #
+  # Retest (read the wire size and Content-Encoding, NOT `| wc -c` — curl
+  # decompresses, so a piped byte count always reports the full document):
+  #   curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}
+' <url>
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=0, must-revalidate, no-transform"
   </FilesMatch>

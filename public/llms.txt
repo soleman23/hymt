@@ -1,0 +1,37 @@
+# Hit Your Mark Travel
+
+> Single-advisor luxury travel firm. Mark Sole designs bespoke journeys —
+> safari, polar expedition, Europe, Asia, South Pacific, food and wine, and
+> sports and event travel — for travellers who are short on time and specific
+> about quality. US-based, serving clients nationwide.
+> CA Seller of Travel 2165910-50 · WA Seller of Travel 605920581 · FL Seller of Travel ST46122.
+
+Contact: mark@hymtravel.com · +1 408 568 1404
+
+## Core pages
+
+- [About Mark Sole](https://www.hymtravel.com/about/): who plans the trips, credentials, and how the practice works
+- [Plan Your Trip](https://www.hymtravel.com/plan-your-trip/): the inquiry form and what happens after it
+- [FAQ](https://www.hymtravel.com/faq/): fees, process, what is and is not included
+- [Destinations](https://www.hymtravel.com/destinations/): 43 destination guides, grouped by region
+- [Experiences](https://www.hymtravel.com/experiences/): 12 trip types
+- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 field reports and planning guides
+- [Contact](https://www.hymtravel.com/contact/): direct enquiry
+
+## Regions
+
+- [Africa](https://www.hymtravel.com/destinations/africa/)
+- [Asia](https://www.hymtravel.com/destinations/asia/)
+- [Caribbean & Mexico](https://www.hymtravel.com/destinations/caribbean-mexico/)
+- [Europe](https://www.hymtravel.com/destinations/europe/)
+- [Middle East](https://www.hymtravel.com/destinations/middle-east/)
+- [North America](https://www.hymtravel.com/destinations/north-america/)
+- [Polar Regions](https://www.hymtravel.com/destinations/polar-regions/)
+- [South America](https://www.hymtravel.com/destinations/south-america/)
+- [South Pacific](https://www.hymtravel.com/destinations/south-pacific/)
+
+## Optional
+
+- [Privacy Policy](https://www.hymtravel.com/privacy-policy/)
+- [Terms & Conditions](https://www.hymtravel.com/terms-and-conditions/)
+- [Sitemap](https://www.hymtravel.com/sitemap-index.xml)

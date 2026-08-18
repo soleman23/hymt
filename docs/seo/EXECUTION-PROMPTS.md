@@ -132,7 +132,7 @@ This is the largest phase. Split it:
 ```
 Read docs/seo/SEO-AIO-PLAN.md Phase 3 and docs/seo/CONTENT-STANDARDS.md.
 Execute P3-1 (title/description audit) only. Produce the full before/after
-table for all 94 pages for my review BEFORE applying anything. Stop and show
+table for every page for my review BEFORE applying anything. Stop and show
 me the table.
 ```
 
