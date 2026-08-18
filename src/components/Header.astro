@@ -10,7 +10,7 @@ const items = [
 ] as const;
 ---
 <nav class="nav" id="nav">
-  <a href="/"><img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52"></a>
+  <a href="/"><img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52" decoding="async"></a>
   <ul class="nav__links" id="navLinks">
     {items.map(([key, label, href]) => (
       <li>

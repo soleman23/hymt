@@ -50,6 +50,7 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
+  analyticsUngated, unscopedAccordionHides,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -715,6 +716,73 @@ t("csp: drift - 'unsafe-inline' alongside hashes is flagged",
 t("csp: drift - a host source is neither missing nor stale",
   cspScriptSrcDrift("'self' https://www.googletagmanager.com 'sha256-AAA='", ["sha256-AAA="]).stale.length, 0);
 
+/* ── analytics-host-gate ── */
+
+const GA = (body) => `<script>${body}</script>`;
+const GATE = `if (location.hostname !== 'www.hymtravel.com') return;`;
+const LOAD = `var s=document.createElement('script');s.src='https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';document.head.appendChild(s);function gtag(){dataLayer.push(arguments)}`;
+
+t("gate: the shipped shape - gate then gtag - is not flagged",
+  analyticsUngated(GA(`(function(){ ${GATE} ${LOAD} })();`)), false);
+
+t("gate: gtag with no gate at all is flagged",
+  analyticsUngated(GA(`(function(){ ${LOAD} })();`)), true);
+
+t("gate: an INVERTED gate (=== instead of !==) is flagged",
+  analyticsUngated(GA(`(function(){ if (location.hostname === 'www.hymtravel.com') return; ${LOAD} })();`)), true);
+
+t("gate: a gate on the wrong host is flagged",
+  analyticsUngated(GA(`(function(){ if (location.hostname !== 'staging.example.com') return; ${LOAD} })();`)), true);
+
+t("gate: a gate that does not return is flagged",
+  analyticsUngated(GA(`(function(){ if (location.hostname !== 'www.hymtravel.com') console.log('x'); ${LOAD} })();`)), true);
+
+t("gate: double quotes and a braced return are still the gate",
+  analyticsUngated(GA(`if (location.hostname !== "www.hymtravel.com") { return; } ${LOAD}`)), false);
+
+t("gate: a measurement ID alone counts as analytics",
+  analyticsUngated(GA(`var id = 'G-ABC123DEF';`)), true);
+
+t("gate: a page with no analytics is not flagged",
+  analyticsUngated(`<script>document.documentElement.classList.add('js-accordion');</script>`), false);
+
+t("gate: text outside <script> is not analytics",
+  analyticsUngated(`<p>We use gtag( for analytics on G-XXXXXXXXXX.</p>`), false);
+
+/* ── accordion-noscript (P0-1) ── */
+
+t("accordion: the shipped scoped hide rule is clean",
+  unscopedAccordionHides(`.js-accordion .pf-a{display:none}.js-accordion .pf-item.open .pf-a{display:block}`).length, 0);
+
+/* The F1 defect verbatim: the answer hidden with no scope, so a crawler and
+   a JS-off reader see nothing. */
+t("accordion: an unscoped .pf-a hide is caught",
+  unscopedAccordionHides(`.pf-a{display:none}`).length, 1);
+
+t("accordion: an unscoped .faq-a hide is caught",
+  unscopedAccordionHides(`.faq-a { display: none; }`).length, 1);
+
+t("accordion: display:block on the answer is not a hide",
+  unscopedAccordionHides(`.pf-a{display:block}`).length, 0);
+
+t("accordion: hiding something else without the scope is fine",
+  unscopedAccordionHides(`.journal-more__btn{display:none}`).length, 0);
+
+t("accordion: one unscoped selector in a comma list is caught, the scoped one is not",
+  unscopedAccordionHides(`.js-accordion .pf-a, .faq-a { display:none }`).join("|"), ".faq-a");
+
+t("accordion: a rule inside @media is still checked",
+  unscopedAccordionHides(`@media(max-width:900px){.pf-a{display:none}}`).length, 1);
+
+t("accordion: a scoped rule inside @media is still clean",
+  unscopedAccordionHides(`@media(max-width:900px){.js-accordion .pf-a{display:none}}`).length, 0);
+
+t("accordion: .pf-answer is not .pf-a",
+  unscopedAccordionHides(`.pf-answer{display:none}`).length, 0);
+
+t("accordion: empty css reports nothing",
+  unscopedAccordionHides(``).length, 0);
+
 /* ── schema-itemlist ── */
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
@@ -833,6 +901,22 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   const planBody = /<script>([\s\S]*?)<\/script>/.exec(plan.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ""))?.[1] ?? "";
   t("real /plan-your-trip/ inline script carries CR, so raw bytes hash differently",
     planBody.includes("\r") && createHash("sha256").update(planBody).digest("base64") !== cspScriptHash(planBody).slice(7), true);
+
+  /* Every page carries Analytics.astro; the FAQ page carries the .faq-a
+     accordion in an inline <style>, and the bundled CSS carries .pf-a. */
+  t("real / carries analytics behind the production-hostname gate",
+    analyticsUngated(home), false);
+  const faqPage = await readFile(path.join(dist, "faq", "index.html"), "utf8");
+  const faqInlineCss = [...faqPage.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join("\n");
+  t("real /faq/ inline style scopes its .faq-a hide to .js-accordion",
+    unscopedAccordionHides(faqInlineCss).length, 0);
+  const { readdirSync } = await import("node:fs");
+  const bundled = readdirSync(path.join(dist, "_astro")).filter((f) => f.endsWith(".css"))
+    .map((f) => readFileSync(path.join(dist, "_astro", f), "utf8")).join("\n");
+  t("real bundled CSS scopes its .pf-a hide to .js-accordion",
+    unscopedAccordionHides(bundled).length, 0);
+  t("real bundled CSS does contain the scoped hide (so the check is looking at the right file)",
+    /\.js-accordion \.pf-a\{display:none\}/.test(bundled), true);
 
   const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
   t("real dist/.htaccess exists and carries the report-only CSP",

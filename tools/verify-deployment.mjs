@@ -21,6 +21,7 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
+  analyticsUngated, unscopedAccordionHides,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -429,6 +430,26 @@ const inlineHandlerSeen = new Map();
   }
 }
 
+/* accordion-noscript, bundled half. section-shared.css carries the .pf-a
+   hide and Astro bundles it under dist/_astro/; the inline-<style> half runs
+   in the per-page loop above. The scoped hide must also still EXIST — a
+   check that only looks for the wrong shape would stay green if the whole
+   accordion CSS quietly stopped shipping. */
+{
+  const cssFiles = await walk(path.join(DIST, "_astro"), (f) => f.endsWith(".css")).catch(() => []);
+  let scopedSeen = false;
+  for (const file of cssFiles) {
+    const css = await readFile(file, "utf8");
+    if (/\.js-accordion\s+\.pf-a\s*\{[^}]*display\s*:\s*none/.test(css)) scopedSeen = true;
+    for (const sel of unscopedAccordionHides(css)) {
+      fail("accordion-noscript", `${rel(file)} hides an accordion answer outside .js-accordion: ${sel} — with JS off the answer is invisible (P0-1)`);
+    }
+  }
+  if (!scopedSeen) {
+    fail("accordion-noscript", "no bundled stylesheet carries the scoped `.js-accordion .pf-a{display:none}` rule — the accordion CSS did not ship");
+  }
+}
+
 /* Runbook §2.4 gates launch at 1.5 MB initial load. Images are effectively
    all of it — see the eager-image-budget check below.
 
@@ -502,9 +523,26 @@ for (const file of htmlFiles) {
     fail("field-maxlength", `${url} has a user-editable field with no maxlength: ${tag.slice(0, 90)}…`);
   }
 
-  /* img-attrs: intrinsic dimensions prevent CLS; alt is non-negotiable. */
+  /* analytics-host-gate: CLAUDE.md, never fire analytics on the staging
+     host. One line in Analytics.astro is all that enforces it, and it ships
+     on every page. Dropped, inverted or re-hosted, this goes red. */
+  if (analyticsUngated(html)) {
+    fail("analytics-host-gate", `${url} loads analytics without the location.hostname !== 'www.hymtravel.com' gate — it would fire on staging`);
+  }
+
+  /* accordion-noscript (P0-1): the answer hide rule stays inside
+     .js-accordion, in inline <style> as well as the bundled CSS below. */
+  for (const m of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) {
+    for (const sel of unscopedAccordionHides(m[1])) {
+      fail("accordion-noscript", `${url} inline <style> hides an accordion answer outside .js-accordion: ${sel}`);
+    }
+  }
+
+  /* img-attrs: intrinsic dimensions prevent CLS; alt is non-negotiable;
+     decoding="async" is CLAUDE.md's rule for every <img> and was missing
+     from the two logo tags on all 98 pages. */
   for (const img of html.match(/<img\b[^>]*>/gi) ?? []) {
-    for (const attr of ["alt", "width", "height"]) {
+    for (const attr of ["alt", "width", "height", "decoding"]) {
       if (!new RegExp(`\\b${attr}=`).test(img)) {
         fail("img-attrs", `${url} has an <img> missing ${attr}: ${img.slice(0, 80)}…`);
       }
