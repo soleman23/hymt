@@ -2368,5 +2368,10 @@
   "b64": "images-b64/assets__img__patagonia-chilean-fjords-and-carretera-austral.jpg.b64",
   "target": "public/assets/img/patagonia-chilean-fjords-and-carretera-austral.jpg",
   "bytes": 352562
+ },
+ {
+  "b64": "images-b64/assets__img__pc-e-11-elephant-herd-aerial.jpg.b64",
+  "target": "public/assets/img/pc-e-11-elephant-herd-aerial.jpg",
+  "bytes": 75390
  }
 ]
