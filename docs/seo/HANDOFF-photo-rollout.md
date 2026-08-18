@@ -94,7 +94,12 @@ markup assertions. Deploy is not reliably automatic — never promise a time.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD = `8449977` on `main`.
+**Repo:** clean, all work pushed. HEAD was `8449977` when this was written;
+the repo has moved well past it. **The photo counts below are still accurate**
+(no photography work has happened since) but re-derive them with the snippet
+under "The 4 pages still on placeholders" rather than trusting the commit
+reference. For the launch-blocker workstream see
+`docs/seo/HANDOFF-launch-blockers.md`.
 
 | | |
 |---|---|

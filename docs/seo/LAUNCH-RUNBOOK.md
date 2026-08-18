@@ -33,8 +33,13 @@ succeed or fail.
 >
 > ```bash
 > npm run build   # reports the page count it just built
-> grep -c "<loc>" dist/sitemap-0.xml
+> grep -o "<loc>" dist/sitemap-0.xml | wc -l
 > ```
+>
+> Use `grep -o ... | wc -l`, **not** `grep -c`. The sitemap is emitted as a
+> single line with no newlines, so `grep -c` counts matching lines and returns
+> `1` no matter how many URLs there are. That exact mistake shipped in this
+> runbook between 22779e3 and its correction.
 >
 > `sitemap-parity` in `tools/verify-deployment.mjs` already fails the build if
 > those two disagree, so one number is enough. **At the time of writing
@@ -131,9 +136,17 @@ There is no LCP debt here to accept, and nothing to re-test in month 2 beyond
 confirming the numbers still hold. See #95.
 
 ### 2.5 Content
-- [ ] `grep -ri "lorem\|TBD\|coming soon\|TODO\|XXX\|placeholder:" dist/`
+- [ ] `grep -rli "lorem\|TBD\|coming soon\|TODO\|placeholder:" dist/ --include="*.html"`
       returns nothing — "placeholder:" is in the list because `/about/` shipped
-      six of them past the shorter grep
+      six of them past the shorter grep.
+      **Two corrections to how this was written.** Scope it to `--include="*.html"`
+      and use `-l`: unscoped it matches 127 binary assets on byte sequences and
+      reports 225 files, which reads as catastrophic and means nothing.
+      And `XXX` is dropped from the pattern deliberately — every page carries the
+      GA4 placeholder `G-XXXXXXXXXX`, so while the measurement ID is unset this
+      item can never go green and tells you nothing. It starts passing the moment
+      the real ID lands, which is tracked separately; do not treat the change as
+      evidence of anything else.
 - [ ] The About page contains real copy from Mark, not scaffolding (F20/P0-3c)
 - [ ] `grep -rn "NEEDS MARK" src/` — every one resolved or consciously deferred
 - [x] Hero stat rail — **done 2026-08-17 (#94).** All 43 destination pages
@@ -181,7 +194,7 @@ Budget two hours including checks. Do not do this on a Friday.
 
 ### 4.1 Final deploy to staging (T-60 min)
 - [ ] `node tools/set-journal-dates.mjs --date <today's date>` — stamps
-      `publishDate` on all 29 journal posts per DECISIONS.md D6 (posts are
+      `publishDate` on every journal post per DECISIONS.md D6 (posts are
       dated the day they go live; never backdate). Commit the result.
 - [ ] `git pull && npm install && npm run build`
 - [ ] `node tools/verify-deployment.mjs` clean
@@ -196,6 +209,25 @@ Budget two hours including checks. Do not do this on a Friday.
       `www.hymtravel.com`
 
 ### 4.3 Verify propagation (T+15 to T+60)
+
+> **Before trusting ANY check in § 4.3 or § 4.4, confirm you are looking at the
+> new site.** `https://www.hymtravel.com/` answers today, from a host that is not
+> this build — so a propagation check, an HTTPS check, an HSTS check and a
+> "200 OK" all pass *before* cutover has happened. Four of the six automated
+> checks below are satisfiable by a domain that simply resolves somewhere.
+>
+> The cheap discriminator is the title, which is unique to this build:
+>
+> ```bash
+> curl -s https://www.hymtravel.com/ | grep -o "<title>[^<]*</title>"
+> ```
+>
+> It must read `Hit Your Mark Travel — Bespoke Luxury Journeys`. Anything else
+> means DNS has not moved yet and every result below is measuring the wrong
+> server. `npm run verify:prod` is not a substitute: its remote mode fetches
+> three pages and their stylesheets, and emits `ok` lines against any host that
+> returns HTML.
+
 ```bash
 dig +short www.hymtravel.com
 curl -sIL https://www.hymtravel.com/ | head -20
