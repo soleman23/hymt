@@ -108,10 +108,11 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\reach\OneDrive\Pictures\Deskt
 | Destination pages | 43, all with Best Season **and** Best For |
 | Experience pages | 12 |
 | Journal posts | 32 |
-| Check fixtures | 215 (derive: `node tools/verify-checks.test.mjs`) |
+| Check fixtures | 242 (derive: `node tools/verify-checks.test.mjs`) |
 | Open issues | 41 |
 | Inline event handlers | 0, enforced by `inline-handler` |
 | Inline scripts under `'unsafe-inline'` | 0 — 10 sha256 hashes, enforced by `csp-script-src` |
+| Pages with a unique og:image | 83 of 98 (was 0; 15 keep the crest plate) |
 
 ### Closed 2026-08-18 (later session) — the audit and what it turned up
 
@@ -140,6 +141,25 @@ evidence:
   `img-attrs`.
 - **Web3Forms key pinned, honeypot on every form** (`e26683d`) — `web3forms`
   check; a partial rotation or a "fix #74 with a new key" goes red.
+
+Then a second pass on the image and header work:
+
+- **`htaccess-headers` + `photo-grid`** (`55ef0c9`) — nothing asserted
+  `dist/.htaccess` existed at all; renaming it left the build green while
+  the site shipped with no CSP, no security headers and no staging noindex.
+- **Unreferenced-image build note** (`73d8caf`) — 17 tracked images nothing
+  used, now printed every build.
+- **restore_images.py retries** (`426d395`) — OneDrive intermittently failed
+  one write of 959 with EINVAL and blocked every commit.
+- **Botswana 3:2 crop** (`c351357`) — the card was severing the lead
+  elephant above its tusks; 48.6% of the frame → 99.9%.
+- **Photography docs corrected** (`b3c099c`).
+- **family-travel photographed** (`122025c`) — six cards from assets already
+  in the repo, zero credits.
+- **Willamette filenames** (`4610eaf`) — two names claimed a Tuscan photo
+  was Oregon.
+- **70 per-page og:image crops** (`aa7a271`, `c8605ce`) — 83 of 98 pages now
+  have a unique share card, was 0.
 
 Every new check was driven red against real output before being trusted,
 and three of them caught a bug in *themselves* on the first fixture run
@@ -566,10 +586,35 @@ apex and www.
 - **The GA4 measurement ID is still `G-XXXXXXXXXX`**, so runbook § 2.5's
   placeholder grep can only go green once a real property exists. The grep is
   now scoped so it does not also report 127 binary assets.
-- **Audit findings not yet acted on, all agent-doable, none launch-blocking:**
-  a `--photo` grid may not contain a swatch (verifier check); report
-  never-referenced MANIFEST assets as a build note; photograph
-  `experiences/family-travel` from assets already in the repo (no generation);
-  crop the portrait Botswana frame to 3:2 for the Africa hub card; cut
-  per-page 1200×630 `og:image` crops from the heroes that already ship;
-  assert the non-CSP security headers in `dist/.htaccess`.
+- ~~Audit findings not yet acted on~~ — **all seven landed 2026-08-18**, see
+  the section above. What is left of the image work is only the 60 remaining
+  swatch cards (24 destination on india/jordan/new-zealand/oman, 36
+  experience on 6 pages), and those need photography that does not exist in
+  the repo — the seven subjects are listed in `photography-plan.md`.
+
+- **`og:image:alt`, `og:image:width` and `og:image:height` are on 0 of 98
+  pages.** `CONTENT-STANDARDS.md` § OG image asks for alt and
+  `SCHEMA-LIBRARY.md:594` shows all three. Now that 83 pages carry a real
+  per-page image, the missing alt is more visible, not less. One change to
+  `Base.astro`'s head block; deliberately not bundled with the 70-blob crop
+  commit.
+
+- **`/destinations/alaska/` ships a frame containing about six recognisable
+  people** on a viewing platform, which the no-faces brand rule would
+  normally exclude. Keeping it was an explicit call on 2026-08-18, recorded
+  here so it is not silently re-litigated. Six other Alaska frames are in
+  the library if that is ever revisited.
+
+- **One frame ships three times over.** `e-17-tuscan-wine-tasting.jpg` also
+  exists as a byte-identical `/assets/vineyard-tasting-golden-hour.jpg` with
+  its own 435 KB base64 twin, plus an `ALIASES.json` entry pointing at a
+  third path. Consolidating means deleting a tracked asset, which needs
+  authorisation. Same family: check `ALIASES.json` before assuming two paths
+  are two pictures.
+
+- **Search the place-prefixed filename families before concluding an asset
+  is missing.** A pass looking for a Southern-African safari frame checked
+  `africa-*`, `safari`, `kruger`, `sabi` and `serengeti`, concluded none
+  existed, and proposed an East African substitute. Six `botswana-*` frames
+  were sitting there. The build now prints the unreferenced-image inventory
+  on every run for the same reason.
