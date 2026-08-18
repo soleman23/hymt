@@ -22,6 +22,7 @@ import Base from "./Base.astro";
 import { article, breadcrumbs, plain } from "../lib/schema";
 import "../styles/journal.css";
 
+import { OG_CROPS } from "../lib/og-crops";
 interface Props {
   title: string;
   description?: string;
@@ -93,11 +94,19 @@ const schema = [
     wordCount,
   }),
 ];
+
+/* og:image (#98 follow-up): every page shipped the same crest plate, so
+   every social and AI share of any page looked identical. The crop is
+   derived from the hero the page already declares — see
+   tools/make-og-crops.mjs. An explicit ogImage prop still wins, and a
+   hero with no crop falls through to Base.astro's default. */
+const ogCrop = ogImage ?? (hero?.image ? OG_CROPS[hero.image] : undefined);
+
 ---
 <Base
   title={title}
   description={description}
-  ogImage={ogImage}
+  ogImage={ogCrop}
   canonicalPath={canonicalPath}
   schemaType="article"
   schema={schema}

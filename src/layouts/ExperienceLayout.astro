@@ -19,7 +19,8 @@ import { breadcrumbs, extractFaq, faq, plain, service, webPage } from "../lib/sc
 // and .seasons-grid from it, and later source order is what makes that work.
 import "../styles/section-shared.css";
 import "../styles/experience.css";
-
+
+import { OG_CROPS } from "../lib/og-crops";
 interface Props {
   title: string;
   description?: string;
@@ -65,11 +66,19 @@ const schema = [
   }),
   faqPairs.length ? faq(faqPairs) : null,
 ].filter(Boolean);
+
+/* og:image (#98 follow-up): every page shipped the same crest plate, so
+   every social and AI share of any page looked identical. The crop is
+   derived from the hero the page already declares — see
+   tools/make-og-crops.mjs. An explicit ogImage prop still wins, and a
+   hero with no crop falls through to Base.astro's default. */
+const ogCrop = ogImage ?? (hero?.image ? OG_CROPS[hero.image] : undefined);
+
 ---
 <Base
   title={title}
   description={description}
-  ogImage={ogImage}
+  ogImage={ogCrop}
   canonicalPath={canonicalPath}
   schemaType={schemaType}
   schema={schema}
