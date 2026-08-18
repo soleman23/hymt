@@ -21,7 +21,7 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
-  analyticsUngated, unscopedAccordionHides,
+  analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -427,6 +427,48 @@ const inlineHandlerSeen = new Map();
         notes.push(`${needed.size} inline script hashes in the CSP, all current, no 'unsafe-inline' in script-src`);
       }
     }
+  }
+}
+
+/* web3forms (#74): the access key is THE key, there is exactly one of it
+   across the site, and every page that carries it carries the honeypot.
+
+   CLAUDE.md: never change the Web3Forms access key. The key is pinned here
+   on purpose, which makes a rotation touch four files rather than three
+   (Newsletter.astro, contact.html, plan-your-trip.html, and this). That is
+   the intended friction: the recipient problem in #74 is a dashboard
+   setting, and minting a fresh key against the right address is the
+   tempting wrong fix - it silently orphans every submission on any page a
+   deploy misses, and it is the one change CLAUDE.md names. A partial
+   rotation is the other failure this sees: two keys live at once, and the
+   form on the page still carrying the old one fails with no build error.
+   If a rotation is ever deliberate and authorised, update the constant here
+   in the same commit and say so. */
+const WEB3FORMS_KEY = "94312057-04b8-44d8-a7a8-7cb083d999b8";
+{
+  const seen = new Map(); // key -> first page
+  let carriers = 0, honeypotMissing = 0;
+  for (const file of htmlFiles) {
+    const html = await readFile(file, "utf8");
+    const keys = web3formsKeys(html);
+    if (!keys.length) continue;
+    carriers++;
+    for (const k of keys) if (!seen.has(k)) seen.set(k, urlOf(file));
+    if (!hasHoneypot(html)) {
+      honeypotMissing++;
+      fail("web3forms", `${urlOf(file)} carries the access key but no botcheck honeypot`);
+    }
+  }
+  if (!carriers) {
+    fail("web3forms", "no built page carries the Web3Forms access key — the forms did not ship");
+  }
+  for (const [k, page] of seen) {
+    if (k !== WEB3FORMS_KEY) {
+      fail("web3forms", `${page} carries access key ${k}, not the site's key — CLAUDE.md: never change it (a partial rotation leaves two keys live; a full one is the wrong fix for #74)`);
+    }
+  }
+  if (!failures.some((f) => f.check === "web3forms")) {
+    notes.push(`Web3Forms key on ${carriers} pages, one key, honeypot on every one`);
   }
 }
 

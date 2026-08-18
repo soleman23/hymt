@@ -50,7 +50,7 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
-  analyticsUngated, unscopedAccordionHides,
+  analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -783,6 +783,43 @@ t("accordion: .pf-answer is not .pf-a",
 t("accordion: empty css reports nothing",
   unscopedAccordionHides(``).length, 0);
 
+/* ── web3forms (#74) ── */
+
+const KEY = "94312057-04b8-44d8-a7a8-7cb083d999b8";
+const OTHER = "11111111-2222-4333-8444-555555555555";
+
+/* Both shipped shapes, verbatim. */
+t("web3forms: the Newsletter's hidden input yields the key",
+  web3formsKeys(`<input type="hidden" name="access_key" value="${KEY}" />`).join(), KEY);
+
+t("web3forms: Contact's formData.append yields the key",
+  web3formsKeys(`formData.append('access_key', '${KEY}');`).join(), KEY);
+
+t("web3forms: value-before-name attribute order still yields the key",
+  web3formsKeys(`<input value="${KEY}" type="hidden" name="access_key">`).join(), KEY);
+
+t("web3forms: the same key in both shapes on one page is one key",
+  web3formsKeys(`<input type="hidden" name="access_key" value="${KEY}"><script>formData.append('access_key', '${KEY}')</script>`).length, 1);
+
+/* The partial-rotation shape: two keys live at once. */
+t("web3forms: two different keys on one page are two",
+  web3formsKeys(`<input type="hidden" name="access_key" value="${KEY}"><script>formData.append('access_key', '${OTHER}')</script>`).length, 2);
+
+t("web3forms: a uuid that is not an access_key is not a key",
+  web3formsKeys(`<input type="hidden" name="session" value="${OTHER}">`).length, 0);
+
+t("web3forms: a page with no form yields nothing",
+  web3formsKeys(`<main><p>x</p></main>`).length, 0);
+
+t("web3forms: the honeypot is seen",
+  hasHoneypot(`<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">`), true);
+
+t("web3forms: a missing honeypot is seen",
+  hasHoneypot(`<input type="email" name="email">`), false);
+
+t("web3forms: botcheck as a JS string is not the honeypot input",
+  hasHoneypot(`<script>formData.append('botcheck', '')</script>`), false);
+
 /* ── schema-itemlist ── */
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
@@ -917,6 +954,16 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     unscopedAccordionHides(bundled).length, 0);
   t("real bundled CSS does contain the scoped hide (so the check is looking at the right file)",
     /\.js-accordion \.pf-a\{display:none\}/.test(bundled), true);
+
+  /* All three forms: the newsletter on /, Contact, Plan Your Trip. */
+  t("real / carries exactly the one key, from the newsletter",
+    web3formsKeys(home).join(), KEY);
+  t("real /contact/ carries exactly the one key (form + newsletter agree)",
+    web3formsKeys(contact).join(), KEY);
+  t("real /plan-your-trip/ carries exactly the one key",
+    web3formsKeys(plan).join(), KEY);
+  t("real /plan-your-trip/ carries the honeypot (#76)",
+    hasHoneypot(plan), true);
 
   const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
   t("real dist/.htaccess exists and carries the report-only CSP",
