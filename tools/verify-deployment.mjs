@@ -183,6 +183,38 @@ if (!missingAssets.length) {
         `it will 404 on a fresh clone. Run \`node tools/adopt-orphan-assets.mjs\`.`);
   }
   if (!orphans) notes.push(`${srcRefs.size} source-referenced assets all in the image pipeline`);
+
+  /* The reverse direction, as a NOTE not a failure: tracked assets nothing
+     references. Never a build error — an unused asset breaks nothing, and
+     proposing deletions is not this check's job. It prints because the most
+     expensive recorded lesson in this repo is "check the repo before
+     generating, not just Drive": kenya-tanzania-serengeti.jpg sat unused at
+     exactly the right slug and size while work went looking for it. Anyone
+     about to spend a credit on a subject should see the free frames first.
+
+     Scans by BASENAME across every text file in src/ and public/, not the
+     srcRefs index above: that index reads only image URLs out of .html and
+     .astro, so fonts (referenced from CSS) and anything named in llms.txt
+     would be reported as unused. Restricted to images for the same reason —
+     this is about photography, not about every tracked byte. */
+  {
+    const textFiles = [
+      ...(await walk(path.join(ROOT, "src"), (f) => /\.(html|astro|ts|js|mjs|css|json|txt|md)$/.test(f))),
+      ...(await walk(path.join(ROOT, "public"), (f) => /\.(html|css|js|json|txt|xml|webmanifest)$/.test(f))),
+    ];
+    let haystack = "";
+    for (const f of textFiles) haystack += await readFile(f, "utf8");
+    const unused = manifest
+      .map((m) => m.target)
+      .filter((t) => /\.(jpe?g|png|webp)$/i.test(t) && !haystack.includes(path.basename(t)));
+    if (unused.length) {
+      const shown = unused.map((t) => path.basename(t)).sort();
+      notes.push(
+        `${unused.length} tracked image${unused.length === 1 ? "" : "s"} referenced nowhere — ` +
+          `free to use before generating anything new: ${shown.slice(0, 5).join(", ")}` +
+          (shown.length > 5 ? `, +${shown.length - 5} more (grep images-b64/MANIFEST.json)` : ""));
+    }
+  }
 }
 
 /* ── 3b. og:image resolves to a file that exists ──
