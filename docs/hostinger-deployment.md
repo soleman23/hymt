@@ -40,6 +40,24 @@ Edit the Astro source, run `npm run build`, and upload `dist/`.
 > "force www" rule would redirect the `*.hostingersite.com` preview domain to a
 > hostname that does not exist, breaking the preview site.
 
+### 1b. Purge the CDN cache
+
+**Uploading is not deploying.** Hostinger fronts the site with a CDN
+(`server: hcdn`), and static assets are cached at the edge. After any upload
+that changes an image, font or stylesheet, purge the CDN cache in hPanel or
+visitors keep getting the old file.
+
+Two clean `582/582` uploads on 2026-08-18 changed nothing that anyone could
+see. Only the purge did. Full write-up in #107.
+
+Check a **GET**, not a HEAD — HEAD reaches origin and hides the problem:
+
+```bash
+curl -s -D - -o /dev/null <url>/assets/img/<file>.jpg | grep -i "x-hcdn-cache-status"
+```
+
+`HIT` after a purge-and-reupload means the purge did not take.
+
 ### 2. Point the domain
 - If `hymtravel.com` is registered **at Hostinger**: hPanel → Domains → assign to this hosting plan. Done.
 - If registered elsewhere (e.g. GoDaddy/Namecheap): either change nameservers to Hostinger's (shown in hPanel → Domains → DNS) — simplest — or create an **A record** pointing `@` and `www` to your hosting IP (hPanel → Hosting Details).

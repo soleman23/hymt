@@ -208,6 +208,28 @@ Budget two hours including checks. Do not do this on a Friday.
 - [ ] Confirm the certificate covers **both** `hymtravel.com` and
       `www.hymtravel.com`
 
+### 4.2b Purge the CDN cache — **a deploy alone does not change what is served**
+
+- [ ] hPanel → purge / clear the CDN cache **after** the upload, **before** any
+      verification below
+
+This is not optional and it is not belt-and-braces. On 2026-08-18 two clean
+`582/582` deploys changed nothing a visitor could see, because Hostinger's edge
+was replaying cached responses. Only the purge moved it. The cause (`immutable`
+on non-content-addressed image URLs) is fixed in `public/.htaccess`, but **the
+entries already in the cache are not evicted by fixing the header** — and the
+same will be true of any future asset change.
+
+Verify with a **GET**, never a HEAD:
+
+```bash
+curl -s -D - -o /dev/null https://www.hymtravel.com/assets/img/<some-image>.jpg \
+  | grep -i "x-hcdn-cache-status\|content-length"
+```
+
+A `HEAD` reaches origin and will happily report the new file while every real
+visitor is still served the old one. That mistake cost an hour; see #107.
+
 ### 4.3 Verify propagation (T+15 to T+60)
 
 > **Before trusting ANY check in § 4.3 or § 4.4, confirm you are looking at the
