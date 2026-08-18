@@ -1,9 +1,34 @@
 # Destination photography needed — the 25 missing hero images
 
-Every destination in the `/destinations/` grid now has a card. **25 of them
-ship a placeholder plate instead of a photograph**, which is the single blocker
-on building their detail pages (milestone **M7**, issues #40–#65). Seychelles is
-the one exception — its photo already exists, which is why it is the pilot.
+> ## ⚠ SUPERSEDED 2026-08-18. Every subject below now ships.
+>
+> Re-derived against the repo on 2026-08-18: **all 25 subjects have a
+> shippable asset** — present in `images-b64/MANIFEST.json`, with a base64
+> twin, resolving on disk. 24 are already wired as `/destinations/` index
+> cards. The 25th is **Aspen**, whose asset (`dh-26-aspen-maroon-bells.jpg`)
+> exists but is wired nowhere: `888817d` deliberately pulled the Aspen and
+> Banff cards from the grid until those pages exist.
+>
+> So the tier checklists below are a **historical record of what was
+> commissioned**, not a to-do list. Nothing in them is outstanding. The
+> specs table is also wrong in two ways — see the strikethroughs.
+>
+> The real remaining photography is **place cards, not heroes**, and it is
+> tracked in [`photography-plan.md`](photography-plan.md) § Workstream B and
+> in #93. Derive it, never quote it:
+>
+> ```bash
+> grep -rl 'place-card__ph' dist/destinations --include='*.html' | wc -l   # 4 pages
+> grep -rho 'place-card__ph' dist/destinations --include='*.html' | wc -l  # 24 cards
+> grep -rho 'exp-card__ph'   dist/experiences  --include='*.html' | wc -l  # 42 cards
+> ```
+
+Every destination in the `/destinations/` grid now has a card. ~~**25 of them
+ship a placeholder plate instead of a photograph**~~ — **none do; the grid has
+zero placeholder plates** (`grep -c '__ph"' src/content-pages/destinations.html`
+returns 0) — which ~~is~~ *was* the single blocker on building their detail
+pages (milestone **M7**, issues #40–#65). Seychelles is the one exception — its
+photo already exists, which is why it is the pilot.
 
 Sourcing these in tier order means the highest-value pages become buildable
 first. Nothing here blocks launch: every card already links to its region hub.
@@ -12,9 +37,9 @@ first. Nothing here blocks launch: every card already links to its region hub.
 
 | Field | Value |
 |---|---|
-| Naming | `dh-NN-<slug>-<subject>.jpg`, continuing the series — **next free number is `dh-26`** |
+| Naming | `dh-NN-<slug>-<subject>.jpg`, continuing the series — ~~**next free number is `dh-26`**~~ the series now runs to **`dh-28`**; derive with `ls public/assets/img/ \| grep -o '^dh-[0-9]*' \| sort -u \| tail -1` |
 | Location | `public/assets/img/` |
-| Ratio / res | 16:9, 4K (these are full-bleed hero backgrounds) |
+| Ratio / res | ~~16:9, 4K~~ **1600px wide, capped by `tools/cap-image-width.py`** — 1600 is the widest any visitor is ever served (measured against the Hostinger CDN), so 4K is thrown away at build time. Shipped hero widths today are 1024, 1456, 1536 and 1600. |
 | Style | Golden-hour editorial travel photography, cinematic grade |
 | **Hard brand rules** | **No faces. No people. No text overlays. No visible signage.** |
 | Also needed | A 1200×630 crop for `og:image` if the hero doesn't crop cleanly |
@@ -65,7 +90,9 @@ Highest demand; these unblock the most valuable pages.
 1. Drop it in `public/assets/img/` using the naming convention above.
 2. The destination page (when built) passes it as `hero.image` — preload,
    `og:image` and schema `image` all follow automatically from that one prop.
-3. Update the grid card in `src/content-pages/destinations.html` to use the
-   photo instead of the placeholder plate, and re-point its `href` from the
-   region hub to the new page.
+3. ~~Update the grid card in `src/content-pages/destinations.html` to use the
+   photo instead of the placeholder plate~~ — **dead step: that file has zero
+   placeholder plates.** Every card there is already a photograph. What is
+   still needed is only to re-point the card's `href` from the region hub to
+   the new page.
 4. `npm run build` must stay clean.

@@ -7,22 +7,49 @@ subjects now exist**.
 
 ## Where things actually stand
 
+> **Re-derived 2026-08-18. Both rows below were wrong; corrected in place.**
+> Workstream A is finished, and B is smaller than stated by a factor of six.
+> Every figure in the corrected table is a command, because every figure in
+> the original rotted.
+
 | Workstream | Unblocks | Images still needed | Est. credits |
 |---|---|---|---|
-| **A — Destination heroes (M7, #40–#65)** | 25 **new** pages | 3 subjects + a resolution decision | ~3–30 |
-| **B — Place cards on existing sub-pages** | 30 **existing** pages | 162 | ~162 |
+| ~~**A — Destination heroes (M7, #40–#65)**~~ | ~~25 **new** pages~~ | ~~3 subjects + a resolution decision~~ **0 — done** | ~~~3–30~~ 0 |
+| **B — Place cards on existing sub-pages** | ~~30~~ **11 existing pages** | ~~162~~ **66** (24 destination + 42 experience) | ~66 |
 
-Balance at time of writing: **308.7 credits** (Plus plan).
+```bash
+grep -rho 'place-card__ph' dist/destinations --include='*.html' | wc -l   # 24, on 4 pages
+grep -rho 'exp-card__ph'   dist/experiences  --include='*.html' | wc -l   # 42, on 7 pages
+```
 
-### Workstream A is nearly done and nobody noticed
+The 4 destination pages: `india`, `jordan`, `new-zealand`, `oman`.
+The 7 experience pages: `adventure-active-travel`, `all-inclusive-vacations`,
+`beach-island-escapes`, `family-travel`, `safari-wildlife-travel`,
+`sports-event-travel`, `wellness-retreat-travel`.
+
+Balance at time of writing: **308.7 credits** (Plus plan) — a 2026-08-12
+snapshot, not a current reading. Check the dashboard.
+
+### Workstream A is ~~nearly~~ done and nobody noticed
 
 `photography-needed.md` was written before the hub rollout. Of its 25 missing
-heroes, 22 subjects now have an asset — 16 from the hub batch (PR #102), plus
-South Africa, Morocco and Zambia from the earlier africa set. Genuinely missing:
+heroes, ~~22~~ **all 25** subjects now have an asset — 16 from the hub batch
+(PR #102), plus South Africa, Morocco and Zambia from the earlier africa set.
+~~Genuinely missing:~~ **The three this section called genuinely missing all
+ship, and have since before this was written:**
 
-- **Costa Rica** (#41, Tier 1)
-- **Aspen** (#40, Tier 2)
-- **Bhutan** (#52, Tier 3)
+- ~~**Costa Rica** (#41, Tier 1)~~ → `dh-27-costa-rica-cloud-forest.jpg`
+- ~~**Aspen** (#40, Tier 2)~~ → `dh-26-aspen-maroon-bells.jpg` (in MANIFEST,
+  wired nowhere — `888817d` pulled the Aspen card until that page exists)
+- ~~**Bhutan** (#52, Tier 3)~~ → `dh-28-bhutan-paro-taktsang.jpg`
+
+**Seven experience-card subjects genuinely have no library asset**, and this
+is the list nobody should have to derive a fourth time: Dolomites & Alps,
+St. Lucia (×2), Namibia, Formula 1, Football & Rugby, Arizona & Southwest.
+`family-travel` is the one blocked page whose cards are *nearly* all coverable
+from stock already in the repo — five of six — but its "Family Safari" card is
+tagged Sabi Sand and the library holds no Southern-African safari frame at
+all, only Serengeti.
 
 The catch is **resolution, not subject**. Heroes are full-bleed LCP images specced
 at 16:9 / 4K. What is on disk is the place-card intake: 1600px wide, because
