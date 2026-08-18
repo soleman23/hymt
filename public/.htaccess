@@ -85,12 +85,29 @@ ErrorDocument 404 /404.html
   # and a CDN purge.
   #
   # RFC 9111 5.2.2.6: no-transform forbids an intermediary from altering
-  # the payload, which takes their compressor out of the path for pages.
-  # HTML then ships uncompressed — roughly 40 KB per page rather than 12 KB.
-  # That is the deliberate trade: slower pages beat blank ones.
+  # the payload. That is the deliberate trade: slower pages beat blank ones.
   #
-  # Remove this once Hostinger confirms the CDN bug is fixed, and re-test
-  # with: curl --compressed -s <url> | wc -c
+  # RETESTED 2026-08-17 against the staging host, on the same URL that
+  # originally broke. The stated cost is NOT being paid: with this header in
+  # place the edge still negotiates compression, and the body decompresses to
+  # the complete document.
+  #
+  #   Accept-Encoding: (none)  51,355 B   identity
+  #   Accept-Encoding: gzip    15,084 B   Content-Encoding: gzip
+  #   Accept-Encoding: br      13,498 B   Content-Encoding: br
+  #   curl --compressed        14,230 B   Content-Encoding: zstd
+  #                                       -> decompressed to 51,355 B, intact
+  #
+  # So the header is NOT holding HTML at ~40 KB — pages already ship at
+  # ~13.5 KB on the wire — and the 13-byte corruption does not reproduce.
+  # Removing it would therefore buy nothing measurable while re-exposing a
+  # bug whose failure mode is a blank page. KEEP IT until there is a reason
+  # better than a saving that is already banked. See #95.
+  #
+  # Retest (read the wire size and Content-Encoding, NOT `| wc -c` — curl
+  # decompresses, so a piped byte count always reports the full document):
+  #   curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}
+' <url>
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=0, must-revalidate, no-transform"
   </FilesMatch>
