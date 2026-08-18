@@ -9,7 +9,7 @@
  * this repo. Add to them rather than relying on remembering the convention.
  */
 import { readFile, writeFile, readdir, access, stat } from "node:fs/promises";
-import { constants } from "node:fs";
+import { constants, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 /* Fixture-tested in tools/verify-checks.test.mjs. Both of these were written
@@ -20,6 +20,7 @@ import {
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
+  imageDims, imgRatioMismatches,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -404,6 +405,18 @@ const EAGER_IMAGE_DEBT = {};
 let eagerPeak = 0;
 const eagerDebtSeen = new Set();
 
+/* img-ratio reads image headers from dist/. Memoised: the logo alone is
+   referenced 290 times, and every asset the site references is read once. */
+const imageDimsCache = new Map();
+const dimsOf = (src) => {
+  if (!imageDimsCache.has(src)) {
+    let dims = null;
+    try { dims = imageDims(readFileSync(path.join(DIST, src))); } catch { /* missing-asset reports it */ }
+    imageDimsCache.set(src, dims);
+  }
+  return imageDimsCache.get(src);
+};
+
 const deadLinks = new Set();
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
@@ -454,6 +467,15 @@ for (const file of htmlFiles) {
         fail("img-attrs", `${url} has an <img> missing ${attr}: ${img.slice(0, 80)}…`);
       }
     }
+  }
+  /* img-ratio: and the dimensions must be TRUE. Every logo <img> declared
+     1254x1254 for a 256x256 file for as long as the file has been 256x256,
+     and img-attrs, which only asks whether the attributes exist, was green
+     throughout. Judged on ratio, so a declaration at the rendered size still
+     passes; a declaration whose shape disagrees with the file's reserves the
+     wrong box and shifts the page when the image lands. */
+  for (const { src, declared, real } of imgRatioMismatches(html, dimsOf)) {
+    fail("img-ratio", `${url} declares ${src} as ${declared} but the file is ${real}`);
   }
 
   /* canonical-host: nothing may point anywhere but the production host.

@@ -27,7 +27,7 @@
  * Runs as part of `npm run build`, before the verifier itself.
  */
 import { readFile, access } from "node:fs/promises";
-import { constants } from "node:fs";
+import { constants, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -48,6 +48,7 @@ import {
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
+  imageDims, imgRatioMismatches,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -557,6 +558,83 @@ t("maxlength: maxlength with spaces round the = still counts",
 t("maxlength: a page with no fields reports nothing",
   uncappedFields(`<main><p>No forms here.</p></main>`).length, 0);
 
+/* ── img-ratio ── */
+
+/* Header bytes, not fixture tables, for the dimension reader: a PNG IHDR and
+   a JPEG with an APP0 segment before its SOF0, the shape every camera JPEG
+   has. If the reader ever mis-parses, both go wrong here first. */
+const pngHeader = (w, h) => {
+  const b = Buffer.alloc(24);
+  b.writeUInt32BE(0x89504e47, 0); b.writeUInt32BE(0x0d0a1a0a, 4);
+  b.writeUInt32BE(13, 8); b.write("IHDR", 12); b.writeUInt32BE(w, 16); b.writeUInt32BE(h, 20);
+  return b;
+};
+const jpegHeader = (w, h) => Buffer.concat([
+  Buffer.from([0xff, 0xd8]),
+  Buffer.from([0xff, 0xe0, 0x00, 0x10]), Buffer.alloc(14),               // APP0, 16 bytes
+  Buffer.from([0xff, 0xc0, 0x00, 0x11, 0x08]),                           // SOF0, precision 8
+  Buffer.from([(h >> 8) & 0xff, h & 0xff, (w >> 8) & 0xff, w & 0xff]),  // height, then width
+  Buffer.alloc(12),
+]);
+
+t("imageDims: reads a PNG IHDR",
+  JSON.stringify(imageDims(pngHeader(256, 256))), JSON.stringify({ w: 256, h: 256 }));
+
+t("imageDims: reads a JPEG SOF0 past an APP0 segment",
+  JSON.stringify(imageDims(jpegHeader(1200, 800))), JSON.stringify({ w: 1200, h: 800 }));
+
+t("imageDims: JPEG height comes before width in the frame header",
+  imageDims(jpegHeader(1200, 800)).w, 1200);
+
+t("imageDims: an unknown format is null, not a guess",
+  imageDims(Buffer.from("<svg xmlns='http://www.w3.org/2000/svg'/>")), null);
+
+const dims = (table) => (src) => table[src] ?? null;
+const LOGO = { "/assets/logo.png": { w: 256, h: 256 }, "/assets/img/hero.jpg": { w: 1200, h: 800 } };
+
+/* The shipped state, verbatim: 1254x1254 for a 256x256 file is the wrong
+   NUMBER but the right RATIO. This check deliberately passes it, because the
+   box it reserves is the right shape; the source was corrected regardless. */
+t("img-ratio: the shipped 1254x1254 logo declaration is the right ratio, and passes",
+  imgRatioMismatches(`<img src="/assets/logo.png" class="dest-hero__watermark" alt="" aria-hidden="true" width="1254" height="1254" decoding="async">`, dims(LOGO)).length, 0);
+
+t("img-ratio: the nav logo at its rendered 52x52 passes for the same reason",
+  imgRatioMismatches(`<img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52">`, dims(LOGO)).length, 0);
+
+t("img-ratio: exact intrinsic dimensions pass",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="x" width="1200" height="800">`, dims(LOGO)).length, 0);
+
+/* The regression this exists for: the file is swapped for a non-square one
+   and 94 tags keep saying square. */
+t("img-ratio: a square declaration for a 3:2 file is caught",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="x" width="256" height="256">`, dims(LOGO)).length, 1);
+
+t("img-ratio: the report names the src, the declaration and the truth",
+  JSON.stringify(imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="x" width="256" height="256">`, dims(LOGO))[0]),
+  JSON.stringify({ src: "/assets/img/hero.jpg", declared: "256×256", real: "1200×800" }));
+
+t("img-ratio: swapped width and height are caught",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="x" width="800" height="1200">`, dims(LOGO)).length, 1);
+
+t("img-ratio: a 1% rounding drift is tolerated",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="x" width="600" height="401">`, dims(LOGO)).length, 0);
+
+t("img-ratio: a query string on the src does not defeat the lookup",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg?v=2" alt="x" width="256" height="256">`, dims(LOGO)).length, 1);
+
+/* Out of scope by design: each of these is someone else's check or nobody's. */
+t("img-ratio: an image with no declared size is img-attrs' problem, not this one's",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="x">`, dims(LOGO)).length, 0);
+
+t("img-ratio: an external src is not judged",
+  imgRatioMismatches(`<img src="https://cdn.example/x.jpg" alt="x" width="1" height="1000">`, dims(LOGO)).length, 0);
+
+t("img-ratio: a src the resolver cannot read is skipped, not failed",
+  imgRatioMismatches(`<img src="/assets/img/missing.jpg" alt="x" width="1" height="1000">`, dims(LOGO)).length, 0);
+
+t("img-ratio: two wrong tags on one page are two",
+  imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="a" width="1" height="1"><img src="/assets/logo.png" alt="b" width="2" height="1">`, dims(LOGO)).length, 2);
+
 /* ── schema-itemlist ── */
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
@@ -657,6 +735,16 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     uncappedFields(contact).length, 0);
   t("real /plan-your-trip/ has no uncapped field (steppers exempt)",
     uncappedFields(plan).length, 0);
+
+  /* Real image bytes from dist/, through the same reader the verifier uses.
+     Italy carries a hero JPEG plus the logo watermark. */
+  const realDims = (src) => {
+    try { return imageDims(readFileSync(path.join(dist, src))); } catch { return null; }
+  };
+  t("real logo.png is 256x256, so the 1254 declarations were the wrong number",
+    JSON.stringify(realDims("/assets/logo.png")), JSON.stringify({ w: 256, h: 256 }));
+  t("real /destinations/italy/ declares every image at its true ratio",
+    imgRatioMismatches(italy, realDims).length, 0);
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
