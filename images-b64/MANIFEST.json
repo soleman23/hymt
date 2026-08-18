@@ -945,8 +945,8 @@
   "bytes": 210032
  },
  {
-  "b64": "images-b64/assets__willamette-vineyard.jpg.b64",
-  "target": "public/assets/willamette-vineyard.jpg",
+  "b64": "images-b64/assets__vineyard-tasting-golden-hour.jpg.b64",
+  "target": "public/assets/vineyard-tasting-golden-hour.jpg",
   "bytes": 326654
  },
  {
@@ -1125,8 +1125,8 @@
   "bytes": 41020
  },
  {
-  "b64": "images-b64/assets__img__jc-willamette-vineyard.jpg.b64",
-  "target": "public/assets/img/jc-willamette-vineyard.jpg",
+  "b64": "images-b64/assets__img__jc-vineyard-tasting-golden-hour.jpg.b64",
+  "target": "public/assets/img/jc-vineyard-tasting-golden-hour.jpg",
   "bytes": 25493
  },
  {
