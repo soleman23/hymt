@@ -148,7 +148,7 @@ ErrorDocument 404 /404.html
   # A month is long enough to be worth having and short enough that a mistake
   # ages out on its own. Revalidation still makes repeat views free.
   <FilesMatch "\.(jpg|jpeg|png|webp|svg|woff2?)$">
-    Header set Cache-Control "public, max-age=2592000"
+    Header set Cache-Control "public, max-age=2592000, no-transform"
   </FilesMatch>
 
   # no-transform: Hostinger's CDN (server: hcdn) re-compresses HTML on the
