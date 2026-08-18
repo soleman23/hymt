@@ -302,11 +302,9 @@ const linkResolves = async (p) => {
    unlisted one fails outright, and an entry that drops to zero fails until it
    is deleted. Every entry must name the issue that removes it. */
 const DEAD_HANDLER_DEBT = {
-  /* 13 category buttons on /travel-journal/. Unlike copyLink these were never
-     implementable as written: the article cards carry no category hook to
-     filter on, so this is an unbuilt feature rather than a lost function.
-     Tracked in its own issue with #loadMore, which is dead the same way. */
-  filterArticles: 13,
+  /* Empty because it worked. filterArticles (13 calls) was the only entry;
+     #105 built the feature it named, the ratchet then demanded its entry
+     back out, and this is the state it should always return to. */
 };
 const deadHandlerSeen = new Map();
 
