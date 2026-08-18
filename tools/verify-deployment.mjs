@@ -19,7 +19,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields,
+  undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -504,6 +504,13 @@ for (const file of htmlFiles) {
         fail("canonical-host", `${url} JSON-LD URL ${u} — site URLs in schema must start with ${SITE}`);
       }
     }
+  }
+  /* schema-itemlist: an ItemList that parses can still be wrong. The journal
+     hub's is built by parsing the hub HTML, and the featured post is also a
+     card in the grid, so it listed one URL at two positions and claimed 33
+     for 32 posts. schema-valid saw a block that parsed and moved on. */
+  for (const defect of itemListDefects(html)) {
+    fail("schema-itemlist", `${url}: ${defect}`);
   }
   /* schema-required — flipped hard at P2-4, extended to the full page-type
      mapping from SCHEMA-LIBRARY.md §4. Every page type must emit its set. */

@@ -47,7 +47,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields,
+  undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -557,6 +557,67 @@ t("maxlength: maxlength with spaces round the = still counts",
 t("maxlength: a page with no fields reports nothing",
   uncappedFields(`<main><p>No forms here.</p></main>`).length, 0);
 
+/* ── schema-itemlist ── */
+
+const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
+const li = (pos, slug) => ({ "@type": "ListItem", position: pos, name: slug,
+  url: `https://www.hymtravel.com/travel-journal/${slug}/` });
+const collectionPage = (items, n = items.length) => ld({
+  "@context": "https://schema.org", "@type": "CollectionPage", name: "Travel Journal",
+  mainEntity: { "@type": "ItemList", numberOfItems: n, itemListElement: items },
+});
+
+/* The shipped defect in miniature: the featured post parsed out twice, so the
+   list was one longer than the site had posts and one URL sat at two
+   positions. numberOfItems agreed with the (wrong) element count, so this is
+   the duplicate branch alone. */
+t("itemlist: the featured post listed twice is one defect",
+  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "masters-field-report"),
+    li(3, "botswana-shoulder-season")])).length, 1);
+
+t("itemlist: the duplicate report names the URL and both positions",
+  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "masters-field-report"),
+    li(3, "botswana-shoulder-season")]))[0].includes("positions 1, 3"), true);
+
+t("itemlist: distinct URLs are clean",
+  itemListDefects(collectionPage([li(1, "a"), li(2, "b"), li(3, "c")])).length, 0);
+
+t("itemlist: numberOfItems disagreeing with the element count is caught",
+  itemListDefects(collectionPage([li(1, "a"), li(2, "b")], 3)).length, 1);
+
+t("itemlist: a duplicate AND a wrong count are two defects, not one",
+  itemListDefects(collectionPage([li(1, "a"), li(2, "a")], 5)).length, 2);
+
+/* item can be an @id object rather than a bare url. */
+t("itemlist: duplicates via item.@id are seen too",
+  itemListDefects(ld({ "@type": "ItemList", numberOfItems: 2, itemListElement: [
+    { "@type": "ListItem", position: 1, item: { "@id": "https://www.hymtravel.com/x/" } },
+    { "@type": "ListItem", position: 2, item: { "@id": "https://www.hymtravel.com/x/" } },
+  ] })).length, 1);
+
+t("itemlist: an ItemList inside an @graph is walked",
+  itemListDefects(ld({ "@context": "https://schema.org", "@graph": [
+    { "@type": "WebPage", name: "x" },
+    { "@type": "ItemList", numberOfItems: 1, itemListElement: [li(1, "a"), li(2, "a")] },
+  ] })).length, 2);
+
+/* Two lists on one page are checked independently. */
+t("itemlist: a clean list does not hide a broken neighbour",
+  itemListDefects(collectionPage([li(1, "a"), li(2, "b")]) +
+    collectionPage([li(1, "c"), li(2, "c")])).length, 1);
+
+t("itemlist: BreadcrumbList is not an ItemList",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/" },
+  ] })).length, 0);
+
+t("itemlist: a block that does not parse is skipped, not reported here",
+  itemListDefects(`<script type="application/ld+json">{not json</script>`).length, 0);
+
+t("itemlist: a page with no ItemList reports nothing",
+  itemListDefects(`<main><p>nothing</p></main>`).length, 0);
+
 /* ── the real build, so these predicates cannot drift from the site ── */
 
 const dist = path.join(ROOT, "dist");
@@ -577,6 +638,9 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   const journal = await readFile(path.join(dist, "travel-journal", "index.html"), "utf8");
   t("real /travel-journal/ carries no inline handlers",
     inlineHandlers(journal).length, 0);
+  /* The hub whose ItemList shipped 33 for 32, one URL at two positions. */
+  t("real /travel-journal/ ItemList has no duplicate and an honest count",
+    itemListDefects(journal).length, 0);
 
   const plan = await readFile(path.join(dist, "plan-your-trip", "index.html"), "utf8");
   t("real /plan-your-trip/ carries no inline handlers",

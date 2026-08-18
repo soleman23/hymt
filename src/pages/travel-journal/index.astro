@@ -3,22 +3,33 @@ import Base from "../../layouts/Base.astro";
 import Content from "../../content-pages/travel-journal.html?raw";
 import { breadcrumbs, collection, plain } from "../../lib/schema";
 
-/* P2-5: CollectionPage + ItemList of all 29 posts, parsed from the hub
+/* P2-5: CollectionPage + ItemList of every post, parsed from the hub
    content this page already imports (featured block + article cards) so
-   there is no second hand-maintained list to drift. */
+   there is no second hand-maintained list to drift.
+
+   Deduped by path: the featured post is also a card in the grid, so it
+   parses out twice, and the ItemList shipped with numberOfItems one higher
+   than the site had posts and one URL at two positions. The verifier's
+   schema-itemlist check now fails the build on either. */
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
 const description =
   "The Hit Your Mark Travel Journal — destination notes, shoulder-season guides, and considered opinions on how to travel exceptionally well.";
 const posts: { name: string; path: string }[] = [];
 {
+  const seen = new Set<string>();
+  const add = (name: string, path: string) => {
+    if (seen.has(path)) return;
+    seen.add(path);
+    posts.push({ name: plain(name), path });
+  };
   const feat = Content.match(
     /journal-featured__title">([\s\S]*?)<\/h2>[\s\S]*?href="(\/travel-journal\/[^"]+)" class="journal-featured__cta"/
   );
-  if (feat) posts.push({ name: plain(feat[1]), path: feat[2] });
+  if (feat) add(feat[1], feat[2]);
   for (const chunk of Content.split('<div class="article-card"').slice(1)) {
     const name = chunk.match(/article-card__title">([\s\S]*?)<\/h3>/)?.[1];
     const path = chunk.match(/href="(\/travel-journal\/[^"]+)" class="article-card__read"/)?.[1];
-    if (name && path) posts.push({ name: plain(name), path });
+    if (name && path) add(name, path);
   }
 }
 const schema = [
