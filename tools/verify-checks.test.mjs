@@ -821,6 +821,41 @@ t("web3forms: a missing honeypot is seen",
 t("web3forms: botcheck as a JS string is not the honeypot input",
   hasHoneypot(`<script>formData.append('botcheck', '')</script>`), false);
 
+/* ── og:image:alt interpolation guard ──
+   The og-image check's alt rules live inline in verify-deployment.mjs, but
+   the one that caught a real bug is a predicate worth pinning here: an alt
+   containing a stringified non-string. "Italy, [object Object]" shipped to
+   43 pages because DestinationLayout's `region` is {label, href}, and
+   "Africa, undefined" to the hubs that omit it. Both tags were present and
+   non-empty, so nothing else could see them. */
+const badInterpolation = (alt) => /\[object Object\]|\bundefined\b|\bNaN\b/.test(alt);
+
+t("og-alt: the shipped [object Object] bug is caught",
+  badInterpolation("Italy, [object Object]"), true);
+
+t("og-alt: the shipped undefined bug is caught",
+  badInterpolation("Africa, undefined"), true);
+
+t("og-alt: NaN is caught",
+  badInterpolation("Trip for NaN nights"), true);
+
+t("og-alt: a correct two-part alt passes",
+  badInterpolation("Italy, Europe"), false);
+
+t("og-alt: a single-word alt passes",
+  badInterpolation("Africa"), false);
+
+t("og-alt: the crest plate's own alt passes",
+  badInterpolation("Hit Your Mark Travel"), false);
+
+/* Guard the guard: the \b anchors mean ordinary copy merely containing the
+   letters must not fire. */
+t("og-alt: a longer word containing the substring is not flagged",
+  badInterpolation("Undefinedness as a theme"), false);
+
+t("og-alt: an escaped ampersand is not an interpolation fault",
+  badInterpolation("Safari &#38; Wildlife"), false);
+
 /* ── htaccess-headers ── */
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored

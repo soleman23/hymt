@@ -11,6 +11,12 @@ interface Props {
   description?: string;
   active?: string;
   ogImage?: string;
+  /** Alt text for og:image. Describes the IMAGE, not the page — the default
+   *  below describes the crest plate, so a page that falls back to it does
+   *  not end up claiming the plate is a photograph of a destination. The
+   *  section layouts pass a real description only when a hero crop is
+   *  actually used. CONTENT-STANDARDS § 4 requires this. */
+  ogImageAlt?: string;
   pageCss?: string;
   extraCss?: string;
   showNewsletter?: boolean;
@@ -30,6 +36,7 @@ const {
   description = "Hit Your Mark Travel designs bespoke journeys for the time-poor, taste-rich traveler. A lifetime of experience. A global network. And someone who actually picks up the phone.",
   active = "",
   ogImage = "/assets/og-default.jpg",
+  ogImageAlt = "Hit Your Mark Travel",
   pageCss = "",
   extraCss = "",
   showNewsletter = true,
@@ -70,10 +77,19 @@ const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Yo
 <meta property="og:description" content={description}>
 <meta property="og:url" content={`${site}${canonical}`}>
 <meta property="og:image" content={`${site}${ogImage}`}>
+{/* Every og:image on this site is 1200x630 — the default plate and all 70
+    hero crops. The literals are safe because og-image asserts each target's
+    real header dimensions against them, so a differently-shaped image fails
+    the build rather than shipping a lie a crawler would size a card from. */}
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={ogImageAlt}>
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content={fullTitle}>
 <meta name="twitter:description" content={description}>
 <meta name="twitter:image" content={`${site}${ogImage}`}>
+<meta name="twitter:image:alt" content={ogImageAlt}>
 
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/logo.png">

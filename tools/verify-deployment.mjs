@@ -217,6 +217,18 @@ if (!missingAssets.length) {
   }
 }
 
+/* img-ratio reads image headers from dist/. Memoised: the logo alone is
+   referenced 290 times, and every asset the site references is read once. */
+const imageDimsCache = new Map();
+const dimsOf = (src) => {
+  if (!imageDimsCache.has(src)) {
+    let dims = null;
+    try { dims = imageDims(readFileSync(path.join(DIST, src))); } catch { /* missing-asset reports it */ }
+    imageDimsCache.set(src, dims);
+  }
+  return imageDimsCache.get(src);
+};
+
 /* ── 3b. og:image resolves to a file that exists ──
    Every page pointed og:image at /assets/og-default.jpg while the file did
    not exist (F12) — social shares 404'd for months. The og:image URL is
@@ -227,7 +239,41 @@ for (const file of htmlFiles) {
   const og = (html.match(/<meta property="og:image" content="([^"]*)"/i)?.[1] ?? "").trim();
   if (!og) { fail("og-image", `${urlOf(file)} has no og:image`); continue; }
   const clean = (og.startsWith("http") ? new URL(og).pathname : og).split(/[?#]/)[0];
-  if (!(await exists(path.join(DIST, clean)))) ogMissing.add(clean);
+  if (!(await exists(path.join(DIST, clean)))) { ogMissing.add(clean); continue; }
+
+  /* og:image:alt — CONTENT-STANDARDS § 4. It must describe the IMAGE, so the
+     one thing worth failing on beyond absence is a page that inherits the
+     crest plate's alt while shipping a photograph, or the reverse: an alt
+     that names a place while the image is the plate. Both are checked by
+     pairing alt against which file is actually referenced. */
+  const alt = (html.match(/<meta property="og:image:alt" content="([^"]*)"/i)?.[1] ?? "").trim();
+  const url = urlOf(file);
+  if (!alt) {
+    fail("og-image", `${url} has no og:image:alt — CONTENT-STANDARDS § 4 requires one describing the image`);
+  } else if (/\[object Object\]|\bundefined\b|\bNaN\b/.test(alt)) {
+    /* A template interpolating a prop of the wrong shape. This exact bug
+       shipped "Italy, [object Object]" to 43 pages, because DestinationLayout's
+       `region` is {label, href} and not a string. Nothing would have caught
+       it: the tag was present and non-empty. */
+    fail("og-image", `${url} og:image:alt is "${alt}" — a value was interpolated that is not a string`);
+  } else if (clean.endsWith("/og-default.jpg") && alt !== "Hit Your Mark Travel") {
+    fail("og-image", `${url} ships the crest plate but its og:image:alt says "${alt}" — the alt describes the image, and the plate is not a photograph of that`);
+  } else if (!clean.endsWith("/og-default.jpg") && alt === "Hit Your Mark Travel") {
+    fail("og-image", `${url} ships a photograph (${clean}) but kept the crest plate's alt — pass ogImageAlt describing the picture`);
+  }
+
+  /* The width/height literals in Base.astro are only safe while every
+     og:image really is that size. Read the file's own header and compare. */
+  const declaredW = Number(html.match(/<meta property="og:image:width" content="(\d+)"/i)?.[1]);
+  const declaredH = Number(html.match(/<meta property="og:image:height" content="(\d+)"/i)?.[1]);
+  if (!declaredW || !declaredH) {
+    fail("og-image", `${url} declares og:image without og:image:width/height`);
+  } else {
+    const real = dimsOf(clean);
+    if (real && (real.w !== declaredW || real.h !== declaredH)) {
+      fail("og-image", `${url} declares og:image ${declaredW}×${declaredH} but ${clean} is ${real.w}×${real.h}`);
+    }
+  }
 }
 for (const p of ogMissing) {
   fail("og-image", `og:image target ${p} is not in dist/`);
@@ -567,18 +613,6 @@ const EAGER_IMAGE_BUDGET = 1.5 * 1024 * 1024;
 const EAGER_IMAGE_DEBT = {};
 let eagerPeak = 0;
 const eagerDebtSeen = new Set();
-
-/* img-ratio reads image headers from dist/. Memoised: the logo alone is
-   referenced 290 times, and every asset the site references is read once. */
-const imageDimsCache = new Map();
-const dimsOf = (src) => {
-  if (!imageDimsCache.has(src)) {
-    let dims = null;
-    try { dims = imageDims(readFileSync(path.join(DIST, src))); } catch { /* missing-asset reports it */ }
-    imageDimsCache.set(src, dims);
-  }
-  return imageDimsCache.get(src);
-};
 
 const deadLinks = new Set();
 for (const file of htmlFiles) {

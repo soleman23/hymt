@@ -25,7 +25,7 @@ import { breadcrumbs, destination, extractFaq, faq, plain, webPage } from "../li
 // and .seasons-grid from it, and later source order is what makes that work.
 import "../styles/section-shared.css";
 import "../styles/destination.css";
-
+
 import { OG_CROPS } from "../lib/og-crops";
 export interface HeroStat {
   label: string;
@@ -93,12 +93,19 @@ const schema = [
    tools/make-og-crops.mjs. An explicit ogImage prop still wins, and a
    hero with no crop falls through to Base.astro's default. */
 const ogCrop = ogImage ?? (hero?.image ? OG_CROPS[hero.image] : undefined);
+/* Alt only when a CROP is used: it describes the photograph. A page
+   falling back to the crest plate keeps Base.astro default, which
+   describes the plate. */
+const ogCropAlt = (hero?.image && OG_CROPS[hero.image])
+  ? (region?.label ? plain(`${name}, ${region.label}`) : plain(name))
+  : undefined;
 
 ---
 <Base
   title={title}
   description={description}
   ogImage={ogCrop}
+  ogImageAlt={ogCropAlt}
   canonicalPath={canonicalPath}
   schemaType={schemaType}
   schema={schema}
