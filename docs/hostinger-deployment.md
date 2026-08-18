@@ -61,6 +61,45 @@ curl -s -D - -o /dev/null <url>/assets/img/<file>.jpg | grep -i "x-hcdn-cache-st
 
 `HIT` after a purge-and-reupload means the purge did not take.
 
+**A purge is only needed when the bytes behind an EXISTING url changed.**
+Adding new files, or renaming, cannot go stale — a url the edge never
+cached is fetched from origin. Confirm before assuming: diff
+`images-b64/MANIFEST.json` against the last deployed commit and look for a
+`target` whose `bytes` changed. On 2026-08-18's deploy that was 73 added, 2
+removed and **0 changed in place**, so no purge was required, and the new
+crops came back `x-hcdn-cache-status: MISS` at byte-exact size.
+
+### 1c. Prune files the build no longer ships
+
+**An upload never removes anything.** A renamed or deleted asset stays on
+the server, answering 200, referenced by nothing — and it will be carried to
+production at cutover unless it is pruned.
+
+`deploy-to-hostinger.ps1` has a `$StaleFiles` list for this. Entries are
+web-root-relative with forward slashes, and are safe to leave in place
+permanently: a file already gone reports "not on server (fine)", and the
+loop refuses to delete anything that exists in `dist/`, so a wrong entry
+cannot remove a file the build actually ships.
+
+Currently listed:
+
+```
+sitemap.xml                             (replaced by sitemap-index.xml)
+assets/willamette-vineyard.jpg          (renamed in 4610eaf)
+assets/img/jc-willamette-vineyard.jpg   (renamed in 4610eaf)
+```
+
+**That list lives only in the working copy.** The four `*.ps1` deploy scripts
+are gitignored on purpose — they embed the FTP host and username and this
+repository is public (see `.gitignore`). So the script cannot carry this
+knowledge between machines; this section is the tracked copy. **If the deploy
+script is ever recreated, restore the entries above**, and add any future
+rename here at the same time as the rename.
+
+Find orphans by listing the server and diffing against `dist/`, or from a
+rename's own commit: anything in `images-b64/MANIFEST.json` at the previous
+deployed commit whose `target` is absent now is a candidate.
+
 ### 2. Point the domain
 - If `hymtravel.com` is registered **at Hostinger**: hPanel → Domains → assign to this hosting plan. Done.
 - If registered elsewhere (e.g. GoDaddy/Namecheap): either change nameservers to Hostinger's (shown in hPanel → Domains → DNS) — simplest — or create an **A record** pointing `@` and `www` to your hosting IP (hPanel → Hosting Details).
