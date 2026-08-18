@@ -82,7 +82,10 @@ the two that were written down both rotted within a session.
 **Staging is CURRENT and verified**, including the CDN purge. Re-verified after
 it: 60 of 60 sampled images byte-match local, journal index at 32 cards and 12
 filters, `llms.txt` 200, CSP report-only present, staging `noindex` intact.
-The user runs the deploy:
+Re-verified again after the inline-handler deploy: 12 of 12 sampled images still
+byte-match, `onclick=` is 0 site-wide, `X-Robots-Tag` is the full
+`noindex, nofollow, noarchive, nosnippet`, `/sitemap-index.xml` 200 and
+`/sitemap.xml` 404. The user runs the deploy:
 
 ```
 powershell -ExecutionPolicy Bypass -File "C:\Users\reach\OneDrive\Pictures\Desktop\hymt-site\deploy-to-hostinger.ps1"
@@ -178,6 +181,25 @@ max-age=31556952`.
 mode fetches three pages plus stylesheets and emits `ok` lines against any host
 returning HTML. Runbook § 4.3 now opens with a title-based discriminator; use it
 before believing anything else in that section.
+
+**And the same blind spot applies to staging, which is easier to trip over.**
+`npm run verify:remote` ran clean against staging while staging was serving a
+build from *before* the push — because 8 of its 10 `ok` lines are local checks
+against `dist/`, and the remote work (`tools/verify-deployment.mjs:751`) is
+three pages, a HEAD on their stylesheets, and the `X-Robots-Tag` read. It
+answers "is a site there and locked down", never "is it *this* build".
+Discriminate on something the deploy actually changed. For the current HEAD:
+
+```bash
+curl -s https://brown-goose-754147.hostingersite.com/plan-your-trip/ \
+  | grep -o 'data-goto=' | wc -l   # 6 on this build, 0 before it
+```
+
+Distinguishing "not deployed" from "deployed but cached" is a separate step, and
+cheap: read `x-hcdn-cache-status` on a GET. HTML is served `max-age=0,
+must-revalidate` and comes back `DYNAMIC`, i.e. never edge-cached — so stale
+HTML means the upload did not happen, not that the CDN is holding it. The purge
+only ever matters for `/assets/` and `/_astro/`.
 
 Per CLAUDE.md this changes **nothing** about the launch plan: no redirect maps,
 no Change-of-Address, no legacy-path assumptions. It is recorded here only
@@ -335,15 +357,23 @@ under a deliberately *enforcing* local copy. Its only remaining checkbox is
   header before enforcing, because getting it wrong strips the schema off
   every page on the site.
 
-**The gap that only production can close:** `src/components/Analytics.astro:31`
-hard-gates on `location.hostname !== 'www.hymtravel.com'`, so `gtag.js` has
-**never loaded** under this policy — not locally, not on staging. The
-`googletagmanager` and `google-analytics` entries are reasoned from code, never
-observed. A `script-src` mistake there fails *silently*: blocked analytics
-breaks measurement, not the page.
+**Which third-party origins are observed, and which are still only reasoned.**
+The distinction matters because a `script-src` or `connect-src` mistake under an
+enforcing policy fails *silently*.
+
+- `api.web3forms.com` in `connect-src`, and `form-action` — **observed.** A real
+  Plan Your Trip inquiry was submitted through the staging UI on 2026-08-18 under
+  the report-only header. It reached the branded success state, which is gated on
+  `response.ok && data.success`, and raised zero CSP violations in the console.
+  These two entries can be trusted.
+- `googletagmanager` and `google-analytics` — **still reasoned from code, never
+  observed.** `src/components/Analytics.astro:31` hard-gates on
+  `location.hostname !== 'www.hymtravel.com'`, so `gtag.js` has never loaded
+  under this policy: not locally, not on staging, and it cannot until cutover.
 
 Order: cutover → browse production with report-only still on → check
-specifically for Google-origin violations → only then enforce.
+specifically for Google-origin violations → only then enforce. That check is now
+the *only* origin work left before #100 can flip.
 
 ---
 
@@ -387,8 +417,11 @@ apex and www.
 ## Definition of done for this handoff
 
 - [x] Staging current and verified, CDN purged, 60/60 images byte-matching
-- [ ] #74's dashboard settings are on, and runbook § 2.3's E2E gate ran
-      **before** the domain restriction
+- [ ] #74's dashboard settings are on. Runbook § 2.3's E2E gate has **already
+      run** — a real inquiry was submitted and accepted on 2026-08-18, while no
+      domain restriction was in place, which is the correct order. Enabling the
+      restriction now invalidates nothing; confirm the mail arrived (check spam,
+      it is the first delivery from this sender) before turning it on
 - [ ] #96 complete: Domain property on `hymtravel.com`, Bing imported, staging
       submitted nowhere
 - [ ] #99's record snapshot exists, MX included, TTL lowered
