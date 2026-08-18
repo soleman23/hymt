@@ -19,7 +19,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers, linklessCards,
+  undefinedInlineHandlers, linklessCards, inlineHandlers,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -308,6 +308,23 @@ const DEAD_HANDLER_DEBT = {
 };
 const deadHandlerSeen = new Map();
 
+/* inline-handler (#100): the CSP blocker itself, not a style preference.
+   Dropping 'unsafe-inline' from script-src is the whole of #100, and every
+   inline handler attribute anywhere on the site is a reason it cannot be
+   dropped. 46 shipped — 35 card divs navigating via window.location.href,
+   plus the multi-step form's own controls — and not one of them could be seen
+   by dead-inline-handler above, because every one of them worked.
+
+   INLINE_HANDLER_DEBT is a ratchet on the same terms as the two above: a
+   listed name may only ever appear FEWER times, an unlisted one fails
+   outright, and an entry that reaches zero fails until it is deleted.
+
+   Empty, and it should stay empty. Nothing here needs one: a control that
+   navigates is a link, and a control that runs script is wired in the script
+   that already defines what it calls. */
+const INLINE_HANDLER_DEBT = {};
+const inlineHandlerSeen = new Map();
+
 /* hero-stat-rail: runbook § 2.5 gates on this, and until #94 it was a gate at
    0% that nothing could detect. The rail renders only the stats a page supplies
    and is hidden below 900px, so a page missing one looks fine in review and
@@ -408,6 +425,16 @@ for (const file of htmlFiles) {
     deadHandlerSeen.set(name, (deadHandlerSeen.get(name) ?? 0) + count);
     if (allowed === undefined) {
       fail("dead-inline-handler", `${url} calls ${name}() from an inline handler ${count}\u00d7, and nothing defines it`);
+    }
+  }
+
+  /* inline-handler (#100) — see INLINE_HANDLER_DEBT above. */
+  for (const { name, count } of inlineHandlers(html)) {
+    inlineHandlerSeen.set(name, (inlineHandlerSeen.get(name) ?? 0) + count);
+    if (INLINE_HANDLER_DEBT[name] === undefined) {
+      fail("inline-handler",
+        `${url} carries ${count} inline ${name}= handler${count === 1 ? "" : "s"}, ` +
+          `which script-src 'unsafe-inline' has to permit (#100)`);
     }
   }
 
@@ -685,6 +712,22 @@ for (const [name, allowed] of Object.entries(DEAD_HANDLER_DEBT)) {
   } else if (seen < allowed) {
     fail("dead-inline-handler",
       `${name}() is down to ${seen}× from ${allowed} — lower its DEAD_HANDLER_DEBT entry to ${seen} so it cannot creep back.`);
+  }
+}
+
+/* The inline-handler ratchet (#100), on the same contract as the one above. */
+for (const [name, allowed] of Object.entries(INLINE_HANDLER_DEBT)) {
+  const seen = inlineHandlerSeen.get(name) ?? 0;
+  if (seen === 0) {
+    fail("inline-handler",
+      `INLINE_HANDLER_DEBT lists ${name}, which no page carries any more — delete the entry.`);
+  } else if (seen > allowed) {
+    fail("inline-handler",
+      `${name}= appears ${seen}× but INLINE_HANDLER_DEBT allows ${allowed}. ` +
+        `Recorded debt may only shrink — wire it in the page's script instead.`);
+  } else if (seen < allowed) {
+    fail("inline-handler",
+      `${name}= is down to ${seen}× from ${allowed} — lower its INLINE_HANDLER_DEBT entry to ${seen} so it cannot creep back.`);
   }
 }
 notes.push("page-quality gates checked (P1-6)");

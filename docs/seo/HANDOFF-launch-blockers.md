@@ -33,9 +33,10 @@ WHAT IS ACTUALLY LEFT, and who can do it:
   AGENT-DOABLE NOW
     - nothing is blocking. The pre-launch polish milestone is down to items
       that need Mark, a dashboard login, or DNS.
-    - optional: #100 groundwork (see § CSP below) — you can remove inline
-      handlers to shrink the 'unsafe-inline' blocker without touching the
-      header. 46 remain, 35 of them one mechanical pattern.
+    - the #100 inline-handler groundwork is DONE — all 46 are gone and an
+      `inline-handler` verifier check now holds the site at zero. What is
+      left of #100 is the inline <script> blocks, which is not a mechanical
+      job. See § CSP.
 
   HUMAN-ONLY (do not attempt; surface and stop)
     - #74  Web3Forms dashboard: domain restriction, CAPTCHA, rate limits
@@ -74,8 +75,9 @@ correct only because they were explicitly authorised.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. `HEAD = 71e7aa1` on `main`, tracking
-`origin/main`.
+**Repo:** clean, all work pushed. `HEAD` on `main`, tracking `origin/main`.
+Re-derive it — `git log --oneline -1` — rather than trusting a literal here;
+the two that were written down both rotted within a session.
 
 **Staging is CURRENT and verified**, including the CDN purge. Re-verified after
 it: 60 of 60 sampled images byte-match local, journal index at 32 cards and 12
@@ -92,8 +94,9 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\reach\OneDrive\Pictures\Deskt
 | Destination pages | 43, all with Best Season **and** Best For |
 | Experience pages | 12 |
 | Journal posts | 32 |
-| Check fixtures | 96 |
+| Check fixtures | 110 |
 | Open issues | 41 |
+| Inline event handlers | 0, enforced by `inline-handler` |
 
 ### What this session closed
 
@@ -108,6 +111,47 @@ Four verifier checks were added, each with fixtures that go red: `llms-txt`,
 `linkless-card`. Three of the four caught a bug in **themselves** on their
 first run against real output — which is the argument for the fixture rule,
 not a coincidence.
+
+### Closed after that handoff — the #100 inline-handler groundwork
+
+All **46** inline handlers are gone, and the site now builds at zero.
+
+- **35 card divs** on `/travel-journal/` and `/destinations/` that navigated
+  via `onclick="window.location.href='...'"`. The 32 journal cards already
+  contained a real `<a class="article-card__read">` to the same URL, so the
+  attribute came off and a stretched-link rule in the hub's own `pageCss`
+  (`::before`, because `::after` already carries the arrow glyph) restores the
+  whole-card click target with no JS. The 3 `compare-card__cta` "Ask Mark"
+  controls on the destinations hub were `<button>`s that navigated; they are
+  `<a href="/plan-your-trip/">` now.
+- **11 on `/plan-your-trip/`** — `goTo` ×6, `adj` ×4, `submitForm` ×1. These
+  call real functions, so they moved to `data-goto` / `data-adj` /
+  `data-adj-by` attributes wired by an IIFE at the foot of the script that
+  already defines them.
+
+**This was not only a CSP change.** A `<div onclick>` is not focusable, not
+announced as a link, and not followable by a crawler — so 32 journal cards and
+3 CTAs to `/plan-your-trip/` were mouse-only and invisible to Google. They are
+real links now.
+
+A fifth verifier check, `inline-handler`, holds it there, with an
+`INLINE_HANDLER_DEBT` ratchet on the same contract as the other two: an
+unlisted name fails outright, a listed one may only ever shrink, and an entry
+that reaches zero fails until it is deleted. Both ratchet branches and the
+per-page failure were driven red on purpose before being trusted. It caught a
+bug in itself on its first run against real output, like three of the four
+before it: the journal hub's `pageCss` is inlined into a `<style>` and its
+comment *describes* the handlers that were removed, so a naive scan reported
+the fix as the defect on the one page the fix was largest. `<script>`,
+`<style>` and comment bodies are stripped before scanning.
+
+Verified in a browser, not just in the build: whole-card click navigates from
+anywhere on the card, the #105 filters/Load More/count still read
+`Showing 12 of 32` → `24 of 32` → `3 articles in Season`, the four-step form
+still steps and its steppers still clamp at 1 adult / 0 children, and the
+submit button still validates (tested with `fetch` stubbed, so no inquiry was
+sent). Journal *post* pages were confirmed unaffected — their related cards are
+`<a class="article-card">` on `journal.css`, and the hub rules did not leak.
 
 ---
 
@@ -270,14 +314,26 @@ is live on staging, and was browsed across five templates with zero violations
 under a deliberately *enforcing* local copy. Its only remaining checkbox is
 #100's job.
 
-**#100's blocker is measured, not guessed:**
+**#100's blocker is measured, not guessed. It has also moved:**
 
-- 46 inline handlers remain site-wide (was 141; #104 and #105 removed 95).
-  **35 are one mechanical pattern** — `onclick="window.location.href='...'"` on
-  cards — which is the cheapest remaining win and is agent-doable today.
-- The rest: `goTo` ×6, `adj` ×4, `submitForm` ×1, all defined.
-- Every page also carries inline `<script>`, so `'unsafe-inline'` needs nonces
-  or externalising regardless.
+- **Inline handlers: 0.** Was 141, then 46; all 46 are now gone and the
+  `inline-handler` check fails the build if one returns. See the section above.
+  Nothing is left to do here.
+- **Inline `<script>`: 425 blocks across all 98 pages, 3 to 5 per page, and
+  zero external `<script src>` anywhere on the site.** This is now the whole of
+  the `'unsafe-inline'` blocker, and it is not a mechanical job — it needs
+  nonces or externalising, and externalising costs the site its
+  no-external-JS posture. Derive it again before acting on it:
+
+  ```bash
+  grep -rho '<script[^>]*>' dist --include='*.html' | grep -vc 'ld+json'
+  ```
+
+- Also present: 305 `application/ld+json` data blocks. Browsers do not apply
+  `script-src` to a non-executable data block, so these should not need a
+  nonce — but that is reasoned, not observed. Confirm it under the report-only
+  header before enforcing, because getting it wrong strips the schema off
+  every page on the site.
 
 **The gap that only production can close:** `src/components/Analytics.astro:31`
 hard-gates on `location.hostname !== 'www.hymtravel.com'`, so `gtag.js` has

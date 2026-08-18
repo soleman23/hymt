@@ -196,6 +196,16 @@
 }
 .journal-about__cat-item { font:inherit;text-align:left;width:100% }
 
+/* ── WHOLE-CARD CLICK (#100) ──
+   Every card was a div carrying an inline onclick that set
+   window.location.href — something a CSP has to permit with 'unsafe-inline',
+   and something no keyboard user and no crawler could follow. The card's own
+   Read more anchor now stretches over the card instead: the same click
+   target, a real link, and no JS. ::before, because ::after on that anchor
+   already carries the arrow glyph. */
+.article-card { position:relative }
+.article-card__read::before { content:'';position:absolute;inset:0 }
+
 @media(max-width:900px){
   .journal-featured__grid { grid-template-columns:1fr }
   .journal-grid { grid-template-columns:1fr }
@@ -244,7 +254,7 @@
 <section class="journal-section">
   <div class="journal-grid" id="articleGrid">
 
-    <div class="article-card" data-category="experience-report" onclick="window.location.href='/travel-journal/heli-ski-field-report/'">
+    <div class="article-card" data-category="experience-report">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-07-bc-powder-ridgeline.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -259,7 +269,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="adventure" onclick="window.location.href='/travel-journal/aspen-book-early/'">
+    <div class="article-card" data-category="adventure">
       <div class="article-card__image">
         <div class="article-card__image-inner" style="background:#1a2030">
           <span>Article Photography · Aspen</span>
@@ -276,7 +286,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="experience-report" onclick="window.location.href='/travel-journal/masters-field-report/'">
+    <div class="article-card" data-category="experience-report">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-11-augusta-azalea-hole.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -291,7 +301,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="experience-report" onclick="window.location.href='/travel-journal/kentucky-derby-field-report/'">
+    <div class="article-card" data-category="experience-report">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-10-racetrack-home-stretch.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -306,7 +316,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="opinion" onclick="window.location.href='/travel-journal/five-star-problem/'">
+    <div class="article-card" data-category="opinion">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-05-grand-hotel-facade-dusk.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -321,7 +331,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="opinion" onclick="window.location.href='/travel-journal/european-grand-tour-mistake/'">
+    <div class="article-card" data-category="opinion">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-04-european-station-concourse.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -336,7 +346,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="opinion" onclick="window.location.href='/travel-journal/in-defense-of-slow-travel/'">
+    <div class="article-card" data-category="opinion">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-09-hill-village-lane.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -351,7 +361,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="experience-report" onclick="window.location.href='/travel-journal/singita-grumeti-field-report/'">
+    <div class="article-card" data-category="experience-report">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-15-grumeti-river-corridor.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -366,7 +376,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="experience-report" onclick="window.location.href='/travel-journal/amanjiwo-field-report/'">
+    <div class="article-card" data-category="experience-report">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-02-borobudur-dawn-stupas.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -381,7 +391,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="experience-report" onclick="window.location.href='/travel-journal/glacier-express-field-report/'">
+    <div class="article-card" data-category="experience-report">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-06-landwasser-viaduct.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -396,7 +406,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="insider-tips" onclick="window.location.href='/travel-journal/private-guide-advantage/'">
+    <div class="article-card" data-category="insider-tips">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-13-medina-alley-light.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -411,7 +421,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="season" onclick="window.location.href='/travel-journal/the-case-for-shoulder-season/'">
+    <div class="article-card" data-category="season">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-16-empty-piazza-shoulder.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -426,7 +436,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="season" onclick="window.location.href='/travel-journal/mediterranean-october/'">
+    <div class="article-card" data-category="season">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-12-mediterranean-october-coast.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -441,7 +451,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="asia" onclick="window.location.href='/travel-journal/kyoto-april-vs-november/'">
+    <div class="article-card" data-category="asia">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-dh-10-japan-kyoto-dawn.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -456,7 +466,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="season" onclick="window.location.href='/travel-journal/african-safari-calendar/'">
+    <div class="article-card" data-category="season">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-01-serengeti-season-plains.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -471,7 +481,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="insider-tips" onclick="window.location.href='/travel-journal/how-hotel-upgrades-work/'">
+    <div class="article-card" data-category="insider-tips">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-08-suite-interior-golden-hour.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -486,7 +496,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="insider-tips" onclick="window.location.href='/travel-journal/what-hotel-descriptions-actually-mean/'">
+    <div class="article-card" data-category="insider-tips">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-18-balcony-partial-sea-view.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -501,7 +511,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="beach" onclick="window.location.href='/travel-journal/maldives-overwater-vs-beach-villa/'">
+    <div class="article-card" data-category="beach">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-h-01-maldives-aerial.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -516,7 +526,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="africa" onclick="window.location.href='/travel-journal/botswana-shoulder-season/'">
+    <div class="article-card" data-category="africa">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-03-moremi-delta-channel.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -533,7 +543,7 @@
 
 
 
-    <div class="article-card" data-category="planning" onclick="window.location.href='/travel-journal/safari-planning-12-questions/'">
+    <div class="article-card" data-category="planning">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-14-east-africa-plains-dawn.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -553,7 +563,7 @@
 
 
 
-    <div class="article-card" data-category="planning" onclick="window.location.href='/travel-journal/what-a-travel-advisor-actually-does/'">
+    <div class="article-card" data-category="planning">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-jh-17-planning-desk-window.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -568,7 +578,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/europe-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-europe-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -583,7 +593,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/polar-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-polar-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -598,7 +608,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/south-america-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-south-america-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -613,7 +623,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/middle-east-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-middle-east-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -628,7 +638,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/south-pacific-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-south-pacific-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -643,7 +653,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/asia-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-asia-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -658,7 +668,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/africa-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-africa-safari.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -673,7 +683,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/north-america-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-north-america-landscape.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -688,7 +698,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="destination-guide" onclick="window.location.href='/travel-journal/caribbean-mexico-destination-guide/'">
+    <div class="article-card" data-category="destination-guide">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-caribbean-beach.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -703,7 +713,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="food-wine" onclick="window.location.href='/travel-journal/napa-sonoma-winery-route/'">
+    <div class="article-card" data-category="food-wine">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-napa-vineyard-dining.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>
@@ -718,7 +728,7 @@
       </div>
     </div>
 
-    <div class="article-card" data-category="food-wine" onclick="window.location.href='/travel-journal/willamette-valley-winery-route/'">
+    <div class="article-card" data-category="food-wine">
       <div class="article-card__image">
         <img class="article-card__img" src="/assets/img/jc-willamette-vineyard.jpg" alt="" aria-hidden="true" width="780" height="410" loading="lazy" decoding="async">
       </div>

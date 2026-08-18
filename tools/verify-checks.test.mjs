@@ -21,7 +21,7 @@
  *
  * The predicates are imported from ./content-checks.mjs, the same module
  * verify-deployment.mjs imports, so there is no copy here to drift. The last
- * three tests additionally run them against real dist/ output, so a fixture
+ * five tests additionally run them against real dist/ output, so a fixture
  * that stops resembling the site fails too.
  *
  * Runs as part of `npm run build`, before the verifier itself.
@@ -47,7 +47,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers, linklessCards,
+  undefinedInlineHandlers, linklessCards, inlineHandlers,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -378,7 +378,9 @@ t("handlers: const arrow form also counts as defined",
   undefinedInlineHandlers(
     "<script>const copyLink = () => {}</script>" + SHARE_BTN).length, 0);
 
-/* 35 of these ship today. Flagging them would bury the real finding. */
+/* Not this check's business either way — a member expression resolves at
+   runtime. The 35 pages that shipped this exact shape are gone (#100); it is
+   `inlineHandlers` below that catches the attribute itself. */
 t("handlers: a member expression is not a bare call",
   undefinedInlineHandlers(
     `<div onclick="window.location.href='/plan-your-trip/'">x</div>`).length, 0);
@@ -456,6 +458,59 @@ t("cards: an anchor card with no href is still caught",
 t("cards: a page with no article cards at all is clean",
   linklessCards("<main><p>no cards here</p></main>").length, 0);
 
+/* ── inline handlers (#100) ──
+   The 46 that shipped were all live and working, so `undefinedInlineHandlers`
+   above — which only asks whether the named function exists — could not see a
+   single one. This asks the other question: the attribute itself is what
+   `script-src 'unsafe-inline'` has to permit, and #100 cannot drop that while
+   any page carries one. */
+
+t("inline: the shipped card pattern is caught",
+  inlineHandlers(`<div class="article-card" onclick="window.location.href='/travel-journal/x/'">c</div>`)[0].name,
+  "onclick");
+
+t("inline: every occurrence on the page is counted, not just the first",
+  inlineHandlers(`<button onclick="goTo(2)">a</button><button onclick="goTo(3)">b</button>`)[0].count, 2);
+
+/* The whole point of the distinction: a handler calling a function that DOES
+   exist is exactly as much of a CSP blocker as one calling a phantom. */
+t("inline: a handler that resolves is still a handler",
+  inlineHandlers(`<script>function goTo(){}</script><button onclick="goTo(2)">a</button>`).length, 1);
+
+t("inline: names other than onclick are caught too",
+  inlineHandlers(`<input onchange="x()"><body onload="y()">`).map((h) => h.name).sort().join(","),
+  "onchange,onload");
+
+t("inline: a single-quoted attribute counts",
+  inlineHandlers(`<button onclick='goTo(2)'>a</button>`).length, 1);
+
+t("inline: an unquoted attribute counts",
+  inlineHandlers(`<button onclick=goTo(2)>a</button>`).length, 1);
+
+/* This one caught a bug in itself on its first run against real output. The
+   journal hub's pageCss is inlined into a <style> element, and its comment
+   describes the handlers that were removed — so scanning the raw page reported
+   the fix as the defect, on the one page the fix was largest. */
+t("inline: a <style> body describing a handler is not a handler",
+  inlineHandlers(`<style>/* was onclick="nav()" */ .a{color:red}</style>`).length, 0);
+
+t("inline: a <script> body is not markup",
+  inlineHandlers(`<script>var s = " onclick=x()";</script>`).length, 0);
+
+t("inline: an HTML comment is not markup either",
+  inlineHandlers(`<!-- <button onclick="x()">the old control</button> -->`).length, 0);
+
+t("inline: the data-attribute replacement is clean",
+  inlineHandlers(`<button type="button" class="btn-next" data-goto="2">Continue</button>`).length, 0);
+
+t("inline: the stretched-link card that replaced the 35 is clean",
+  inlineHandlers(
+    `<div class="article-card" data-category="x">` +
+    `<a href="/travel-journal/x/" class="article-card__read">Read more</a></div>`).length, 0);
+
+t("inline: a page with no handlers at all reports nothing",
+  inlineHandlers(`<main><a href="/plan-your-trip/">Ask Mark</a></main>`).length, 0);
+
 /* ── the real build, so these predicates cannot drift from the site ── */
 
 const dist = path.join(ROOT, "dist");
@@ -471,6 +526,15 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   const masters = await readFile(path.join(dist, "travel-journal", "masters-field-report", "index.html"), "utf8");
   t("real masters post clears the destination-link floor",
     linkFloor(masters, "journal") >= 2, true);
+
+  /* The two pages that carried 43 of the 46 removed handlers. */
+  const journal = await readFile(path.join(dist, "travel-journal", "index.html"), "utf8");
+  t("real /travel-journal/ carries no inline handlers",
+    inlineHandlers(journal).length, 0);
+
+  const plan = await readFile(path.join(dist, "plan-your-trip", "index.html"), "utf8");
+  t("real /plan-your-trip/ carries no inline handlers",
+    inlineHandlers(plan).length, 0);
 } else {
   console.log("  (dist/ absent — skipped the 3 real-output tests; run `npm run build` first)");
 }

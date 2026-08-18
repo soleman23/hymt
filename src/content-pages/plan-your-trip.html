@@ -162,7 +162,7 @@
         <div class="form-nav">
           <button type="button" class="btn-back" disabled>Back</button>
           <span class="step-count">1 / 4</span>
-          <button type="button" class="btn-next" onclick="goTo(2)">Continue →</button>
+          <button type="button" class="btn-next" data-goto="2">Continue →</button>
         </div>
       </div>
 
@@ -204,17 +204,17 @@
           <div class="stepper-group">
             <label>Adults (18+)</label>
             <div class="stepper">
-              <button type="button" class="stepper-btn" onclick="adj('adults',-1)">−</button>
+              <button type="button" class="stepper-btn" data-adj="adults" data-adj-by="-1">−</button>
               <input class="stepper-val" id="adults" value="2" readonly>
-              <button type="button" class="stepper-btn" onclick="adj('adults',1)">+</button>
+              <button type="button" class="stepper-btn" data-adj="adults" data-adj-by="1">+</button>
             </div>
           </div>
           <div class="stepper-group">
             <label>Children</label>
             <div class="stepper">
-              <button type="button" class="stepper-btn" onclick="adj('children',-1)">−</button>
+              <button type="button" class="stepper-btn" data-adj="children" data-adj-by="-1">−</button>
               <input class="stepper-val" id="children" value="0" readonly>
-              <button type="button" class="stepper-btn" onclick="adj('children',1)">+</button>
+              <button type="button" class="stepper-btn" data-adj="children" data-adj-by="1">+</button>
             </div>
           </div>
         </div>
@@ -230,9 +230,9 @@
           </div>
         </div>
         <div class="form-nav">
-          <button type="button" class="btn-back" onclick="goTo(1)">← Back</button>
+          <button type="button" class="btn-back" data-goto="1">← Back</button>
           <span class="step-count">2 / 4</span>
-          <button type="button" class="btn-next" onclick="goTo(3)">Continue →</button>
+          <button type="button" class="btn-next" data-goto="3">Continue →</button>
         </div>
       </div>
 
@@ -269,9 +269,9 @@
           </div>
         </div>
         <div class="form-nav">
-          <button type="button" class="btn-back" onclick="goTo(2)">← Back</button>
+          <button type="button" class="btn-back" data-goto="2">← Back</button>
           <span class="step-count">3 / 4</span>
-          <button type="button" class="btn-next" onclick="goTo(4)">Continue →</button>
+          <button type="button" class="btn-next" data-goto="4">Continue →</button>
         </div>
       </div>
 
@@ -319,9 +319,9 @@
           </label>
         </div>
         <div class="form-nav">
-          <button type="button" class="btn-back" onclick="goTo(3)">← Back</button>
+          <button type="button" class="btn-back" data-goto="3">← Back</button>
           <span class="step-count">4 / 4</span>
-          <button type="button" class="btn-next" id="planSubmitBtn" onclick="submitForm()" style="background:var(--gold-500)">Submit My Inquiry →</button>
+          <button type="button" class="btn-next" id="planSubmitBtn" style="background:var(--gold-500)">Submit My Inquiry →</button>
         </div>
         <p id="planError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:16px;text-align:right"></p>
       </div>
@@ -506,4 +506,26 @@ async function submitForm() {
     submitBtn.disabled = false;
   }
 }
+
+/* #100 groundwork: the step, stepper and submit controls were inline onclick
+   attributes, which a CSP has to permit with 'unsafe-inline'. Behaviour is
+   unchanged — they carry data attributes now and the wiring lives here, in
+   the script that already defines what they call. */
+(function () {
+  var wire = function (sel, fn) {
+    Array.prototype.slice.call(document.querySelectorAll(sel)).forEach(fn);
+  };
+  wire('[data-goto]', function (btn) {
+    btn.addEventListener('click', function () {
+      goTo(parseInt(btn.getAttribute('data-goto'), 10));
+    });
+  });
+  wire('[data-adj]', function (btn) {
+    btn.addEventListener('click', function () {
+      adj(btn.getAttribute('data-adj'), parseInt(btn.getAttribute('data-adj-by'), 10));
+    });
+  });
+  var submitBtn = document.getElementById('planSubmitBtn');
+  if (submitBtn) submitBtn.addEventListener('click', submitForm);
+})();
 </script>
