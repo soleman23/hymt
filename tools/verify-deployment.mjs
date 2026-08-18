@@ -19,7 +19,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers,
+  undefinedInlineHandlers, linklessCards,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -392,6 +392,15 @@ for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const url = urlOf(file);
   const is404 = file.endsWith("404.html");
+
+  /* linkless-card (#106): a card that advertises an article must link to one.
+     7 of 39 on the journal index did not, and no check could see it —
+     internal-links validates hrefs that exist, and a card with no href has
+     none to validate. Also guards the ItemList schema, which is built by
+     parsing for this exact link. */
+  for (const title of linklessCards(html)) {
+    fail("linkless-card", `${url} has an article card with no in-site link: "${title}"`);
+  }
 
   /* dead-inline-handler (#104) — see DEAD_HANDLER_DEBT above. */
   for (const { name, count } of undefinedInlineHandlers(html)) {

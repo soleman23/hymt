@@ -47,7 +47,7 @@ import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
-  undefinedInlineHandlers,
+  undefinedInlineHandlers, linklessCards,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -407,6 +407,54 @@ t("handlers: two different missing functions are reported separately",
 
 t("handlers: a page with no inline handlers at all is clean",
   undefinedInlineHandlers("<button class=\"share-btn\" data-share=\"copy\"></button>").length, 0);
+
+/* ── linkless article cards (#106) ──
+   The shipped shape: a card whose read element is a <span>, not an <a>. Seven
+   of these were live on /travel-journal/ and nothing could see them, because
+   internal-links only validates hrefs that exist and these had none. */
+
+const jCard = (title, read) =>
+  `<div class="article-card" data-category="x"><div class="article-card__image"></div>` +
+  `<div class="article-card__body"><h3 class="article-card__title">${title}</h3>` +
+  `<p class="article-card__excerpt">x</p>${read}</div></div>`;
+
+const READ_LINK = `<a href="/travel-journal/kyoto-april-vs-november/" class="article-card__read">Read more</a>`;
+const READ_SPAN = `<span class="article-card__read">Read more</span>`;
+
+t("cards: a card that links is clean",
+  linklessCards(jCard("Kyoto in April vs. November", READ_LINK)).length, 0);
+
+t("cards: the exact shipped defect is caught, and named",
+  linklessCards(jCard("The Case for Costa Rica with Teenagers", READ_SPAN))[0],
+  "The Case for Costa Rica with Teenagers");
+
+t("cards: one dead card among live ones is still found",
+  linklessCards(jCard("A", READ_LINK) + jCard("B", READ_SPAN) + jCard("C", READ_LINK)).join(","), "B");
+
+t("cards: all four phantoms would have been reported together",
+  linklessCards(["French Riviera", "St. Barth's", "Costa Rica", "Burgundy"]
+    .map((x) => jCard(x, READ_SPAN)).join("")).length, 4);
+
+/* An external link is not an article link \u2014 the card must point into the
+   site, or the ItemList schema still cannot see it. */
+t("cards: an off-site link does not satisfy the check",
+  linklessCards(jCard("X", `<a href="https://example.com/">Read more</a>`)).length, 1);
+
+t("cards: a card with no title still reports rather than being skipped",
+  linklessCards(`<div class="article-card"><span class="article-card__read">Read</span></div>`)[0],
+  "(untitled card)");
+
+/* The related-articles grid on every journal post uses this shape: the card IS
+   the anchor. An earlier version of this predicate only looked INSIDE the card
+   and reported all 86 of them as broken. */
+t("cards: a card that IS the anchor counts as linked",
+  linklessCards(`<a class="article-card" href="/travel-journal/x/"><h3 class="article-card__title">X</h3></a>`).length, 0);
+
+t("cards: an anchor card with no href is still caught",
+  linklessCards(`<a class="article-card"><h3 class="article-card__title">Y</h3></a>`)[0], "Y");
+
+t("cards: a page with no article cards at all is clean",
+  linklessCards("<main><p>no cards here</p></main>").length, 0);
 
 /* ── the real build, so these predicates cannot drift from the site ── */
 
