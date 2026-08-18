@@ -20,7 +20,7 @@ import {
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
-  imageDims, imgRatioMismatches,
+  imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -382,6 +382,48 @@ const inlineHandlerSeen = new Map();
         if (!(await exists(path.join(DIST, p)))) fail("llms-txt", `${p} is not in dist/`);
       } else if (!(await linkResolves(p))) {
         fail("llms-txt", `${p} does not resolve in dist/`);
+      }
+    }
+  }
+}
+
+/* csp-script-src (#100): the report-only CSP names every inline script by
+   hash instead of carrying 'unsafe-inline'. That only works if the list is
+   complete and current, and any edit to any inline <script> changes its
+   hash - one did in the session that wrote this. Under report-only a stale
+   list is a console line nobody reads; under enforcing it is that script
+   dead on every page carrying it. So the list is diffed against dist/ on
+   every build, and the failure prints the exact script-src to paste. The
+   header ships from public/.htaccess and is asserted on the copy that
+   actually deploys, dist/.htaccess - which nothing else checked existed. */
+{
+  const htaccess = await readFile(path.join(DIST, ".htaccess"), "utf8").catch(() => null);
+  if (htaccess === null) {
+    fail("csp-script-src", "dist/.htaccess is missing — public/.htaccess did not ship, so no header on the site is what the repo says it is");
+  } else {
+    const HEADER = "Content-Security-Policy-Report-Only";
+    const scriptSrc = cspDirective(htaccess, HEADER, "script-src");
+    if (scriptSrc === null) {
+      fail("csp-script-src", `dist/.htaccess has no ${HEADER} header with a script-src directive`);
+    } else {
+      const needed = new Set();
+      const firstPage = new Map();
+      for (const file of htmlFiles) {
+        for (const h of inlineScriptHashes(await readFile(file, "utf8"))) {
+          needed.add(h);
+          if (!firstPage.has(h)) firstPage.set(h, urlOf(file));
+        }
+      }
+      const { missing, stale, unsafeInline } = cspScriptSrcDrift(scriptSrc, needed);
+      if (missing.length || stale.length || unsafeInline) {
+        for (const h of missing) fail("csp-script-src", `script-src lacks '${h}' — an inline script on ${firstPage.get(h)} would be blocked under enforcement`);
+        for (const h of stale) fail("csp-script-src", `script-src lists '${h}', which no built page carries — a script changed and the hash was not regenerated`);
+        if (unsafeInline) fail("csp-script-src", "script-src still carries 'unsafe-inline'; a browser ignores it once any hash is present, so it only reads as permissive");
+        const hosts = scriptSrc.split(/\s+/).filter((t) => t && !/^'sha256-/.test(t) && t !== "'unsafe-inline'");
+        const want = [...hosts.filter((t) => t.startsWith("'")), ...[...needed].sort().map((h) => `'${h}'`), ...hosts.filter((t) => !t.startsWith("'"))].join(" ");
+        hints.push(`csp-script-src: replace the script-src value in public/.htaccess with:\n    ${want}`);
+      } else {
+        notes.push(`${needed.size} inline script hashes in the CSP, all current, no 'unsafe-inline' in script-src`);
       }
     }
   }

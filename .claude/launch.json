@@ -4,8 +4,22 @@
     {
       "name": "hymt-preview",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["astro", "preview", "--port", "4321"],
+      "runtimeArgs": [
+        "astro",
+        "preview",
+        "--port",
+        "4321"
+      ],
       "port": 4321
+    },
+    {
+      "name": "hymt-csp-enforcing",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/serve-csp-enforcing.mjs",
+        "4399"
+      ],
+      "port": 4399
     }
   ]
 }

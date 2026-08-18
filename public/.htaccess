@@ -80,13 +80,31 @@ ErrorDocument 404 /404.html
   # one. Switching to enforcing is #100, and only after a clean browse of the
   # homepage, a destination page, a journal post, Contact and Plan Your Trip.
   #
-  # Inventory this was built from, against dist/ on 2026-08-17:
-  #   'unsafe-inline' script  - every page carries inline <script>, and there
-  #                             are 141 inline onclick= handlers. Removing it
-  #                             means nonces or external files; that is the
-  #                             work #100 has to cost, and it is why this
-  #                             starts report-only rather than pretending a
-  #                             strict policy is one header away.
+  # Inventory this was built from, against dist/ on 2026-08-17, script-src
+  # revised 2026-08-18:
+  #   script-src hashes       - every page carries inline <script>: 425 blocks
+  #                             site-wide, but only 10 DISTINCT bodies, so
+  #                             script-src names each by sha256 and carries no
+  #                             'unsafe-inline'. The 141 inline onclick=
+  #                             handlers the 08-17 inventory counted are 0 now
+  #                             (#100 groundwork; the inline-handler check
+  #                             holds it there). THE LIST IS GENERATED, NOT
+  #                             MAINTAINED: the build's csp-script-src check
+  #                             diffs it against every inline script in dist/
+  #                             and fails with the exact value to paste here.
+  #                             Do not hand-edit a hash. Two traps it guards:
+  #                             (a) a browser hashes script text after CRLF is
+  #                             normalised to LF, and three bodies (home,
+  #                             Contact, Plan Your Trip) carry CR in dist/, so
+  #                             a raw-byte hash is silently wrong on exactly
+  #                             the conversion path; (b) once ANY hash is
+  #                             present a browser ignores 'unsafe-inline', so
+  #                             coverage is all-or-nothing and an edit to any
+  #                             inline script changes its hash - under
+  #                             report-only a console line, under enforcing
+  #                             that script dead on every page carrying it.
+  #                             ld+json blocks are not hashed: script-src does
+  #                             not apply to a non-executable type.
   #   googletagmanager.com    - Analytics.astro injects gtag.js at runtime.
   #                             There is no <script src> in the HTML at all.
   #   api.web3forms.com       - connect-src for the three forms' fetch, and
@@ -119,7 +137,7 @@ ErrorDocument 404 /404.html
   # entries above are therefore reasoned from the code, not observed. **That is
   # the specific thing to watch in the report-only console review before #100
   # flips this to enforcing.**
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-2C5uHkKXj70urOh+oF/cbrPHqtEPZdW90xiBzItXL/Q=' 'sha256-2enSBrTaqAgikPryFm7SETfa8CikvpEL0Zjk3GYqWpw=' 'sha256-A8nJuRMRV8gKhPBmgyiqQ1OaNtXjid2FlgDx+JCwpOg=' 'sha256-P3uTVPSPEXpwPPqzmktut6L5IDbUsWRhcj3hrwyuDeM=' 'sha256-VuDxb/TjA2hpjbD1CWiKjTjRHb5qd15mTvoFZA8cmkM=' 'sha256-bRMg786r1QonXLQ4FIDlwwSkdN81Hmb1PCFGQP7HufU=' 'sha256-cP1sIPxo8K1aY23/HvN4WqswzaGCD6nzPEzQFDx6wzA=' 'sha256-fhsoJtgWlL0ngPhzUrkkan8dURvhRRt+pr/fR2MtIL8=' 'sha256-wtlY0QypsoxQFoIz4YB1ZWUnA1Gnotp/yhzSc4cd7o4=' 'sha256-xshWrWulZRsWTBeLQbpQ0F3ohDjhCVL78Kxyj082oyU=' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"
   # ── Static asset caching ──
   #
   # NOT `immutable`, deliberately (#107). `immutable` is a promise that the URL

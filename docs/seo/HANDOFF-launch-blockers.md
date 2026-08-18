@@ -33,10 +33,12 @@ WHAT IS ACTUALLY LEFT, and who can do it:
   AGENT-DOABLE NOW
     - nothing is blocking. The pre-launch polish milestone is down to items
       that need Mark, a dashboard login, or DNS.
-    - the #100 inline-handler groundwork is DONE — all 46 are gone and an
-      `inline-handler` verifier check now holds the site at zero. What is
-      left of #100 is the inline <script> blocks, which is not a mechanical
-      job. See § CSP.
+    - the #100 groundwork is DONE, both halves. All 46 inline handlers are
+      gone (`inline-handler` holds it at zero), AND script-src now names the
+      site's 10 distinct inline <script> bodies by sha256 with no
+      'unsafe-inline' (`csp-script-src` regenerates the list every build and
+      fails on drift). Verified under an ENFORCING local header on every
+      template. The only thing left of #100 is the flip itself. See § CSP.
 
   HUMAN-ONLY (do not attempt; surface and stop)
     - #74  Web3Forms dashboard. FIRST: form submissions are delivered to the
@@ -381,21 +383,45 @@ under a deliberately *enforcing* local copy. Its only remaining checkbox is
 - **Inline handlers: 0.** Was 141, then 46; all 46 are now gone and the
   `inline-handler` check fails the build if one returns. See the section above.
   Nothing is left to do here.
-- **Inline `<script>`: 425 blocks across all 98 pages, 3 to 5 per page, and
-  zero external `<script src>` anywhere on the site.** This is now the whole of
-  the `'unsafe-inline'` blocker, and it is not a mechanical job — it needs
-  nonces or externalising, and externalising costs the site its
-  no-external-JS posture. Derive it again before acting on it:
+- **Inline `<script>`: DONE (2026-08-18).** The 425 blocks across all 98
+  pages are only **10 distinct bodies**, so `script-src` now names each by
+  sha256 and carries **no `'unsafe-inline'`**. It was not the nonce-or-
+  externalise job this section previously said it was. The list is not
+  maintained by hand: the build's `csp-script-src` check diffs
+  `dist/.htaccess` against every inline script in `dist/` and fails with the
+  exact `script-src` value to paste. Two traps it exists for, both observed
+  in Chrome rather than reasoned:
+  - a browser hashes script text after CRLF→LF normalisation, and three
+    bodies (home, Contact, Plan Your Trip — the conversion path) carry CR in
+    `dist/`. Under a header built from raw-byte hashes, Plan Your Trip's
+    script was **blocked**, and the console demanded the normalised hash;
+  - any hash present makes the browser ignore `'unsafe-inline'`, so coverage
+    is all-or-nothing, and an edit to any inline script changes its hash. One
+    did during the session that wrote this (the Newsletter cap), which is why
+    the check, not the list, is the deliverable.
+
+  Verified under an **enforcing** local copy — `node
+  tools/serve-csp-enforcing.mjs`, also in `.claude/launch.json` — across
+  every template: home, Contact (form + newsletter submitted with `fetch`
+  stubbed, both reached their success state), Plan Your Trip (`goTo`,
+  `submitForm`, all six step buttons and four steppers live), both hubs
+  (Load More, filters), a destination page, a journal post. Zero violations
+  from any page's own scripts; a deliberately unhashed probe *was* blocked,
+  which is what proves the header was live. Re-derive before trusting:
 
   ```bash
-  grep -rho '<script[^>]*>' dist --include='*.html' | grep -vc 'ld+json'
+  grep -rho '<script[^>]*>' dist --include='*.html' | grep -vc 'ld+json'   # 425
+  node tools/verify-deployment.mjs | grep 'inline script hashes'          # 10, all current
   ```
 
-- Also present: 305 `application/ld+json` data blocks. Browsers do not apply
-  `script-src` to a non-executable data block, so these should not need a
-  nonce — but that is reasoned, not observed. Confirm it under the report-only
-  header before enforcing, because getting it wrong strips the schema off
-  every page on the site.
+- The 305 `application/ld+json` data blocks are **not hashed and did not
+  need to be** — now observed, not reasoned: every template above rendered
+  its schema under the enforcing header with no `script-src` violation.
+  `script-src` does not apply to a non-executable type.
+
+- `frame-src 'none'` is **enforced** — an attempt to load site pages into
+  iframes under the local enforcing header was refused. If a CAPTCHA is ever
+  added (#74), that directive must be *replaced*, not extended.
 
 **Which third-party origins are observed, and which are still only reasoned.**
 The distinction matters because a `script-src` or `connect-src` mistake under an

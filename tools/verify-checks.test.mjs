@@ -28,6 +28,7 @@
  */
 import { readFile, access } from "node:fs/promises";
 import { constants, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -48,7 +49,7 @@ import {
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
-  imageDims, imgRatioMismatches,
+  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -635,6 +636,85 @@ t("img-ratio: a src the resolver cannot read is skipped, not failed",
 t("img-ratio: two wrong tags on one page are two",
   imgRatioMismatches(`<img src="/assets/img/hero.jpg" alt="a" width="1" height="1"><img src="/assets/logo.png" alt="b" width="2" height="1">`, dims(LOGO)).length, 2);
 
+/* ── csp-script-src (#100) ── */
+
+/* The browser hashes script text after CRLF -> LF normalisation. Three of the
+   site's ten inline bodies carry CR (home, Contact, Plan Your Trip - the
+   conversion path). Hashing raw bytes there produces a value the browser will
+   never accept, silently. So this is the fixture that matters most. */
+t("csp: CRLF and LF bodies hash identically, as the browser sees them",
+  cspScriptHash("var a = 1;\r\nvar b = 2;\r\n"), cspScriptHash("var a = 1;\nvar b = 2;\n"));
+
+t("csp: a lone CR is normalised too",
+  cspScriptHash("a\rb"), cspScriptHash("a\nb"));
+
+t("csp: but the hash is not whitespace-insensitive - a changed body is a changed hash",
+  cspScriptHash("var a = 1;\n") === cspScriptHash("var a = 1; \n"), false);
+
+/* Known-answer: sha256 of the empty string, base64. If the encoding ever
+   drifts from what a CSP header wants, this is the line that goes red. */
+t("csp: the hash is base64 sha256 with the CSP prefix",
+  cspScriptHash(""), "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+
+t("csp: an inline script yields one hash",
+  inlineScriptHashes(`<script>var x = 1;</script>`).length, 1);
+
+t("csp: type=module inline scripts are hashed like any other",
+  inlineScriptHashes(`<script type="module">import x from "y";</script>`).length, 1);
+
+t("csp: the same body twice on a page is one hash",
+  inlineScriptHashes(`<script>a()</script><p>x</p><script>a()</script>`).length, 1);
+
+t("csp: two different bodies are two hashes",
+  inlineScriptHashes(`<script>a()</script><script>b()</script>`).length, 2);
+
+/* script-src does not apply to a non-executable data block, and the site
+   carries 305 of them. Hashing them would put 98+ dead hashes in the header
+   and, worse, hide a real gap in the noise. */
+t("csp: ld+json data blocks are not scripts and are not hashed",
+  inlineScriptHashes(`<script type="application/ld+json">{"@type":"WebPage"}</script>`).length, 0);
+
+t("csp: an external <script src> is host-matched, not hashed",
+  inlineScriptHashes(`<script src="https://www.googletagmanager.com/gtag/js"></script>`).length, 0);
+
+t("csp: attribute order and quoting do not change the ld+json exemption",
+  inlineScriptHashes(`<script id="x" type='application/ld+json'>{}</script>`).length, 0);
+
+const HT = `# comment
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; frame-src 'none'"
+`;
+
+t("csp: cspDirective pulls one directive's value from the Header line",
+  cspDirective(HT, "Content-Security-Policy-Report-Only", "script-src"), "'self' 'sha256-AAA=' https://www.googletagmanager.com");
+
+t("csp: cspDirective distinguishes directives that share a prefix",
+  cspDirective(HT, "Content-Security-Policy-Report-Only", "frame-src"), "'none'");
+
+t("csp: an absent header is null, not an empty string",
+  cspDirective(HT, "Content-Security-Policy", "script-src"), null);
+
+t("csp: an absent directive is null",
+  cspDirective(HT, "Content-Security-Policy-Report-Only", "worker-src"), null);
+
+t("csp: drift - a needed hash the header lacks is missing",
+  cspScriptSrcDrift("'self' 'sha256-AAA='", ["sha256-AAA=", "sha256-BBB="]).missing.join(","), "sha256-BBB=");
+
+t("csp: drift - a listed hash no page needs is stale",
+  cspScriptSrcDrift("'self' 'sha256-AAA=' 'sha256-OLD='", ["sha256-AAA="]).stale.join(","), "sha256-OLD=");
+
+t("csp: drift - an exact match is clean",
+  JSON.stringify(cspScriptSrcDrift("'self' 'sha256-AAA=' 'sha256-BBB=' https://x", ["sha256-BBB=", "sha256-AAA="])),
+  JSON.stringify({ missing: [], stale: [], unsafeInline: false }));
+
+/* Any hash present makes a CSP2 browser ignore 'unsafe-inline'. Leaving it in
+   alongside hashes reads as permissive and is not - so it is reported. */
+t("csp: drift - 'unsafe-inline' alongside hashes is flagged",
+  cspScriptSrcDrift("'self' 'unsafe-inline' 'sha256-AAA='", ["sha256-AAA="]).unsafeInline, true);
+
+t("csp: drift - a host source is neither missing nor stale",
+  cspScriptSrcDrift("'self' https://www.googletagmanager.com 'sha256-AAA='", ["sha256-AAA="]).stale.length, 0);
+
 /* ── schema-itemlist ── */
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
@@ -745,6 +825,20 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     JSON.stringify(realDims("/assets/logo.png")), JSON.stringify({ w: 256, h: 256 }));
   t("real /destinations/italy/ declares every image at its true ratio",
     imgRatioMismatches(italy, realDims).length, 0);
+
+  /* The CSP trap is real in this build, not hypothetical: Plan Your Trip's
+     inline script carries CR, so its raw-byte hash is NOT what the browser
+     will check. If this ever passes, the CR is gone and the comment above
+     cspScriptHash can be softened. */
+  const planBody = /<script>([\s\S]*?)<\/script>/.exec(plan.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ""))?.[1] ?? "";
+  t("real /plan-your-trip/ inline script carries CR, so raw bytes hash differently",
+    planBody.includes("\r") && createHash("sha256").update(planBody).digest("base64") !== cspScriptHash(planBody).slice(7), true);
+
+  const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
+  t("real dist/.htaccess exists and carries the report-only CSP",
+    cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src") !== null, true);
+  t("real dist/.htaccess script-src covers every inline script on /",
+    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(home)).missing.length, 0);
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
