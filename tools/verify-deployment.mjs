@@ -22,6 +22,7 @@ import {
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
+  htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -430,6 +431,31 @@ const inlineHandlerSeen = new Map();
   }
 }
 
+/* htaccess-headers: the file that carries every header the site sends, and
+   which nothing asserted. Renaming public/.htaccess, or editing one line of
+   its header block, left the build fully green while the site shipped with
+   no CSP, no security headers, no staging noindex and no cache rules. The
+   staging-noindex check covers one leg of this but only under --remote, so
+   only after the mistake has already deployed.
+
+   Read from dist/, not public/ — dist/.htaccess is what gets uploaded, and
+   asserting the two match is what proves astro copied it at all. */
+{
+  const distHt = await readFile(path.join(DIST, ".htaccess"), "utf8").catch(() => null);
+  const publicHt = await readFile(path.join(ROOT, "public", ".htaccess"), "utf8").catch(() => null);
+  if (distHt === null) {
+    fail("htaccess-headers", "dist/.htaccess is missing — the site would ship with no CSP, no security headers, no staging noindex and no cache rules");
+  } else {
+    for (const gap of htaccessGaps(distHt)) fail("htaccess-headers", `dist/.htaccess: ${gap}`);
+    if (publicHt !== null && publicHt !== distHt) {
+      fail("htaccess-headers", "dist/.htaccess differs from public/.htaccess — the build did not copy the current file, so the deployed headers are not the ones in the repo");
+    }
+    if (!failures.some((f) => f.check === "htaccess-headers")) {
+      notes.push(`.htaccess shipped with ${HTACCESS_SECURITY_HEADERS.length} security headers, the staging noindex, ${CSP_DIRECTIVES.length} CSP directives, and no immutable cache rule`);
+    }
+  }
+}
+
 /* web3forms (#74): the access key is THE key, there is exactly one of it
    across the site, and every page that carries it carries the honeypot.
 
@@ -570,6 +596,13 @@ for (const file of htmlFiles) {
      on every page. Dropped, inverted or re-hosted, this goes red. */
   if (analyticsUngated(html)) {
     fail("analytics-host-gate", `${url} loads analytics without the location.hostname !== 'www.hymtravel.com' gate — it would fire on staging`);
+  }
+
+  /* photo-grid (#93): a grid carrying the --photo modifier claims every
+     card is a real photograph. A half-converted page built green before
+     this; the defect was visible only in a browser. */
+  for (const defect of photoGridDefects(html)) {
+    fail("photo-grid", `${url}: ${defect}`);
   }
 
   /* accordion-noscript (P0-1): the answer hide rule stays inside

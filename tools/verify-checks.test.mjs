@@ -51,6 +51,7 @@ import {
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
+  htaccessGaps, photoGridDefects,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -820,6 +821,117 @@ t("web3forms: a missing honeypot is seen",
 t("web3forms: botcheck as a JS string is not the honeypot input",
   hasHoneypot(`<script>formData.append('botcheck', '')</script>`), false);
 
+/* ── htaccess-headers ── */
+
+const HT_GOOD = `# a comment mentioning immutable, which must be ignored
+<IfModule mod_headers.c>
+  SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"
+  Header set Cache-Control "public, max-age=2592000, no-transform"
+</IfModule>`;
+
+t("htaccess: a complete file is clean",
+  htaccessGaps(HT_GOOD).length, 0);
+
+/* THE false-positive guard. `immutable` appears 4x in the real file today and
+   every one is a comment explaining why it was removed (#107). A predicate
+   over raw text reports the fix as the defect — the trap inline-handler hit. */
+t("htaccess: `immutable` inside a comment is not a Cache-Control value",
+  htaccessGaps(HT_GOOD.replace("# a comment mentioning immutable, which must be ignored",
+    "# NOT `immutable`, deliberately (#107). `immutable` promises the bytes never change.")).length, 0);
+
+t("htaccess: a commented-out Header line does not satisfy the check",
+  htaccessGaps(HT_GOOD.replace(`  Header set X-Frame-Options "SAMEORIGIN"`,
+    `  # Header set X-Frame-Options "SAMEORIGIN"`)).length, 1);
+
+/* #107, reproduced exactly. */
+t("htaccess: immutable in a real Cache-Control is caught",
+  htaccessGaps(HT_GOOD.replace(`"public, max-age=2592000, no-transform"`,
+    `"public, max-age=31536000, immutable"`)).length, 2);   // immutable AND no no-transform
+
+t("htaccess: a Cache-Control without no-transform is caught (#95)",
+  htaccessGaps(HT_GOOD.replace(`, no-transform"`, `"`)).length, 1);
+
+/* The two CSP entries that fail SILENTLY once #100 flips to enforcing. */
+t("htaccess: dropping api.web3forms.com from connect-src is caught",
+  htaccessGaps(HT_GOOD.replace("connect-src 'self' https://api.web3forms.com", "connect-src 'self'")).length, 1);
+
+t("htaccess: dropping frame-src 'none' is caught (the Turnstile half-fix)",
+  htaccessGaps(HT_GOOD.replace("frame-src 'none'; ", "")).length, 1);
+
+t("htaccess: a missing security header is caught",
+  htaccessGaps(HT_GOOD.replace(`  Header set X-Content-Type-Options "nosniff"\n`, "")).length, 1);
+
+t("htaccess: a security header with the WRONG value is caught",
+  htaccessGaps(HT_GOOD.replace(`"SAMEORIGIN"`, `"ALLOWALL"`)).length, 1);
+
+/* The header is inert without the SetEnvIf that arms it. */
+t("htaccess: deleting the SetEnvIf while keeping X-Robots-Tag is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIf.*$/m, "")).length, 1);
+
+t("htaccess: deleting the staging X-Robots-Tag is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*Header always set X-Robots-Tag.*$/m, "")).length, 1);
+
+/* No CSP reports its absence once, not eleven missing directives. */
+t("htaccess: no CSP header at all is one offender, not eleven",
+  htaccessGaps(HT_GOOD.replace(/^\s*Header always set Content-Security-Policy-Report-Only.*$/m, "")).length, 1);
+
+t("htaccess: an ENFORCING CSP satisfies the check as well as report-only",
+  htaccessGaps(HT_GOOD.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy")).length, 0);
+
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 8:
+   the 4 security headers, both staging lines, the CSP once, the cache once. */
+t("htaccess: an empty file reports all 8 gaps and does not throw",
+  htaccessGaps("").length, 8);
+
+/* ── photo-grid (#93) ── */
+
+const photoCard = `<a class="place-card" href="/plan-your-trip/"><img class="place-card__img" src="/assets/img/x.jpg" alt="X" width="1600" height="900" loading="lazy" decoding="async"><div class="place-card__name">X</div></a>`;
+const swatchCard = `<a class="place-card" href="/plan-your-trip/"><div class="place-card__ph" style="background:#1a100a">Destination Photography · X</div><div class="place-card__overlay"></div><div class="place-card__name">X</div></a>`;
+const grid = (mod, cards) => `<section><div class="places-grid places-grid--even${mod}">${cards}</div></section>`;
+
+t("photo-grid: a --photo grid of real photos is clean",
+  photoGridDefects(grid(" places-grid--photo", photoCard + photoCard)).length, 0);
+
+/* The half-converted page: the modifier claims photos, a card is still a swatch. */
+t("photo-grid: a --photo grid still holding a swatch is caught",
+  photoGridDefects(grid(" places-grid--photo", photoCard + swatchCard)).length, 1);
+
+t("photo-grid: the report counts the swatches",
+  photoGridDefects(grid(" places-grid--photo", swatchCard + swatchCard))[0].includes("2 placeholder swatches"), true);
+
+/* The honest un-converted state — 4 destination + 7 experience pages today. */
+t("photo-grid: a grid WITHOUT the modifier may hold swatches",
+  photoGridDefects(grid("", swatchCard + swatchCard)).length, 0);
+
+t("photo-grid: exp-cards--photo is checked the same way",
+  photoGridDefects(`<section><div class="exp-cards exp-cards--photo"><a class="exp-card"><div class="exp-card__ph" style="background:#111">X</div></a></div></section>`).length, 1);
+
+t("photo-grid: exp-cards without the modifier may hold swatches",
+  photoGridDefects(`<section><div class="exp-cards"><a class="exp-card"><div class="exp-card__ph" style="background:#111">X</div></a></div></section>`).length, 0);
+
+/* The counting trap: a photo smuggled in as a CSS background. No alt, no
+   intrinsic size, cannot lazy-load. 19 cards were in this state at filing. */
+t("photo-grid: a __ph carrying a background-IMAGE is caught even without the modifier",
+  photoGridDefects(`<div class="places-grid"><div class="place-card__ph" style="background-image:url(/assets/img/x.jpg)"></div></div>`).length, 1);
+
+t("photo-grid: a flat background COLOUR is not a smuggled photo",
+  photoGridDefects(`<div class="places-grid"><div class="place-card__ph" style="background:#1a100a">X</div></div>`).length, 0);
+
+t("photo-grid: a converted grid does not leak into the next grid on the page",
+  photoGridDefects(grid(" places-grid--photo", photoCard) + grid("", swatchCard)).length, 0);
+
+t("photo-grid: two broken grids on one page are two",
+  photoGridDefects(grid(" places-grid--photo", swatchCard) + grid(" places-grid--photo", swatchCard)).length, 2);
+
+t("photo-grid: a page with no grid reports nothing",
+  photoGridDefects(`<main><p>nothing</p></main>`).length, 0);
+
 /* ── schema-itemlist ── */
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
@@ -966,6 +1078,11 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     hasHoneypot(plan), true);
 
   const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
+  /* The real file, which contains `immutable` four times in comments. */
+  t("real dist/.htaccess has no header gaps",
+    htaccessGaps(htaccess).join(" | "), "");
+  t("real dist/.htaccess does contain `immutable` in comments (so the guard is live)",
+    /immutable/.test(htaccess), true);
   t("real dist/.htaccess exists and carries the report-only CSP",
     cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src") !== null, true);
   t("real dist/.htaccess script-src covers every inline script on /",
