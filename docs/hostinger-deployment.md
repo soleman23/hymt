@@ -66,17 +66,36 @@ curl -s -D - -o /dev/null <url>/assets/img/<file>.jpg | grep -i "x-hcdn-cache-st
 hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://www.hymtravel.com` loads with the padlock.
 
 ### 4. Forms (Web3Forms key) — already done
-The real Web3Forms access key is **already baked into every form** (87 pages: the
-newsletter on nearly every page, plus the Contact and Plan Your Trip inquiry
-forms). No placeholder remains and no post-upload find/replace is needed.
+The real Web3Forms access key is **already baked into every form** (95 of the 98
+built pages: the newsletter on 94, plus Plan Your Trip, which carries its own form
+and no newsletter). No placeholder remains and no post-upload find/replace is
+needed. Derive these rather than trusting them:
+`grep -rl '94312057' dist --include='*.html' | wc -l`.
 
 Web3Forms keys are not secrets — they are public by design, since the key sits in
 client-side HTML on every page.
 
-Submissions were tested end-to-end and deliver to **mark@hymtravel.com**. If you
-ever rotate the key, change it in `src/components/Newsletter.astro`,
+> **Submissions are delivered to the wrong address. Fix this before launch (#74).**
+> Verified 2026-08-18 by a real staging submission: the mail arrived intact one
+> second later, and its **only** recipient was `devinp.sole@gmail.com`. Nothing
+> reached **mark@hymtravel.com**, which has never received a submission from this
+> site. This is account-level — a Newsletter signup the same day landed at the same
+> address — so **all three forms are affected**, silently, with the branded success
+> state showing every time.
+>
+> The fix is the **recipient setting in the Web3Forms dashboard** (§ 4a below). It
+> cannot be fixed in code: no recipient field is sent, so delivery follows whatever
+> address the key is registered to. **Do not rotate the key to "fix" it** — the
+> access key must not change (`CLAUDE.md` § Never do). Once corrected, re-run the
+> § 2.3 end-to-end gate *before* enabling the domain restriction, and check Mark's
+> spam folder on the first delivery.
+
+If you ever rotate the key, change it in `src/components/Newsletter.astro`,
 `src/content-pages/plan-your-trip.html` and `src/content-pages/contact.html`,
-then rebuild.
+then rebuild. Note that `src/content-pages/plan-your-trip.singlestep.bak` also
+carries the key — it is gitignored and never reaches `dist/`, but it will not be
+updated by a rotation, so do not treat a grep of the working tree as the source
+of truth.
 
 #### 4a. Web3Forms dashboard hardening (SEC-1, #74) — human step, ~10 minutes
 

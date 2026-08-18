@@ -141,8 +141,23 @@ directly instead — those are the real source now.
 All forms (Plan Your Trip, Contact, newsletter) use [Web3Forms](https://web3forms.com).
 The live access key is wired in exactly three places — `Newsletter.astro` (which
 puts the newsletter form on nearly every page), `plan-your-trip.html`, and
-`contact.html` — and submissions have been tested end-to-end; they deliver to
-mark@hymtravel.com.
+`contact.html`.
+
+> **The recipient address is wrong, and this is a launch blocker (#74).**
+> Verified 2026-08-18 by submitting a real inquiry through the staging UI:
+> Web3Forms accepted it and delivered it intact, but its **only** recipient was
+> `devinp.sole@gmail.com`. No CC. Nothing reached `mark@hymtravel.com`, and that
+> address has never received a submission from this site. A Newsletter signup the
+> same day landed at the same address, so this is account-level and **all three
+> forms are affected**. Live as it stands, every client inquiry goes to the site
+> owner's personal Gmail while the form shows its branded success state.
+>
+> It cannot be fixed in code: `submitForm` sends no recipient field, so Web3Forms
+> delivers to whatever address the access key is registered to. The fix is the
+> **recipient setting in the Web3Forms dashboard**. Do not mint a new key — the
+> access key must not change (see `CLAUDE.md` § Never do). After the recipient is
+> corrected, re-run the end-to-end gate in `docs/seo/LAUNCH-RUNBOOK.md` § 2.3 and
+> check Mark's spam folder on the first delivery.
 
 Web3Forms access keys are public by design (they ship in client-side HTML), so the
 key lives in the source rather than in an environment variable. To rotate it,
