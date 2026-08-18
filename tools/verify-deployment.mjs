@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
-  unsafeBlankLinks, eagerImageRefs,
+  unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -289,6 +289,48 @@ const linkResolves = async (p) => {
   return (await exists(path.join(DIST, noSlash, "index.html"))) ||
          (await exists(path.join(DIST, noSlash)));
 };
+
+/* llms-txt: the file is a hand-authored map of the site for AI assistants
+   (#36), which makes it the one shipped page nothing else re-derives. The
+   SCHEMA-LIBRARY template it was built from had gone stale exactly this way
+   — "42 destination guides", "29 property assessments" — against a site
+   with 43 and 32. Two things are asserted: every count it states is still
+   true of the built site, and every link in it resolves. Claims are matched
+   by fixed phrase; the phrases and the predicate are fixture-tested. */
+{
+  const llms = await readFile(path.join(DIST, "llms.txt"), "utf8").catch(() => null);
+  if (llms === null) {
+    fail("llms-txt", "dist/llms.txt is missing — public/llms.txt did not ship");
+  } else {
+    const sectionCount = async (dir) => {
+      const entries = await readdir(path.join(DIST, dir), { withFileTypes: true }).catch(() => []);
+      let n = 0;
+      for (const e of entries) {
+        if (e.isDirectory() && await exists(path.join(DIST, dir, e.name, "index.html"))) n++;
+      }
+      return n;
+    };
+    const actual = {
+      destinations: await sectionCount("destinations"),
+      experiences: await sectionCount("experiences"),
+      journal: await sectionCount("travel-journal"),
+    };
+    for (const m of llmsClaimMismatches(llms, actual)) fail("llms-txt", m);
+
+    for (const url of llms.match(/https:\/\/[^\s)\]]+/g) ?? []) {
+      if (!url.startsWith(SITE + "/")) {
+        fail("llms-txt", `${url} is not a ${SITE} URL`);
+        continue;
+      }
+      const p = new URL(url).pathname;
+      if (p.includes(".")) {
+        if (!(await exists(path.join(DIST, p)))) fail("llms-txt", `${p} is not in dist/`);
+      } else if (!(await linkResolves(p))) {
+        fail("llms-txt", `${p} does not resolve in dist/`);
+      }
+    }
+  }
+}
 
 /* Runbook §2.4 gates launch at 1.5 MB initial load. Images are effectively
    all of it — see the eager-image-budget check below.
