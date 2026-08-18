@@ -10,8 +10,8 @@ Two deployable versions of the same site live in this repo, plus the full build 
 | `src/` | Astro 5 source — layouts, components, page wrappers, content partials |
 | `tools/` | Build pipeline (source HTML → Astro pages), image manifest, `restore_images.py` |
 | `public/` | Static assets served at site root (`robots.txt`, `sitemap.xml`) |
-| `dist/` | **The finished static site — 93 pages + custom 404, ready to upload to any static host** |
-| `images-b64/` | All 92 site images as base64 text (see below) |
+| `dist/` | **The finished static site — 97 pages + custom 404 (98 built HTML files), ready to upload to any static host** |
+| `images-b64/` | All 474 site images as base64 text (see below) |
 | `docs/` | Hostinger deployment guide + image production checklist |
 
 > **This repository is now the complete, single source of truth.** It holds the
@@ -82,14 +82,20 @@ every clean URL until the cutover; it is there for after it happens.
 
 ## The static site (`dist/`)
 
-94 pages, fully linked, SEO meta/canonicals/JSON-LD in place, sitemap + robots included:
+97 pages plus the 404, fully linked, SEO meta/canonicals/JSON-LD in place,
+sitemap + robots included. Every count below rots; derive it rather than
+trusting it — `grep -o "<loc>" dist/sitemap-0.xml | wc -l` for the page total
+(`grep -c` returns 1: the sitemap has no newlines), and
+`find dist/<section> -mindepth 2 -name index.html | wc -l` per section:
 
 - Homepage with 4-slide rotating hero, category grid, featured journey
-- 12 experience pages, 42 destination pages (9 regional hubs + 33 deep-dives)
-- 29 journal articles + journal hub with featured card
+- 12 experience pages, 43 destination pages (9 regional hubs + 34 deep-dives)
+- 32 journal articles + journal hub with featured card
 - About, FAQ, Contact, Plan Your Trip (inquiry form with `?type=` pre-selection)
 - Privacy Policy, Terms & Conditions, custom 404
-- 92 AI-generated brand images (golden-hour editorial, no faces, no text)
+- 474 site images in `images-b64/MANIFEST.json` — heroes, place-card crops,
+  og:images — golden-hour editorial, no faces, no text; the About photo is
+  the family's real one
 
 **Deploy:** upload the contents of `dist/` to Hostinger `public_html` (after a
 clean `npm run build`). Full guide: `docs/hostinger-deployment.md`.

@@ -10,7 +10,7 @@ without updating this file in the same commit.
 | D2 | Consortium / affiliations | **HYMT is part of the Travel Leaders Network.** No other consortium or association memberships to publish. | About page (visible), P2-2 `Organization.memberOf` + `sameAs`, P2-3 Person affiliations |
 | D3 | Public address | **(a) City/region only: Bend, Oregon.** No street address anywhere on the site or in schema. | P2-2 `address` (locality + region only), Google Business Profile |
 | D4 | Google Business Profile | **Yes — Devin creates it** as a service-area business with the address hidden. The profile URL joins `sameAs` once it exists. | P2-2 `sameAs`, off-site entity building (#38) |
-| D5 | Author identity | **All 29 journal posts are authored by Mark Sole.** Photo + bio are publishable; Devin supplies the assets later. | P1-4 (mark-note photo), P2-3 `Person` + About headshot, journal bylines |
+| D5 | Author identity | **All journal posts are authored by Mark Sole** (29 when decided; 32 at 2026-08-18 — the decision covers every post, not a count). Photo + bio are publishable; Devin supplies the assets later. | P1-4 (mark-note photo), P2-3 `Person` + About headshot, journal bylines |
 | D6 | Journal publication dates | **Go-live policy: each post is dated the day it goes live at cutover. Never backdate.** The hero display strings (e.g. "May 2026") are replaced at P1-5 with the real go-live date — they are not publication dates. | P1-5 `publishDate`/`dateModified`, launch runbook §4 |
 
 ## Practical notes

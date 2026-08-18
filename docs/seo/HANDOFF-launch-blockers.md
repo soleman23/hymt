@@ -504,7 +504,9 @@ apex and www.
 ## Open items this handoff did not resolve
 
 - **`docs/seo/HANDOFF-photo-rollout.md` is stale at the top** — it states
-  `HEAD = 8449977`, which is 12 commits behind. Its photo counts are still
+  `HEAD = 8449977`, which is many commits behind (derive:
+  `git rev-list --count 8449977..HEAD`; the number written here rotted from
+  12 to 28 in one session). Its photo counts are still
   accurate; only the commit reference rotted.
 - **`docs/hostinger-deployment.md` and `README.md` carry stale counts** — "93
   pages", "87 pages", "three places" for the key. Same family as #98.

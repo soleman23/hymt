@@ -399,7 +399,7 @@ can never disagree.
 | `/destinations/<slug>/` | `WebPage`, `BreadcrumbList`, `TouristDestination`, `FAQPage` |
 | `/experiences/` | `CollectionPage` + `ItemList` (12 children), `BreadcrumbList` |
 | `/experiences/<slug>/` | `WebPage`, `BreadcrumbList`, `Service`, `FAQPage` |
-| `/travel-journal/` | `CollectionPage` + `ItemList` (29 posts), `BreadcrumbList` |
+| `/travel-journal/` | `CollectionPage` + `ItemList` (every post, deduped by URL — 32 today), `BreadcrumbList` |
 | `/travel-journal/<slug>/` | `Article`, `BreadcrumbList` |
 | `/faq/` | `FAQPage`, `BreadcrumbList` |
 | `/privacy-policy/`, `/terms-and-conditions/` | `WebPage`, `BreadcrumbList` |
@@ -541,6 +541,12 @@ Ship it in Phase 5. It costs two minutes. Attach no expectations: Ahrefs'
 May-2026 study of 137,210 domains found 97% of published `llms.txt` files got
 zero traffic that month, and Google has said it does not use the file.
 
+**Shipped (#36).** `public/llms.txt` is the source of truth, not the template
+below — the two had already diverged (the shipped file says 43 guides and 32
+journal pieces; this said 42 and 29) before the `llms-txt` build check began
+holding every count in the shipped file to the built site. Edit the file, not
+this section.
+
 ```markdown
 # Hit Your Mark Travel
 
@@ -557,9 +563,9 @@ Contact: mark@hymtravel.com · +1 408 568 1404
 - [About Mark Sole](https://www.hymtravel.com/about/): who plans the trips, credentials, and how the practice works
 - [Plan Your Trip](https://www.hymtravel.com/plan-your-trip/): the inquiry form and what happens after it
 - [FAQ](https://www.hymtravel.com/faq/): fees, process, what is and is not included
-- [Destinations](https://www.hymtravel.com/destinations/): 42 destination guides across nine regions
+- [Destinations](https://www.hymtravel.com/destinations/): 43 destination guides, grouped by region
 - [Experiences](https://www.hymtravel.com/experiences/): 12 trip types
-- [Travel Journal](https://www.hymtravel.com/travel-journal/): 29 property assessments and planning guides
+- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 field reports and planning guides
 
 ## Optional
 
@@ -617,7 +623,7 @@ log the result in `docs/seo/validation-log.md`.
 | [Rich Results Test](https://search.google.com/test/rich-results) | `Article` and `BreadcrumbList` detected, zero errors, zero warnings |
 | [Schema Markup Validator](https://validator.schema.org/) | zero errors on every node including the non-rich-result types |
 | `curl -s <url> \| grep -c 'ld+json'` | matches the expected node count for that page type |
-| GSC → Enhancements → Breadcrumbs | 83 valid items, post-launch |
+| GSC → Enhancements → Breadcrumbs | one valid item per page that emits `BreadcrumbList` — 96 today, derive with `grep -rl BreadcrumbList dist --include='*.html' \| wc -l` — post-launch |
 
 Note: `TouristDestination`, `Service`, `ItemList` and `FAQPage` will show
 "no rich result" or an equivalent notice in the Rich Results Test. That is the

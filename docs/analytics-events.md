@@ -50,7 +50,9 @@ counted, add a separate event — do not rename that node into the observed pair
 ## Setup still owed by a human (P0-5)
 
 - Create the GA4 property; paste the measurement ID as above.
-- Verify Google Search Console on `www.hymtravel.com` as a **Domain property**
-  (DNS TXT record) — before DNS cutover, so history starts on day one.
+- Verify Google Search Console as a **Domain property on `hymtravel.com`** —
+  the bare domain, via DNS TXT; a Domain property covers `www` and the apex
+  together, so "on www" is the wrong shape (runbook § 1.2) — before DNS
+  cutover, so history starts on day one.
 - Verify Bing Webmaster Tools by importing from GSC.
 - Never verify or submit the staging domain anywhere.

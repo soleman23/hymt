@@ -32,22 +32,27 @@ launch.
 
 ## How to use this with Claude Code
 
-1. Copy this whole `docs/seo/` folder into the repo root of `soleman23/hymt`.
-2. Append the block in `SEO-AIO-PLAN.md` § "Repo rules addendum" to the repo's
-   `CLAUDE.md` **and** `AGENTS.md` (they are currently identical copies — keep
-   them identical).
-3. Open Claude Code in the repo and follow `EXECUTION-PROMPTS.md` — it has the
-   exact prompt for each phase, in order, starting with Phase 0.
+Steps 1 and 2 below are **done** and describe a repo state that no longer
+exists: this folder lives at `docs/seo/` in `soleman23/hymt`, and the "Repo
+rules addendum" is in `CLAUDE.md` and `AGENTS.md` as § "SEO & AIO rules"
+(the two files are identical copies — keep them identical). Kept for the
+record; start at step 3.
 
-4. Work one phase at a time. Every phase ends with `npm run build` passing and
-   `node tools/verify-deployment.mjs` clean.
+1. ~~Copy this whole `docs/seo/` folder into the repo root of `soleman23/hymt`.~~
+2. ~~Append the block in `SEO-AIO-PLAN.md` § "Repo rules addendum" to the repo's
+   `CLAUDE.md` **and** `AGENTS.md`.~~
+3. Open Claude Code in the repo and follow `EXECUTION-PROMPTS.md` — it has the
+   exact prompt for each phase, in order. Phases 0–3 are complete; the live
+   work is the launch chain in `HANDOFF-launch-blockers.md`.
+4. Work one phase at a time. Every phase ends with `npm run build` passing —
+   it is self-contained and runs the check fixtures and the verifier itself.
 
 ## Non-negotiables carried over from the existing repo
 
-These come from the repo's `README.md` (note: the current `CLAUDE.md` /
-`AGENTS.md` are a GitNexus tooling stub and do **not** contain them — which is
-exactly why step 2 above appends the rules addendum to both). None of the work
-in this folder overrides them:
+These come from the repo's `README.md` and are now also in `CLAUDE.md` /
+`AGENTS.md` § "SEO & AIO rules" (they were a GitNexus tooling stub when this
+was written, which is why step 2 existed). None of the work in this folder
+overrides them:
 
 - `npm run build` is self-contained: astro build, image restore
   (`tools/restore-images.mjs`, which autodetects `python3`/`python`), verifier.

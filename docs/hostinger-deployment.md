@@ -1,6 +1,9 @@
 # Hit Your Mark Travel — Hostinger Deployment Guide
 
-The deliverable is a static site: 93 pages plus a custom 404, ready to serve.
+The deliverable is a static site: 97 pages plus a custom 404 (98 built HTML
+files), ready to serve. Derive that rather than trusting it —
+`grep -o "<loc>" dist/sitemap-0.xml | wc -l` — every count in this file has
+rotted at least once.
 Edit the Astro source, run `npm run build`, and upload `dist/`.
 
 ---
@@ -125,8 +128,8 @@ Contact, Plan Your Trip and the newsletter all still deliver.
 
 ## Notes on what was built
 
-- **93 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap.xml` + `robots.txt` included.
-- **92 images produced** from your Image Prompt Library, plus supplemental heroes for the sections the library didn't map — every destination, experience and journal post now opens on a photograph. All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `image-production-checklist.csv` for exactly where each image is used.
+- **97 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap-index.xml` + `robots.txt` included.
+- **474 images** in `images-b64/MANIFEST.json` — the 92 first produced from your Image Prompt Library, plus the heroes, place-card crops and og:images added since — every destination, experience and journal post now opens on a photograph. All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `image-production-checklist.csv` for exactly where each image is used.
 - **The About page photo is your real family photo** (from the files you provided) — no fake people anywhere on the site.
 - **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). The live key is already in place — see step 4.
 - **E-commerce/booking**: not included per your call — the structure leaves room to add a booking tool later.

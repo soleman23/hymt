@@ -884,9 +884,13 @@ violation, not a shortcut. Real stars come from Google Business Profile
 Full procedure in `LAUNCH-RUNBOOK.md`. Summary of gates:
 
 1. Phases 0–3 complete, `npm run build` clean, `npm run verify:remote` clean.
-2. GSC and Bing verified on `www.hymtravel.com` **before** cutover.
-3. Full crawl of the dev site (Screaming Frog free tier covers 94 pages) with
-   zero 4xx/5xx, zero redirect chains, zero missing canonicals.
+2. GSC verified as a **Domain property on `hymtravel.com`** via DNS TXT — the
+   bare domain, not a URL-prefix property on `www` — and Bing imported from it,
+   **before** cutover. Runbook § 1.2 has the wording; the DNS TXT goes at
+   whichever host currently serves the zone.
+3. Full crawl of the dev site (Screaming Frog's free tier covers 500 URLs;
+   the site is 97 — derive it, `grep -o "<loc>" dist/sitemap-0.xml | wc -l`)
+   with zero 4xx/5xx, zero redirect chains, zero missing canonicals.
 4. Manual pass at 375 px on ten representative pages.
 5. Web3Forms end-to-end test from the dev site with a real submission.
 6. DNS cutover.

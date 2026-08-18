@@ -66,7 +66,9 @@ Notes:
   post-stamp during launch week. An error is a failure; a date recommendation
   pre-stamp is expected.
 - Post-launch (M5): re-run the journal URL on the production host, and watch
-  GSC → Enhancements → Breadcrumbs fill to 83 valid items.
+  GSC → Enhancements → Breadcrumbs fill to one valid item per page that emits
+  `BreadcrumbList` (96 at 2026-08-18; derive with
+  `grep -rl BreadcrumbList dist --include='*.html' | wc -l`).
 
 ## Results
 
