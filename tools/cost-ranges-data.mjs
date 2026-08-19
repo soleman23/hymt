@@ -1,15 +1,24 @@
 /**
- * The 54 cost-range rows from docs/seo/research-backfill-2026-08-09.md,
+ * The cost-range rows seeded from docs/seo/research-backfill-2026-08-09.md,
  * keyed by content-page file. Consumed by tools/p3-8-cost-insert.mjs.
+ *
+ * 80 rows as of 2026-08-19: 43 carry a range, 37 are held. The header used to
+ * say 54 rows and 11 held; both counts predate the M7 destination pages, which
+ * added 25 held rows in one go.
  *
  * Every figure is an editorial planning band assembled from published rates
  * and official fee sources — USD, two adults sharing, five-star/boutique
  * tier, shoulder season, verified August 9, 2026. Not quotes.
  *
- * Entries with `held` instead of a range are the 11 rows whose research
- * confidence sits below the launch bar (Medium-low / Low-medium in the
- * backfill's quality gate). They stay commented out on the page until a
- * supplier confirms the band. Tracked on #30.
+ * Entries with `held` instead of a range sit below the launch bar in the
+ * backfill's quality gate (Medium-low / Low-medium) and render no cost block
+ * at all. Tracked on #108 — #30 was the original tracker and is closed.
+ *
+ * "Held" does not uniformly mean "waiting on a figure". Most of the newer rows
+ * are held because a nightly two-adult band is the wrong unit for the
+ * destination — a voyage priced per cabin, a region spanning three countries —
+ * and no supplier confirmation would unblock them. #108 groups all 37 by which
+ * kind they are; read it before researching a number for any of them.
  */
 export const VERIFIED = { datetime: "2026-08-09", label: "August 2026" };
 
