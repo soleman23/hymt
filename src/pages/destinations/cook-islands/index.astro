@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__cook-islands.html?raw";
+---
+<DestinationLayout
+  title="Cook Islands | Aitutaki &amp; Rarotonga — Hit Your Mark Travel"
+  description="Aitutaki's lagoon is the reason to come and Rarotonga is why people leave disappointed. How to split nine nights, and why May–October wins."
+  schemaType="website"
+  name={"Cook Islands"}
+  region={{ label: "South Pacific", href: "/destinations/south-pacific/" }}
+  hero={{
+    image: "/assets/img/south-pacific-cook-islands.jpg",
+    eyebrow: "South Pacific",
+    headline: "The Lagoon Is on Aitutaki.<br>Plan the Trip Around It.",
+    sub: "Fifteen islands, about fifteen thousand people, and two islands that carry almost every trip. Rarotonga is where the flights land and where a thin lagoon disappoints anyone who booked it as a beach week. Aitutaki is the water everyone came for. Getting the nights in the right proportion is most of the work.",
+    ctaPrimary: { label: "Plan a Cook Islands Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Cook Islands ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "May – October" },
+      { label: "Best For", value: "Lagoons<br>&amp; Quiet Weeks" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

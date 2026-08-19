@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__brazil.html?raw";
+---
+<DestinationLayout
+  title="Brazil | Rio, the Pantanal & Iguaçu — Hit Your Mark Travel"
+  description="July to October is the window: Rio dry, Pantanal jaguars on the riverbanks, Iguaçu walkable. The Northeast beaches keep the opposite calendar."
+  schemaType="website"
+  name={"Brazil"}
+  region={{ label: "South America", href: "/destinations/south-america/" }}
+  hero={{
+    image: "/assets/img/south-america-brazil.jpg",
+    eyebrow: "South America",
+    headline: "A Country You Cannot<br>Do in Ten Days.",
+    sub: "Brazil takes up close to half of South America, and almost every move inside it is a flight rather than a drive. Between July and October Rio is dry and mild, the Pantanal's floodwater has drained back to the rivers and the jaguars are working the banks in daylight, and Iguaçu is comfortable to walk. The Northeast beaches run on the opposite rain calendar and belong to a different trip.",
+    ctaPrimary: { label: "Plan a Brazil Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Brazil ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "July – October" },
+      { label: "Best For", value: "Jaguars<br>&amp; Rio de Janeiro" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

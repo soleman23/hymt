@@ -847,6 +847,38 @@ export const COST_RANGES = {
   "destinations__new-york.html": { held: "Medium-low — luxury rates are highly volatile" },
   "destinations__riviera-maya-los-cabos.html": { held: "Medium-low — hotel pricing is live and quote-led" },
   "destinations__st-barths.html": { held: "Medium-low — the upper tier is dynamic and editorial" },
+
+  /* ── The M7 destination set (#40-#65) ──
+     Twenty-five pages created after the 2026-08-09 backfill, so none of
+     them has a researched row to draw on. Each ships its cost block
+     commented out, the same way India (#54) does, and joins the queue
+     for a supplier-confirmed band rather than guessing one. ── */
+  "destinations__aspen.html": { held: "Medium-low — peak-week lodging is its own market and the two holiday weeks do not share a band with the rest of the season" },
+  "destinations__costa-rica.html": { held: "Medium-low — green-season and dry-season lodge rates are far enough apart that one band would describe neither" },
+  "destinations__jamaica.html": { held: "Medium-low — villa-with-staff and resort pricing are different products quoted on different bases" },
+  "destinations__barbados-eastern-caribbean.html": { held: "Medium-low — the band would have to span four islands with unrelated rate structures" },
+  "destinations__dominican-republic.html": { held: "Medium-low — Punta Cana all-inclusive and Casa de Campo villa rates are not the same product" },
+  "destinations__brazil.html": { held: "Medium-low — Pantanal lodges, Rio hotels and Northeast beach properties do not share a band" },
+  "destinations__argentina.html": { held: "Medium-low — rates are quoted in USD against a moving local price level" },
+  "destinations__colombia.html": { held: "Medium-low — luxury supply is thin enough that a band would rest on a handful of properties" },
+  "destinations__seychelles.html": { held: "Medium-low — island-resort rates are live and the inter-island transfers move the total materially" },
+  "destinations__south-africa.html": { held: "Medium-low — private-reserve lodges and city hotels sit an order of magnitude apart" },
+  "destinations__zambia-victoria-falls.html": { held: "Medium-low — camp rates are seasonal and the Falls-side hotels price on a separate basis" },
+  "destinations__morocco.html": { held: "Medium-low — riad and palace-hotel rates are live, and the desert leg prices per vehicle rather than per person" },
+  "destinations__bhutan.html": { held: "Medium-low — the published government fee is one line of the day rate, not the day rate" },
+  "destinations__vietnam-southeast-asia.html": { held: "Medium-low — the band would have to span three countries" },
+  "destinations__sri-lanka.html": { held: "Medium-low — bungalow and safari-lodge rates vary by season and by coast at the same time" },
+  "destinations__israel.html": { held: "Medium-low — Jerusalem and Tel Aviv hotel rates are live and gated by the religious calendar" },
+  "destinations__uae-gulf.html": { held: "Medium-low — Gulf hotel rates are among the most dynamic in the industry" },
+  "destinations__georgia-armenia.html": { held: "Medium-low — luxury supply is new and thin, so a band would not be stable enough to publish" },
+  "destinations__australia.html": { held: "Medium-low — the band would have to span a continent and the internal flights that join it" },
+  "destinations__cook-islands.html": { held: "Medium-low — Aitutaki and Rarotonga are different price levels on the same trip" },
+  "destinations__vanuatu.html": { held: "Medium-low — the band would span Vanuatu, Samoa, Tonga and the Solomons" },
+  "destinations__arctic-norway.html": { held: "Medium-low — aurora-season rates are live and the itineraries are chartered rather than packaged" },
+  "destinations__svalbard.html": { held: "Medium-low — expedition-vessel pricing is per departure and per cabin category" },
+  "destinations__greenland.html": { held: "Medium-low — charter flights and boat transfers dominate the number, and both are quoted per trip" },
+  "destinations__falklands-south-georgia.html": { held: "Medium-low — voyage pricing is per departure and per cabin category" },
+
   "experiences__romance-celebration-travel.html": { held: "Medium-low — dynamic rates, and event budgets price separately" },
   "experiences__multigenerational-travel.html": { held: "Low-medium — the two-adult normalization is structurally weak for villa parties" },
   "experiences__sports-event-travel.html": { held: "Low-medium — needs rebuilding on event, duration and party composition" },

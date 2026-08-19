@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__vietnam-southeast-asia.html?raw";
+---
+<DestinationLayout
+  title="Vietnam &amp; Southeast Asia — Hit Your Mark Travel"
+  description="Vietnam holds three climates at once, so no single month works everywhere. February to April runs Hanoi to the Mekong, and Hoi An floods in October."
+  schemaType="website"
+  name={"Vietnam &amp; Southeast Asia"}
+  region={{ label: "Asia", href: "/destinations/asia/" }}
+  hero={{
+    image: "/assets/img/asia-vietnam-and-southeast-asia.jpg",
+    eyebrow: "Southeast Asia",
+    headline: "One Country,<br>Three Weather Calendars.",
+    sub: "Vietnam runs 1,650 km from the northern border to the tip of the Mekong Delta and carries three climates at the same time, which is why any single-month answer to when to go is wrong somewhere. February through April is the only stretch that works end to end. Everything outside it is a decision about which third of the country the trip is really about — and Angkor and Luang Prabang are two more decisions after that.",
+    ctaPrimary: { label: "Plan a Vietnam Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Vietnam ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "Feb – April" },
+      { label: "Best For", value: "Street Food<br>&amp; Ancient Towns" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__bhutan.html?raw";
+---
+<DestinationLayout
+  title="Bhutan | Paro, Punakha & Bumthang — Hit Your Mark Travel"
+  description="Bhutan charges US$100 per adult per night and requires a guide. What that buys, why Taktsang goes last, and how far east the road is worth going."
+  schemaType="website"
+  name={"Bhutan"}
+  region={{ label: "Asia", href: "/destinations/asia/" }}
+  hero={{
+    image: "/assets/img/dh-28-bhutan-paro-taktsang.jpg",
+    eyebrow: "Eastern Himalaya",
+    headline: "The Country That Sets<br>Its Own Price.",
+    sub: "Bhutan is the one destination where the government publishes the number before you ask: a Sustainable Development Fee charged per adult per night, and a licensed guide with you throughout. Both read as restrictions on a booking page and work as advantages on the ground. What is left to plan is the guide, the pace, and how far east the road goes.",
+    ctaPrimary: { label: "Plan a Bhutan Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Bhutan ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "Sept – Nov" },
+      { label: "Best For", value: "Buddhist Culture<br>&amp; Mountain Walking" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

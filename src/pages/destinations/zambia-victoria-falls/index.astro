@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__zambia-victoria-falls.html?raw";
+---
+<DestinationLayout
+  title="Zambia &amp; Victoria Falls — Hit Your Mark Travel"
+  description="Victoria Falls peaks around April, months after the rain. South Luangwa invented the walking safari in the 1950s. Which month gives you which trip."
+  schemaType="website"
+  name={"Zambia &amp; Victoria Falls"}
+  region={{ label: "Africa", href: "/destinations/africa/" }}
+  hero={{
+    image: "/assets/img/africa-zambia-and-victoria-falls.jpg",
+    eyebrow: "Southern Africa",
+    headline: "The Country That Invented<br>the Walking Safari.",
+    sub: "Zambia runs on two calendars that do not agree with each other. The wildlife window is June through October, when the water pulls back into the channels, the grass drops and the seasonal bushcamps open for walking. Victoria Falls runs months behind the rain that feeds it, peaking around April and bottoming out in late October. Which of those two you came for is what decides the month, and almost nobody says so before you book.",
+    ctaPrimary: { label: "Plan a Zambia Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Zambia ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "June – October" },
+      { label: "Best For", value: "Walking Safari<br>&amp; the Falls" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

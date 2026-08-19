@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__south-africa.html?raw";
+---
+<DestinationLayout
+  title="South Africa | Safari, Cape Town & Wine — Hit Your Mark Travel"
+  description="One trip with a private reserve, a city, a wine region and a coastline. April to October, Sabi Sand for leopards, and the Garden Route driven east to west."
+  schemaType="website"
+  name={"South Africa"}
+  region={{ label: "Africa", href: "/destinations/africa/" }}
+  hero={{
+    image: "/assets/img/africa-south-africa.jpg",
+    eyebrow: "Southern Africa",
+    headline: "The Right First Trip<br>to Africa.",
+    sub: "South Africa is the only country on the continent where a private game reserve, a serious wine region, a major city and a coastline you can drive in a week sit inside one two-week itinerary. That is exactly why it is the right first Africa trip and the wrong one for a traveller who wants nothing but bush. Everything else turns on which reserve you book, and on the fact that the two halves of the country peak in opposite months.",
+    ctaPrimary: { label: "Plan a South Africa Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore South Africa ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "April – October" },
+      { label: "Best For", value: "A First<br>Africa Trip" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

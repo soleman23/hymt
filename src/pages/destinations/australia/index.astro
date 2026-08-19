@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__australia.html?raw";
+---
+<DestinationLayout
+  title="Australia | Sydney, Uluru, the Reef — Hit Your Mark Travel"
+  description="Sydney, Uluru and the Great Barrier Reef are three trips, not a loop. Which reef gateway, why May and September work, and how many days it takes."
+  schemaType="website"
+  name={"Australia"}
+  region={{ label: "South Pacific", href: "/destinations/south-pacific/" }}
+  hero={{
+    image: "/assets/img/south-pacific-australia.jpg",
+    eyebrow: "South Pacific",
+    headline: "The Continent People<br>Plan as One Country.",
+    sub: "Sydney, Uluru, the Great Barrier Reef and Tasmania are not stops on a loop. They are four separate trips joined by domestic flights, and the months that suit one of them work against the next. May through September is the window that makes a multi-region trip possible at all; everything after that is a decision about which half of the country the trip is really about.",
+    ctaPrimary: { label: "Plan an Australia Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Australia ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "May – September" },
+      { label: "Best For", value: "Reef, Desert<br>&amp; Coast" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

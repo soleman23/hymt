@@ -63,6 +63,37 @@ const DEST = {
   thailand: ["Thailand", "Asia", "asia", "/assets/img/dh-24-thailand-limestone-bay.jpg"],
   "turks-caicos": ["Turks &amp; Caicos", "Caribbean &amp; Mexico", "caribbean-mexico", "/assets/img/d-02-grace-bay.jpg"],
   "uk-ireland": ["UK &amp; Ireland", "Europe", "europe", "/assets/img/dh-25-uk-ireland-highland-loch.jpg"],
+
+  /* ── The M7 set (#40-#65) plus India (#54) ──
+     Derived from each page's own wrapper and related-section, so this map
+     and the pages cannot disagree. tools/make-related-card-crops.mjs reads
+     the same heroes to name its rc- crops. ── */
+  "arctic-norway": ["Arctic Norway", "Polar Regions", "polar-regions", "/assets/img/polar-regions-arctic-norway-and-northern-lights.jpg"],
+  argentina: ["Argentina", "South America", "south-america", "/assets/img/south-america-argentina.jpg"],
+  aspen: ["Aspen", "North America", "north-america", "/assets/img/dh-26-aspen-maroon-bells.jpg"],
+  australia: ["Australia", "South Pacific", "south-pacific", "/assets/img/south-pacific-australia.jpg"],
+  "barbados-eastern-caribbean": ["Barbados &amp; Eastern Caribbean", "Caribbean &amp; Mexico", "caribbean-mexico", "/assets/img/caribbean-mexico-barbados-and-eastern-caribbean.jpg"],
+  bhutan: ["Bhutan", "Asia", "asia", "/assets/img/dh-28-bhutan-paro-taktsang.jpg"],
+  brazil: ["Brazil", "South America", "south-america", "/assets/img/south-america-brazil.jpg"],
+  colombia: ["Colombia", "South America", "south-america", "/assets/img/south-america-colombia.jpg"],
+  "cook-islands": ["Cook Islands", "South Pacific", "south-pacific", "/assets/img/south-pacific-cook-islands.jpg"],
+  "costa-rica": ["Costa Rica", "Caribbean &amp; Mexico", "caribbean-mexico", "/assets/img/dh-27-costa-rica-cloud-forest.jpg"],
+  "dominican-republic": ["Dominican Republic", "Caribbean &amp; Mexico", "caribbean-mexico", "/assets/img/caribbean-mexico-dominican-republic.jpg"],
+  "falklands-south-georgia": ["Falklands &amp; South Georgia", "Polar Regions", "polar-regions", "/assets/img/polar-regions-falklands-and-south-georgia.jpg"],
+  "georgia-armenia": ["Georgia & Armenia", "Middle East", "middle-east", "/assets/img/middle-east-georgia-and-armenia.jpg"],
+  greenland: ["Greenland", "Polar Regions", "polar-regions", "/assets/img/polar-regions-greenland.jpg"],
+  india: ["India", "Asia", "asia", "/assets/img/asia-india.jpg"],
+  israel: ["Israel", "Middle East", "middle-east", "/assets/img/middle-east-israel.jpg"],
+  jamaica: ["Jamaica", "Caribbean &amp; Mexico", "caribbean-mexico", "/assets/img/caribbean-mexico-jamaica.jpg"],
+  morocco: ["Morocco", "Africa", "africa", "/assets/img/africa-morocco.jpg"],
+  seychelles: ["Seychelles", "Africa", "africa", "/assets/img/h-03-seychelles-granite.jpg"],
+  "south-africa": ["South Africa", "Africa", "africa", "/assets/img/africa-south-africa.jpg"],
+  "sri-lanka": ["Sri Lanka", "Asia", "asia", "/assets/img/asia-sri-lanka.jpg"],
+  svalbard: ["Svalbard", "Polar Regions", "polar-regions", "/assets/img/polar-regions-svalbard.jpg"],
+  "uae-gulf": ["UAE &amp; the Gulf", "Middle East", "middle-east", "/assets/img/middle-east-uae-and-the-gulf.jpg"],
+  vanuatu: ["Vanuatu &amp; Beyond", "South Pacific", "south-pacific", "/assets/img/south-pacific-vanuatu-and-beyond.jpg"],
+  "vietnam-southeast-asia": ["Vietnam &amp; Southeast Asia", "Asia", "asia", "/assets/img/asia-vietnam-and-southeast-asia.jpg"],
+  "zambia-victoria-falls": ["Zambia &amp; Victoria Falls", "Africa", "africa", "/assets/img/africa-zambia-and-victoria-falls.jpg"],
 };
 
 /** slug → the three destinations a reader on this page is genuinely deciding between. */
@@ -100,6 +131,34 @@ const RELATED = {
   thailand: ["bali", "maldives", "japan"],
   "turks-caicos": ["st-barths", "riviera-maya-los-cabos", "maldives"],
   "uk-ireland": ["france", "iceland", "new-york"],
+
+  /* ── The M7 set. Same derivation as DEST above. ── */
+  "arctic-norway": ["iceland", "svalbard", "greenland"],
+  argentina: ["patagonia", "brazil", "peru"],
+  aspen: ["canadian-rockies", "napa-sonoma", "new-york"],
+  australia: ["new-zealand", "fiji", "french-polynesia"],
+  "barbados-eastern-caribbean": ["st-barths", "turks-caicos", "jamaica"],
+  bhutan: ["india", "japan", "thailand"],
+  brazil: ["argentina", "peru", "patagonia"],
+  colombia: ["peru", "brazil", "costa-rica"],
+  "cook-islands": ["french-polynesia", "fiji", "vanuatu"],
+  "costa-rica": ["galapagos", "peru", "riviera-maya-los-cabos"],
+  "dominican-republic": ["jamaica", "turks-caicos", "riviera-maya-los-cabos"],
+  "falklands-south-georgia": ["antarctica", "patagonia", "svalbard"],
+  "georgia-armenia": ["israel", "jordan", "portugal"],
+  greenland: ["svalbard", "iceland", "antarctica"],
+  india: ["thailand", "japan", "bali"],
+  israel: ["jordan", "egypt", "greece"],
+  jamaica: ["dominican-republic", "st-barths", "turks-caicos"],
+  morocco: ["egypt", "jordan", "spain"],
+  seychelles: ["maldives", "french-polynesia", "turks-caicos"],
+  "south-africa": ["botswana", "kenya-tanzania", "rwanda"],
+  "sri-lanka": ["india", "maldives", "thailand"],
+  svalbard: ["greenland", "arctic-norway", "antarctica"],
+  "uae-gulf": ["oman", "jordan", "egypt"],
+  vanuatu: ["fiji", "cook-islands", "french-polynesia"],
+  "vietnam-southeast-asia": ["thailand", "bali", "japan"],
+  "zambia-victoria-falls": ["botswana", "kenya-tanzania", "south-africa"],
 };
 
 const H2 = `font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:700;letter-spacing:-.02em;color:var(--text-primary)`;

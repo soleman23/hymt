@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__greenland.html?raw";
+---
+<DestinationLayout
+  title="Greenland | Ilulissat and the Icefjord — Hit Your Mark Travel"
+  description="No road links Greenland's towns, so every plan is flights, boats and weather slack. Ilulissat, Disko Bay, and the February-to-April sled window."
+  schemaType="website"
+  name={"Greenland"}
+  region={{ label: "Polar Regions", href: "/destinations/polar-regions/" }}
+  hero={{
+    image: "/assets/img/polar-regions-greenland.jpg",
+    eyebrow: "North Atlantic Arctic",
+    headline: "The Island With No Road<br>Between Its Towns.",
+    sub: "Nuuk, Ilulissat, Kangerlussuaq and Tasiilaq are joined by aircraft, helicopter and boat, and all three stop when the weather says so. That is not a caveat at the foot of an itinerary — it is the structure of one. Every good Greenland trip is built around the sea and air schedule first, with the spare days written in rather than hoped for.",
+    ctaPrimary: { label: "Plan a Greenland Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Greenland ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "June – September" },
+      { label: "Best For", value: "Icebergs<br>&amp; Dog Sledding" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

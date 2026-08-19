@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__sri-lanka.html?raw";
+---
+<DestinationLayout
+  title="Sri Lanka | Cultural Triangle to Yala — Hit Your Mark Travel"
+  description="Two monsoons on opposite coasts: the west and south run December to March, the east May to September. Which side of Sri Lanka to be on in your month."
+  schemaType="website"
+  name={"Sri Lanka"}
+  region={{ label: "Asia", href: "/destinations/asia/" }}
+  hero={{
+    image: "/assets/img/asia-sri-lanka.jpg",
+    eyebrow: "South Asia",
+    headline: "There Is No Bad Month.<br>Only the Wrong Coast.",
+    sub: "Sri Lanka runs two monsoons on opposite flanks of one island, which means the calendar never closes — it only moves. December through March belongs to the west, the south and the hill country; May through September belongs to Trincomalee and the east. Get that one decision right and the rest of the itinerary follows. Get it wrong and no hotel on the island can fix it.",
+    ctaPrimary: { label: "Plan a Sri Lanka Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Sri Lanka ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "Dec – April" },
+      { label: "Best For", value: "Culture<br>&amp; Wildlife" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__georgia-armenia.html?raw";
+---
+<DestinationLayout
+  title="Georgia & Armenia | Tbilisi to Yerevan — Hit Your Mark Travel"
+  description="Tbilisi to Yerevan is 280 km and one land border. When the Kakheti harvest runs, which mountain roads open in May, and how the crossing day is planned."
+  schemaType="website"
+  name={"Georgia & Armenia"}
+  region={{ label: "Middle East", href: "/destinations/middle-east/" }}
+  hero={{
+    image: "/assets/img/middle-east-georgia-and-armenia.jpg",
+    eyebrow: "The Caucasus",
+    headline: "Wine, Monasteries and<br>Roads That Decide the Trip.",
+    sub: "Georgia and Armenia are the wine-and-monastery trip people are looking for once Tuscany has stopped surprising them. Georgia has fermented in buried clay qvevri for eight thousand years; Armenia has been cutting churches into cliffs since the fourth century. Both fit in one itinerary, and the driving distances — not the sights — are what decide how that itinerary is built.",
+    ctaPrimary: { label: "Plan a Georgia & Armenia Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Georgia & Armenia ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "May – Oct" },
+      { label: "Best For", value: "Wine<br>&amp; Mountain Roads" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

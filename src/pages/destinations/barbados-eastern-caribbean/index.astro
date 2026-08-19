@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__barbados-eastern-caribbean.html?raw";
+---
+<DestinationLayout
+  title="Barbados &amp; the Eastern Caribbean — Hit Your Mark Travel"
+  description="Barbados is the Eastern Caribbean's air hub, and that decides the itinerary. West coast versus east, when to add St. Lucia or Nevis, and why December–April wins."
+  schemaType="website"
+  name={"Barbados &amp; Eastern Caribbean"}
+  region={{ label: "Caribbean &amp; Mexico", href: "/destinations/caribbean-mexico/" }}
+  hero={{
+    image: "/assets/img/caribbean-mexico-barbados-and-eastern-caribbean.jpg",
+    eyebrow: "Eastern Caribbean",
+    headline: "The Island You Can Reach,<br>and the Ones You Reach From.",
+    sub: "Barbados sits about a hundred miles east of the chain everything else here belongs to, which is why the long-haul flights land in it and why almost every island hop connects through it. Its west coast and its east coast are two different holidays on one island. St. Lucia, Antigua, Nevis and Mustique each beat it at exactly one thing — and the connections between them, not the hotels, decide how many of them fit.",
+    ctaPrimary: { label: "Plan a Barbados &amp; Eastern Caribbean Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Barbados &amp; Eastern Caribbean &darr;", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "December &ndash; April" },
+      { label: "Best For", value: "Beaches<br>&amp; Island Hopping" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

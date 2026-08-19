@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__costa-rica.html?raw";
+---
+<DestinationLayout
+  title="Costa Rica | Arenal, Monteverde, Osa — Hit Your Mark Travel"
+  description="Two bases beat four in eight days. Arenal or Monteverde, then one coast — and why the Caribbean side is brightest in September while the Pacific floods."
+  schemaType="website"
+  name={"Costa Rica"}
+  region={{ label: "Caribbean &amp; Mexico", href: "/destinations/caribbean-mexico/" }}
+  hero={{
+    image: "/assets/img/dh-27-costa-rica-cloud-forest.jpg",
+    eyebrow: "Central America",
+    headline: "The Country People Ruin<br>By Trying to See All of It.",
+    sub: "Costa Rica is the best family adventure destination I plan, and the one most often wrecked by ambition — four regions crammed into eight days on roads that do not cooperate. Two bases, one highland and one coast, with the park reservations and the naturalist guides held before the hotels. That is the whole trick, and almost nobody books it that way.",
+    ctaPrimary: { label: "Plan a Costa Rica Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Costa Rica ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "Dec – April" },
+      { label: "Best For", value: "Family Adventure<br>&amp; Wildlife" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

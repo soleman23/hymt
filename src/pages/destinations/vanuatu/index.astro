@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__vanuatu.html?raw";
+---
+<DestinationLayout
+  title="Vanuatu | Tanna, Espiritu Santo & Tonga — Hit Your Mark Travel"
+  description="The dry season runs May to October. Espiritu Santo's SS President Coolidge, Mount Yasur on Tanna, and why inter-island flights decide the trip."
+  schemaType="website"
+  name={"Vanuatu &amp; Beyond"}
+  region={{ label: "South Pacific", href: "/destinations/south-pacific/" }}
+  hero={{
+    image: "/assets/img/south-pacific-vanuatu-and-beyond.jpg",
+    eyebrow: "Melanesia",
+    headline: "The Pacific Nobody<br>Arranged For You.",
+    sub: "Vanuatu is the South Pacific for people who do not want a resort island. A 199-metre liner sunk in 1942 sits close enough to the beach at Luganville to be entered on foot, an active volcano on Tanna can be stood above at dusk, and the infrastructure is genuinely thinner than Fiji's. The planning problem is the domestic flight schedule, and everything else follows from it.",
+    ctaPrimary: { label: "Plan a Vanuatu & Beyond Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore Vanuatu & Beyond ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "May – October" },
+      { label: "Best For", value: "Volcanoes<br>&amp; Wreck Diving" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>
