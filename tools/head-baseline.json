@@ -29,20 +29,55 @@
   "description": "Antarctica planned properly — which expedition ship, whether to fly the Drake, when to go for whales or penguins, and how to avoid the trips that disappoint.",
   "canonical": "https://www.hymtravel.com/destinations/antarctica/"
  },
+ "/destinations/arctic-norway/": {
+  "title": "Arctic Norway &amp; the Northern Lights — Hit Your Mark Travel",
+  "description": "Aurora season runs late September to late March, and Tromsø sits at 69°N under the oval. How many nights the odds need, and which base leaves room to move.",
+  "canonical": "https://www.hymtravel.com/destinations/arctic-norway/"
+ },
+ "/destinations/argentina/": {
+  "title": "Argentina | Buenos Aires, Mendoza &amp; Salta — Hit Your Mark Travel",
+  "description": "Buenos Aires, Mendoza's high-altitude malbec and the Salta northwest point three ways. Which two fit your dates, and why October and March are the windows.",
+  "canonical": "https://www.hymtravel.com/destinations/argentina/"
+ },
  "/destinations/asia/": {
   "title": "Asia | Japan, Thailand &amp; Bali — Hit Your Mark Travel",
   "description": "Japan, Bali, Thailand, Vietnam, India and Sri Lanka — planned around the guides, properties and windows that reveal the depth, not the surface.",
   "canonical": "https://www.hymtravel.com/destinations/asia/"
+ },
+ "/destinations/aspen/": {
+  "title": "Aspen | Four Mountains, One Lift Ticket — Hit Your Mark Travel",
+  "description": "Four mountains on one lift ticket, a season from late November to mid-April, and the two weeks that are their own market. Plus why July works.",
+  "canonical": "https://www.hymtravel.com/destinations/aspen/"
+ },
+ "/destinations/australia/": {
+  "title": "Australia | Sydney, Uluru, the Reef — Hit Your Mark Travel",
+  "description": "Sydney, Uluru and the Great Barrier Reef are three trips, not a loop. Which reef gateway, why May and September work, and how many days it takes.",
+  "canonical": "https://www.hymtravel.com/destinations/australia/"
  },
  "/destinations/bali/": {
   "title": "Bali | Ubud, Komodo &amp; the Nusa Islands — Hit Your Mark Travel",
   "description": "Ubud, Sidemen Valley, the Nusa Islands, Komodo and Lombok — Bali's rice terrace culture and the surrounding islands most visitors never reach.",
   "canonical": "https://www.hymtravel.com/destinations/bali/"
  },
+ "/destinations/barbados-eastern-caribbean/": {
+  "title": "Barbados &amp; the Eastern Caribbean — Hit Your Mark Travel",
+  "description": "Barbados is the Eastern Caribbean's air hub, and that decides the itinerary. West coast versus east, when to add St. Lucia or Nevis, and why December–April wins.",
+  "canonical": "https://www.hymtravel.com/destinations/barbados-eastern-caribbean/"
+ },
+ "/destinations/bhutan/": {
+  "title": "Bhutan | Paro, Punakha &amp; Bumthang — Hit Your Mark Travel",
+  "description": "Bhutan charges US$100 per adult per night and requires a guide. What that buys, why Taktsang goes last, and how far east the road is worth going.",
+  "canonical": "https://www.hymtravel.com/destinations/bhutan/"
+ },
  "/destinations/botswana/": {
   "title": "Botswana — Hit Your Mark Travel",
   "description": "The Okavango Delta, Chobe, Central Kalahari and Linyanti. Botswana's low-volume model produces the most pristine safari available in Africa.",
   "canonical": "https://www.hymtravel.com/destinations/botswana/"
+ },
+ "/destinations/brazil/": {
+  "title": "Brazil | Rio, the Pantanal &amp; Iguaçu — Hit Your Mark Travel",
+  "description": "July to October is the window: Rio dry, Pantanal jaguars on the riverbanks, Iguaçu walkable. The Northeast beaches keep the opposite calendar.",
+  "canonical": "https://www.hymtravel.com/destinations/brazil/"
  },
  "/destinations/canadian-rockies/": {
   "title": "Canadian Rockies | Banff &amp; Jasper — Hit Your Mark Travel",
@@ -54,6 +89,26 @@
   "description": "Turks &#38; Caicos, St. Barth's, Jamaica, Barbados, Riviera Maya and Los Cabos — the islands, properties and windows that actually deliver.",
   "canonical": "https://www.hymtravel.com/destinations/caribbean-mexico/"
  },
+ "/destinations/colombia/": {
+  "title": "Colombia | Coffee Country &amp; Cartagena — Hit Your Mark Travel",
+  "description": "Cartagena earns three nights, not seven. Where Medellín, the coffee fincas and the Cocora valley fit, and why December to March is the window.",
+  "canonical": "https://www.hymtravel.com/destinations/colombia/"
+ },
+ "/destinations/cook-islands/": {
+  "title": "Cook Islands | Aitutaki &amp; Rarotonga — Hit Your Mark Travel",
+  "description": "Aitutaki's lagoon is the reason to come and Rarotonga is why people leave disappointed. How to split nine nights, and why May–October wins.",
+  "canonical": "https://www.hymtravel.com/destinations/cook-islands/"
+ },
+ "/destinations/costa-rica/": {
+  "title": "Costa Rica | Arenal, Monteverde, Osa — Hit Your Mark Travel",
+  "description": "Two bases beat four in eight days. Arenal or Monteverde, then one coast — and why the Caribbean side is brightest in September while the Pacific floods.",
+  "canonical": "https://www.hymtravel.com/destinations/costa-rica/"
+ },
+ "/destinations/dominican-republic/": {
+  "title": "Dominican Republic Beyond Punta Cana — Hit Your Mark Travel",
+  "description": "Punta Cana is not the country. Humpbacks fill Samaná Bay mid-January to late March, the dry season runs December to April, and the golf is at Casa de Campo.",
+  "canonical": "https://www.hymtravel.com/destinations/dominican-republic/"
+ },
  "/destinations/egypt/": {
   "title": "Egypt | Pyramids, Luxor &amp; the Nile — Hit Your Mark Travel",
   "description": "The Pyramids, the Valley of the Kings, Abu Simbel and the Nile — planned around Egyptologists and the dawn access that beats the crowds.",
@@ -63,6 +118,11 @@
   "title": "Europe | Italy, France, Spain &amp; Greece — Hit Your Mark Travel",
   "description": "Italy, France, Spain, Portugal, Greece and the UK — planned around the places, guides and access that most European itineraries never reach.",
   "canonical": "https://www.hymtravel.com/destinations/europe/"
+ },
+ "/destinations/falklands-south-georgia/": {
+  "title": "Falklands &amp; South Georgia Voyages — Hit Your Mark Travel",
+  "description": "South Georgia's king penguin beaches are why the 18–22 day voyage beats a Peninsula crossing. The October–March season, and the Falklands as a land trip.",
+  "canonical": "https://www.hymtravel.com/destinations/falklands-south-georgia/"
  },
  "/destinations/fiji/": {
   "title": "Fiji | Private Islands &amp; Coral Diving — Hit Your Mark Travel",
@@ -84,10 +144,20 @@
   "description": "Santa Cruz, Fernandina, Española and Bartolomé — the liveaboard versus land-based decision, island selection, and the naturalist guides.",
   "canonical": "https://www.hymtravel.com/destinations/galapagos/"
  },
+ "/destinations/georgia-armenia/": {
+  "title": "Georgia &amp; Armenia | Tbilisi to Yerevan — Hit Your Mark Travel",
+  "description": "Tbilisi to Yerevan is 280 km and one land border. When the Kakheti harvest runs, which mountain roads open in May, and how the crossing day is planned.",
+  "canonical": "https://www.hymtravel.com/destinations/georgia-armenia/"
+ },
  "/destinations/greece/": {
   "title": "Greece | Aegean Islands &amp; the Peloponnese — Hit Your Mark Travel",
   "description": "Athens, Santorini, Mykonos, Crete, the Peloponnese and Rhodes — archaeological access, island combinations, and the right property on each.",
   "canonical": "https://www.hymtravel.com/destinations/greece/"
+ },
+ "/destinations/greenland/": {
+  "title": "Greenland | Ilulissat and the Icefjord — Hit Your Mark Travel",
+  "description": "No road links Greenland's towns, so every plan is flights, boats and weather slack. Ilulissat, Disko Bay, and the February-to-April sled window.",
+  "canonical": "https://www.hymtravel.com/destinations/greenland/"
  },
  "/destinations/hawaii/": {
   "title": "Hawaii | Maui, Kauai &amp; the Big Island — Hit Your Mark Travel",
@@ -109,10 +179,20 @@
   "description": "The Golden Triangle needs seven days, not four. Rajasthan's forts, Kerala's backwaters, and why October through March is the window that works.",
   "canonical": "https://www.hymtravel.com/destinations/india/"
  },
+ "/destinations/israel/": {
+  "title": "Israel | Jerusalem, Tel Aviv &amp; Masada — Hit Your Mark Travel",
+  "description": "March to May and October to November are the windows that work. What Shabbat closes, how many nights Jerusalem needs, and where Petra fits.",
+  "canonical": "https://www.hymtravel.com/destinations/israel/"
+ },
  "/destinations/italy/": {
   "title": "Italy | Rome, Tuscany &amp; the Amalfi Coast — Hit Your Mark Travel",
   "description": "Rome, Tuscany, the Amalfi Coast, Venice, Sicily and Puglia — planned around the art historians, food specialists and properties worth the rate.",
   "canonical": "https://www.hymtravel.com/destinations/italy/"
+ },
+ "/destinations/jamaica/": {
+  "title": "Jamaica | Which Coast to Pick — Hit Your Mark Travel",
+  "description": "Montego Bay, Negril, Port Antonio or the south coast — which Jamaican coast to pick, why December through April, and the drives that break itineraries.",
+  "canonical": "https://www.hymtravel.com/destinations/jamaica/"
  },
  "/destinations/japan/": {
   "title": "Japan | Tokyo, Kyoto &amp; Ryokan Stays — Hit Your Mark Travel",
@@ -138,6 +218,11 @@
   "title": "Middle East — Hit Your Mark Travel",
   "description": "Jordan, Israel, Oman, Egypt, and the UAE. Middle East travel planned around the ancient sites, desert landscapes, and cultural access most itineraries never reach.",
   "canonical": "https://www.hymtravel.com/destinations/middle-east/"
+ },
+ "/destinations/morocco/": {
+  "title": "Morocco | Fez, Marrakech &amp; the Sahara — Hit Your Mark Travel",
+  "description": "Fez before Marrakech, and October to April before high summer. How many days the Sahara detour really costs, and when a licensed medina guide pays for itself.",
+  "canonical": "https://www.hymtravel.com/destinations/morocco/"
  },
  "/destinations/napa-sonoma/": {
   "title": "Napa &amp; Sonoma | Private Wine Country — Hit Your Mark Travel",
@@ -199,6 +284,16 @@
   "description": "Mountain gorilla trekking in Volcanoes National Park — the most profound wildlife encounter available, in a country rebuilt around small-group tourism.",
   "canonical": "https://www.hymtravel.com/destinations/rwanda/"
  },
+ "/destinations/seychelles/": {
+  "title": "Seychelles | Mahé, Praslin &amp; La Digue — Hit Your Mark Travel",
+  "description": "Mahé, Praslin and La Digue sit an hour apart by scheduled ferry — nothing like a Maldives atoll. April and October are the two calmest months.",
+  "canonical": "https://www.hymtravel.com/destinations/seychelles/"
+ },
+ "/destinations/south-africa/": {
+  "title": "South Africa | Safari, Cape Town &amp; Wine — Hit Your Mark Travel",
+  "description": "One trip with a private reserve, a city, a wine region and a coastline. April to October, Sabi Sand for leopards, and the Garden Route driven east to west.",
+  "canonical": "https://www.hymtravel.com/destinations/south-africa/"
+ },
  "/destinations/south-america/": {
   "title": "South America — Hit Your Mark Travel",
   "description": "Patagonia, Peru, the Galápagos, Brazil, Colombia and Argentina — planned around the landscapes, lodges and windows that deliver the continent.",
@@ -214,10 +309,20 @@
   "description": "Spain by region and by table — San Sebastián's pintxos, Andalusia's Moorish triangle, Rioja's wineries, Galicia's seafood. One region deeply, not five superficially.",
   "canonical": "https://www.hymtravel.com/destinations/spain/"
  },
+ "/destinations/sri-lanka/": {
+  "title": "Sri Lanka | Cultural Triangle to Yala — Hit Your Mark Travel",
+  "description": "Two monsoons on opposite coasts: the west and south run December to March, the east May to September. Which side of Sri Lanka to be on in your month.",
+  "canonical": "https://www.hymtravel.com/destinations/sri-lanka/"
+ },
  "/destinations/st-barths/": {
   "title": "St. Barth&#39;s | Villas &amp; Beaches — Hit Your Mark Travel",
   "description": "St. Barth's planned properly — which beach to base on, villa versus hotel, how the December window really works, and why the island rewards a return visit.",
   "canonical": "https://www.hymtravel.com/destinations/st-barths/"
+ },
+ "/destinations/svalbard/": {
+  "title": "Svalbard | Small-Ship Arctic Expeditions — Hit Your Mark Travel",
+  "description": "June to August is the circumnavigation window; March to May is snowmobile and blue-light season. Why passenger count decides how often you land.",
+  "canonical": "https://www.hymtravel.com/destinations/svalbard/"
  },
  "/destinations/thailand/": {
   "title": "Thailand — Hit Your Mark Travel",
@@ -229,10 +334,30 @@
   "description": "Grace Bay, North Caicos, Salt Cay, Pine Cay and Parrot Cay — the right villa on Providenciales, the quieter outer cays, and the winter whale season.",
   "canonical": "https://www.hymtravel.com/destinations/turks-caicos/"
  },
+ "/destinations/uae-gulf/": {
+  "title": "UAE &amp; the Gulf | Dubai, Abu Dhabi &amp; Doha — Hit Your Mark Travel",
+  "description": "November to March is the only comfortable window, and July highs pass 40°C. What Dubai, Abu Dhabi and Doha each do better, and when to add Oman.",
+  "canonical": "https://www.hymtravel.com/destinations/uae-gulf/"
+ },
  "/destinations/uk-ireland/": {
   "title": "UK &amp; Ireland | Scotland, Ireland &amp; England — Hit Your Mark Travel",
   "description": "Scottish Highlands by private driver, Ireland's Wild Atlantic Way, London done properly, and the castle hotels worth booking a year out.",
   "canonical": "https://www.hymtravel.com/destinations/uk-ireland/"
+ },
+ "/destinations/vanuatu/": {
+  "title": "Vanuatu | Tanna, Espiritu Santo &amp; Tonga — Hit Your Mark Travel",
+  "description": "The dry season runs May to October. Espiritu Santo's SS President Coolidge, Mount Yasur on Tanna, and why inter-island flights decide the trip.",
+  "canonical": "https://www.hymtravel.com/destinations/vanuatu/"
+ },
+ "/destinations/vietnam-southeast-asia/": {
+  "title": "Vietnam &amp; Southeast Asia — Hit Your Mark Travel",
+  "description": "Vietnam holds three climates at once, so no single month works everywhere. February to April runs Hanoi to the Mekong, and Hoi An floods in October.",
+  "canonical": "https://www.hymtravel.com/destinations/vietnam-southeast-asia/"
+ },
+ "/destinations/zambia-victoria-falls/": {
+  "title": "Zambia &amp; Victoria Falls — Hit Your Mark Travel",
+  "description": "Victoria Falls peaks around April, months after the rain. South Luangwa invented the walking safari in the 1950s. Which month gives you which trip.",
+  "canonical": "https://www.hymtravel.com/destinations/zambia-victoria-falls/"
  },
  "/experiences/adventure-active-travel/": {
   "title": "Adventure &amp; Active Travel — Hit Your Mark Travel",
