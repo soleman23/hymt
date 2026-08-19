@@ -60,6 +60,28 @@ const SOURCES = [
   "dh-23-spain-andalusia-dusk.jpg", "d-06-st-barts-harbour.jpg",
   "dh-24-thailand-limestone-bay.jpg", "d-02-grace-bay.jpg",
   "dh-25-uk-ireland-highland-loch.jpg",
+
+  /* The M7 set (#40-#65) plus India (#54). These 26 destinations had no rc-
+     crop because none of them had a page for another page to relate TO. They
+     do now, and the related grid on a new page is the first place a reader
+     meets its neighbours -- Jamaica's genuine alternative is the Dominican
+     Republic, Svalbard's is Greenland, and both sides of every one of those
+     pairs shipped in the same milestone. */
+  "asia-india.jpg", "dh-26-aspen-maroon-bells.jpg",
+  "dh-27-costa-rica-cloud-forest.jpg", "caribbean-mexico-jamaica.jpg",
+  "caribbean-mexico-barbados-and-eastern-caribbean.jpg",
+  "caribbean-mexico-dominican-republic.jpg", "south-america-brazil.jpg",
+  "south-america-argentina.jpg", "south-america-colombia.jpg",
+  "h-03-seychelles-granite.jpg", "africa-south-africa.jpg",
+  "africa-zambia-and-victoria-falls.jpg", "africa-morocco.jpg",
+  "dh-28-bhutan-paro-taktsang.jpg", "asia-vietnam-and-southeast-asia.jpg",
+  "asia-sri-lanka.jpg", "middle-east-israel.jpg",
+  "middle-east-uae-and-the-gulf.jpg", "middle-east-georgia-and-armenia.jpg",
+  "south-pacific-australia.jpg", "south-pacific-cook-islands.jpg",
+  "south-pacific-vanuatu-and-beyond.jpg",
+  "polar-regions-arctic-norway-and-northern-lights.jpg",
+  "polar-regions-svalbard.jpg", "polar-regions-greenland.jpg",
+  "polar-regions-falklands-and-south-georgia.jpg",
 ];
 
 const cropName = (src) => "rc-" + src.replace(/\.(jpe?g|png|webp)$/i, "") + ".jpg";
