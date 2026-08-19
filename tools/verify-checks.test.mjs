@@ -51,7 +51,7 @@ import {
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, photoGridDefects,
+  htaccessGaps, photoGridDefects, bodyWords, crumbTrail,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -354,6 +354,109 @@ t("rail: labels come back in document order",
 
 t("rail: markup inside a label does not leak into the name",
   heroStatLabels(hRail(hStat("Best&nbsp;For", "x")))[0], "Best For");
+
+/* ── page-length (CONTENT-STANDARDS § 3.4) ──
+   The M7 destination set was drafted at 3,636–4,087 words against a 3,500
+   ceiling and every page built green, because nothing measured length. These
+   fixtures pin what is counted, which is the whole difficulty: the breadcrumb
+   and hero are layout output, not authored copy, and they add ~108 words to
+   every destination page. Counting them makes an honest 3,402-word page fail
+   a ceiling written against the standard's own number.
+
+   The nesting cases are not padding. The breadcrumb is a div inside a div and
+   the body is sections inside sections, so a non-greedy strip would end at the
+   first close and leak the rest of the trail into the count — the same bug the
+   hero-stat-rail predicate shipped with and that innerOf exists to prevent. */
+
+const wds = (n, w = "word") => Array.from({ length: n }, () => w).join(" ");
+const crumbs = (...names) =>
+  `<div class="breadcrumb"><div class="breadcrumb__inner">` +
+  names.map((n, i) => i < names.length - 1
+    ? `<a class="breadcrumb__link" href="/x/">${n}</a><span class="breadcrumb__sep">&rsaquo;</span>`
+    : `<span class="breadcrumb__current">${n}</span>`).join("") +
+  `</div></div>`;
+const dHero = `<section class="dest-hero"><div class="dest-hero__bg"></div>` +
+  `<div class="dest-hero__content"><div class="dest-hero__left"><h1>India</h1>` +
+  `<p class="dest-hero__sub">${wds(60, "herosub")}</p></div>` +
+  `<div class="dest-hero__right"><div><span class="dest-hero__stat-label">Best Season</span></div></div>` +
+  `</div></section>`;
+/* Body sections nest, exactly as the real pages do. */
+const dBody = (n) =>
+  `<section class="intro-section"><div><p>${wds(n)}</p></div></section>` +
+  `<section class="page-faq"><div class="pf-item"><div class="pf-a">${wds(10, "answer")}</div></div></section>`;
+const destPage = (n, trail = ["Home", "Destinations", "Asia", "India"]) =>
+  `<body><nav>${wds(25, "navlink")}</nav><main>` + crumbs(...trail) + dHero + dBody(n) +
+  `</main><footer>${wds(40, "footlink")}</footer></body>`;
+
+t("length: counts inside <main> only — nav and footer are not the page's copy",
+  bodyWords(destPage(100)), 110);
+
+t("length: the breadcrumb is layout output and does not count",
+  bodyWords(destPage(100)) === bodyWords(
+    destPage(100, ["Home", "Destinations", "Caribbean & Mexico", "Riviera Maya & Los Cabos"])), true);
+
+/* The leak text sits AFTER the inner </div> and before the outer one — the
+   only position where innerOf and a non-greedy regex disagree. With the text
+   inside the nested div (the obvious way to write this) both implementations
+   return 30 and the fixture pins nothing. */
+t("length: a nested div inside the breadcrumb does not leak crumbs into the count",
+  bodyWords(`<body><main><div class="breadcrumb"><div class="breadcrumb__inner">` +
+    `<a class="breadcrumb__link">Home</a></div>${wds(50, "leak")}</div>` +
+    `<p>${wds(30)}</p></main></body>`), 30);
+
+t("length: the hero is layout output and does not count",
+  bodyWords(`<body><main>${dHero}<p>${wds(30)}</p></main></body>`), 30);
+
+t("length: a nested section inside the hero does not truncate the strip",
+  bodyWords(`<body><main><section class="dest-hero"><section>${wds(10, "inner")}</section>` +
+    `${wds(50, "leak")}</section><p>${wds(30)}</p></main></body>`), 30);
+
+t("length: nested body sections are counted whole, not to the first </section>",
+  bodyWords(`<body><main><section class="a"><section class="b">${wds(40)}</section>` +
+    `${wds(20)}</section></main></body>`), 60);
+
+/* The chrome strip runs against the region innerOf returned, so a <main> read
+   with a non-greedy regex would hand it a truncated page. </main> is unique on
+   a real page, which is exactly why this needs a fixture rather than trust:
+   nothing on the site would show the difference. */
+t("length: the strip reads the whole <main>, not up to a nested close",
+  bodyWords(`<body><main><section class="dest-hero"><div>x</div></section>` +
+    `<div class="wrap"></div>${wds(45)}</main></body>`), 45);
+
+t("length: comments and scripts are not shipped copy",
+  bodyWords(`<body><main><!-- ${wds(80, "NEEDSMARK")} --><script>${wds(80, "js")}</script>` +
+    `<p>${wds(30)}</p></main></body>`), 30);
+
+t("length: a page with no <main> reports that as its own cause",
+  bodyWords("<body><p>x</p></body>"), "no-main");
+
+/* The failure this check exists for, at the real numbers. India ships 3,225
+   words of copy; the M7 drafts came in around 4,000. */
+t("length: an India-sized page is under the 3,500 ceiling",
+  bodyWords(destPage(3215)) <= 3500, true);
+
+t("length: an M7-sized draft is over the ceiling — the check goes red",
+  bodyWords(destPage(4030)) > 3500, true);
+
+t("length: the ceiling is not passed by padding the hero instead",
+  bodyWords(`<body><main>` + crumbs("Home", "Destinations", "Asia", "India") +
+    `<section class="dest-hero">${wds(4000, "hero")}</section>` +
+    dBody(100) + `</main></body>`) > 3500, false);
+
+/* crumbTrail is how a regional hub is told from a country page, so the
+   check must not fire on the nine hubs. A slug list would have drifted. */
+t("length: a country page has four crumbs",
+  crumbTrail(destPage(10)).join("|"), "Home|Destinations|Asia|India");
+
+t("length: a regional hub has three, so page-length skips it",
+  crumbTrail(destPage(10, ["Home", "Destinations", "Africa"])).length, 3);
+
+t("length: entities in a crumb decode to the visible name",
+  crumbTrail(destPage(10, ["Home", "Destinations", "Caribbean &amp; Mexico", "Jamaica"]))[2],
+  "Caribbean &amp; Mexico");
+
+t("length: a page with no breadcrumb yields no trail rather than throwing",
+  crumbTrail("<body><main><p>x</p></main></body>").length, 0);
 
 /* ── dead inline handlers (#104) ──
    Reproduces the shipped bug: a share button calling a function nothing
@@ -1039,6 +1142,25 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   const italy = await readFile(path.join(dist, "destinations", "italy", "index.html"), "utf8");
   t("real /destinations/italy/ clears the journal-link floor",
     linkFloor(italy, "section") >= 2, true);
+
+  /* page-length against real output. The numbers are asserted, not just the
+     verdict: bodyWords must return exactly what a word count of
+     src/content-pages/destinations__<slug>.html returns, because that is the
+     file an author opens when this check goes red. If these drift, the
+     predicate has started measuring something else. */
+  t("real /destinations/italy/ measures its authored body copy, chrome excluded",
+    bodyWords(italy), 3269);
+  t("real /destinations/italy/ is a country page, so page-length applies",
+    crumbTrail(italy).length, 4);
+  const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");
+  t("real /destinations/africa/ is a regional hub, so page-length skips it",
+    crumbTrail(africaHub).length, 3);
+  /* The shortest page on the site. It is deliberately short — § 3.4's own
+     prose blesses "a tight 1,200-word destination page" — which is why this
+     check has a ceiling and no floor. */
+  const napa = await readFile(path.join(dist, "destinations", "napa-sonoma", "index.html"), "utf8");
+  t("real /destinations/napa-sonoma/ is 1,215 words and passes: there is no floor",
+    bodyWords(napa) < 1500 && bodyWords(napa) <= 3500, true);
 
   const masters = await readFile(path.join(dist, "travel-journal", "masters-field-report", "index.html"), "utf8");
   t("real masters post clears the destination-link floor",

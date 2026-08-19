@@ -23,6 +23,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
+  bodyWords, crumbTrail,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -35,6 +36,10 @@ const REMOTE = (() => {
   const i = process.argv.indexOf("--remote");
   return i === -1 ? null : process.argv[i + 1]?.replace(/\/$/, "");
 })();
+
+/* CONTENT-STANDARDS § 3.4, destination country pages. Measured against the
+   built site: 34 such pages run 1,215–3,402 words of body copy. */
+const DEST_MAX_WORDS = 3500;
 
 const failures = [];
 const notes = [];
@@ -857,6 +862,44 @@ for (const file of htmlFiles) {
           : `links to ${n} journal post${n === 1 ? "" : "s"}`;
         fail("internal-link-floor", `${url} ${what} — CONTENT-STANDARDS § 7 requires 2`);
       }
+    }
+  }
+
+  /* page-length (CONTENT-STANDARDS § 3.4) — the ceiling on a destination
+     country page, and only that page type.
+
+     It exists because the M7 set was drafted at 3,636–4,087 words against a
+     3,500 ceiling — 15–25% over, past anything the site had ever shipped, and
+     green on every check. Length is the one quality bound with no natural
+     signal: a long page looks like a thorough one, and § 3.4 is explicit that
+     it buys nothing ("the GEO research found adding length produced zero
+     measured citation benefit").
+
+     WHY NO FLOOR. § 3.4's table says 1,500, and its own prose one paragraph
+     later says "a tight 1,200-word destination page beats a padded 3,000-word
+     one every time". Ten pages sit at 1,215–1,450 and are deliberately short —
+     napa-sonoma, st-barths, new-orleans, riviera-maya-los-cabos,
+     canadian-rockies, iceland, spain, antarctica, uk-ireland, portugal.
+     Enforcing the table would fail all ten against the standard's own words,
+     so the floor is not a rule and is not checked.
+
+     WHY ONLY THIS PAGE TYPE. § 3.4's other bands do not describe the built
+     site: all nine regional hubs run 2,544–3,109 against a stated
+     1,200–2,000, and the journal runs to 4,746 against 3,000. Those numbers
+     want re-deriving from the site before anything enforces them; a check
+     that needs a debt list on the day it ships is a check nobody trusts.
+     Regional hubs are told apart by breadcrumb depth, not a slug list — see
+     crumbTrail. */
+  if (!is404 && url.startsWith("/destinations/") && crumbTrail(html).length === 4) {
+    const n = bodyWords(html);
+    if (n === "no-main") {
+      fail("page-length", `${url} has no <main> element to measure`);
+    } else if (n > DEST_MAX_WORDS) {
+      fail("page-length",
+        `${url} body copy is ${n} words, over the ${DEST_MAX_WORDS} ceiling in ` +
+          `CONTENT-STANDARDS § 3.4 by ${n - DEST_MAX_WORDS}. Cut, do not pad — ` +
+          `the built set runs 1,215–3,402 and the template pages sit at ` +
+          `India 3,225 / Italy 3,269.`);
     }
   }
 
