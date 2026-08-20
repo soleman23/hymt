@@ -23,7 +23,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
-  bodyWords, crumbTrail,
+  bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -1051,7 +1051,57 @@ notes.push(
    page depends on — a deploy that skipped dist/_astro/ leaves every page
    unstyled while the HTML itself still looks fine. */
 if (REMOTE) {
-  const sample = ["/", "/destinations/st-barths/", "/destinations/maldives/"];
+  /* Every route the build produced must answer on the server.
+     This used to be three hardcoded routes — "/", st-barths, maldives — and
+     the 25 M7 destination pages deployed without the remote leg fetching one
+     of them. It reported ok because it never looked. The list now comes from
+     dist, so a page cannot ship outside the sample. */
+  const routes = remoteRoutes(htmlFiles.map(urlOf));
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  /* Four at a time with a pause between batches. Twelve was enough to make
+     www.hymtravel.com 429 the entire sweep. Throttling is retried with
+     backoff before it is believed, because one 429 says nothing about
+     whether the page is deployed. */
+  const probe = async (route) => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const r = await fetch(REMOTE + route, { method: "HEAD" })
+        .catch((e) => ({ ok: false, status: e.message }));
+      if (r.ok || !isThrottled(r.status)) return { route, ok: r.ok, status: r.status };
+      await sleep(1000 * (attempt + 1));
+    }
+    return { route, ok: false, status: 429 };
+  };
+
+  const results = [];
+  for (let i = 0; i < routes.length; i += 4) {
+    results.push(...await Promise.all(routes.slice(i, i + 4).map(probe)));
+    if (i + 4 < routes.length) await sleep(150);
+  }
+
+  const misses = remoteMisses(results);
+  const throttled = remoteThrottled(results);
+  if (misses.length) {
+    fail("remote-pages",
+      `${misses.length} of ${routes.length} built pages do not answer on ${REMOTE}: ` +
+      misses.slice(0, 8).join(", ") + (misses.length > 8 ? `, +${misses.length - 8} more` : ""));
+  }
+  if (throttled.length) {
+    /* Not a pass and not a failure: the host rate-limited us, so these routes
+       are simply unverified. Saying so beats implying they are fine. */
+    notes.push(`${throttled.length} of ${routes.length} routes still rate-limited after 3 tries — NOT verified`);
+  }
+  if (!misses.length && !throttled.length) {
+    notes.push(`all ${routes.length} built pages answer on ${REMOTE}`);
+  }
+
+  /* Deep check on a few: a deploy that skipped dist/_astro/ leaves every page
+     unstyled while the HTML itself still looks fine. Any page proves the
+     stylesheets, so these stay fixed — the sweep above is what tracks new
+     routes. One M7 page is included so the deep leg exercises the newest
+     template too. */
+  const sample = ["/", "/destinations/st-barths/", "/destinations/maldives/",
+                  "/destinations/aspen/"];
   for (const page of sample) {
     const res = await fetch(REMOTE + page).catch((e) => ({ ok: false, status: e.message }));
     if (!res.ok) { fail("remote", `${REMOTE}${page} returned ${res.status}`); continue; }

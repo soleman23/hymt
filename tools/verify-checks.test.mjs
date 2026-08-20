@@ -52,6 +52,7 @@ import {
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, photoGridDefects, bodyWords, crumbTrail,
+  remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 
@@ -1247,6 +1248,57 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
+
+/* ── remote-pages (§5 remote spot-check) ──
+   The bug these encode: the remote leg sampled three hardcoded routes, so the
+   25 M7 destination pages deployed to the dev site without one of them being
+   fetched. `verify:remote` printed ok while nothing had verified the pages
+   that had just shipped. A check that only looks at three routes cannot go red
+   for the fourth, so these assert the route list tracks the build and that a
+   page which does not answer is actually reported. */
+const BUILT = [
+  "/", "/destinations/", "/destinations/st-barths/", "/destinations/aspen/",
+  "/destinations/falklands-south-georgia/", "/404.html",
+];
+
+t("remoteRoutes keeps every built page",
+  remoteRoutes(BUILT).length, 5);
+t("remoteRoutes drops 404.html — it is the error document, not a route",
+  remoteRoutes(BUILT).includes("/404.html"), false);
+t("remoteRoutes includes a page the old hardcoded sample never named",
+  remoteRoutes(BUILT).includes("/destinations/aspen/"), true);
+t("remoteRoutes dedupes and sorts, so the order cannot drift with walk order",
+  remoteRoutes(["/b/", "/a/", "/b/"]).join(","), "/a/,/b/");
+
+/* the broken shape: a page that does not answer must be reported */
+t("remoteMisses reports a page that 404s on the server",
+  remoteMisses([
+    { route: "/", ok: true, status: 200 },
+    { route: "/destinations/aspen/", ok: false, status: 404 },
+  ]).join(""), "/destinations/aspen/ -> 404");
+t("remoteMisses reports a transport failure, not just an HTTP status",
+  remoteMisses([{ route: "/x/", ok: false, status: "ENOTFOUND" }]).join(""),
+  "/x/ -> ENOTFOUND");
+t("remoteMisses is empty when every page answers",
+  remoteMisses([{ route: "/", ok: true, status: 200 }]).length, 0);
+
+/* The false red this cost us: sweeping 122 routes made production 429 every
+   one, and the first version reported "122 of 122 built pages do not answer"
+   — a deploy catastrophe that had not happened. Throttling is inconclusive,
+   never absence. */
+const THROTTLED = [
+  { route: "/", ok: false, status: 429 },
+  { route: "/destinations/aspen/", ok: false, status: 503 },
+  { route: "/gone/", ok: false, status: 404 },
+];
+t("a 429 is not counted as a missing page",
+  remoteMisses(THROTTLED).join(""), "/gone/ -> 404");
+t("a 503 is not counted as a missing page either",
+  remoteMisses(THROTTLED).some((m) => m.includes("aspen")), false);
+t("throttled routes are reported separately, so they are not silently a pass",
+  remoteThrottled(THROTTLED).join(","), "/,/destinations/aspen/");
+t("a genuine 404 is not mistaken for throttling",
+  remoteThrottled(THROTTLED).includes("/gone/"), false);
 
 /* ── report ── */
 if (failures.length) {
