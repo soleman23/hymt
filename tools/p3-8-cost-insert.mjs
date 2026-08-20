@@ -43,8 +43,14 @@ function renderSection(title, basis, d) {
   if (!/^https:\/\/[^\s"']+$/.test(d.source.href)) {
     throw new Error(`source href is not https: ${d.source.href}`);
   }
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(VERIFIED.datetime)) {
-    throw new Error(`bad verified datetime: ${VERIFIED.datetime}`);
+  /* A row re-shopped after the 2026-08-09 backfill carries its own `verified`.
+     Without this the only options are to date it wrongly or to bump the global
+     VERIFIED, which would claim every one of the other rows was re-checked on a
+     day nobody looked at it. The label is what a reader sees and stays coarse
+     ("August 2026"); the datetime is machine-readable and must be exact. */
+  const v = d.verified ?? VERIFIED;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v.datetime)) {
+    throw new Error(`bad verified datetime: ${v.datetime}`);
   }
   const li = (items) => items.map((t) => `        <li>${esc(checkField("list item", t))}</li>`).join("\n");
   return `<section class="cost-range">
@@ -80,7 +86,7 @@ ${li(d.drivers)}
 
   <p class="cost-range__note">
     Editorial planning bands, not quotes — assembled from published rates and official fee sources,
-    verified <time datetime="${VERIFIED.datetime}">${esc(VERIFIED.label)}</time>.
+    verified <time datetime="${v.datetime}">${esc(checkField("verified label", v.label))}</time>.
     Rates, permit costs and park fees change; confirm before booking.
     Source: <a href="${esc(d.source.href)}">${esc(checkField("source text", d.source.text))}</a>.
   </p>
@@ -131,5 +137,13 @@ for (const [file, d] of Object.entries(COST_RANGES)) {
   await writeFile(p, html, "utf8");
 }
 
+/* Derived, not hardcoded. This line used to read "expect 43 / expect 11 /
+   expect 54" and was wrong on two of the three the moment the M7 pages landed
+   25 held rows. Counting the data file cannot go stale; a remembered number
+   always does. Note `live` counts what THIS run rendered, so a second run
+   reports 0 live and everything skipped — that is correct, the tool is
+   idempotent. */
 const total = Object.keys(COST_RANGES).length;
-console.log(`live: ${live} (expect 43), held: ${held} (expect 11), skipped: ${skipped}, total pages: ${total} (expect 54)`);
+const wantHeld = Object.values(COST_RANGES).filter((d) => d.held).length;
+console.log(`this run — rendered: ${live}, held headers rewritten: ${held}, already live and skipped: ${skipped}`);
+console.log(`data file — ${total} rows: ${total - wantHeld} with a range, ${wantHeld} held`);
