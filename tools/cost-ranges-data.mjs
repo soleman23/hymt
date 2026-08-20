@@ -2,23 +2,38 @@
  * The cost-range rows seeded from docs/seo/research-backfill-2026-08-09.md,
  * keyed by content-page file. Consumed by tools/p3-8-cost-insert.mjs.
  *
- * 80 rows as of 2026-08-19: 43 carry a range, 37 are held. The header used to
- * say 54 rows and 11 held; both counts predate the M7 destination pages, which
- * added 25 held rows in one go.
+ * 80 rows as of 2026-08-20: 52 carry a range, 28 are held. Do not trust these
+ * two numbers if the file has been touched since — derive them, the way
+ * p3-8-cost-insert.mjs now does at the end of every run. The header has been
+ * wrong twice: it said 54 rows and 11 held long after the M7 pages added 25
+ * held rows in one go.
  *
  * Every figure is an editorial planning band assembled from published rates
  * and official fee sources — USD, two adults sharing, five-star/boutique
- * tier, shoulder season, verified August 9, 2026. Not quotes.
+ * tier, shoulder season. Not quotes.
+ *
+ * The band is editorial and is NOT derived from its `source`. The source is an
+ * authority anchor for one concrete, checkable fee of the kind the entry
+ * references — destinations__europe.html carries a whole-of-Europe band cited
+ * to the price of a Louvre ticket, and never names the Louvre in its own
+ * strings. Anyone re-shopping a row should know this before deciding a band is
+ * unpublishable because no rate card proves it. None of the 52 would survive
+ * that test.
+ *
+ * Most rows are dated by the global VERIFIED below. A row re-shopped later
+ * carries its own `verified` override, so it states the day it was actually
+ * checked rather than inheriting a date nobody looked at it on. Nine rows
+ * carry one today, all 2026-08-20.
  *
  * Entries with `held` instead of a range sit below the launch bar in the
  * backfill's quality gate (Medium-low / Low-medium) and render no cost block
  * at all. Tracked on #108 — #30 was the original tracker and is closed.
  *
- * "Held" does not uniformly mean "waiting on a figure". Most of the newer rows
- * are held because a nightly two-adult band is the wrong unit for the
- * destination — a voyage priced per cabin, a region spanning three countries —
- * and no supplier confirmation would unblock them. #108 groups all 37 by which
- * kind they are; read it before researching a number for any of them.
+ * "Held" does not uniformly mean "waiting on a figure". Most of what remains is
+ * held because a nightly two-adult band is the wrong unit for the destination —
+ * a voyage priced per cabin, a region spanning three countries — and no
+ * supplier confirmation would unblock them. #108 groups them by which kind they
+ * are; read it before researching a number for any of them.
  */
 export const VERIFIED = { datetime: "2026-08-09", label: "August 2026" };
 
@@ -847,15 +862,167 @@ export const COST_RANGES = {
   },
 
   /* ── Held — research confidence below the launch bar (#30) ── */
-  "destinations__caribbean-mexico.html": { held: "Medium-low — transient island rates are date-gated; re-shop before publishing" },
-  "destinations__bali.html": { held: "Medium-low — hotel and villa pricing varies too widely without live quotes" },
+  "destinations__caribbean-mexico.html": {
+    range: "$400–$1,700",
+    includes: [
+      "Half of a luxury room, suite or villa, and an arrival transfer",
+      "Breakfast or a meal plan where the property bundles it",
+      "Room levies like Barbados's BDS $35 (US$17.50) per bedroom",
+    ],
+    excludes: [
+      "International airfare",
+      "Inter-island flights, and meals outside the property's plan",
+      "Villa chef and provisioning, boat charters, spa and gratuities",
+    ],
+    drivers: [
+      "Island — St. Barth's tops the band, the Dominican Republic anchors it",
+      "Season — May and late November run 30–40% under February",
+      "Room category — beachfront prices well above garden view",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Barbados room rate levy", href: "https://bra.gov.bb/attachment?file=Attachments%2FTourism+Levy+Act%2C+2019-57.pdf&name=Tourism+Levy+Act%2C+2019-57" },
+  },
+  "destinations__bali.html": {
+    range: "$250–$800",
+    includes: [
+      "Half of a five-star room or a one-bedroom pool villa, two adults sharing",
+      "The 10% hospitality tax and a 5–10% service charge on quoted rates",
+      "Breakfast for two where the published rate carries it",
+    ],
+    excludes: [
+      "International airfare and the internal flights to Komodo or Lombok",
+      "The IDR 150,000 (about $8) Bali tourist levy, charged once per visit",
+      "Lunch, dinner, alcohol, spa treatments and a car with driver",
+    ],
+    drivers: [
+      "Area — Uluwatu and Seminyak villas run about 70% above Ubud in high season",
+      "Dates — mid-August runs about 27% above mid-May across 251 sampled villas",
+      "Property tier — Capella Ubud starts at about double the Apurva Kempinski rate",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Bali tourist levy", href: "https://lovebali.baliprov.go.id/" },
+  },
   "destinations__india.html": { held: "Medium-low — the spread across palace stays, tiger lodges and city five-stars is too wide to band without live quotes" },
-  "destinations__hawaii.html": { held: "Medium-low — resort rates are live and dynamic" },
-  "destinations__napa-sonoma.html": { held: "Medium-low — hotel pricing is live and seasonal" },
-  "destinations__new-orleans.html": { held: "Medium-low — stable public hotel rates are limited" },
-  "destinations__new-york.html": { held: "Medium-low — luxury rates are highly volatile" },
-  "destinations__riviera-maya-los-cabos.html": { held: "Medium-low — hotel pricing is live and quote-led" },
-  "destinations__st-barths.html": { held: "Medium-low — the upper tier is dynamic and editorial" },
+  "destinations__hawaii.html": {
+    range: "$650–$1,400",
+    includes: [
+      "Half of a five-star or boutique resort room, room only",
+      "Hawaii's 11% accommodations tax, the 3% county surcharge and the GET pass-on",
+      "A rental car with parking and park entry, plus one guided activity a day averaged",
+    ],
+    excludes: [
+      "Mainland airfare and the inter-island flights",
+      "All meals, alcohol, spa and golf",
+      "Optional helicopter and private boat days, plus gratuities",
+    ],
+    drivers: [
+      "Island and resort region — Maui County luxury ran $853–$982 a room a night against Oahu's $437–$472",
+      "Room category — oceanfront and suites roughly double the room line and set the top of the band",
+      "Summer and festive weeks against the April–June and September–October windows",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Hawaii transient accommodations tax", href: "https://files.hawaii.gov/tax/news/announce/ann26-01.pdf" },
+  },
+  "destinations__napa-sonoma.html": {
+    range: "$800–$1,600",
+    includes: [
+      "Half of a five-star or boutique room",
+      "The 13% lodging tax and 2% tourism assessment on Napa nights",
+      "Two tasting appointments, a shared car and driver on tasting days, one strong dinner",
+    ],
+    excludes: [
+      "Flights into San Francisco or Oakland",
+      "Bottles bought at the cellar door and their shipping",
+      "Resort fees, spa treatments and gratuities",
+    ],
+    drivers: [
+      "Hotel tier — a boutique inn holds the floor, an estate resort tops the band",
+      "Harvest weeks — September and October price above this shoulder-season band",
+      "Tasting tier — basic pours average $40, elevated tastings $200 or more",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Napa County transient occupancy tax rates", href: "https://www.napacounty.gov/1266/Transient-Occupancy-Tax" },
+  },
+  "destinations__new-orleans.html": {
+    range: "$450–$900",
+    includes: [
+      "Half of a five-star or boutique double room",
+      "Breakfast, plus all room taxes including the 5% city hotel-motel tax",
+      "Local transfers and a share of private guiding",
+    ],
+    excludes: [
+      "Airfare into Louis Armstrong International",
+      "Lunches and dinners, including the grand Creole rooms",
+      "Alcohol, festival tickets, spa and gratuities",
+    ],
+    drivers: [
+      "Festival weeks — Mardi Gras 9 February 2027, Jazz Fest 22 April",
+      "Room category — a Quarter-facing suite tops the band",
+      "How much of the week is privately guided",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "City of New Orleans hotel-motel tax rates", href: "https://services.nola.gov/CNO/Services/Revenue/Forms/8010inst.htm" },
+  },
+  "destinations__new-york.html": {
+    range: "$700–$1,500",
+    includes: [
+      "Half of a West Village or Tribeca boutique room",
+      "Hotel taxes, plus $3.50 a room a night in flat city and state fees",
+      "Everyday meals, museum entry and subway fares",
+    ],
+    excludes: [
+      "Airfare into JFK, LaGuardia or Newark",
+      "Omakase counters, tasting menus and premium wine",
+      "A private food-specialist day, Broadway seats and tips",
+    ],
+    drivers: [
+      "Hotel choice — Tribeca's best rooms run more than double the downtown boutique floor",
+      "Dates — October rooms run well above late August across the boutique tier",
+      "Where you eat — a bistrot dinner circuit runs several times the counter-and-market days",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "NYC hotel room occupancy tax", href: "https://www.nyc.gov/site/finance/business/business-hotel-room-occupancy-tax.page" },
+  },
+  "destinations__riviera-maya-los-cabos.html": {
+    range: "$450–$1,200",
+    includes: [
+      "Half of a five-star or boutique room, breakfast where the property bundles it",
+      "The 16% IVA and the state lodging tax on the room rate",
+      "Beach and pool service, Wi-Fi and gym access",
+    ],
+    excludes: [
+      "International airfare, airport transfers and each state's per-person visitor tax",
+      "Lunch, dinner and alcohol unless the property is all-inclusive",
+      "Excursions, cenote and Mayan-site entry, spa, golf and gratuities",
+    ],
+    drivers: [
+      "Room category — a beachfront suite tops the band, a garden room sits near the floor",
+      "Meal plan — an all-inclusive rate absorbs those meals and prices above room-only",
+      "Dates — peak nights at the Cabo flagships run over twice their off-peak rate",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Mexico's IVA rate (Ley del IVA, Article 1)", href: "https://wwwmat.sat.gob.mx/articulo/19848/articulo-1" },
+  },
+  "destinations__st-barths.html": {
+    range: "$350–$1,750",
+    includes: [
+      "Half of a boutique hotel room or a two-bedroom villa, two adults sharing",
+      "The 5% taxe de séjour on the net room rate",
+      "Daily maid service and the villa agency's 10% service fee at the top end",
+    ],
+    excludes: [
+      "International airfare and the St. Martin connection",
+      "Restaurants, beach clubs, alcohol and gratuities",
+      "Car hire, boat charters and spa treatments",
+    ],
+    drivers: [
+      "Villa versus hotel — two adults taking a villa alone tops the band",
+      "Occupancy — four sharing a two-bedroom villa halves the per-person figure",
+      "Late-December dates — New Year's week runs about three times a high-season week",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Collectivité de Saint-Barthélemy taxe de séjour tariff", href: "https://comstbarth.taxesejour.fr/portail/document/2444874/download" },
+  },
 
   /* ── The M7 destination set (#40-#65) ──
      Twenty-five pages created after the 2026-08-09 backfill, so none of
@@ -888,7 +1055,26 @@ export const COST_RANGES = {
   "destinations__greenland.html": { held: "Medium-low — charter flights and boat transfers dominate the number, and both are quoted per trip" },
   "destinations__falklands-south-georgia.html": { held: "Medium-low — voyage pricing is per departure and per cabin category" },
 
-  "experiences__romance-celebration-travel.html": { held: "Medium-low — dynamic rates, and event budgets price separately" },
+  "experiences__romance-celebration-travel.html": {
+    range: "$600–$2,000",
+    includes: [
+      "Half of a luxury suite, overwater villa or ryokan room with breakfast",
+      "Local lodging and accommodation taxes on the room",
+      "Full board and guiding where a safari camp prices all-inclusive",
+    ],
+    excludes: [
+      "International airfare, plus the seaplane or inter-camp flight unless packaged",
+      "Meals and drinks outside those plans, spa treatments and gratuities",
+      "The top villa and presidential categories, which price above the band",
+    ],
+    drivers: [
+      "Destination — a private safari camp prices several times a Mediterranean five-star",
+      "Room category — overwater with a private pool tops the band",
+      "Festive and peak-season dates, where supplements are real",
+    ],
+    verified: { datetime: "2026-08-20", label: "August 2026" },
+    source: { text: "Kyoto City accommodation tax", href: "https://www.city.kyoto.lg.jp/gyozai/page/0000236942.html" },
+  },
   "experiences__multigenerational-travel.html": { held: "Low-medium — the two-adult normalization is structurally weak for villa parties" },
   "experiences__sports-event-travel.html": { held: "Low-medium — needs rebuilding on event, duration and party composition" },
 };
