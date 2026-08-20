@@ -148,9 +148,9 @@ const REWRITES = [
 
 const wc = (s) => s.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
 const firstSentence = (t) => {
-  const guard = t.replace(/\b(St|Mt|Dr|Mr|Ms|No|vs|approx)\./gi, (m) => m.replace(".", " "));
+  const guard = t.replace(/\b(St|Mt|Dr|Mr|Ms|No|vs|approx)\./gi, (m) => m.replace(".", "\u0000"));
   const m = guard.match(/^[\s\S]*?[.!?](?=\s|<|$)/);
-  return (m ? m[0] : guard).replace(/ /g, ".");
+  return (m ? m[0] : guard).replace(/\u0000/g, ".");
 };
 
 /* ── validate every lead before touching anything ── */
