@@ -884,7 +884,12 @@ export const COST_RANGES = {
   "destinations__cook-islands.html": { held: "Medium-low — Aitutaki and Rarotonga are different price levels on the same trip" },
   "destinations__vanuatu.html": { held: "Medium-low — the band would span Vanuatu, Samoa, Tonga and the Solomons" },
   "destinations__arctic-norway.html": { held: "Medium-low — aurora-season rates are live and the itineraries are chartered rather than packaged" },
-  "destinations__svalbard.html": { held: "Medium-low — expedition-vessel pricing is per departure and per cabin category" },
+  /* Basis corrected 2026-08-20 from "per person, per day, land only" to "per
+     person, per voyage", matching falklands-south-georgia and the polar-regions
+     parent. The page's first heading is "Svalbard Is a Ship Trip", two of its
+     three itineraries are 8-12 day voyages, and the land-only unit described
+     only the third. The unit is no longer the blocker; the two below are. */
+  "destinations__svalbard.html": { held: "Medium-low — the per-voyage band still needs an official anchor, and the March–May snowmobile weeks price separately" },
   "destinations__greenland.html": { held: "Medium-low — charter flights and boat transfers dominate the number, and both are quoted per trip" },
   "destinations__falklands-south-georgia.html": { held: "Medium-low — voyage pricing is per departure and per cabin category" },
 
