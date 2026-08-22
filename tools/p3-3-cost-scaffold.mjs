@@ -34,12 +34,14 @@ const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DIR = path.join(ROOT, "src", "content-pages");
 const WORKSHEET = path.join(ROOT, "docs", "seo", "figures-worksheet.md");
 
-/* stem → [display name, pricing basis, authority for P3-5 citations] */
+/* stem → [display name, pricing basis, authority for P3-5 citations, plural?]
+   plural is optional and defaults to falsy; set it true where the display name
+   takes "Actually Cost" rather than "Actually Costs". */
 const PAGES = {
   // ── regional hubs ──
   "destinations__africa": ["Africa", "per person, per night, all-inclusive at camp", "Country park authorities; Botswana DWNP, Kenya Wildlife Service, TANAPA"],
   "destinations__asia": ["Asia", "per person, per day, land only", "National tourism boards (JNTO, TAT, Indonesia MoT)"],
-  "destinations__caribbean-mexico": ["the Caribbean &amp; Mexico", "per person, per night", "National tourism boards; NOAA for hurricane season dates"],
+  "destinations__caribbean-mexico": ["the Caribbean &amp; Mexico", "per person, per night", "National tourism boards; NOAA for hurricane season dates", true],
   "destinations__europe": ["Europe", "per person, per day, land only", "National tourism boards; individual museum and site operators"],
   "destinations__middle-east": ["the Middle East", "per person, per day, land only", "National tourism boards; UK FCDO / US State Dept for entry rules"],
   "destinations__north-america": ["North America", "per person, per day, land only", "US National Park Service; Parks Canada"],
@@ -52,7 +54,7 @@ const PAGES = {
   "destinations__antarctica": ["Antarctica", "per person, per voyage", "IAATO"],
   "destinations__bali": ["Bali", "per person, per night", "Indonesia Ministry of Tourism; Bali tourist levy"],
   "destinations__botswana": ["Botswana", "per person, per night, all-inclusive at camp", "Botswana Dept of Wildlife &amp; National Parks (park fees, concession rates)"],
-  "destinations__canadian-rockies": ["the Canadian Rockies", "per person, per day, land only", "Parks Canada (park pass, Moraine Lake shuttle)"],
+  "destinations__canadian-rockies": ["the Canadian Rockies", "per person, per day, land only", "Parks Canada (park pass, Moraine Lake shuttle)", true],
   "destinations__egypt": ["Egypt", "per person, per day, land only", "Egyptian Ministry of Tourism and Antiquities (site tickets)"],
   "destinations__fiji": ["Fiji", "per person, per night", "Tourism Fiji; Fiji Revenue &amp; Customs (departure tax)"],
   "destinations__france": ["France", "per person, per day, land only", "Atout France; individual museum operators (Louvre, Orsay)"],
@@ -64,9 +66,9 @@ const PAGES = {
   "destinations__italy": ["Italy", "per person, per day, land only", "Vatican Museums; Italian Ministry of Culture (site tickets)"],
   "destinations__japan": ["Japan", "per person, per day, land only", "JNTO; JR Group (rail pass pricing)"],
   "destinations__jordan": ["Jordan", "per person, per day, land only", "Petra Development &amp; Tourism Region Authority; Jordan Pass"],
-  "destinations__kenya-tanzania": ["Kenya &amp; Tanzania", "per person, per night, all-inclusive at camp", "Kenya Wildlife Service; TANAPA (park and conservancy fees)"],
+  "destinations__kenya-tanzania": ["Kenya &amp; Tanzania", "per person, per night, all-inclusive at camp", "Kenya Wildlife Service; TANAPA (park and conservancy fees)", true],
   "destinations__maldives": ["the Maldives", "per person, per night", "Maldives Inland Revenue Authority (green tax, TGST)"],
-  "destinations__napa-sonoma": ["Napa &amp; Sonoma", "per person, per day, land only", "Individual winery tasting fees; Napa Valley Vintners"],
+  "destinations__napa-sonoma": ["Napa &amp; Sonoma", "per person, per day, land only", "Individual winery tasting fees; Napa Valley Vintners", true],
   "destinations__new-orleans": ["New Orleans", "per person, per day, land only", "New Orleans &amp; Company (festival dates)"],
   "destinations__new-york": ["New York", "per person, per day, land only", "NYC Tourism; individual museum operators"],
   "destinations__new-zealand": ["New Zealand", "per person, per day, land only", "NZ Dept of Conservation (Great Walks, Milford)"],
@@ -74,13 +76,50 @@ const PAGES = {
   "destinations__patagonia": ["Patagonia", "per person, per day, land only", "CONAF (Torres del Paine); Argentina APN (Los Glaciares)"],
   "destinations__peru": ["Peru", "per person, per day, land only", "Peru Ministerio de Cultura (Machu Picchu tickets, Inca Trail permits)"],
   "destinations__portugal": ["Portugal", "per person, per day, land only", "Turismo de Portugal; individual quinta tasting fees"],
-  "destinations__riviera-maya-los-cabos": ["Mexico's coasts", "per person, per night", "Mexico SECTUR; INAH (Mayan site tickets)"],
+  "destinations__riviera-maya-los-cabos": ["Mexico's coasts", "per person, per night", "Mexico SECTUR; INAH (Mayan site tickets)", true],
   "destinations__rwanda": ["Rwanda", "per person, per night, all-inclusive at lodge", "Rwanda Development Board (gorilla permit price and daily quota)"],
   "destinations__spain": ["Spain", "per person, per day, land only", "Turespaña; Patronato de la Alhambra (ticket release dates)"],
   "destinations__st-barths": ["St. Barth's", "per person, per night", "Comité Territorial de Tourisme de Saint-Barthélemy"],
   "destinations__thailand": ["Thailand", "per person, per day, land only", "Tourism Authority of Thailand; DNP (national park fees)"],
   "destinations__turks-caicos": ["Turks &amp; Caicos", "per person, per night", "Turks &amp; Caicos Tourist Board"],
-  "destinations__uk-ireland": ["the UK &amp; Ireland", "per person, per day, land only", "VisitBritain; Fáilte Ireland; National Trust / OPW site fees"],
+  "destinations__uk-ireland": ["the UK &amp; Ireland", "per person, per day, land only", "VisitBritain; Fáilte Ireland; National Trust / OPW site fees", true],
+
+
+  /* ── destinations · the M7 set (#40-#65), added 2026-08-20 ──
+     These 26 pages were built after this table was written and never went
+     through it. docs/seo/NEW-CONTENT-PROMPT.md hardcodes "a cost-range block:
+     per-person per-day range" and states the shape "is not negotiable", so all
+     26 inherited "per person, per day, land only" regardless of what they sell;
+     only falklands-south-georgia was overridden by hand. Eight of the units
+     below therefore differ from what those pages currently declare, and the
+     pages still need editing to match — this table records the decision, it
+     does not apply it. Tracked on #108. */
+  "destinations__arctic-norway": ["Arctic Norway", "per person, per day, land only", "Norwegian Public Roads Administration (national road ferry tariffs, toll charges); Norwegian Meteorological Institute (yr.no cloud and aurora forecast)"],
+  "destinations__argentina": ["Argentina", "per person, per day, land only", "Argentina APN (Iguazú and Nahuel Huapi national park entry fees)"],
+  "destinations__aspen": ["Aspen", "per person, per night", "US Forest Service, White River National Forest (Maroon Bells timed-entry reservation and shuttle fee); City of Aspen (lodging tax)"],
+  "destinations__australia": ["Australia", "per person, per day, land only", "Parks Australia (Uluru-Kata Tjuta park entry fee); Great Barrier Reef Marine Park Authority (Environmental Management Charge)"],
+  "destinations__barbados-eastern-caribbean": ["Barbados &amp; the Eastern Caribbean", "per person, per night", "Barbados Revenue Authority (room rate levy, product development levy); Saint Lucia Tourism Authority; Antigua and Barbuda Tourism Authority", true],
+  "destinations__bhutan": ["Bhutan", "per person, per day, land only", "Bhutan Department of Tourism (Sustainable Development Fee, visa fee)"],
+  "destinations__brazil": ["Brazil", "per person, per day, land only", "ICMBio (Iguaçu National Park entry); Brazilian Ministry of Foreign Affairs (e-visa fee)"],
+  "destinations__colombia": ["Colombia", "per person, per day, land only", "Parques Nacionales Naturales de Colombia (Tayrona and Corales del Rosario entry fees)"],
+  "destinations__cook-islands": ["the Cook Islands", "per person, per night", "Cook Islands Revenue Management Division (VAT, departure tax)", true],
+  "destinations__costa-rica": ["Costa Rica", "per person, per day, land only", "SINAC (national park entry fees, daily-capacity reservations and the Corcovado certified-guide requirement)"],
+  "destinations__dominican-republic": ["the Dominican Republic", "per person, per night", "Dirección General de Impuestos Internos (18% ITBIS on hotel rates); Ministerio de Medio Ambiente (Samaná whale-watching permits)"],
+  "destinations__falklands-south-georgia": ["the Falklands &amp; South Georgia", "per person, per voyage", "Government of South Georgia &amp; the South Sandwich Islands (visitor entry permit, harbour dues); Falkland Islands Government (departure tax)", true],
+  "destinations__georgia-armenia": ["Georgia &amp; Armenia", "per person, per day, land only", "Georgian Ministry of Foreign Affairs consular service; Armenian Ministry of Foreign Affairs (visa fees and entry rules)", true],
+  "destinations__greenland": ["Greenland", "per person, per day, land only", "Government of Greenland, Naalakkersuisut (national park and expedition permits); Danish Immigration Service (Greenland visa endorsement)"],
+  "destinations__india": ["India", "per person, per day, land only", "Archaeological Survey of India (monument entry tickets); Indian Bureau of Immigration (e-Visa fee)"],
+  "destinations__israel": ["Israel", "per person, per day, land only", "Israel Nature and Parks Authority (Masada, Ein Gedi and Caesarea site entry fees); Population and Immigration Authority (ETA-IL fee)"],
+  "destinations__jamaica": ["Jamaica", "per person, per night", "Tax Administration Jamaica (GCT on tourism accommodation, nightly room tax)"],
+  "destinations__morocco": ["Morocco", "per person, per day, land only", "Morocco Ministry of Youth, Culture and Communication (monument and heritage site tickets)"],
+  "destinations__seychelles": ["Seychelles", "per person, per night", "Seychelles Revenue Commission (Environmental Sustainability Levy, VAT)"],
+  "destinations__south-africa": ["South Africa", "per person, per day, land only", "South African National Parks (Kruger and Addo daily conservation fee)"],
+  "destinations__sri-lanka": ["Sri Lanka", "per person, per day, land only", "Sri Lanka Dept of Wildlife Conservation (national park entry fees); Central Cultural Fund (Cultural Triangle site tickets)"],
+  "destinations__svalbard": ["Svalbard", "per person, per voyage", "Governor of Svalbard (Svalbard environmental fee, protected-area landing rules and passenger caps)"],
+  "destinations__uae-gulf": ["the UAE &amp; the Gulf", "per person, per day, land only", "UAE Federal Tax Authority (VAT); Dubai Department of Economy and Tourism (Tourism Dirham hotel fee)", true],
+  "destinations__vanuatu": ["Vanuatu &amp; Beyond", "per person, per day, land only", "Vanuatu Department of Customs and Inland Revenue (VAT, departure tax)", true],
+  "destinations__vietnam-southeast-asia": ["Vietnam &amp; Southeast Asia", "per person, per day, land only", "Vietnam Immigration Department (e-visa fee); Angkor Enterprise, Cambodia (Angkor pass price)", true],
+  "destinations__zambia-victoria-falls": ["Zambia &amp; Victoria Falls", "per person, per night, all-inclusive at camp", "Zambia Dept of National Parks &amp; Wildlife (park entry and concession fees)", true],
 
   // ── experiences ──
   "experiences__adventure-active-travel": ["an active trip", "per person, per day, land only", "Relevant park authorities per destination"],
@@ -99,7 +138,12 @@ const PAGES = {
 
 const NF = "NEEDS FIGURE";
 
-function block(name, basis) {
+/* `plural` picks the verb. The heading is generated, and with "Costs" hardcoded
+   this generator is where "What Mexico's coasts Actually Costs" came from: it
+   shipped commented, nothing validated it, and it published itself the moment
+   the block went live (fixed by hand in bec5164). A compound subject or a
+   plural place needs "Cost". */
+function block(name, basis, plural) {
   return `<!-- ══ WHAT IT COSTS (P3-3) — NOT YET LIVE ══════════════════════════════
      The structure below is final. Every number is a ${NF} placeholder.
 
@@ -118,7 +162,7 @@ function block(name, basis) {
 <section class="cost-range">
   <div class="cost-range__header">
     <div class="cost-range__label">What It Costs</div>
-    <h2 class="cost-range__title">What ${name} Actually Costs</h2>
+    <h2 class="cost-range__title">What ${name} Actually ${plural ? "Cost" : "Costs"}</h2>
   </div>
 
   <div class="cost-range__figure">${NF}: low end to high end, in USD</div>
@@ -167,17 +211,32 @@ function block(name, basis) {
 const FAQ_OPEN = '<section class="page-faq">';
 let changed = 0;
 
-for (const [stem, [name, basis]] of Object.entries(PAGES)) {
+for (const [stem, [name, basis, , plural]] of Object.entries(PAGES)) {
   const file = path.join(DIR, `${stem}.html`);
   let html = await readFile(file, "utf8");
 
-  if (html.includes("WHAT IT COSTS (P3-3)")) {
+  /* Skip a page that already has a cost block in EITHER state. This used to
+     test only for "WHAT IT COSTS (P3-3)" and missed both:
+
+       - the 26 M7 destination pages carry hand-written scaffolds headed
+         "<!-- ══ WHAT IT COSTS ══" with no "(P3-3)" in them;
+       - a page turned live by p3-8-cost-insert.mjs has no comment marker at
+         all, because the whole commented block was replaced by the rendered
+         <section class="cost-range">.
+
+     So running this tool against the repo as it stands today re-inserted a
+     scaffold into all 52 live pages. Both the old and the new block are
+     commented and the placeholder check strips comments before reading visible
+     text, so nothing went red — the duplicate would simply have shipped, and
+     surfaced later as two cost sections on one page. The second clause is the
+     same test p3-8-cost-insert.mjs already uses to decide a page is done. */
+  if (html.includes("WHAT IT COSTS") || html.includes('class="cost-range"')) {
     console.log(`  skip  ${stem}`);
     continue;
   }
   if (!html.includes(FAQ_OPEN)) throw new Error(`${stem}: no page-faq to insert before`);
 
-  html = html.replace(FAQ_OPEN, block(name, basis) + FAQ_OPEN);
+  html = html.replace(FAQ_OPEN, block(name, basis, plural) + FAQ_OPEN);
   await writeFile(file, html, "utf8");
   changed++;
   console.log(`  ok    ${stem}`);
