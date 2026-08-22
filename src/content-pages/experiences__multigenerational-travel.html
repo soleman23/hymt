@@ -254,9 +254,17 @@
      A researched band exists for this page (docs/seo/research-backfill-2026-08-09.md
      and tools/cost-ranges-data.mjs) but its confidence sits below the launch
      bar: Low-medium — the two-adult normalization is structurally weak for villa parties.
-     To ship it: confirm the band against a supplier quote, replace this
-     page's `held` entry in tools/cost-ranges-data.mjs with the confirmed
-     data, and re-run `node tools/p3-8-cost-insert.mjs`.
+     To ship it: give the row an official fee source and a band you can
+     defend, replace this page's `held` entry in tools/cost-ranges-data.mjs
+     with that data, and re-run `node tools/p3-8-cost-insert.mjs`.
+
+     A supplier quote is NOT the bar, and this line used to say it was. No
+     shipped row has one. The band is EDITORIAL, assembled from published
+     rates; `source` is an authority anchor for one concrete, checkable fee,
+     not evidence for the range. destinations__europe.html bands the whole of
+     Europe and cites the price of a Louvre ticket. Nine rows shipped on
+     2026-08-20 by swapping an aggregator citation for an official government
+     fee page, with every band left exactly where it was. See #108.
 
      Do NOT hand-uncomment this with placeholders still in it. The build's
      placeholder check reads visible text only, which is why this is safe
