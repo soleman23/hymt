@@ -102,6 +102,22 @@ for (const { file, slug, alt } of items) {
 
 if (/exp-card__ph/.test(html)) throw new Error(`${page}: placeholders remain after conversion`);
 
+/* Scrim -> panel. `.exp-card__bg` is the per-card slot that lets a scrim grid
+   upgrade ONE card at a time while `--photo` stays gated on all six. Once the
+   last placeholder is gone the page can move to the panel layout, but only if
+   every card comes with it: under `--photo` the copy moves to a solid panel
+   BELOW the image, so a card still wearing a bottom-anchored scrim overlay
+   would darken a photograph nothing is written over. Convert them together or
+   not at all. */
+const bgs = (html.match(/exp-card__bg/g) || []).length;
+if (bgs) {
+  html = html.replace(/(<img class="exp-card)__bg(")/g, "$1__img$2");
+  html = html.replace(/\s*<div class="exp-card__overlay"><\/div>/g, "");
+  if (/exp-card__bg/.test(html)) throw new Error(`${page}: some __bg slots did not convert`);
+  console.log(`  converted ${bgs} existing scrim __bg cards to __img for the panel layout`);
+}
+if (/exp-card__overlay/.test(html)) throw new Error(`${page}: an exp-card__overlay survived — it would darken a --photo panel`);
+
 /* Only now is the modifier safe. */
 html = html.replace(/<div class="exp-cards">/, '<div class="exp-cards exp-cards--photo">');
 if (!/exp-cards--photo/.test(html)) throw new Error(`${page}: could not add the --photo modifier`);

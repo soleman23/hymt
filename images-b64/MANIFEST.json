@@ -3098,5 +3098,75 @@
   "b64": "images-b64/assets__img__e-50-alentejo-cork-retreat.jpg.b64",
   "target": "public/assets/img/e-50-alentejo-cork-retreat.jpg",
   "bytes": 205014
+ },
+ {
+  "b64": "images-b64/assets__img__e-51-w-trek-trail.jpg.b64",
+  "target": "public/assets/img/e-51-w-trek-trail.jpg",
+  "bytes": 374522
+ },
+ {
+  "b64": "images-b64/assets__img__e-52-inca-stairway-cloud.jpg.b64",
+  "target": "public/assets/img/e-52-inca-stairway-cloud.jpg",
+  "bytes": 284135
+ },
+ {
+  "b64": "images-b64/assets__img__e-53-fiordland-valley-falls.jpg.b64",
+  "target": "public/assets/img/e-53-fiordland-valley-falls.jpg",
+  "bytes": 364211
+ },
+ {
+  "b64": "images-b64/assets__img__e-54-vatnajokull-crevasse.jpg.b64",
+  "target": "public/assets/img/e-54-vatnajokull-crevasse.jpg",
+  "bytes": 407964
+ },
+ {
+  "b64": "images-b64/assets__img__e-55-alta-via-limestone.jpg.b64",
+  "target": "public/assets/img/e-55-alta-via-limestone.jpg",
+  "bytes": 271421
+ },
+ {
+  "b64": "images-b64/assets__img__e-56-pacuare-river-valley.jpg.b64",
+  "target": "public/assets/img/e-56-pacuare-river-valley.jpg",
+  "bytes": 274218
+ },
+ {
+  "b64": "images-b64/assets__img__e-57-riviera-maya-resort-path.jpg.b64",
+  "target": "public/assets/img/e-57-riviera-maya-resort-path.jpg",
+  "bytes": 337263
+ },
+ {
+  "b64": "images-b64/assets__img__e-58-negril-beach-curve.jpg.b64",
+  "target": "public/assets/img/e-58-negril-beach-curve.jpg",
+  "bytes": 295650
+ },
+ {
+  "b64": "images-b64/assets__img__e-59-punta-cana-palm-colonnade.jpg.b64",
+  "target": "public/assets/img/e-59-punta-cana-palm-colonnade.jpg",
+  "bytes": 359555
+ },
+ {
+  "b64": "images-b64/assets__img__e-60-st-lucia-terrace-piton.jpg.b64",
+  "target": "public/assets/img/e-60-st-lucia-terrace-piton.jpg",
+  "bytes": 239392
+ },
+ {
+  "b64": "images-b64/assets__img__e-61-crete-olive-terrace.jpg.b64",
+  "target": "public/assets/img/e-61-crete-olive-terrace.jpg",
+  "bytes": 290713
+ },
+ {
+  "b64": "images-b64/assets__img__e-62-providenciales-pool-edge.jpg.b64",
+  "target": "public/assets/img/e-62-providenciales-pool-edge.jpg",
+  "bytes": 250553
+ },
+ {
+  "b64": "images-b64/assets__img__e-63-circuit-kerb-apex.jpg.b64",
+  "target": "public/assets/img/e-63-circuit-kerb-apex.jpg",
+  "bytes": 316558
+ },
+ {
+  "b64": "images-b64/assets__img__e-64-stadium-pitch-tiers.jpg.b64",
+  "target": "public/assets/img/e-64-stadium-pitch-tiers.jpg",
+  "bytes": 308335
  }
 ]
