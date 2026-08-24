@@ -3038,5 +3038,65 @@
   "b64": "images-b64/assets__img__e-38-sossusvlei-dune-ridge.jpg.b64",
   "target": "public/assets/img/e-38-sossusvlei-dune-ridge.jpg",
   "bytes": 145140
+ },
+ {
+  "b64": "images-b64/assets__img__e-39-maldives-atoll-overhead.jpg.b64",
+  "target": "public/assets/img/e-39-maldives-atoll-overhead.jpg",
+  "bytes": 391618
+ },
+ {
+  "b64": "images-b64/assets__img__e-40-grace-bay-waterline.jpg.b64",
+  "target": "public/assets/img/e-40-grace-bay-waterline.jpg",
+  "bytes": 231916
+ },
+ {
+  "b64": "images-b64/assets__img__e-41-la-digue-granite.jpg.b64",
+  "target": "public/assets/img/e-41-la-digue-granite.jpg",
+  "bytes": 284525
+ },
+ {
+  "b64": "images-b64/assets__img__e-42-st-barths-bay-clifftop.jpg.b64",
+  "target": "public/assets/img/e-42-st-barths-bay-clifftop.jpg",
+  "bytes": 380362
+ },
+ {
+  "b64": "images-b64/assets__img__e-43-bora-bora-palm-frame.jpg.b64",
+  "target": "public/assets/img/e-43-bora-bora-palm-frame.jpg",
+  "bytes": 488778
+ },
+ {
+  "b64": "images-b64/assets__img__e-44-pitons-from-the-water.jpg.b64",
+  "target": "public/assets/img/e-44-pitons-from-the-water.jpg",
+  "bytes": 243900
+ },
+ {
+  "b64": "images-b64/assets__img__e-45-ubud-yoga-pavilion.jpg.b64",
+  "target": "public/assets/img/e-45-ubud-yoga-pavilion.jpg",
+  "bytes": 369651
+ },
+ {
+  "b64": "images-b64/assets__img__e-46-ayurveda-treatment-room.jpg.b64",
+  "target": "public/assets/img/e-46-ayurveda-treatment-room.jpg",
+  "bytes": 251400
+ },
+ {
+  "b64": "images-b64/assets__img__e-47-onsen-first-light.jpg.b64",
+  "target": "public/assets/img/e-47-onsen-first-light.jpg",
+  "bytes": 295350
+ },
+ {
+  "b64": "images-b64/assets__img__e-48-cenote-light-shaft.jpg.b64",
+  "target": "public/assets/img/e-48-cenote-light-shaft.jpg",
+  "bytes": 331429
+ },
+ {
+  "b64": "images-b64/assets__img__e-49-catalina-foothills-dawn.jpg.b64",
+  "target": "public/assets/img/e-49-catalina-foothills-dawn.jpg",
+  "bytes": 234303
+ },
+ {
+  "b64": "images-b64/assets__img__e-50-alentejo-cork-retreat.jpg.b64",
+  "target": "public/assets/img/e-50-alentejo-cork-retreat.jpg",
+  "bytes": 205014
  }
 ]
