@@ -3008,5 +3008,35 @@
   "b64": "images-b64/assets__img__e-32-monaco-harbour-dusk.jpg.b64",
   "target": "public/assets/img/e-32-monaco-harbour-dusk.jpg",
   "bytes": 188389
+ },
+ {
+  "b64": "images-b64/assets__img__e-33-okavango-channel-golden.jpg.b64",
+  "target": "public/assets/img/e-33-okavango-channel-golden.jpg",
+  "bytes": 319571
+ },
+ {
+  "b64": "images-b64/assets__img__e-34-mara-migration-line.jpg.b64",
+  "target": "public/assets/img/e-34-mara-migration-line.jpg",
+  "bytes": 308732
+ },
+ {
+  "b64": "images-b64/assets__img__e-35-ngorongoro-crater-floor.jpg.b64",
+  "target": "public/assets/img/e-35-ngorongoro-crater-floor.jpg",
+  "bytes": 344283
+ },
+ {
+  "b64": "images-b64/assets__img__e-36-sabi-sand-leadwood.jpg.b64",
+  "target": "public/assets/img/e-36-sabi-sand-leadwood.jpg",
+  "bytes": 312698
+ },
+ {
+  "b64": "images-b64/assets__img__e-37-virunga-bamboo-light.jpg.b64",
+  "target": "public/assets/img/e-37-virunga-bamboo-light.jpg",
+  "bytes": 431445
+ },
+ {
+  "b64": "images-b64/assets__img__e-38-sossusvlei-dune-ridge.jpg.b64",
+  "target": "public/assets/img/e-38-sossusvlei-dune-ridge.jpg",
+  "bytes": 145140
  }
 ]
