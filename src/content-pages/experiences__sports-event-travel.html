@@ -31,7 +31,7 @@
   <div class="exp-cards">
 
     <a class="exp-card" href="/plan-your-trip/">
-      <div class="exp-card__ph" style="background:#1a2a18">Event Photography · Tennis</div>
+      <img class="exp-card__bg" src="/assets/img/e-31-wimbledon-court-strawberries.jpg" alt="Strawberries and champagne on a courtside table as a rally plays out on a grass court at the All England Club" width="1600" height="893" loading="lazy" decoding="async">
       <div class="exp-card__overlay"></div>
       <div class="exp-card__body">
         <div class="exp-card__region">London, Paris &amp; Melbourne</div>
@@ -43,7 +43,7 @@
     </a>
 
     <a class="exp-card" href="/plan-your-trip/">
-      <div class="exp-card__ph" style="background:#1a2418">Event Photography · Golf</div>
+      <img class="exp-card__bg" src="/assets/img/e-28-augusta-tee-shot.jpg" alt="A dawn tee shot framed by azaleas and dogwoods, the clubhouse at the far end of the fairway" width="1600" height="893" loading="lazy" decoding="async">
       <div class="exp-card__overlay"></div>
       <div class="exp-card__body">
         <div class="exp-card__region">Augusta &amp; St Andrews</div>
@@ -67,7 +67,7 @@
     </a>
 
     <a class="exp-card" href="/plan-your-trip/">
-      <div class="exp-card__ph" style="background:#1c2232">Event Photography · Skiing</div>
+      <img class="exp-card__bg" src="/assets/img/e-29-heli-ski-powder-run.jpg" alt="A skier cutting first tracks below a hovering helicopter, backcountry lodge in the valley at alpenglow" width="1600" height="893" loading="lazy" decoding="async">
       <div class="exp-card__overlay"></div>
       <div class="exp-card__body">
         <div class="exp-card__region">The Alps &amp; British Columbia</div>
@@ -91,7 +91,7 @@
     </a>
 
     <a class="exp-card" href="/plan-your-trip/">
-      <div class="exp-card__ph" style="background:#201e18">Event Photography · Horse Racing</div>
+      <img class="exp-card__bg" src="/assets/img/e-30-derby-box-juleps.jpg" alt="Mint juleps and binoculars in a trackside box as the field thunders down the home stretch" width="1600" height="893" loading="lazy" decoding="async">
       <div class="exp-card__overlay"></div>
       <div class="exp-card__body">
         <div class="exp-card__region">Ascot, Louisville &amp; Dubai</div>
@@ -138,7 +138,7 @@
     </div>
 
     <div class="event-card">
-      <div class="event-image" style="background:#181820">Event Photography<br>Monaco · Grand Prix Circuit</div>
+      <div class="event-image event-image--photo" style="background-image:url('/assets/img/e-32-monaco-harbour-dusk.jpg')" role="img" aria-label="Champagne poured on a balcony above Monaco's yacht-filled harbour at dusk during the Grand Prix"></div>
       <div class="event-body">
         <div class="event-when">May · Monte Carlo, Monaco</div>
         <div class="event-name">Monaco Grand Prix</div>
@@ -227,9 +227,17 @@
      A researched band exists for this page (docs/seo/research-backfill-2026-08-09.md
      and tools/cost-ranges-data.mjs) but its confidence sits below the launch
      bar: Low-medium — needs rebuilding on event, duration and party composition.
-     To ship it: confirm the band against a supplier quote, replace this
-     page's `held` entry in tools/cost-ranges-data.mjs with the confirmed
-     data, and re-run `node tools/p3-8-cost-insert.mjs`.
+     To ship it: give the row an official fee source and a band you can
+     defend, replace this page's `held` entry in tools/cost-ranges-data.mjs
+     with that data, and re-run `node tools/p3-8-cost-insert.mjs`.
+
+     A supplier quote is NOT the bar, and this line used to say it was. No
+     shipped row has one. The band is EDITORIAL, assembled from published
+     rates; `source` is an authority anchor for one concrete, checkable fee,
+     not evidence for the range. destinations__europe.html bands the whole of
+     Europe and cites the price of a Louvre ticket. Nine rows shipped on
+     2026-08-20 by swapping an aggregator citation for an official government
+     fee page, with every band left exactly where it was. See #108.
 
      Do NOT hand-uncomment this with placeholders still in it. The build's
      placeholder check reads visible text only, which is why this is safe
