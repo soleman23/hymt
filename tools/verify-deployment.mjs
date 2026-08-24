@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
    show — see that file's header. */
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
-  unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeHrefs, inertCostSections, costFigureShape, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
@@ -956,6 +956,17 @@ for (const file of htmlFiles) {
   }
   for (const kind of inertCostSections(html)) {
     fail("inert-cost-section", `${url} has a ${kind} inside a .cost-range section — the insert surface must stay inert (SEC-8)`);
+  }
+
+  /* cost-figure-shape (#108, DECISIONS.md D8): 21 rows deliberately ship a
+     cost section with no headline band, because a nightly two-adult figure is
+     the wrong unit for a per-cabin voyage or a four-island region. This holds
+     both directions of that decision — a no-band figure must not show a price,
+     and a banded figure must still show one. */
+  for (const [kind, text] of costFigureShape(html)) {
+    fail("cost-figure-shape", kind === "priced-unit"
+      ? `${url} renders a price in a no-band cost figure: "${text}" — a --unit figure states the unit, never an amount (D8)`
+      : `${url} renders a cost figure with no amount in it: "${text}" — add the band, or mark it --unit and say why (D8)`);
   }
 
   /* blank-link-rel (SEC-5, #80): a new-tab link without noopener leaves the

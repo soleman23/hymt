@@ -250,71 +250,29 @@
 <!-- ══ NEWSLETTER ══ -->
 
 <!-- ══ PAGE FAQ ══ -->
-<!-- ══ WHAT IT COSTS (P3-3) — HELD ══════════════════════════════════════
-     A researched band exists for this page (docs/seo/research-backfill-2026-08-09.md
-     and tools/cost-ranges-data.mjs) but its confidence sits below the launch
-     bar: Low-medium — the two-adult normalization is structurally weak for villa parties.
-     To ship it: give the row an official fee source and a band you can
-     defend, replace this page's `held` entry in tools/cost-ranges-data.mjs
-     with that data, and re-run `node tools/p3-8-cost-insert.mjs`.
-
-     A supplier quote is NOT the bar, and this line used to say it was. No
-     shipped row has one. The band is EDITORIAL, assembled from published
-     rates; `source` is an authority anchor for one concrete, checkable fee,
-     not evidence for the range. destinations__europe.html bands the whole of
-     Europe and cites the price of a Louvre ticket. Nine rows shipped on
-     2026-08-20 by swapping an aggregator citation for an official government
-     fee page, with every band left exactly where it was. See #108.
-
-     Do NOT hand-uncomment this with placeholders still in it. The build's
-     placeholder check reads visible text only, which is why this is safe
-     commented and unsafe half-filled.
-
 <section class="cost-range">
   <div class="cost-range__header">
     <div class="cost-range__label">What It Costs</div>
     <h2 class="cost-range__title">What a multigenerational trip Actually Costs</h2>
   </div>
 
-  <div class="cost-range__figure">NEEDS FIGURE: low end to high end, in USD</div>
-  <div class="cost-range__basis">per person, per day, land only. Ranges, not quotes.</div>
-
-  <div class="cost-range__grid">
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What that includes</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: accommodation tier the range assumes</li>
-        <li>NEEDS FIGURE: meals and drinks included at that tier</li>
-        <li>NEEDS FIGURE: guiding, transfers and activities included</li>
-      </ul>
-    </div>
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What it does not</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: international airfare position</li>
-        <li>NEEDS FIGURE: internal flights, permits and park fees</li>
-        <li>NEEDS FIGURE: anything else excluded, stated plainly</li>
-      </ul>
-    </div>
-  </div>
+  <div class="cost-range__figure cost-range__figure--unit">Priced per villa and per party, not per head</div>
+  <div class="cost-range__basis">The villa, the chef, the driver and the boat day are each bought once for the whole party, so the per-person figure falls as the group grows and a two-adult night describes nobody in it.</div>
 
   <div class="cost-range__drivers">
-    <div class="cost-range__col-label">The two or three things that move it most</div>
+    <div class="cost-range__col-label">What actually sets the number</div>
     <ul class="cost-range__list">
-      <li>NEEDS FIGURE: driver 1, with the size of its effect</li>
-      <li>NEEDS FIGURE: driver 2, with the size of its effect</li>
-      <li>NEEDS FIGURE: driver 3, if there is a third worth naming</li>
+      <li>Party size against bedroom count — the same villa week divides very differently by eight or by four</li>
+      <li>Which weeks — school-holiday windows price above the May–June and September–October shoulder</li>
+      <li>Per-party fees — Hawaii Volcanoes charges $30 a vehicle for seven days, whether that is two people or fourteen</li>
     </ul>
   </div>
 
   <p class="cost-range__note">
-    Ranges verified <time datetime="NEEDS FIGURE-YYYY-MM-DD">NEEDS FIGURE: Month Year</time>.
-    Rates, permit costs and park fees change; confirm before booking.
-    Source: NEEDS FIGURE: P3-5 authority link from the worksheet.
+    Tell me the dates and the party and you get a real quote, not a range.
+    Source: <a href="https://www.nps.gov/havo/planyourvisit/fees.htm">Hawaii Volcanoes National Park entrance fees</a>.
   </p>
 </section>
-
-     ══ end WHAT IT COSTS ══ -->
 
 <section class="page-faq">
   <div class="page-faq__header">

@@ -46,7 +46,7 @@ const t = (name, actual, expected) => {
    drifted — the exact failure mode these tests exist to prevent. */
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
-  unsafeHrefs, inertCostSections, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeHrefs, inertCostSections, costFigureShape, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
@@ -188,6 +188,55 @@ t("inert: a page script OUTSIDE the cost section is not this check's business",
 
 t("inert: nested divs do not truncate the scan before the violation",
   inertCostSections(cost(`<div><div></div><script>late()</script></div>`)).length, 1);
+
+/* ── cost-figure-shape (#108, DECISIONS.md D8) ── */
+
+const fig = (cls, text) => `<div class="cost-range__figure${cls}">${text}</div>`;
+
+t("cost-figure: a banded figure with a range passes",
+  costFigureShape(fig("", "$800–$3,000")).length, 0);
+
+t("cost-figure: a banded figure that lost its amount fails",
+  costFigureShape(fig("", "Ranges, not quotes")).length, 1);
+
+t("cost-figure: a --unit figure stating the unit passes",
+  costFigureShape(fig(" cost-range__figure--unit", "Priced per voyage, not per night")).length, 0);
+
+t("cost-figure: a --unit figure that shows a price fails",
+  costFigureShape(fig(" cost-range__figure--unit", "From $9,400 per voyage")).length, 1);
+
+t("cost-figure: the failure is named by which direction it broke",
+  costFigureShape(fig(" cost-range__figure--unit", "$100 per night"))[0][0], "priced-unit");
+
+t("cost-figure: a unit phrase may carry a plain number without reading as a price",
+  costFigureShape(fig(" cost-range__figure--unit", "Priced per cabin over 18 to 22 days")).length, 0);
+
+t("cost-figure: euro and sterling amounts count as priced",
+  costFigureShape(fig(" cost-range__figure--unit", "€2,400 per person")).length, 1);
+
+t("cost-figure: the modifier is matched as a token, not a substring",
+  costFigureShape(`<div class="cost-range__figure cost-range__figure--unit extra">Priced per departure</div>`).length, 0);
+
+t("cost-figure: nested markup inside the figure is read as text",
+  costFigureShape(`<div class="cost-range__figure"><span>$800</span>&nbsp;–&nbsp;<span>$3,000</span></div>`).length, 0);
+
+t("cost-figure: both figures on a page are checked, not just the first",
+  costFigureShape(fig("", "$800–$3,000") + fig("", "no amount here")).length, 1);
+
+t("cost-figure: a page with no cost section has nothing to report",
+  costFigureShape(`<p>Just copy.</p>`).length, 0);
+
+/* The check's own first finding on real dist/ was 29 failures against 1
+   corruption: every held page ships its cost section commented out with the
+   NEEDS FIGURE placeholder intact, and the raw-HTML scan read all 28. */
+t("cost-figure: a held scaffold inside a comment is sanctioned and passes",
+  costFigureShape(`<!-- HELD\n${fig("", "NEEDS FIGURE: low end to high end, in USD")}\n-->`).length, 0);
+
+t("cost-figure: the same placeholder OUTSIDE a comment still fails",
+  costFigureShape(fig("", "NEEDS FIGURE: low end to high end, in USD")).length, 1);
+
+t("cost-figure: a live figure after a commented scaffold is still read",
+  costFigureShape(`<!-- ${fig("", "NEEDS FIGURE")} -->` + fig("", "no amount")).length, 1);
 
 /* ── placeholder-copy tokens (SEC-8 extension) ── */
 

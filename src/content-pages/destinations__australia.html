@@ -302,59 +302,29 @@
   </div>
 </section>
 
-<!-- ══ WHAT IT COSTS ══
-     HELD: no researched band for Australia meets the launch confidence bar, so
-     this section stays commented exactly as it ships on the other held pages
-     (see tools/cost-ranges-data.mjs for the current set). Australia's spread across city
-     hotels, reef liveaboards, Red Centre lodges and Kimberley expedition
-     berths is too wide to publish a per-day band without live supplier
-     confirmation.
-
-     To turn it on: add the confirmed data to this page's entry in
-     tools/cost-ranges-data.mjs and re-run `node tools/p3-8-cost-insert.mjs`.
-
-     Do NOT hand-uncomment this with placeholders still in it. The build's
-     placeholder check reads visible text only, which is why this is safe
-     commented and unsafe half-filled.
-
 <section class="cost-range">
   <div class="cost-range__header">
     <div class="cost-range__label">What It Costs</div>
     <h2 class="cost-range__title">What Australia Actually Costs</h2>
   </div>
 
-  <div class="cost-range__figure">NEEDS FIGURE: low end to high end, in USD</div>
-  <div class="cost-range__basis">per person, per day, land only. Ranges, not quotes.</div>
-
-  <div class="cost-range__grid">
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What that includes</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: accommodation tier the range assumes</li>
-        <li>NEEDS FIGURE: meals and drinks included at that tier</li>
-        <li>NEEDS FIGURE: guiding, transfers and national park entry</li>
-      </ul>
-    </div>
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What it does not</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: international airfare position</li>
-        <li>NEEDS FIGURE: domestic flights and reef boat fees</li>
-        <li>NEEDS FIGURE: gratuities and visa costs</li>
-      </ul>
-    </div>
-  </div>
+  <div class="cost-range__figure cost-range__figure--unit">Priced per region, plus the flights between them</div>
+  <div class="cost-range__basis">Sydney, the Red Centre, the reef and Tasmania are four separate cost floors joined by domestic sectors, and a single nightly figure would sit above the cheapest of them and well below a Kimberley expedition berth.</div>
 
   <div class="cost-range__drivers">
-    <div class="cost-range__col-label">The two or three things that move it most</div>
+    <div class="cost-range__col-label">What actually sets the number</div>
     <ul class="cost-range__list">
-        <li>NEEDS FIGURE: the property tier driver</li>
-        <li>NEEDS FIGURE: the season driver</li>
-        <li>NEEDS FIGURE: the domestic-flight and expedition-berth driver</li>
+      <li>How many regions — the Uluru-Kata Tjuta pass is A$38 for three days, and each extra region adds a sector</li>
+      <li>Reef days, which carry the A$8.50 per-person environmental management charge on any trip of three hours or more</li>
+      <li>The calendar split — May to September for the centre and the tropics, December to February for Sydney and Tasmania</li>
     </ul>
   </div>
+
+  <p class="cost-range__note">
+    Tell me the dates and the party and you get a real quote, not a range.
+    Source: <a href="https://uluru.gov.au/plan/buy-your-pass/">Uluru-Kata Tjuta National Park pass</a>.
+  </p>
 </section>
--->
 
 <section class="page-faq">
   <div class="page-faq__header">

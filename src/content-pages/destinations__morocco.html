@@ -300,69 +300,29 @@
   </div>
 </section>
 
-<!-- ══ WHAT IT COSTS ══
-     HELD: no researched band for Morocco meets the launch confidence bar, so
-     this section stays commented exactly as it ships on the other held pages
-     (see tools/cost-ranges-data.mjs for the current set). Morocco's spread across a six-room
-     riad inside the Fez medina, a night in a desert camp on Erg Chebbi and a
-     Palmeraie resort is too wide to publish a per-day band without live
-     supplier confirmation.
-
-     To turn it on: add the confirmed data to this page's entry in
-     tools/cost-ranges-data.mjs and re-run `node tools/p3-8-cost-insert.mjs`.
-
-     CORRECTION 2026-08-20: the "live supplier confirmation" framing above is
-     not the bar, and never was. No shipped row on this site has a supplier
-     quote and 52 rows are live. A band here is EDITORIAL, assembled from
-     published rates; `source` is an authority anchor for one concrete,
-     checkable fee, not evidence for the range. destinations__europe.html
-     bands the whole of Europe and cites the price of a Louvre ticket. Nine
-     held rows shipped on 2026-08-20 by swapping an aggregator citation for an
-     official government fee page, with every band left exactly where it was.
-     Tracked on #108.
-
-     Do NOT hand-uncomment this with placeholders still in it. The build's
-     placeholder check reads visible text only, which is why this is safe
-     commented and unsafe half-filled.
-
 <section class="cost-range">
   <div class="cost-range__header">
     <div class="cost-range__label">What It Costs</div>
     <h2 class="cost-range__title">What Morocco Actually Costs</h2>
   </div>
 
-  <div class="cost-range__figure">NEEDS FIGURE: low end to high end, in USD</div>
-  <div class="cost-range__basis">per person, per day, land only. Ranges, not quotes.</div>
-
-  <div class="cost-range__grid">
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What that includes</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: accommodation tier the range assumes</li>
-        <li>NEEDS FIGURE: meals and drinks included at that tier</li>
-        <li>NEEDS FIGURE: guiding, car and driver, and monument entry</li>
-      </ul>
-    </div>
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What it does not</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: international airfare position</li>
-        <li>NEEDS FIGURE: desert camp supplement and park fees</li>
-        <li>NEEDS FIGURE: gratuities and entry costs</li>
-      </ul>
-    </div>
-  </div>
+  <div class="cost-range__figure cost-range__figure--unit">Priced per room, and per vehicle on the road</div>
+  <div class="cost-range__basis">The riads price per room and the Sahara leg prices per vehicle, so the same 4x4 and driver costs a couple exactly what it costs a family of four and the per-person figure halves without the trip changing at all.</div>
 
   <div class="cost-range__drivers">
-    <div class="cost-range__col-label">The two or three things that move it most</div>
+    <div class="cost-range__col-label">What actually sets the number</div>
     <ul class="cost-range__list">
-        <li>NEEDS FIGURE: the riad and property tier driver</li>
-        <li>NEEDS FIGURE: the season driver</li>
-        <li>NEEDS FIGURE: the private driver and licensed guiding driver</li>
+      <li>Party size on the desert leg, because the vehicle costs the same for two as for four</li>
+      <li>Motorway tolls, billed by vehicle class rather than by passenger — 25, 36 or 43 dirhams for Casablanca to Rabat</li>
+      <li>The October-to-April window, and the Easter and Christmas fortnights when the good riads go six months ahead</li>
     </ul>
   </div>
+
+  <p class="cost-range__note">
+    Tell me the dates and the party and you get a real quote, not a range.
+    Source: <a href="https://www.adm.co.ma/fr/grille-tarifaire-sur-le-reseau">Morocco's motorway toll grid, by vehicle class</a>.
+  </p>
 </section>
--->
 
 <section class="page-faq">
   <div class="page-faq__header">

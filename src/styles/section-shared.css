@@ -218,7 +218,20 @@
   font-family:var(--font-d);font-size:clamp(24px,3vw,34px);font-weight:700;
   color:var(--gold-500);line-height:1.2;margin-bottom:8px;
 }
+/* #108 / D8: 21 pages publish no headline band, because a nightly two-adult
+   figure is the wrong unit for a per-cabin voyage or a four-island region.
+   The slot states the unit instead of an amount. A sentence set at the
+   band's 34px would tower over the h2 above it, so it drops to the title's
+   own scale and loses the bold — it reads as a statement, not a price. */
+.cost-range__figure--unit {
+  font-size:clamp(17px,1.9vw,22px);font-weight:400;
+  letter-spacing:-.01em;line-height:1.35;max-width:34ch;
+}
 .cost-range__basis { font-family:var(--font-b);font-size:14px;color:var(--text-muted);margin-bottom:28px }
+/* Under a band this line is six words ("per person, per night"); under a unit
+   line it is a full sentence, so it needs a measure. Scoped to the sibling
+   selector rather than added to .cost-range__basis, which 52 shipped pages use. */
+.cost-range__figure--unit + .cost-range__basis { max-width:68ch;line-height:1.65 }
 .cost-range__grid { display:grid;grid-template-columns:repeat(2,1fr);gap:3px;margin-bottom:28px }
 .cost-range__col {
   padding:24px 28px;background:var(--bg-elevated);border:1px solid var(--border-subtle);

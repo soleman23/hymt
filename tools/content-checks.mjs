@@ -965,3 +965,48 @@ export function remoteMisses(results) {
 export function remoteThrottled(results) {
   return results.filter((r) => !r.ok && isThrottled(r.status)).map((r) => r.route);
 }
+
+/**
+ * Whether every `.cost-range__figure` on the page says the kind of thing its
+ * class claims it does.
+ *
+ * Two shapes ship after DECISIONS.md D8. A banded row renders a currency
+ * range. A no-band row renders a short unit phrase instead — "Priced per
+ * voyage, not per night" — and carries the `--unit` modifier. Each must be
+ * what it says it is:
+ *
+ *   priced-unit    a `--unit` figure showing a price. That is a band that
+ *                  escaped the decision to withhold one, and it is the exact
+ *                  outcome #108 exists to prevent: a number that is precise
+ *                  and false.
+ *   unpriced-band  a plain figure with no price in it. That is a band that
+ *                  lost its number somewhere between the data file and the
+ *                  page, rendering a cost section that costs nothing.
+ *
+ * Neither shape trips any existing check. `placeholder-copy` only matches the
+ * literal "NEEDS FIGURE", so a figure that silently went blank, or a no-band
+ * row that gained a range from a mis-keyed edit, both ship green without this.
+ *
+ * Returns [kind, text] pairs.
+ */
+export function costFigureShape(html) {
+  const out = [];
+  /* Comments first. A held page ships its whole cost section commented out,
+     placeholders and all, and that scaffold contains a literal
+     `<div class="cost-range__figure">NEEDS FIGURE: …</div>`. Scanning raw HTML
+     reported all 28 of them on the first real run — the check's own first
+     finding was against itself. Sanctioned inside a comment, failed outside
+     one, exactly as `visibleText` treats NEEDS FIGURE. */
+  const live = html.replace(/<!--[\s\S]*?-->/g, " ");
+  const re = /<div\b[^>]*\bclass="([^"]*\bcost-range__figure\b[^"]*)"[^>]*>([\s\S]*?)<\/div>/gi;
+  for (const m of live.matchAll(re)) {
+    const isUnit = /\bcost-range__figure--unit\b/.test(m[1]);
+    const text = textIn(m[2]);
+    /* A currency amount, not merely a digit: "Priced per voyage over 18 days"
+       is a legitimate unit phrase and must not read as a price. */
+    const priced = /[$€£]\s?\d/.test(text);
+    if (isUnit && priced) out.push(["priced-unit", text]);
+    if (!isUnit && !priced) out.push(["unpriced-band", text]);
+  }
+  return out;
+}

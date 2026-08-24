@@ -305,60 +305,29 @@
   </div>
 </section>
 
-<!-- ══ WHAT IT COSTS ══
-     HELD: no researched band for Aspen meets the launch confidence bar, so this
-     section stays commented exactly as it ships on the other held pages
-     (see tools/cost-ranges-data.mjs for the current set). Aspen's per-day figure is decided
-     almost entirely by which week of the season it falls in — the two holiday
-     weeks and the January weeks either side of them are effectively different
-     markets — so a single band would misrepresent every trip it did not
-     describe.
-
-     To turn it on: add the confirmed data to this page's entry in
-     tools/cost-ranges-data.mjs and re-run `node tools/p3-8-cost-insert.mjs`.
-
-     Do NOT hand-uncomment this with placeholders still in it. The build's
-     placeholder check reads visible text only, which is why this is safe
-     commented and unsafe half-filled.
-
 <section class="cost-range">
   <div class="cost-range__header">
     <div class="cost-range__label">What It Costs</div>
     <h2 class="cost-range__title">What Aspen Actually Costs</h2>
   </div>
 
-  <div class="cost-range__figure">NEEDS FIGURE: low end to high end, in USD</div>
-  <div class="cost-range__basis">per person, per day, land only. Ranges, not quotes.</div>
-
-  <div class="cost-range__grid">
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What that includes</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: accommodation tier the range assumes</li>
-        <li>NEEDS FIGURE: meals and drinks included at that tier</li>
-        <li>NEEDS FIGURE: lift tickets, ground transfers and rentals</li>
-      </ul>
-    </div>
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What it does not</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: airfare position</li>
-        <li>NEEDS FIGURE: private instruction and heli or cat days</li>
-        <li>NEEDS FIGURE: gratuities and resort fees</li>
-      </ul>
-    </div>
-  </div>
+  <div class="cost-range__figure cost-range__figure--unit">Priced by the week, and by which week</div>
+  <div class="cost-range__basis">Aspen runs three separate markets inside one season — the Christmas to New Year and Presidents' weeks, X Games week at Buttermilk, and everything else — and a band built on the average of them would be wrong in all three.</div>
 
   <div class="cost-range__drivers">
-    <div class="cost-range__col-label">The two or three things that move it most</div>
+    <div class="cost-range__col-label">What actually sets the number</div>
     <ul class="cost-range__list">
-        <li>NEEDS FIGURE: the week-of-season driver</li>
-        <li>NEEDS FIGURE: the slopeside versus core lodging driver</li>
-        <li>NEEDS FIGURE: the private-instruction driver</li>
+      <li>Which week — Christmas, New Year and Presidents' week clear before they reach the open market</li>
+      <li>Lodging type — Aspen taxes a lodge night at 12.35% and a classic short-term rental at 22.35%</li>
+      <li>Private instruction — a named instructor booked early, or whoever the schedule has left</li>
     </ul>
   </div>
+
+  <p class="cost-range__note">
+    Tell me the dates and the party and you get a real quote, not a range.
+    Source: <a href="https://aspen.gov/1427/Lodging-and-Short-Term-Rental-Taxes">City of Aspen lodging tax rates</a>.
+  </p>
 </section>
--->
 
 <section class="page-faq">
   <div class="page-faq__header">

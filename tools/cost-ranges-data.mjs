@@ -2,38 +2,56 @@
  * The cost-range rows seeded from docs/seo/research-backfill-2026-08-09.md,
  * keyed by content-page file. Consumed by tools/p3-8-cost-insert.mjs.
  *
- * 80 rows as of 2026-08-20: 52 carry a range, 28 are held. Do not trust these
- * two numbers if the file has been touched since — derive them, the way
- * p3-8-cost-insert.mjs now does at the end of every run. The header has been
- * wrong twice: it said 54 rows and 11 held long after the M7 pages added 25
- * held rows in one go.
+ * 80 rows as of 2026-08-24: 58 carry a band, 22 carry `noBand`, none are held.
+ * Do not trust those numbers if the file has been touched since — derive them,
+ * the way p3-8-cost-insert.mjs does at the end of every run. This header has
+ * been wrong twice: it said 54 rows and 11 held long after the M7 pages added
+ * 25 held rows in one go.
  *
- * Every figure is an editorial planning band assembled from published rates
- * and official fee sources — USD, two adults sharing, five-star/boutique
- * tier, shoulder season. Not quotes.
+ * ── The two shapes a row can take ──
+ *
+ * `range` — an editorial planning band: USD, two adults sharing,
+ * five-star/boutique tier, shoulder season. Not quotes.
+ *
+ * `noBand` — a row that will never carry a band, per DECISIONS.md D8. These
+ * are NOT waiting on a figure and `held` has been retired as a state. A nightly
+ * two-adult band is simply the wrong unit for them: a voyage priced per cabin
+ * and per departure, a region spanning three countries, a desert leg priced per
+ * vehicle, a government fee that is one line of a day rate. No supplier
+ * confirmation unblocks any of that, and researching a number for one produces
+ * a number that is precise and false. They render the includes, excludes,
+ * drivers and source with `unit` where the figure would go and `noBand` where
+ * the basis line would go.
+ *
+ * A `noBand` row's `unit` must contain NO currency amount. The renderer throws
+ * on one, and the `cost-figure-shape` check fails the build if one ships.
+ *
+ * ── The source is an anchor, not evidence ──
  *
  * The band is editorial and is NOT derived from its `source`. The source is an
  * authority anchor for one concrete, checkable fee of the kind the entry
  * references — destinations__europe.html carries a whole-of-Europe band cited
  * to the price of a Louvre ticket, and never names the Louvre in its own
  * strings. Anyone re-shopping a row should know this before deciding a band is
- * unpublishable because no rate card proves it. None of the 52 would survive
+ * unpublishable because no rate card proves it. Not one of the 58 would survive
  * that test.
+ *
+ * Every `noBand` row carries at least one concrete, checkable number in its
+ * `drivers` — a park tariff, a government levy, a permit fee, a season window.
+ * That is what earns the section its place without a headline figure.
+ *
+ * ── Dates ──
  *
  * Most rows are dated by the global VERIFIED below. A row re-shopped later
  * carries its own `verified` override, so it states the day it was actually
- * checked rather than inheriting a date nobody looked at it on. Nine rows
- * carry one today, all 2026-08-20.
+ * checked rather than inheriting a date nobody looked at it on. Nine rows carry
+ * 2026-08-20; six carry 2026-08-24. `noBand` rows carry none — they make no
+ * claim that needs a date, and renderNoBandSection emits no verified element.
  *
- * Entries with `held` instead of a range sit below the launch bar in the
- * backfill's quality gate (Medium-low / Low-medium) and render no cost block
- * at all. Tracked on #108 — #30 was the original tracker and is closed.
- *
- * "Held" does not uniformly mean "waiting on a figure". Most of what remains is
- * held because a nightly two-adult band is the wrong unit for the destination —
- * a voyage priced per cabin, a region spanning three countries — and no
- * supplier confirmation would unblock them. #108 groups them by which kind they
- * are; read it before researching a number for any of them.
+ * Two of the six 2026-08-24 bands are the weakest in the file and are marked
+ * here rather than in the copy: `argentina` and `colombia` both rest on
+ * aggregator room anchors with no verified ground-cost data. Re-shop those two
+ * first. #108.
  */
 export const VERIFIED = { datetime: "2026-08-09", label: "August 2026" };
 
@@ -902,7 +920,26 @@ export const COST_RANGES = {
     verified: { datetime: "2026-08-20", label: "August 2026" },
     source: { text: "Bali tourist levy", href: "https://lovebali.baliprov.go.id/" },
   },
-  "destinations__india.html": { held: "Medium-low — the spread across palace stays, tiger lodges and city five-stars is too wide to band without live quotes" },
+  "destinations__india.html": {
+    unit: "Quoted per property class, not per India night",
+    noBand: "A family-seat palace in Rajasthan, a tented camp at a tiger reserve and a Delhi five-star are three different purchases inside one two-week itinerary, and a band wide enough to cover all three would tell a reader nothing about any of them.",
+    includes: [
+      "Heritage, palace or five-star rooms with breakfast, at whichever class is chosen",
+      "A car and driver throughout, with city guides on touring days",
+      "Monument admissions, and park entry and jeep on tiger nights where stated",
+    ],
+    excludes: [
+      "International airfare and the e-Visa",
+      "Internal flights, including the sector between the north and Kerala",
+      "Most meals, gratuities and special-access or camera charges",
+    ],
+    drivers: [
+      "The Taj Mahal at ₹1,100 for a foreign visitor, plus ₹200 for the main mausoleum",
+      "Which property class — a family seat, a restored fort and a costumed new build all say heritage",
+      "October to March against the April-to-June tiger window, when rates fall and the heat arrives",
+    ],
+    source: { text: "Archaeological Survey of India, Taj Mahal ticketing", href: "https://www.tajmahal.gov.in/ticketing.aspx" },
+  },
   "destinations__hawaii.html": {
     range: "$650–$1,400",
     includes: [
@@ -1029,36 +1066,511 @@ export const COST_RANGES = {
      them has a researched row to draw on. Each ships its cost block
      commented out, the same way India (#54) does, and joins the queue
      for a supplier-confirmed band rather than guessing one. ── */
-  "destinations__aspen.html": { held: "Medium-low — peak-week lodging is its own market and the two holiday weeks do not share a band with the rest of the season" },
-  "destinations__costa-rica.html": { held: "Medium-low — green-season and dry-season lodge rates are far enough apart that one band would describe neither" },
-  "destinations__jamaica.html": { held: "Medium-low — villa-with-staff and resort pricing are different products quoted on different bases" },
-  "destinations__barbados-eastern-caribbean.html": { held: "Medium-low — the band would have to span four islands with unrelated rate structures" },
-  "destinations__dominican-republic.html": { held: "Medium-low — Punta Cana all-inclusive and Casa de Campo villa rates are not the same product" },
-  "destinations__brazil.html": { held: "Medium-low — Pantanal lodges, Rio hotels and Northeast beach properties do not share a band" },
-  "destinations__argentina.html": { held: "Medium-low — rates are quoted in USD against a moving local price level" },
-  "destinations__colombia.html": { held: "Medium-low — luxury supply is thin enough that a band would rest on a handful of properties" },
-  "destinations__seychelles.html": { held: "Medium-low — island-resort rates are live and the inter-island transfers move the total materially" },
-  "destinations__south-africa.html": { held: "Medium-low — private-reserve lodges and city hotels sit an order of magnitude apart" },
-  "destinations__zambia-victoria-falls.html": { held: "Medium-low — camp rates are seasonal and the Falls-side hotels price on a separate basis" },
-  "destinations__morocco.html": { held: "Medium-low — riad and palace-hotel rates are live, and the desert leg prices per vehicle rather than per person" },
-  "destinations__bhutan.html": { held: "Medium-low — the published government fee is one line of the day rate, not the day rate" },
-  "destinations__vietnam-southeast-asia.html": { held: "Medium-low — the band would have to span three countries" },
-  "destinations__sri-lanka.html": { held: "Medium-low — bungalow and safari-lodge rates vary by season and by coast at the same time" },
-  "destinations__israel.html": { held: "Medium-low — Jerusalem and Tel Aviv hotel rates are live and gated by the religious calendar" },
-  "destinations__uae-gulf.html": { held: "Medium-low — Gulf hotel rates are among the most dynamic in the industry" },
-  "destinations__georgia-armenia.html": { held: "Medium-low — luxury supply is new and thin, so a band would not be stable enough to publish" },
-  "destinations__australia.html": { held: "Medium-low — the band would have to span a continent and the internal flights that join it" },
-  "destinations__cook-islands.html": { held: "Medium-low — Aitutaki and Rarotonga are different price levels on the same trip" },
-  "destinations__vanuatu.html": { held: "Medium-low — the band would span Vanuatu, Samoa, Tonga and the Solomons" },
-  "destinations__arctic-norway.html": { held: "Medium-low — aurora-season rates are live and the itineraries are chartered rather than packaged" },
+  "destinations__aspen.html": {
+    unit: "Priced by the week, and by which week",
+    noBand: "Aspen runs three separate markets inside one season — the Christmas to New Year and Presidents' weeks, X Games week at Buttermilk, and everything else — and a band built on the average of them would be wrong in all three.",
+    includes: [
+      "Lodging in the core or slopeside, on the week you actually book",
+      "A lift ticket valid across all four mountains",
+      "Local lodging and sales taxes on the room rate",
+    ],
+    excludes: [
+      "Airfare into Aspen/Pitkin County, and the Denver drive contingency",
+      "Private instruction, rentals and any heli or cat day",
+      "Meals, gratuities and the excise tax a private-home rental adds",
+    ],
+    drivers: [
+      "Which week — Christmas, New Year and Presidents' week clear before they reach the open market",
+      "Lodging type — Aspen taxes a lodge night at 12.35% and a classic short-term rental at 22.35%",
+      "Private instruction — a named instructor booked early, or whoever the schedule has left",
+    ],
+    source: { text: "City of Aspen lodging tax rates", href: "https://aspen.gov/1427/Lodging-and-Short-Term-Rental-Taxes" },
+  },
+  "destinations__costa-rica.html": {
+    unit: "Quoted by season, green or dry, per lodge night",
+    noBand: "The same lodge room is a different price in the December-to-April dry season and in the green season from May, and September and October are wet enough on the Pacific that some Osa and Central Pacific lodges reduce operations or close outright — one band would describe neither half of the year.",
+    includes: [
+      "A lodge or small hotel with breakfast, at whichever season's rate applies",
+      "A naturalist guide on activity days, booked by name rather than by agency",
+      "Private ground transfers, and the park reservations held before the hotels",
+    ],
+    excludes: [
+      "International airfare, and the domestic flights to the Osa and Tortuguero",
+      "National-park entry, and the certified guide Corcovado requires of every visitor",
+      "Most meals, adventure activities and gratuities",
+    ],
+    drivers: [
+      "Dry season December to April against green season from May, with September and October wettest on the Pacific",
+      "Two bases or four — a third region costs two mornings and a packing day",
+      "Corcovado's mandatory certified guide, and the daily caps that sell out before hotel rooms do",
+    ],
+    source: { text: "SINAC protected-area entry tariffs", href: "https://www.sinac.go.cr/ES/transprncia/Documents/Tarifas%20Ingreso%20ASP.pdf" },
+  },
+  "destinations__jamaica.html": {
+    unit: "Sold per villa week or per resort room-night",
+    noBand: "A staffed Hanover villa is let by the week for the whole house, with a cook, housekeeper and butler on the estate's payroll, while an all-inclusive down the same coast sells a per-person room-night with the food and drink inside it — the same seven days quoted two ways that do not average.",
+    includes: [
+      "A villa with cook, housekeeper and butler employed by the estate",
+      "Or an all-inclusive room-night with meals, drinks and resort facilities",
+      "Airport transfers with a vetted driver, and days out kept inside an hour",
+    ],
+    excludes: [
+      "International airfare, and the North–South highway toll where the routing uses it",
+      "Villa provisioning, which is shopped to your household rather than fixed",
+      "Excursions, the Blue Mountains and Kingston days, and gratuities",
+    ],
+    drivers: [
+      "Jamaica's own room tax, US$1 per room-night under 51 rooms and US$4 at 101 and above",
+      "Party size against the villa break-even, which sits around six people",
+      "December to April, against a hurricane season the National Hurricane Center peaks on 10 September",
+    ],
+    source: { text: "Jamaica Guest Accommodation Room Tax", href: "https://www.jamaicatax.gov.jm/guest-accommodation-room-tax1" },
+  },
+  "destinations__barbados-eastern-caribbean.html": {
+    unit: "Priced per island, not across the region",
+    noBand: "Every hop on this page crosses into another country, and five of them set their own accommodation taxes, holiday-week calendars and villa rules, so one regional nightly band would be an average of five unrelated markets.",
+    includes: [
+      "Half of a west-coast hotel room or villa, two adults sharing",
+      "The 7.5 percent VAT Barbados charges on direct tourism services",
+      "Airport transfers, and a hire car for the east-coast day",
+    ],
+    excludes: [
+      "International airfare, and every regional hop between islands",
+      "Restaurants, beach clubs, alcohol and gratuities",
+      "A crewed charter or a managed villa, which price on their own bases",
+    ],
+    drivers: [
+      "Which coast — west-facing rooms carry the island's top rates and the south sits below them",
+      "Which island the nights fall on — Barbados taxes tourism accommodation at 7.5 percent against a 17.5 percent standard rate, and each neighbour sets its own",
+      "Christmas and New Year, the two weeks that book first and hold their rates hardest",
+    ],
+    source: { text: "Barbados VAT rate on tourism accommodation", href: "https://bra.gov.bb/Popular-Topics/Value-Added-Tax/VAT-Rates" },
+  },
+  "destinations__dominican-republic.html": {
+    unit: "Sold per all-inclusive room-night or per villa week",
+    noBand: "A Punta Cana all-inclusive is quoted per person with food, drink and tax already inside it, while a Casa de Campo villa is quoted for the whole house before an 18% ITBIS and the 10% legal service charge land on top — those are two products on two bases, not two points on one band.",
+    includes: [
+      "An all-inclusive room with meals, drinks and resort entertainment",
+      "Or a staffed villa with cook and housekeeper, priced by the house",
+      "Ground transfers from whichever of the four usable airports the routing needs",
+    ],
+    excludes: [
+      "International airfare, and the transfer daylight a Punta Cana arrival costs",
+      "Green fees at Teeth of the Dog and Punta Espada, and permitted whale boats",
+      "The 18% ITBIS and 10% service charge wherever a rate is quoted net",
+    ],
+    drivers: [
+      "Whether the rate is gross or net of 18% ITBIS and the 10% service charge",
+      "All-inclusive room-nights against a villa let by the house for the same party",
+      "The mid-January to late March humpback window, when peninsula hotels commit early",
+    ],
+    source: { text: "Dominican ITBIS rate (DGII)", href: "https://dgii.gov.do/cicloContribuyente/obligacionesTributarias/principalesImpuestos/Paginas/Itbis.aspx" },
+  },
+  "destinations__brazil.html": {
+    unit: "Priced per region, on two opposite calendars",
+    noBand: "A Pantanal river camp sells full board with boat days, a Rio hotel sells a room, and Fernando de Noronha charges a per-person environmental tax on top of whatever the bed costs, so no single nightly figure covers the three.",
+    includes: [
+      "Hotels in Rio, and full board at a Pantanal river camp",
+      "Boat days with a pilot, and guiding in the cities",
+      "Ground transfers and stated park admissions",
+    ],
+    excludes: [
+      "International airfare, and the domestic legs that route through a hub",
+      "The e-visa United States, Canadian and Australian passport holders need",
+      "Fernando de Noronha's environmental preservation tax and marine park entry",
+    ],
+    drivers: [
+      "Which regions the month allows — July to October for the Pantanal, September to March for the Northeast coast",
+      "Fernando de Noronha's environmental preservation tax, R$105.79 for a single day and R$901.36 for ten",
+      "Boat days at Porto Jofre, where the pilots worth having commit months ahead",
+    ],
+    source: { text: "Fernando de Noronha environmental preservation tax", href: "https://www.noronha.pe.gov.br/catalogo-de-servicos-old2/taxa-de-preservacao-ambiental-tpa/" },
+  },
+  "destinations__argentina.html": {
+    range: "$450–$1,000",
+    includes: [
+      "Half of a Buenos Aires five-star or a Uco Valley bodega room, with breakfast",
+      "Private transfers, and a driver-guide on the touring and tasting days",
+      "Core admissions, including the ARS 60,000 non-resident ticket at Iguazú",
+    ],
+    excludes: [
+      "International airfare and the domestic flights between regions",
+      "Most lunches and dinners, wine bought at the cellar door and its shipping",
+      "Premium cellar verticals, estancia riding days and gratuities",
+    ],
+    drivers: [
+      "Which two regions — Buenos Aires and Mendoza price above Salta and the Quebrada",
+      "Bodega access — a tasting-room visit and a private vertical with the winemaker are not the same line",
+      "Domestic air — three regions in twelve days adds flights, not just nights",
+    ],
+    verified: { datetime: "2026-08-24", label: "August 2026" },
+    source: { text: "Argentine national park entrance fees", href: "https://www.argentina.gob.ar/parquesnacionales/tarifas" },
+  },
+  "destinations__colombia.html": {
+    range: "$350–$900",
+    includes: [
+      "Half of a walled-city, Bogotá or Medellín boutique room, or a working finca in Quindío, with breakfast",
+      "Private transfers and a local guide on the days that need one",
+      "Park entry, including Tayrona's COP 96,500 high-season rate for non-resident foreigners",
+    ],
+    excludes: [
+      "International airfare and the internal flights that replace the drives",
+      "The Chocó fly-in lodges, which quote per person all-inclusive on a different basis",
+      "Most dinners, the Ciudad Perdida trek and gratuities",
+    ],
+    drivers: [
+      "City against finca — a Cartagena suite runs several times a coffee-farm room",
+      "Dates — late December into early January is the most expensive stretch on the coast",
+      "How many legs are flown — Bogotá to the coffee region and Medellín to Cartagena are flights, not drives",
+    ],
+    verified: { datetime: "2026-08-24", label: "August 2026" },
+    source: { text: "Parques Nacionales 2026 entry-fee resolution", href: "https://www.parquesnacionales.gov.co/wp-content/uploads/2025/12/RESOLUCION-551-DE-19-DE-DICIEMBRE-DE-2025-DG.pdf" },
+  },
+  "destinations__seychelles.html": {
+    range: "$400–$1,300",
+    includes: [
+      "Half of a granite-island five-star or boutique room, breakfast where the rate carries it",
+      "The SCR 100 (about $7) sustainability levy, charged per person per night at large hotels and island resorts",
+      "Scheduled catamaran crossings, a hire car or transfers on Mahé, and reserve entry like the Vallée de Mai's SCR 450",
+    ],
+    excludes: [
+      "International airfare and the light-aircraft hop to a private island",
+      "Lunch and dinner — outside the private islands this is not an all-inclusive country",
+      "Diving, boat charters, spa and gratuities",
+    ],
+    drivers: [
+      "Island and property — a La Digue boutique holds the floor, a Praslin five-star sets the ceiling, and the one-property private islands price several times above the band",
+      "Which coast the room faces — the southeast trades run May to September and reverse in November",
+      "How many crossings the week carries — Mahé–Praslin is €56 a person each way before the La Digue leg",
+    ],
+    verified: { datetime: "2026-08-24", label: "August 2026" },
+    source: { text: "Vallée de Mai entrance fee", href: "https://www.sif.sc/vdm" },
+  },
+  "destinations__south-africa.html": {
+    unit: "Sold as reserve nights and city nights separately",
+    noBand: "A Sabi Sand lodge night buys guiding, trackers, off-road traversing rights, meals and drinks in one figure, while a Cape Town hotel night buys a room and breakfast — the two sit an order of magnitude apart, and one band would describe neither.",
+    includes: [
+      "All-inclusive bush nights — meals, house drinks, twice-daily drives and reserve levies",
+      "Room and breakfast in Cape Town and the Winelands, priced on its own",
+      "Private transfers and driver-guide days, with the Nelspruit or Johannesburg leg where stated",
+    ],
+    excludes: [
+      "International airfare, and the light-aircraft or scheduled sector to the reserve",
+      "Most Cape meals, wine tastings, cableway and Robben Island tickets",
+      "Gratuities for guides and trackers, visas and insurance",
+    ],
+    drivers: [
+      "Kruger's daily conservation fee — R602 per international adult, R692 from 1 November 2026",
+      "Which reserve rather than which lodge, since traversing and off-road rights belong to the reserve",
+      "April, September and October, when both halves work and both commit a year out",
+    ],
+    source: { text: "SANParks daily conservation fees", href: "https://www.sanparks.org/travel/book/useful-information/rates-fees/" },
+  },
+  "destinations__zambia-victoria-falls.html": {
+    unit: "Sold per camp night, all-inclusive, or per hotel room",
+    noBand: "A South Luangwa bushcamp night is one all-inclusive figure covering meals, drinks, laundry, a licensed walking guide, an armed scout and the park fee, at a camp that only exists from about June to October, while a Livingstone hotel sells a room and leaves the Falls gate fee outside it.",
+    includes: [
+      "A camp on an all-inclusive basis, with meals, house drinks and laundry at most camps",
+      "Twice-daily activities — drives, walks with an armed scout, canoes in the Lower Zambezi",
+      "Park entry where the camp rate carries it, plus packaged charter transfers",
+    ],
+    excludes: [
+      "International airfare, and the internal light-aircraft sectors between parks",
+      "Livingstone hotel nights, which price on a separate basis from the camps",
+      "The Zambian visa, gratuities, and Devil's Pool or bridge activities",
+    ],
+    drivers: [
+      "South Luangwa's park fee, US$25 per person per day for non-residents",
+      "The June-to-October bushcamp season, with the exact dates set each year by the rains",
+      "Falls water against game season — April peaks the river, October empties the eastern cataract",
+    ],
+    source: { text: "Zambia park-entry permit fees (DNPW)", href: "https://www.businesslicenses.gov.zm/license/id/213" },
+  },
+  "destinations__morocco.html": {
+    unit: "Priced per room, and per vehicle on the road",
+    noBand: "The riads price per room and the Sahara leg prices per vehicle, so the same 4x4 and driver costs a couple exactly what it costs a family of four and the per-person figure halves without the trip changing at all.",
+    includes: [
+      "A riad room inside the medina, and a hotel outside the walls for the pool nights",
+      "A car and driver for the road legs, priced per vehicle rather than per seat",
+      "A licensed guide for the first full day in Fez and in Marrakech",
+    ],
+    excludes: [
+      "International airfare, and the open-jaw premium on a one-way route",
+      "Motorway tolls, fuel and the driver's own overnight costs where billed separately",
+      "Most meals, monument entry and gratuities",
+    ],
+    drivers: [
+      "Party size on the desert leg, because the vehicle costs the same for two as for four",
+      "Motorway tolls, billed by vehicle class rather than by passenger — 25, 36 or 43 dirhams for Casablanca to Rabat",
+      "The October-to-April window, and the Easter and Christmas fortnights when the good riads go six months ahead",
+    ],
+    source: { text: "Morocco's motorway toll grid, by vehicle class", href: "https://www.adm.co.ma/fr/grille-tarifaire-sur-le-reseau" },
+  },
+  "destinations__bhutan.html": {
+    unit: "A government fee per night, plus a day rate",
+    noBand: "The Sustainable Development Fee is published and fixed, but it is a government levy sitting on top of a day rate that swings by a multiple between a valley guesthouse and the five-lodge circuit.",
+    includes: [
+      "A licensed guide and a driver with a vehicle for the whole itinerary",
+      "Hotel nights, monument entry and most meals at the tier you book",
+      "The Sustainable Development Fee where the operator collects it with the itinerary",
+    ],
+    excludes: [
+      "International flights into Paro, and the domestic hop to Bumthang",
+      "The US$40 one-off visa application fee, charged per person",
+      "Gratuities for the guide and driver, and the top lodge categories",
+    ],
+    drivers: [
+      "The government fee — US$100 per adult per night, US$50 for ages six to eleven, none under six",
+      "Lodge tier — the five-lodge circuit and a valley guesthouse are the same country on different money",
+      "Days and valleys — Bumthang adds a long driving day over two passes in each direction",
+    ],
+    source: { text: "Bhutan Department of Tourism SDF rates", href: "https://bhutan.travel/faqs" },
+  },
+  "destinations__vietnam-southeast-asia.html": {
+    unit: "Priced as separate country legs, not one nightly rate",
+    noBand: "Vietnam, Cambodia and Laos price in three separate currencies with their own visa regimes and site fees, so one nightly figure would average a Hanoi hotel against an Angkor pass and describe neither.",
+    includes: [
+      "Five-star and boutique city hotels with breakfast",
+      "A private guide and vehicle on touring days, with site admissions",
+      "An overnight cabin on a Lan Ha Bay boat, full board",
+    ],
+    excludes: [
+      "International airfare, and the three internal flights the north-to-south route needs",
+      "A separate e-visa for each country on the route",
+      "The Angkor park pass, gratuities and travel insurance",
+    ],
+    drivers: [
+      "Cabin count on the bay boat — four berths and forty berths are different products",
+      "Whether Cambodia is on the route — Angkor's three-day pass is $62 a person before the flight",
+      "The February-to-April window, the only stretch that works from Hanoi to the Mekong Delta at once",
+    ],
+    source: { text: "Angkor Archaeological Park pass prices", href: "https://www.angkorenterprise.gov.kh/en/available-tickets" },
+  },
+  "destinations__sri-lanka.html": {
+    unit: "Priced by coast and season, not per island night",
+    noBand: "Sri Lanka runs two monsoons on opposite flanks — the southwest from May to September and the northeast from December to February — so a planter's bungalow above Nuwara Eliya and a beach hotel at Trincomalee are in high season in different months of the same year, and no single band holds both.",
+    includes: [
+      "A bungalow, boutique hotel or safari lodge on whichever coast is in season",
+      "A car and driver throughout, with site guides where stated",
+      "Reserved hill-line rail seats, booked ahead rather than hoped for",
+    ],
+    excludes: [
+      "International airfare and the Electronic Travel Authorization",
+      "Cultural Triangle site tickets, and park entry and jeep hire at Yala or Wilpattu",
+      "Most meals, whale boats and gratuities",
+    ],
+    drivers: [
+      "The southwest monsoon May to September and the northeast December to February, on opposite coasts",
+      "Which coast the month puts you on, since the beach half of the trip simply moves",
+      "Yala's Block 1 closing for several weeks around September, on dates set annually",
+    ],
+    source: { text: "Central Cultural Fund ticket prices", href: "https://ccf.gov.lk/vsl/tickets" },
+  },
+  "destinations__israel.html": {
+    range: "$500–$1,100",
+    includes: [
+      "Half of a Jerusalem or Tel Aviv five-star or boutique room with breakfast",
+      "A licensed guide on the touring days, and a car and driver where the route needs one",
+      "Site admissions like Masada National Park's ₪37 adult ticket, plus local transfers",
+    ],
+    excludes: [
+      "International airfare, insurance and gratuities",
+      "Most lunches and dinners, including the Tel Aviv tasting rooms",
+      "Optional Dead Sea spa programmes and premium experiences",
+    ],
+    drivers: [
+      "The calendar, not the season — Rosh Hashanah, Yom Kippur and Sukkot make October the most expensive month in Jerusalem, and Passover fills the city for a week in spring",
+      "The guide — a licensed guide runs about $400 a day, a specialist with a vehicle $550–$650",
+      "Where the nights go — an Old City-facing room and a Dead Sea resort price nothing like a Galilee guesthouse",
+    ],
+    verified: { datetime: "2026-08-24", label: "August 2026" },
+    source: { text: "Masada National Park entrance fees", href: "https://en.parks.org.il/reserve-park/masada-national-park/" },
+  },
+  "destinations__uae-gulf.html": {
+    range: "$400–$1,500",
+    includes: [
+      "Half of a Dubai, Abu Dhabi or Doha five-star room with breakfast",
+      "The AED 20 a night Tourism Dirham on a five-star Dubai room, plus the charges that add 22–25% to a quoted rate",
+      "Airport transfers, a car on touring days and admissions like the observation deck and Louvre Abu Dhabi",
+    ],
+    excludes: [
+      "International airfare and the Oman crossing",
+      "Most meals — Dubai dining is where a Gulf budget actually goes",
+      "Desert camps in the Liwa, private aviation and gratuities",
+    ],
+    drivers: [
+      "Dates — the Abu Dhabi Grand Prix and February trade-fair weeks can double a room rate",
+      "Address — a Downtown tower, a Jumeirah beach resort and a Saadiyat resort are three different price levels",
+      "Season — cool-season rates run well above the April and October shoulder, and collapse by June",
+    ],
+    verified: { datetime: "2026-08-24", label: "August 2026" },
+    source: { text: "UAE Government hotel fees", href: "https://u.ae/en/information-and-services/visiting-and-exploring-the-uae/where-to-stay-in-the-uae" },
+  },
+  "destinations__georgia-armenia.html": {
+    unit: "Hotel nights and guesthouse nights, priced apart",
+    noBand: "Tbilisi and Yerevan have five-star hotels; Kakheti, Svaneti and southern Armenia have family guesthouses and winery estates that are genuinely excellent and are not five-star, so a single nightly figure would average two different products — and the driver moves the day rate further than the room does.",
+    includes: [
+      "A four- or five-star room in Tbilisi and Yerevan, and a family guesthouse or winery estate outside them",
+      "A car and driver throughout — the Georgian Military Highway and the Ushguli track are not self-drive propositions",
+      "Cellar visits, site admissions such as the Georgian National Museum's 40 GEL foreign-national ticket, and the border-day handover",
+    ],
+    excludes: [
+      "International airfare and the open-jaw home leg out of Yerevan",
+      "Most meals, the wine bought at the cellar and its shipping",
+      "The Tatev cableway, Gudauri ski days and gratuities",
+    ],
+    drivers: [
+      "Which nights are hotel nights and which are guesthouse nights — settled before anything is booked, because the gap is the trip",
+      "The driver-and-guide day rate, which on a touring itinerary outweighs the room",
+      "Rtveli — late September into late October is the strongest window in either country and the one that books first",
+    ],
+    source: { text: "Georgian National Museum ticket prices", href: "https://museum.ge/index.php?lang_id=ENG&sec_id=5&m=319" },
+  },
+  "destinations__australia.html": {
+    unit: "Priced per region, plus the flights between them",
+    noBand: "Sydney, the Red Centre, the reef and Tasmania are four separate cost floors joined by domestic sectors, and a single nightly figure would sit above the cheapest of them and well below a Kimberley expedition berth.",
+    includes: [
+      "Luxury hotels and lodges with breakfast, in whichever regions the trip covers",
+      "Private or premium ground transport, and transfers at each sector end",
+      "Core guiding, park passes and the reef day boat where stated",
+    ],
+    excludes: [
+      "International airfare, and the domestic sector into each new region",
+      "The ETA or eVisitor authorisation every visitor needs before departure",
+      "Kimberley expedition berths, liveaboard cabins and most meals",
+    ],
+    drivers: [
+      "How many regions — the Uluru-Kata Tjuta pass is A$38 for three days, and each extra region adds a sector",
+      "Reef days, which carry the A$8.50 per-person environmental management charge on any trip of three hours or more",
+      "The calendar split — May to September for the centre and the tropics, December to February for Sydney and Tasmania",
+    ],
+    source: { text: "Uluru-Kata Tjuta National Park pass", href: "https://uluru.gov.au/plan/buy-your-pass/" },
+  },
+  "destinations__cook-islands.html": {
+    unit: "Priced per island, plus the sector between them",
+    noBand: "Aitutaki and Rarotonga sit at different price levels on the same trip, and because the split that works gives Aitutaki five of nine nights, one nightly figure would be an average weighted to the wrong island.",
+    includes: [
+      "Half of a beachfront room or bungalow, two adults sharing",
+      "Breakfast where the property includes it, and airport transfers",
+      "A lagoon cruise day on Aitutaki",
+    ],
+    excludes: [
+      "International airfare into Rarotonga, the country's only gateway",
+      "The Rarotonga to Aitutaki sector, which carries no checked bag on Seat Only fares",
+      "Most meals, kitesurfing and diving, plus travel insurance",
+    ],
+    drivers: [
+      "The island split — five nights on Aitutaki against three on Rarotonga moves the total more than the property does",
+      "The domestic sector, a 40-minute flight run up to five times a day, with excess baggage at NZ$3.50 a kilo",
+      "The overwater bungalows, which exist at exactly one resort in the country and commit furthest ahead",
+    ],
+    source: { text: "Air Rarotonga baggage and excess rates", href: "https://airraro.com/passenger-baggage/" },
+  },
+  "destinations__vanuatu.html": {
+    unit: "Priced per country leg and per boat day",
+    noBand: "Four countries share the May-to-October window and nothing else: a Luganville dive package, a Tanna volcano lodge and a licensed Tongan whale boat price on three different bases, and an average of them describes none.",
+    includes: [
+      "A lodge or resort room with breakfast, on whichever island the leg falls",
+      "Guided dives or lagoon days where the operator packages them",
+      "Road transfers, and the 4WD crossing to the Yasur ash plain",
+    ],
+    excludes: [
+      "International airfare and every domestic turboprop sector",
+      "Dive insurance, technical gas and gear hire beyond the package",
+      "Village and kastom-site fees paid on the ground, plus gratuities",
+    ],
+    drivers: [
+      "Each country taxes and licenses separately — Tonga's consumption tax has run at 15 percent since April 2005",
+      "How many domestic sectors the route needs, since each costs most of a day and cancels for weather",
+      "The July-to-October whale window in Vava'u, when licensed boats and dive slots commit months ahead",
+    ],
+    source: { text: "Tonga's 15% consumption tax", href: "https://www.revenue.gov.to/consumption-tax-overview" },
+  },
+  "destinations__arctic-norway.html": {
+    range: "$550–$1,400",
+    includes: [
+      "Half of a Tromsø, Lofoten or Alta room at the top of the local stock, with breakfast",
+      "Norway's 12% VAT on the room and on passenger transport",
+      "A small-group aurora chase on each dark night, published at NOK 2,200 a person",
+    ],
+    excludes: [
+      "International airfare and the domestic connection to Tromsø, Evenes or Alta",
+      "Most dinners, and the rental car with studded tyres on a self-drive week",
+      "Dog sledding, whale days and a private chase vehicle, plus gratuities",
+    ],
+    drivers: [
+      "How many nights you give the sky — five usually produces a clear window; three is a coin toss",
+      "Shared chase or private — a vehicle that keeps driving inland at midnight is the biggest line after the room",
+      "Base — a Tromsø city hotel holds the floor, a Lofoten rorbu or a Finnmark lodge sets the ceiling",
+    ],
+    verified: { datetime: "2026-08-24", label: "August 2026" },
+    source: { text: "Norway's VAT rates", href: "https://www.skatteetaten.no/en/rates/value-added-tax/" },
+  },
   /* Basis corrected 2026-08-20 from "per person, per day, land only" to "per
      person, per voyage", matching falklands-south-georgia and the polar-regions
      parent. The page's first heading is "Svalbard Is a Ship Trip", two of its
      three itineraries are 8-12 day voyages, and the land-only unit described
      only the third. The unit is no longer the blocker; the two below are. */
-  "destinations__svalbard.html": { held: "Medium-low — the per-voyage band still needs an official anchor, and the March–May snowmobile weeks price separately" },
-  "destinations__greenland.html": { held: "Medium-low — charter flights and boat transfers dominate the number, and both are quoted per trip" },
-  "destinations__falklands-south-georgia.html": { held: "Medium-low — voyage pricing is per departure and per cabin category" },
+  "destinations__svalbard.html": {
+    unit: "Priced per cabin per voyage, or per snowmobile day",
+    noBand: "Svalbard sells two products in two units — an eight to twelve day voyage priced by cabin grade on a named vessel, and a March to May snowmobile week priced by the day out of Longyearbyen — and a single nightly figure would describe neither.",
+    includes: [
+      "A twin-share cabin on a small ice-strengthened vessel, all meals aboard",
+      "The expedition team, Zodiac operations and the landings the ice permits",
+      "The NOK 150 Svalbard environmental fee, collected inside the ticket",
+    ],
+    excludes: [
+      "Flights to Longyearbyen through Oslo or Tromsø, and the buffer night",
+      "Evacuation insurance, premium cabins and specialist photography programmes",
+      "Gratuities, cold-weather gear hire and pre-voyage hotel nights",
+    ],
+    drivers: [
+      "Passenger count — Norway caps ships in the protected areas at 200, with landings limited to 43 sites",
+      "Cabin grade and vessel — the same sailing week prices several ways on one hull",
+      "Which season — the March to May snowmobile weeks are a separate product on a per-day basis",
+    ],
+    source: { text: "Svalbard environmental fee", href: "https://www.sysselmesteren.no/en/svalbards-environmental-protection-fund/" },
+  },
+  "destinations__greenland.html": {
+    unit: "Priced per sector and per charter, not nightly",
+    noBand: "Nothing here is bought by the head for a night: the boat to the Eqi front, the helicopter into Tasiilaq and the cabin on a Scoresby Sund ship are each quoted per trip, so a party of two pays close to what a party of six does.",
+    includes: [
+      "A room in a town hotel or lodge, breakfast where the property offers it",
+      "The scheduled boat day, the sled team and the guide who runs it",
+      "Ferry or scheduled-boat legs where the coastal service replaces a flight",
+    ],
+    excludes: [
+      "International flights, and the Air Greenland sectors between towns",
+      "Helicopter legs, charter boats and the buffer night the schedule needs",
+      "Cold-weather kit hire, gratuities and anything a ship prices separately",
+    ],
+    drivers: [
+      "Ship or land base — Scoresby Sund has one settlement and no way in but a hull",
+      "Remote-area permits — the government's expedition application fee is DKK 4,000 per expedition, not per traveller",
+      "Season — the sled window runs roughly February to April and ends when the ice breaks, not on a date",
+    ],
+    source: { text: "Greenland expedition permit fees", href: "https://expeditionsgreenland.gl/en/apply-for-an-expedition-permit" },
+  },
+  "destinations__falklands-south-georgia.html": {
+    unit: "Priced per cabin category, per departure",
+    noBand: "Pricing here is set by cabin category on a single 18 to 22 day departure, and the Falklands also work as an air-and-lodge week costing a fraction of a berth, so no nightly figure covers both.",
+    includes: [
+      "A twin-share cabin, all meals aboard and the expedition team",
+      "Zodiac landings, the biosecurity programme and the daily briefings at sea",
+      "The South Georgia visitor permit, lodged by the operator for each passenger",
+    ],
+    excludes: [
+      "Flights to Ushuaia, and the pre-voyage nights before embarkation",
+      "Evacuation insurance, single supplements and the top cabin grades",
+      "Kayak and camping programmes, gratuities, and the separate Falklands land week",
+    ],
+    drivers: [
+      "Cabin category — the same departure prices several ways on one hull",
+      "Passenger count — no more than 100 people are ashore at one site at a time",
+      "The government visitor permit — £250 a head from 1 July 2026, £275 from 2027, £300 from 2028",
+    ],
+    source: { text: "South Georgia visitor permit fees", href: "https://gov.gs/visitor-permit-fee-update/" },
+  },
 
   "experiences__romance-celebration-travel.html": {
     range: "$600–$2,000",
@@ -1080,6 +1592,44 @@ export const COST_RANGES = {
     verified: { datetime: "2026-08-20", label: "August 2026" },
     source: { text: "Kyoto City accommodation tax", href: "https://www.city.kyoto.lg.jp/gyozai/page/0000236942.html" },
   },
-  "experiences__multigenerational-travel.html": { held: "Low-medium — the two-adult normalization is structurally weak for villa parties" },
-  "experiences__sports-event-travel.html": { held: "Low-medium — needs rebuilding on event, duration and party composition" },
+  "experiences__multigenerational-travel.html": {
+    unit: "Priced per villa and per party, not per head",
+    noBand: "The villa, the chef, the driver and the boat day are each bought once for the whole party, so the per-person figure falls as the group grows and a two-adult night describes nobody in it.",
+    includes: [
+      "A villa or multi-bedroom configuration with shared space for the whole group",
+      "A private driver and the transfers that keep the party together",
+      "The shared anchors — a chef dinner, a cooking class, a boat day",
+    ],
+    excludes: [
+      "International flights, which price per person and per age band",
+      "Childcare, connecting-room premiums and anything booked for one generation only",
+      "Meals outside the villa, gratuities and the guide days each group takes separately",
+    ],
+    drivers: [
+      "Party size against bedroom count — the same villa week divides very differently by eight or by four",
+      "Which weeks — school-holiday windows price above the May–June and September–October shoulder",
+      "Per-party fees — Hawaii Volcanoes charges $30 a vehicle for seven days, whether that is two people or fourteen",
+    ],
+    source: { text: "Hawaii Volcanoes National Park entrance fees", href: "https://www.nps.gov/havo/planyourvisit/fees.htm" },
+  },
+  "experiences__sports-event-travel.html": {
+    unit: "Priced by the seat, not by the night",
+    noBand: "What sets the number here is the seat rather than the room, and a seat is priced per event, per day and per person's age — six sports on this page span a range no single nightly figure could sit inside.",
+    includes: [
+      "Event access at the category booked — hospitality suite, grandstand or enclosure",
+      "A hotel within walking distance or a short private transfer of the venue",
+      "Transfers on event days, and the catering the package itself carries",
+    ],
+    excludes: [
+      "International flights, and the nights either side of the event",
+      "Anything outside the package's own catering and hospitality window",
+      "Cancel-for-any-reason cover, which event trips need more than most",
+    ],
+    drivers: [
+      "Which event — the ticket, not the room, is the largest line on the trip",
+      "Party composition — Monaco prices ages six to fifteen at half the adult ticket, and free on Thursday",
+      "Duration — a two- or three-day Monaco package takes 10% off the daily rate; a single Sunday does not",
+    ],
+    source: { text: "Automobile Club de Monaco ticket terms", href: "https://acm.mc/en/epreuves/formula-1-grand-prix-de-monaco/useful-infos/information-about-ticket-or-package-purchase/" },
+  },
 };

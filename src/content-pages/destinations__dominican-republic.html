@@ -307,69 +307,29 @@
   </div>
 </section>
 
-<!-- ══ WHAT IT COSTS ══
-     HELD: no researched band for the Dominican Republic meets the launch
-     confidence bar, so this section stays commented exactly as it ships on the
-     other held pages (see tools/cost-ranges-data.mjs for the current set). The gap between an
-     all-inclusive room-night in the Punta Cana corridor and a staffed villa at
-     Casa de Campo is too wide to publish a single per-day band without live
-     supplier confirmation.
-
-     To turn it on: add the confirmed data to this page's entry in
-     tools/cost-ranges-data.mjs and re-run `node tools/p3-8-cost-insert.mjs`.
-
-     CORRECTION 2026-08-20: the "live supplier confirmation" framing above is
-     not the bar, and never was. No shipped row on this site has a supplier
-     quote and 52 rows are live. A band here is EDITORIAL, assembled from
-     published rates; `source` is an authority anchor for one concrete,
-     checkable fee, not evidence for the range. destinations__europe.html
-     bands the whole of Europe and cites the price of a Louvre ticket. Nine
-     held rows shipped on 2026-08-20 by swapping an aggregator citation for an
-     official government fee page, with every band left exactly where it was.
-     Tracked on #108.
-
-     Do NOT hand-uncomment this with placeholders still in it. The build's
-     placeholder check reads visible text only, which is why this is safe
-     commented and unsafe half-filled.
-
 <section class="cost-range">
   <div class="cost-range__header">
     <div class="cost-range__label">What It Costs</div>
     <h2 class="cost-range__title">What the Dominican Republic Actually Costs</h2>
   </div>
 
-  <div class="cost-range__figure">NEEDS FIGURE: low end to high end, in USD</div>
-  <div class="cost-range__basis">per person, per day, land only. Ranges, not quotes.</div>
-
-  <div class="cost-range__grid">
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What that includes</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: accommodation tier the range assumes</li>
-        <li>NEEDS FIGURE: meals and drinks included at that tier</li>
-        <li>NEEDS FIGURE: transfers, guiding and excursion inclusions</li>
-      </ul>
-    </div>
-    <div class="cost-range__col">
-      <div class="cost-range__col-label">What it does not</div>
-      <ul class="cost-range__list">
-        <li>NEEDS FIGURE: international airfare position</li>
-        <li>NEEDS FIGURE: golf green fees and whale-watching permits</li>
-        <li>NEEDS FIGURE: gratuities and entry-card costs</li>
-      </ul>
-    </div>
-  </div>
+  <div class="cost-range__figure cost-range__figure--unit">Sold per all-inclusive room-night or per villa week</div>
+  <div class="cost-range__basis">A Punta Cana all-inclusive is quoted per person with food, drink and tax already inside it, while a Casa de Campo villa is quoted for the whole house before an 18% ITBIS and the 10% legal service charge land on top — those are two products on two bases, not two points on one band.</div>
 
   <div class="cost-range__drivers">
-    <div class="cost-range__col-label">The two or three things that move it most</div>
+    <div class="cost-range__col-label">What actually sets the number</div>
     <ul class="cost-range__list">
-        <li>NEEDS FIGURE: the all-inclusive versus villa driver</li>
-        <li>NEEDS FIGURE: the season driver</li>
-        <li>NEEDS FIGURE: the golf and private-boat driver</li>
+      <li>Whether the rate is gross or net of 18% ITBIS and the 10% service charge</li>
+      <li>All-inclusive room-nights against a villa let by the house for the same party</li>
+      <li>The mid-January to late March humpback window, when peninsula hotels commit early</li>
     </ul>
   </div>
+
+  <p class="cost-range__note">
+    Tell me the dates and the party and you get a real quote, not a range.
+    Source: <a href="https://dgii.gov.do/cicloContribuyente/obligacionesTributarias/principalesImpuestos/Paginas/Itbis.aspx">Dominican ITBIS rate (DGII)</a>.
+  </p>
 </section>
--->
 
 <section class="page-faq">
   <div class="page-faq__header">

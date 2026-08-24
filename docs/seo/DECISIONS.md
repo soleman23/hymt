@@ -72,7 +72,7 @@ Consequences, all deliberate:
 
 **Decided 2026-08-24 (#108).**
 
-Of the 28 rows in `tools/cost-ranges-data.mjs` that render no cost block, only a
+Of the 28 rows in `tools/cost-ranges-data.mjs` that rendered no cost block, only a
 minority are waiting on a number. The rest are held because a nightly two-adult
 band is **the wrong unit** — a voyage priced per cabin and per departure, a row
 spanning four islands or three countries, a government fee that is one line of a
@@ -82,4 +82,6 @@ them produces one that is precise and false.
 So they are not a backlog. They ship a cost section with the includes, excludes,
 drivers and source intact and **no headline band**, plus one honest sentence on
 why a single band would mislead. `held` as a data state is retired; the
-replacement field is `noBand`.
+replacement field is `noBand`, and 22 rows carry it — the 21 originally grouped by
+#108 plus `georgia-armenia`, whose research came back saying the same thing: half
+its itinerary has no five-star tier to normalise to.
