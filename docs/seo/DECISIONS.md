@@ -31,3 +31,55 @@ without updating this file in the same commit.
   the image pipeline and replaces the logo in one pass; D5's
   photo-is-publishable answer still stands for the About page and the P2-3
   `Person` schema.
+
+---
+
+# Later decisions
+
+Decisions taken after Phase 0. Same rule: canonical here, do not re-litigate
+without updating this file in the same commit.
+
+## D7 — Image generation runs on Higgsfield credits, not the Playwright runner
+
+**Decided 2026-08-12 by Devin. Runner deleted 2026-08-24 (#92).**
+
+`tools/image-pipeline/`'s Playwright runner drove the higgsfield.ai web app in a
+logged-in browser to get Unlimited generation, on the reasoning that credits were
+the scarce resource. It never generated an image: three selectors needed a
+signed-in DOM dump, the pipeline hard-stops until Unlimited is confirmed, and
+behind that sat a seven-step Google OAuth setup.
+
+**The premise did not survive contact with the numbers.** The credit route has
+done the work instead — 44.6 credits for 62 cards across 12 pages by 2026-08-13,
+against a balance that was 1700 on 2026-08-24. Credits were never the constraint;
+concept quality and reviewer time were.
+
+Consequences, all deliberate:
+
+- Generation goes through the **Higgsfield MCP connector**, `seedream_v5_lite`,
+  16:9, one `generate_image_batch` of at most 12. The workflow, the house style
+  and every failure mode found so far live in `docs/seo/HANDOFF-photo-rollout.md`.
+- Concepts are written from each card's own copy and **approved before any
+  credit is spent**. This is a standing instruction, not a nicety.
+- The two pre-generation checks stay mandatory: both Drive MIME sweeps, and
+  `public/assets/img/`. `npm run build` prints the unreferenced-image list at the
+  end of every run for exactly this reason — read it before generating.
+- `lib/model-router.mjs` and `lib/tracker.mjs` are kept. See that directory's
+  README for what each one still earns its place with.
+- Do **not** resurrect the runner, and do not ask for the Google setup again.
+
+## D8 — 21 cost rows ship without a headline figure, permanently
+
+**Decided 2026-08-24 (#108).**
+
+Of the 28 rows in `tools/cost-ranges-data.mjs` that render no cost block, only a
+minority are waiting on a number. The rest are held because a nightly two-adult
+band is **the wrong unit** — a voyage priced per cabin and per departure, a row
+spanning four islands or three countries, a government fee that is one line of a
+day rate. No supplier confirmation unblocks those, and researching a figure for
+them produces one that is precise and false.
+
+So they are not a backlog. They ship a cost section with the includes, excludes,
+drivers and source intact and **no headline band**, plus one honest sentence on
+why a single band would mislead. `held` as a data state is retired; the
+replacement field is `noBand`.
