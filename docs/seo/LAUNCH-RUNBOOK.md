@@ -59,12 +59,27 @@ the intended behaviour, not a gap.
 No new pages, no template changes after this point. Content copy edits only.
 
 ### 1.2 Verify properties **before** cutover
-- [ ] GSC: verify `hymtravel.com` as a **Domain property** via DNS TXT. Do this
-      now — the record survives the nameserver change if you keep the same DNS
-      host, and having the property live before cutover means indexing is
-      visible from hour one.
-- [ ] Bing Webmaster Tools: verify the site (import from GSC).
-- [ ] Do **not** verify or submit the `hostingersite.com` staging host anywhere.
+
+Tracked as #96. This is the one search-console task that must happen *before*
+the nameserver change, and it is Devin's — nothing automated touches DNS,
+hPanel or Search Console.
+
+**Why the ordering is load-bearing.** Verify after cutover and the first days
+of crawl data — exactly the window in which a brand-new 122-page site either
+gets discovered or does not — are invisible. § 6's weeks 1–4 indexing watch is
+only as good as the property being live before there is anything to watch.
+
+**A Domain property, not a URL-prefix property.** It covers apex and `www`,
+http and https, in one, and that is what makes it survive the DNS change.
+
+1. [ ] GSC → Add property → **Domain** → `hymtravel.com` → copy the TXT record
+2. [ ] Add the TXT at the **current** DNS host — not at Hostinger, unless
+       Hostinger is already the DNS host today. Verify.
+3. [ ] Bing Webmaster Tools → **Import from GSC** (do not verify separately)
+4. [ ] Confirm the staging host appears in **neither**. Do not verify or submit
+       `hostingersite.com` anywhere, ever.
+5. [ ] Record the TXT value in the table in § 1.3 — it is part of the rollback
+       picture, not just a setup step
 
 ### 1.3 Lower the DNS TTL
 - [ ] Set the TTL on the `hymtravel.com` A/CNAME records to **300 seconds** at
@@ -72,6 +87,27 @@ No new pages, no template changes after this point. Content copy edits only.
       can do to make the switch reversible. Raise it back to 3600 a week after.
 - [ ] Record the current DNS values (A, CNAME, MX, TXT) somewhere safe. They
       are the rollback.
+
+#### The rollback table — fill this in before touching anything
+
+Keep this filled in **outside the repo as well** (the repo is public). What
+matters is that these values exist somewhere retrievable at 2am, not that they
+live here.
+
+| Record | Type | Current value | TTL | Noted on |
+|---|---|---|---|---|
+| `@` | A | | | |
+| `www` | A / CNAME | | | |
+| `@` | MX | | | |
+| `@` | TXT (SPF) | | | |
+| `@` | TXT (GSC verification, § 1.2) | | | |
+| Nameservers | NS | | | |
+| Registrar | — | | — | |
+| DNS host (if different) | — | | — | |
+
+**The GSC TXT row is the one people forget.** If the nameservers move and that
+record is not carried across, the Domain property silently unverifies and the
+§ 4.5 post-cutover check fails at exactly the moment it is least welcome.
 
 ---
 

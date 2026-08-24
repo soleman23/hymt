@@ -10,7 +10,7 @@ Two deployable versions of the same site live in this repo, plus the full build 
 | `src/` | Astro 5 source — layouts, components, page wrappers, content partials |
 | `tools/` | Build pipeline (source HTML → Astro pages), image manifest, `restore_images.py` |
 | `public/` | Static assets served at site root (`robots.txt`, `sitemap.xml`) |
-| `dist/` | **The finished static site — 97 pages + custom 404 (98 built HTML files), ready to upload to any static host** |
+| `dist/` | **The finished static site — 122 pages + custom 404 (123 built HTML files), ready to upload to any static host** |
 | `images-b64/` | All 474 site images as base64 text (see below) |
 | `docs/` | Hostinger deployment guide + image production checklist |
 
@@ -82,7 +82,7 @@ every clean URL until the cutover; it is there for after it happens.
 
 ## The static site (`dist/`)
 
-97 pages plus the 404, fully linked, SEO meta/canonicals/JSON-LD in place,
+122 pages plus the 404, fully linked, SEO meta/canonicals/JSON-LD in place,
 sitemap + robots included. Every count below rots; derive it rather than
 trusting it — `grep -o "<loc>" dist/sitemap-0.xml | wc -l` for the page total
 (`grep -c` returns 1: the sitemap has no newlines), and

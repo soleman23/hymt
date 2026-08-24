@@ -1,6 +1,6 @@
 # Hit Your Mark Travel — Hostinger Deployment Guide
 
-The deliverable is a static site: 97 pages plus a custom 404 (98 built HTML
+The deliverable is a static site: 122 pages plus a custom 404 (123 built HTML
 files), ready to serve. Derive that rather than trusting it —
 `grep -o "<loc>" dist/sitemap-0.xml | wc -l` — every count in this file has
 rotted at least once.
@@ -108,10 +108,13 @@ deployed commit whose `target` is absent now is a candidate.
 hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://www.hymtravel.com` loads with the padlock.
 
 ### 4. Forms (Web3Forms key) — already done
-The real Web3Forms access key is **already baked into every form** (95 of the 98
-built pages: the newsletter on 94, plus Plan Your Trip, which carries its own form
-and no newsletter). No placeholder remains and no post-upload find/replace is
-needed. Derive these rather than trusting them:
+The real Web3Forms access key is **already baked into every form** — 120 of the
+123 built files carry it. The three that do not are `404.html`,
+`/privacy-policy/` and `/terms-and-conditions/`, which ship no newsletter by
+design. No placeholder remains and no post-upload find/replace is needed.
+
+**Derive this rather than trusting it** — the number has been wrong in this file
+twice, both times because new pages landed after someone wrote it down:
 `grep -rl '94312057' dist --include='*.html' | wc -l`.
 
 Web3Forms keys are not secrets — they are public by design, since the key sits in
@@ -154,9 +157,23 @@ scripted flood live in the Web3Forms dashboard and need a login:
    the next session before enabling it.
 3. **Enable rate limiting / spam filtering** if the plan offers it.
 
-Verify afterwards: a bare `curl -X POST https://api.web3forms.com/submit -d
-"access_key=<key>&message=test"` from outside the site should be rejected, while
-Contact, Plan Your Trip and the newsletter all still deliver.
+Verify afterwards with the script rather than hand-rolling a curl — it reads
+the key out of `dist/` so it cannot drift from what ships, and it refuses to
+send anything without an explicit flag:
+
+```bash
+node tools/check-web3forms-hardening.mjs --send
+```
+
+**REJECTED is the pass.** An accepted submission means anyone who reads the key
+out of the page can post to the inbox — and it also means a real email just
+arrived, which is why the flag exists.
+
+Then confirm the other direction by hand, which the script cannot do: submit
+Contact, Plan Your Trip and the newsletter through the real UI and confirm all
+three still deliver. **Do this before enabling the domain restriction** — a
+restriction scoped to `www.hymtravel.com` will reject submissions from the
+staging host and make three working forms look broken.
 
 ### 5. Post-launch
 - Google Search Console → add property → submit `https://www.hymtravel.com/sitemap-index.xml` (the build generates `sitemap-index.xml` + `sitemap-0.xml`; there is no `sitemap.xml` anymore).
@@ -167,8 +184,8 @@ Contact, Plan Your Trip and the newsletter all still deliver.
 
 ## Notes on what was built
 
-- **97 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap-index.xml` + `robots.txt` included.
-- **474 images** in `images-b64/MANIFEST.json` — the 92 first produced from your Image Prompt Library, plus the heroes, place-card crops and og:images added since — every destination, experience and journal post now opens on a photograph. All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `image-production-checklist.csv` for exactly where each image is used.
+- **122 pages** (plus a custom 404), all interlinked, SEO meta/canonicals/JSON-LD in place, `sitemap-index.xml` + `robots.txt` included.
+- **596 images** in `images-b64/MANIFEST.json` (602 entries, of which 6 are fonts) — the 92 first produced from your Image Prompt Library, plus the heroes, place-card crops and og:images added since — every destination, experience and journal post now opens on a photograph. All follow the brand rules: golden-hour editorial photography, no faces, no text overlays. See `image-production-checklist.csv` for exactly where each image is used.
 - **The About page photo is your real family photo** (from the files you provided) — no fake people anywhere on the site.
 - **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). The live key is already in place — see step 4.
 - **E-commerce/booking**: not included per your call — the structure leaves room to add a booking tool later.
