@@ -304,13 +304,23 @@
 <!-- ══ WHAT IT COSTS ══
      HELD: no researched band for the Cook Islands meets the launch confidence
      bar, so this section stays commented exactly as it ships on the other held
-     pages (bali, hawaii, new-york and the rest). The spread between a Rarotonga
+     pages (see tools/cost-ranges-data.mjs for the current set). The spread between a Rarotonga
      self-catering unit and the one overwater property on Aitutaki is wide
      enough that a single per-day band would mislead rather than inform without
      live supplier confirmation.
 
      To turn it on: add the confirmed data to this page's entry in
      tools/cost-ranges-data.mjs and re-run `node tools/p3-8-cost-insert.mjs`.
+
+     CORRECTION 2026-08-20: the "live supplier confirmation" framing above is
+     not the bar, and never was. No shipped row on this site has a supplier
+     quote and 52 rows are live. A band here is EDITORIAL, assembled from
+     published rates; `source` is an authority anchor for one concrete,
+     checkable fee, not evidence for the range. destinations__europe.html
+     bands the whole of Europe and cites the price of a Louvre ticket. Nine
+     held rows shipped on 2026-08-20 by swapping an aggregator citation for an
+     official government fee page, with every band left exactly where it was.
+     Tracked on #108.
 
      Do NOT hand-uncomment this with placeholders still in it. The build's
      placeholder check reads visible text only, which is why this is safe
