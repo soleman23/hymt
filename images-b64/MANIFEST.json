@@ -2983,5 +2983,20 @@
   "b64": "images-b64/assets__img__og-south-pacific-vanuatu-and-beyond.jpg.b64",
   "target": "public/assets/img/og-south-pacific-vanuatu-and-beyond.jpg",
   "bytes": 58403
+ },
+ {
+  "b64": "images-b64/assets__img__e-28-augusta-tee-shot.jpg.b64",
+  "target": "public/assets/img/e-28-augusta-tee-shot.jpg",
+  "bytes": 412610
+ },
+ {
+  "b64": "images-b64/assets__img__e-29-heli-ski-powder-run.jpg.b64",
+  "target": "public/assets/img/e-29-heli-ski-powder-run.jpg",
+  "bytes": 244237
+ },
+ {
+  "b64": "images-b64/assets__img__e-30-derby-box-juleps.jpg.b64",
+  "target": "public/assets/img/e-30-derby-box-juleps.jpg",
+  "bytes": 170585
  }
 ]
