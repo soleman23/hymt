@@ -19,59 +19,63 @@ READ FIRST, in this order — do not start work until you have:
   (docs/seo/photography-plan.md and photography-needed.md are both STALE —
    see Open items. Read them only for the A-before-B sequencing argument.)
 
-STATE, verified against the repo on 2026-08-13 at HEAD 8449977:
-  38 destination pages on .places-grid--photo
-   4 still on placeholder swatches — india, jordan, new-zealand, oman (6 each,
-     24 cards)
-   1 (maldives) has no places-grid section at all
-  38 + 4 + 1 = 43. Higgsfield credits: 243.1.
-  Re-verify with the snippet under "The 4 pages still on placeholders" rather
-  than trusting this number — every handoff before 2026-08-13 quoted counts
-  that silently summed to 42.
+STATE, re-derived on 2026-08-24:
+  EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
+    photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
+  DESTINATIONS — 38 of 68 on .places-grid--photo
+                 29 still on placeholder swatches (6 cards each = 174 cards)
+                  1 (maldives) has no places-grid section at all
+                 38 + 29 + 1 = 68.
+  Higgsfield credits: 1665.
 
-WHAT IS LEFT, suggested order:
-  1. jordan + oman   — desert and ancient, one batch of 12
-  2. new-zealand     — 6
-  3. india           — 6, LAST. It is needs-mark blocked on Mark's first-hand
-                       line and cost figures, so photographing it unblocks
-                       nothing.
-  ~24 credits plus re-rolls. PETRA IS THE LAST BIG LANDMARK IN THE SET —
-  budget a re-roll and use the landmark wording under "What the pilot proved".
+  The 29 are the M7 destination pages. Every earlier version of this file said
+  "4 pages / 24 cards" — true at 43 pages, before M7 added 25 more, each
+  shipping 6 placeholder cards. RE-DERIVE, never trust a written count:
 
-BEFORE GENERATING ANYTHING, two checks. Both have caught free images:
-  1. Drive — BOTH MIME sweeps (image/png AND image/jpeg). The folder CANNOT be
+    node -e "const g=require('glob');" # or just grep:
+    grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
+      | xargs grep -l 'places-grid' | wc -l
+
+WHAT IS LEFT: 174 destination place cards, ~174 credits plus re-rolls against
+  1665. Credits are not the constraint and have not been since 2026-08-12 —
+  concept quality and reviewer time are. Work ONE PAGE AT A TIME.
+
+BEFORE GENERATING ANYTHING, three checks. All three have caught free images:
+  1. `npm run build` prints "N tracked images referenced nowhere — free to use
+     before generating anything new" at the end of every run. READ IT FIRST.
+     It is 27 today.
+  2. Drive — BOTH MIME sweeps (image/png AND image/jpeg). The folder CANNOT be
      enumerated by paging; a pageToken returns a near-duplicate of the previous
-     page. A prefix search alone is not evidence of absence: that mistake hid
-     all four antarctica frames, which had been sitting in Drive for five days.
-  2. The repo — public/assets/img/<page>-<slug>.jpg. kenya-tanzania-serengeti
+     page. A prefix search alone is not evidence of absence.
+  3. The repo — public/assets/img/<page>-<slug>.jpg. kenya-tanzania-serengeti
      already existed there at exactly the right size and slug, unused. Free.
   Drive folder: https://drive.google.com/drive/folders/1fqBl_7TFcX0AgKdd0M2lWzfyqxHUdQAo
-  The tracker spreadsheet has nothing for the remaining pages — all 60 tracked
-  rows read "Not started" with an empty prompt column (verified 2026-08-13).
-  Concepts have to be written from each card's own copy.
+
+  CHECK THE ASPECT RATIO of anything you find free. Six of the 27 unreferenced
+  images — e-07, e-13, e-15, e-19, e-21, e-23 — are 1024x1405, PORTRAIT. A
+  portrait source in a 3:2 landscape panel is the Botswana mistake at scale.
 
 BEFORE CHOOSING A SUBJECT for any card, open the page's own hero AND its
-sibling regional-hub card and look at them. Across portugal, st-barths,
-riviera, kenya-tanzania, rwanda, peru and patagonia this caught 12 collisions
-in 38 cards — nearly one card in three. The obvious subject for a region is
+sibling regional-hub card and look at them. The obvious subject for a region is
 usually already spent on the hero or the hub.
 
 PER PAGE, the loop that works:
   a. read every card's name, region and description from
      src/content-pages/destinations__<page>.html
-  b. run the two pre-generation checks above
+  b. run the three pre-generation checks above
   c. look at the hero + hub card for collisions
   d. write one concept per card FROM ITS OWN COPY, and get them approved
      before spending any credits. The user has asked for this repeatedly.
-  e. generate — seedream_v5_lite, 16:9, one generate_image_batch (caps at 12;
-     two back-to-back returns 429)
-  f. review EVERY frame at its true 3:2 card crop, and check mean luminance
-     across the set — shipped pages sit around 120–190, and one dark tile in a
-     row is conspicuous because the panel is full-brightness by design
-  g. python tools/place-card-intake.py <srcdir> <page> <grid-style|EMPTY> \
-       <file>:<slug> ...
-     Does intake + conversion + every assertion in one pass. Check the real
-     grid tag first:
+  e. generate — seedream_v5_lite, 16:9, one generate_image_batch (caps at 12).
+     A second batch straight after returns 429 on one or two indices; that is
+     not a hard block, just resubmit the failed ones.
+  f. review EVERY frame at its true 3:2 card crop and check mean luminance
+     across the set — see "Reviewing" below. The metric lies in one direction.
+  g. intake. NOTE: tools/place-card-intake.py imports PIL, which is NOT
+     installed on this machine. tools/exp-card-intake.mjs is the node/sharp
+     equivalent and handles experience pages; a destination equivalent does
+     not exist yet and is the obvious next tool to write.
+     Check the real grid tag first:
        grep -o '<div class="places-grid[^>]*>' src/content-pages/destinations__<page>.html
   h. npm run build   (must pass; it is self-contained)
   i. verify in the browser at 1440, 768 and 375: panels exactly 3:2, card
@@ -92,6 +96,48 @@ markup assertions. Deploy is not reliably automatic — never promise a time.
 
 ---
 
+## Reviewing: mean luminance is a proxy, and it lies in one direction
+
+Shipped pages sit around 120–190, and one dark tile in a row is conspicuous
+because the `--photo` panel is full-brightness by design. That rule stands.
+
+**But a low mean does not always mean a dark photograph.** Dense dark-green
+foliage or deep navy water fills a frame and drags the mean down while the
+actual subject — a shaft of light, white water, a bright lagoon centre — is the
+brightest thing in the image and sits dead centre. On 2026-08-24, five frames
+read below 120 and only two were genuinely wrong:
+
+| Frame | Mean | Call | Why |
+|---|---|---|---|
+| Rwanda bamboo | 67 | **kept** | Luminous centre, and the only forest interior in its row |
+| Mexico cenote | 64 | **kept** | A cenote is a cave; the light shaft is the subject |
+| New Zealand fiord | 100 | **kept** | Reads bright — mist and waterfalls carry it |
+| Bali pavilion | 114 | **kept** | Warm and bright; only just under the floor |
+| Costa Rica gorge | 51 | **re-rolled** | Sat directly beside Iceland 161 and Dolomites 162 |
+| Maldives aerial | 34 | **re-rolled** | Mostly navy ocean — see below |
+
+So: read the number, then **look at the crop**, then look at the row it will
+sit in. The question is never "is this frame dark", it is "is this frame darker
+than the two beside it".
+
+**The navy trap, found on the Maldives re-roll.** Under `--photo` the copy
+panel directly below the image is solid navy. A photograph that is itself
+mostly navy dissolves into that panel and the card loses its top edge. That is
+a composition constraint, not a brightness one, and no luminance threshold
+catches it. Compose so the water is turquoise, or the frame is filled.
+
+**Same-subject collisions inside one page's row.** Bora Bora and St Lucia both
+came back as "peak above turquoise water seen from the sea" and would have sat
+adjacent. Re-rolled Bora Bora to a palm-framed beach view with the mountain
+small and distant. When two cards on one page share a shape, change the
+camera, not the subject — and distance also lowers the landmark render risk.
+
+**Same subject across two pages** is a different problem with a different fix.
+Turks & Caicos and St Lucia appear on both Beach & Island and All-Inclusive.
+They got a waterline shot and an infinity-pool edge, and both Pitons from the
+water versus one Piton from a resort terrace at a different hour. Two real
+photographs of one place, which is the patagonia/El Chaltén precedent.
+
 ## Where things stand
 
 **Repo:** clean, all work pushed. HEAD was `8449977` when this was written;
@@ -103,20 +149,24 @@ reference. For the launch-blocker workstream see
 
 | | |
 |---|---|
-| Destination pages | 43 |
+| Destination pages | **68** |
 | On the photo panel | **38** |
-| Still on placeholders | **4** (24 cards) |
+| Still on placeholders | **29** (174 cards) |
 | No places-grid at all | **1** (maldives) |
+| Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **243.1** |
+| Higgsfield credits | **1665** |
 
-### The 4 pages still on placeholders
+### The 29 pages still on placeholders
 
 ```
-india 6   jordan 6   new-zealand 6   oman 6
+india jordan new-zealand oman  +  the 25 M7 pages
 ```
 
-Every one needs exactly 6, so the remainder is a clean 24 cards.
+Every one needs exactly 6, so the remainder is 174 cards. The four named above
+were the whole backlog at 43 destination pages; M7 then added 25 more, each
+shipping its own six placeholders. **This is the single number in this file
+that has been wrong most often — derive it.**
 
 Suggested order: **desert and ancient** (jordan, oman) together, then
 **new-zealand**, and **india** last — india is `needs-mark` blocked on
@@ -156,6 +206,65 @@ both are now done, but check the distinction before assuming coverage.
 
 Note `india` — that page was created this session (issue #54) and ships with
 its own six placeholder cards. Every new M7 destination page adds ~6 more.
+
+---
+
+## What the 2026-08-24 session did — the experience half, closed
+
+**All 12 experience pages are photographed and on `.exp-cards--photo`.** 72 of
+72 cards, zero placeholders. That half of #93 had not moved since the issue was
+filed on 2026-08-11.
+
+32 cards generated, 35 credits including 3 re-rolls, across four commits:
+
+| Page | Cards | Slugs |
+|---|---|---|
+| safari-wildlife-travel | 6 | `e-33` … `e-38` |
+| beach-island-escapes | 6 | `e-39` … `e-44` |
+| wellness-retreat-travel | 6 | `e-45` … `e-50` |
+| adventure-active-travel | 6 | `e-51` … `e-56` |
+| all-inclusive-vacations | 6 | `e-57` … `e-62` |
+| sports-event-travel | 2 | `e-63`, `e-64` |
+
+New frames join the **`e-` family**, which is where experience imagery lives.
+There is no `experiences-<page>-<slug>` convention and there should not be —
+the six previously-photographed pages all reuse `dh-`, `jh-`, `d-`, `x-`,
+`na-` and destination-slug frames.
+
+### The pre-generation check that paid off
+
+`npm run build` prints the unreferenced-image list at the end of every run. It
+named six free `e-` frames — and all six turned out to be **1024×1405,
+portrait**, unusable in a 3:2 panel. Checking the ratio took one command and
+saved shipping the Botswana mistake six times. **A free image is only free if
+its aspect ratio fits.**
+
+Everything else in the repo that matched a subject by name was already in use
+on a destination page, which is why this set was generated rather than
+imported. That check is in "Check the repo before generating" below and it
+still works — it just came back empty this time.
+
+### tools/exp-card-intake.mjs
+
+New. The `.exp-card` sibling of `place-card-intake.py`, which handles
+`.place-card` in a `.places-grid` and was never going to do this half. It also
+imports PIL, **which is not installed on this machine**, while `sharp` already
+ships as a build dependency.
+
+It does image → 1600px JPEG → b64 twin → MANIFEST entry → markup in one pass,
+and refuses to run unless the image count matches the placeholder count,
+because `--photo` is only safe when every card has a photograph.
+
+It also performs the **scrim → panel transition**: `.exp-card__bg` is the
+per-card slot that lets a grid upgrade one card at a time while `--photo` stays
+gated. Once the last placeholder goes, every `__bg` must become `__img` and
+every `__overlay` must go with it — under `--photo` the copy sits in a panel
+*below* the image, so a surviving bottom-anchored scrim would darken a
+photograph nothing is written over. Sports & Event was the first page to make
+that transition; the tool refuses if any overlay survives.
+
+**A destination equivalent does not exist yet.** Writing one is the obvious
+first move for whoever takes the 174 remaining destination cards.
 
 ---
 
@@ -462,6 +571,9 @@ Two things worth carrying into every later wave:
 - **§ B of that doc** — ~14 slugs where a generated image is live and Drive
   holds a different version of the same subject. Needs a side-by-side call
   after launch. Not a defect.
+- ~~**The experience half of #93.**~~ **Closed 2026-08-24** — 12 of 12 pages
+  on `.exp-cards--photo`, 72 of 72 cards. The remaining work is entirely
+  destination-side: 29 pages, 174 cards.
 - **M7 is 1 of 26 pages.** Every one is labelled `needs-mark`. The blocker is
   not images — it is page authoring plus two things only Mark can supply:
   a first-hand line (`CONTENT-STANDARDS` § 6) and cost figures. **One sitting
