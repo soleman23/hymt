@@ -74,6 +74,32 @@ Fill the four middle columns. Leave any row blank that you cannot verify.
 | [Thailand](/destinations/thailand/) | per person, per day, land only | | | | | |
 | [Turks & Caicos](/destinations/turks-caicos/) | per person, per night | | | | | |
 | [the UK & Ireland](/destinations/uk-ireland/) | per person, per day, land only | | | | | |
+| [Arctic Norway](/destinations/arctic-norway/) | per person, per day, land only | | | | | |
+| [Argentina](/destinations/argentina/) | per person, per day, land only | | | | | |
+| [Aspen](/destinations/aspen/) | per person, per night | | | | | |
+| [Australia](/destinations/australia/) | per person, per day, land only | | | | | |
+| [Barbados & the Eastern Caribbean](/destinations/barbados-eastern-caribbean/) | per person, per night | | | | | |
+| [Bhutan](/destinations/bhutan/) | per person, per day, land only | | | | | |
+| [Brazil](/destinations/brazil/) | per person, per day, land only | | | | | |
+| [Colombia](/destinations/colombia/) | per person, per day, land only | | | | | |
+| [the Cook Islands](/destinations/cook-islands/) | per person, per night | | | | | |
+| [Costa Rica](/destinations/costa-rica/) | per person, per day, land only | | | | | |
+| [the Dominican Republic](/destinations/dominican-republic/) | per person, per night | | | | | |
+| [the Falklands & South Georgia](/destinations/falklands-south-georgia/) | per person, per voyage | | | | | |
+| [Georgia & Armenia](/destinations/georgia-armenia/) | per person, per day, land only | | | | | |
+| [Greenland](/destinations/greenland/) | per person, per day, land only | | | | | |
+| [India](/destinations/india/) | per person, per day, land only | | | | | |
+| [Israel](/destinations/israel/) | per person, per day, land only | | | | | |
+| [Jamaica](/destinations/jamaica/) | per person, per night | | | | | |
+| [Morocco](/destinations/morocco/) | per person, per day, land only | | | | | |
+| [Seychelles](/destinations/seychelles/) | per person, per night | | | | | |
+| [South Africa](/destinations/south-africa/) | per person, per day, land only | | | | | |
+| [Sri Lanka](/destinations/sri-lanka/) | per person, per day, land only | | | | | |
+| [Svalbard](/destinations/svalbard/) | per person, per voyage | | | | | |
+| [the UAE & the Gulf](/destinations/uae-gulf/) | per person, per day, land only | | | | | |
+| [Vanuatu & Beyond](/destinations/vanuatu/) | per person, per day, land only | | | | | |
+| [Vietnam & Southeast Asia](/destinations/vietnam-southeast-asia/) | per person, per day, land only | | | | | |
+| [Zambia & Victoria Falls](/destinations/zambia-victoria-falls/) | per person, per night, all-inclusive at camp | | | | | |
 | [an active trip](/experiences/adventure-active-travel/) | per person, per day, land only | | | | | |
 | [an all-inclusive trip](/experiences/all-inclusive-vacations/) | per person, per night, all-inclusive | | | | | |
 | [a beach trip](/experiences/beach-island-escapes/) | per person, per night | | | | | |
@@ -142,6 +168,32 @@ is a one-line change.
 | [Thailand](/destinations/thailand/) | Tourism Authority of Thailand; DNP (national park fees) | |
 | [Turks & Caicos](/destinations/turks-caicos/) | Turks & Caicos Tourist Board | |
 | [the UK & Ireland](/destinations/uk-ireland/) | VisitBritain; Fáilte Ireland; National Trust / OPW site fees | |
+| [Arctic Norway](/destinations/arctic-norway/) | Norwegian Public Roads Administration (national road ferry tariffs, toll charges); Norwegian Meteorological Institute (yr.no cloud and aurora forecast) | |
+| [Argentina](/destinations/argentina/) | Argentina APN (Iguazú and Nahuel Huapi national park entry fees) | |
+| [Aspen](/destinations/aspen/) | US Forest Service, White River National Forest (Maroon Bells timed-entry reservation and shuttle fee); City of Aspen (lodging tax) | |
+| [Australia](/destinations/australia/) | Parks Australia (Uluru-Kata Tjuta park entry fee); Great Barrier Reef Marine Park Authority (Environmental Management Charge) | |
+| [Barbados & the Eastern Caribbean](/destinations/barbados-eastern-caribbean/) | Barbados Revenue Authority (room rate levy, product development levy); Saint Lucia Tourism Authority; Antigua and Barbuda Tourism Authority | |
+| [Bhutan](/destinations/bhutan/) | Bhutan Department of Tourism (Sustainable Development Fee, visa fee) | |
+| [Brazil](/destinations/brazil/) | ICMBio (Iguaçu National Park entry); Brazilian Ministry of Foreign Affairs (e-visa fee) | |
+| [Colombia](/destinations/colombia/) | Parques Nacionales Naturales de Colombia (Tayrona and Corales del Rosario entry fees) | |
+| [the Cook Islands](/destinations/cook-islands/) | Cook Islands Revenue Management Division (VAT, departure tax) | |
+| [Costa Rica](/destinations/costa-rica/) | SINAC (national park entry fees, daily-capacity reservations and the Corcovado certified-guide requirement) | |
+| [the Dominican Republic](/destinations/dominican-republic/) | Dirección General de Impuestos Internos (18% ITBIS on hotel rates); Ministerio de Medio Ambiente (Samaná whale-watching permits) | |
+| [the Falklands & South Georgia](/destinations/falklands-south-georgia/) | Government of South Georgia & the South Sandwich Islands (visitor entry permit, harbour dues); Falkland Islands Government (departure tax) | |
+| [Georgia & Armenia](/destinations/georgia-armenia/) | Georgian Ministry of Foreign Affairs consular service; Armenian Ministry of Foreign Affairs (visa fees and entry rules) | |
+| [Greenland](/destinations/greenland/) | Government of Greenland, Naalakkersuisut (national park and expedition permits); Danish Immigration Service (Greenland visa endorsement) | |
+| [India](/destinations/india/) | Archaeological Survey of India (monument entry tickets); Indian Bureau of Immigration (e-Visa fee) | |
+| [Israel](/destinations/israel/) | Israel Nature and Parks Authority (Masada, Ein Gedi and Caesarea site entry fees); Population and Immigration Authority (ETA-IL fee) | |
+| [Jamaica](/destinations/jamaica/) | Tax Administration Jamaica (GCT on tourism accommodation, nightly room tax) | |
+| [Morocco](/destinations/morocco/) | Morocco Ministry of Youth, Culture and Communication (monument and heritage site tickets) | |
+| [Seychelles](/destinations/seychelles/) | Seychelles Revenue Commission (Environmental Sustainability Levy, VAT) | |
+| [South Africa](/destinations/south-africa/) | South African National Parks (Kruger and Addo daily conservation fee) | |
+| [Sri Lanka](/destinations/sri-lanka/) | Sri Lanka Dept of Wildlife Conservation (national park entry fees); Central Cultural Fund (Cultural Triangle site tickets) | |
+| [Svalbard](/destinations/svalbard/) | Governor of Svalbard (Svalbard environmental fee, protected-area landing rules and passenger caps) | |
+| [the UAE & the Gulf](/destinations/uae-gulf/) | UAE Federal Tax Authority (VAT); Dubai Department of Economy and Tourism (Tourism Dirham hotel fee) | |
+| [Vanuatu & Beyond](/destinations/vanuatu/) | Vanuatu Department of Customs and Inland Revenue (VAT, departure tax) | |
+| [Vietnam & Southeast Asia](/destinations/vietnam-southeast-asia/) | Vietnam Immigration Department (e-visa fee); Angkor Enterprise, Cambodia (Angkor pass price) | |
+| [Zambia & Victoria Falls](/destinations/zambia-victoria-falls/) | Zambia Dept of National Parks & Wildlife (park entry and concession fees) | |
 | [an active trip](/experiences/adventure-active-travel/) | Relevant park authorities per destination | |
 | [an all-inclusive trip](/experiences/all-inclusive-vacations/) | Individual resort inclusion schedules | |
 | [a beach trip](/experiences/beach-island-escapes/) | National tourism boards per region | |
