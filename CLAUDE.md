@@ -64,8 +64,11 @@ This project is indexed by GitNexus as **hymt** (3902 symbols, 7444 relationship
   same work with parallel sessions and a subagent fleet on the box. So budget
   from what else is running, not from the number the analyzer prints, and run it
   when the index is actually stale rather than reflexively after every commit.
-  A run that blows well past even the loaded figure is probably not running at
-  all — see the lock bullet below.
+  One run here took **12 hours** of wall clock for 29s of indexing. That is
+  deliberately left out of the range above: it was not a slow index but a run
+  blocked on a stale lock, and filing it as the high end of normal would teach
+  the opposite of the right response. Treat anything far past the loaded figure
+  as a run that never started — see the lock bullet below.
 - The counts in the block above are generated. Never hand-edit between the
   `gitnexus:start` / `gitnexus:end` markers. If your analyze rewrites them
   downward, you indexed in the wrong mode — fix the branch and re-run, do not
