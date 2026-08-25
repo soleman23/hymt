@@ -3173,5 +3173,15 @@
   "b64": "images-b64/assets__img__e-65-monte-alban-gran-plaza.jpg.b64",
   "target": "public/assets/img/e-65-monte-alban-gran-plaza.jpg",
   "bytes": 310258
+ },
+ {
+  "b64": "images-b64/assets__img__jc-napa-sonoma-the-valley-floor.jpg.b64",
+  "target": "public/assets/img/jc-napa-sonoma-the-valley-floor.jpg",
+  "bytes": 51583
+ },
+ {
+  "b64": "images-b64/assets__img__og-napa-sonoma-the-valley-floor.jpg.b64",
+  "target": "public/assets/img/og-napa-sonoma-the-valley-floor.jpg",
+  "bytes": 110387
  }
 ]

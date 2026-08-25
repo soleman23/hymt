@@ -91,6 +91,7 @@ export const OG_CROPS: Record<string, string> = {
   "/assets/img/na-alaska-brown-bear-salmon.jpg": "/assets/img/og-na-alaska-brown-bear-salmon.jpg",
   "/assets/img/na-canadian-rockies-glacial-lake.jpg": "/assets/img/og-na-canadian-rockies-glacial-lake.jpg",
   "/assets/img/na-napa-sonoma-cellar-tasting.jpg": "/assets/img/og-na-napa-sonoma-cellar-tasting.jpg",
+  "/assets/img/napa-sonoma-the-valley-floor.jpg": "/assets/img/og-napa-sonoma-the-valley-floor.jpg",
   "/assets/img/polar-regions-arctic-norway-and-northern-lights.jpg": "/assets/img/og-polar-regions-arctic-norway-and-northern-lights.jpg",
   "/assets/img/polar-regions-falklands-and-south-georgia.jpg": "/assets/img/og-polar-regions-falklands-and-south-georgia.jpg",
   "/assets/img/polar-regions-greenland.jpg": "/assets/img/og-polar-regions-greenland.jpg",
