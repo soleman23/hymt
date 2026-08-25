@@ -223,9 +223,18 @@ for (const { file, key } of items) {
 
   /* Region and name go into the alt text in their ESCAPED source form —
      `alt="Alta &amp; the Finnmark Plateau, Northern Norway"` is what every
-     converted page already carries. */
+     converted page already carries.
+
+     Unless they are the same string. Some cards are named for their own
+     region — Musandam Peninsula, Tuscany, Brooklyn, Crete — and the naive
+     join reads "Musandam Peninsula, Musandam Peninsula" to a screen reader.
+     The Python tool did exactly that and eleven such alts are already live;
+     this at least stops the twelfth. */
+  const alt = card.name.trim() === card.region.trim()
+    ? card.name
+    : `${card.name}, ${card.region}`;
   card.img = `${card.indent}<img class="place-card__img" src="/assets/img/${slug}.jpg" ` +
-    `alt="${card.name}, ${card.region}" width="${width}" height="${height}" ` +
+    `alt="${alt}" width="${width}" height="${height}" ` +
     `loading="lazy" decoding="async">${EOL}`;
   done.push({ slug, target, b64path, buf, width, height, kb: Math.round(buf.length / 1024), how, warn });
 }

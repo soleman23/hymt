@@ -19,26 +19,28 @@ READ FIRST, in this order — do not start work until you have:
   (docs/seo/photography-plan.md and photography-needed.md are both STALE —
    see Open items. Read them only for the A-before-B sequencing argument.)
 
-STATE, re-derived on 2026-08-24:
+STATE, re-derived on 2026-08-25:
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 38 of 68 on .places-grid--photo
-                 29 still on placeholder swatches (6 cards each = 174 cards)
+  DESTINATIONS — 40 of 68 on .places-grid--photo
+                 27 still on placeholder swatches (6 cards each = 162 cards)
                   1 (maldives) has no places-grid section at all
-                 38 + 29 + 1 = 68.
-  Higgsfield credits: 1665.
+                 40 + 27 + 1 = 68.
+  Higgsfield credits: 1651.
 
-  The 29 are the M7 destination pages. Every earlier version of this file said
-  "4 pages / 24 cards" — true at 43 pages, before M7 added 25 more, each
-  shipping 6 placeholder cards. RE-DERIVE, never trust a written count:
+  The 27 are the 25 M7 destination pages plus india and new-zealand. Every
+  earlier version of this file said "4 pages / 24 cards" — true at 43 pages,
+  before M7 added 25 more, each shipping 6 placeholder cards. RE-DERIVE, never
+  trust a written count:
 
     node -e "const g=require('glob');" # or just grep:
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 174 destination place cards, ~174 credits plus re-rolls against
-  1665. Credits are not the constraint and have not been since 2026-08-12 —
-  concept quality and reviewer time are. Work ONE PAGE AT A TIME.
+WHAT IS LEFT: 162 destination place cards, ~162 credits plus re-rolls against
+  1651. Credits are not the constraint and have not been since 2026-08-12 —
+  concept quality and reviewer time are. Work ONE PAGE AT A TIME. jordan and
+  oman took 13 credits for 12 cards, which is the rate to budget from.
 
 BEFORE GENERATING ANYTHING, three checks. All three have caught free images:
   1. `npm run build` prints "N tracked images referenced nowhere — free to use
@@ -71,12 +73,14 @@ PER PAGE, the loop that works:
      not a hard block, just resubmit the failed ones.
   f. review EVERY frame at its true 3:2 card crop and check mean luminance
      across the set — see "Reviewing" below. The metric lies in one direction.
-  g. intake. NOTE: tools/place-card-intake.py imports PIL, which is NOT
-     installed on this machine. tools/exp-card-intake.mjs is the node/sharp
-     equivalent and handles experience pages; a destination equivalent does
-     not exist yet and is the obvious next tool to write.
-     Check the real grid tag first:
-       grep -o '<div class="places-grid[^>]*>' src/content-pages/destinations__<page>.html
+  g. intake with **tools/place-card-intake.mjs**:
+       node tools/place-card-intake.mjs <srcdir> <page> <file>:<card> ...
+     <card> is the card's visible name or its slugified form; ORDER DOES NOT
+     MATTER and the slug is derived from the markup, so a mis-ordered list
+     cannot put one card's photograph on another. It refuses on a portrait or
+     otherwise badly-proportioned source, and writes nothing until all six
+     have passed. Ignore tools/place-card-intake.py — it imports PIL, which is
+     NOT installed on this machine.
   h. npm run build   (must pass; it is self-contained)
   i. verify in the browser at 1440, 768 and 375: panels exactly 3:2, card
      heights uniform WITHIN each row, CTA baselines aligned, no horizontal
@@ -150,29 +154,29 @@ reference. For the launch-blocker workstream see
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **38** |
-| Still on placeholders | **29** (174 cards) |
+| On the photo panel | **40** |
+| Still on placeholders | **27** (162 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1665** |
+| Higgsfield credits | **1651** |
 
-### The 29 pages still on placeholders
+### The 27 pages still on placeholders
 
 ```
-india jordan new-zealand oman  +  the 25 M7 pages
+india new-zealand  +  the 25 M7 pages
 ```
 
-Every one needs exactly 6, so the remainder is 174 cards. The four named above
-were the whole backlog at 43 destination pages; M7 then added 25 more, each
-shipping its own six placeholders. **This is the single number in this file
-that has been wrong most often — derive it.**
+Every one needs exactly 6, so the remainder is 162 cards. `jordan` and `oman`
+came off this list on 2026-08-25. The four originally named here were the whole
+backlog at 43 destination pages; M7 then added 25 more, each shipping its own
+six placeholders. **This is the single number in this file that has been wrong
+most often — derive it.**
 
-Suggested order: **desert and ancient** (jordan, oman) together, then
-**new-zealand**, and **india** last — india is `needs-mark` blocked on
-Mark's first-hand line and cost figures, so photographing it unblocks
-nothing. **Petra is the last big landmark in the set**; budget a re-roll
-and use the wording under "Generating" that fixed Barcelona.
+Suggested order: jordan and oman went first, together, on 2026-08-25 —
+desert and ancient share a look and a prompt vocabulary. **new-zealand**
+next, and **india** last: india is `needs-mark` blocked on Mark's
+first-hand line and cost figures, so photographing it unblocks nothing.
 
 **Counting note, corrected 2026-08-13.** Every previous version of this
 handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
@@ -263,8 +267,104 @@ every `__overlay` must go with it — under `--photo` the copy sits in a panel
 photograph nothing is written over. Sports & Event was the first page to make
 that transition; the tool refuses if any overlay survives.
 
-**A destination equivalent does not exist yet.** Writing one is the obvious
-first move for whoever takes the 174 remaining destination cards.
+**The destination equivalent now exists** — `tools/place-card-intake.mjs`,
+written 2026-08-25. See the section below.
+
+---
+
+## What the 2026-08-25 session did — the tool, and jordan + oman
+
+`jordan` and `oman` are photographed and on `.places-grid--photo`. 12 cards
+generated, **13 credits** including one re-roll. 174 → 162 cards, 29 → 27 pages.
+
+### tools/place-card-intake.mjs
+
+The `.place-card` sibling of `exp-card-intake.mjs` and the replacement for the
+PIL-dead Python script. Same four-step intake and the same `--photo` gate, with
+three differences that are all lessons from this file made mechanical:
+
+- **Cards match by NAME, not position**, and the slug is derived from the
+  markup rather than passed. A mis-ordered argument list cannot put Petra's
+  photograph on the Dead Sea card.
+- **A 3:2 ratio guard.** A source keeps `min(r/1.5, 1.5/r)` of itself under
+  `object-fit:cover`; below 65% the tool refuses. Fed
+  `e-11-elephant-herd-aerial.jpg` it reports *"1024x1405 … would keep only
+  48.6% of it"* — the Botswana figure, derived rather than remembered. The fix
+  for a refusal is to pre-crop the source to 3:2, not to lower the floor.
+- **Nothing is written until every image has passed**, so a failure on the
+  sixth frame no longer leaves five orphan `.b64` twins.
+
+Two things its tests caught that are worth knowing generally:
+
+- **The content pages are CRLF.** Every one. A regex anchored on `\n` matches
+  nothing, and `cat -A` will hide it from you when the line is long enough to
+  be truncated first. Match `\r?\n` and write back the ending the file uses.
+- **NFKD does not decompose the stroke letters.** `Tromsø` slugifies to
+  `troms` without a transliteration table, because `ø` is a stroke, not a
+  base letter plus a combining mark. `å`, `ç`, `á` are all fine; `ø æ œ ð þ ł`
+  are not.
+
+### The Muscat re-roll, and why it was worth a credit
+
+The first Sultan Qaboos Grand Mosque frame came back as a near-perfect
+**Sheikh Zayed Grand Mosque in Abu Dhabi** — single onion dome, brilliant white
+marble, low white arcades, that minaret placement. The card's first clause names
+Sultan Qaboos. That is the Riviera-Maya-on-the-Oaxaca-card error in a new
+costume, and no luminance or ratio check catches it.
+
+**The class of defect worth watching for: a landmark that renders as the wrong
+country's landmark.** Re-specced with the features that actually distinguish it
+— cream Indian sandstone not white marble, crenellated fortress massing, one
+very tall slender central minaret plus four short corner ones, the bare Hajar
+ridge behind — and it came back Omani.
+
+### Luminance across each row
+
+Three columns, so cards 1–3 are row one and 4–6 row two.
+
+| jordan | | oman | |
+|---|---|---|---|
+| Petra (Monastery) | 152 | Wahiba Sands | 149 |
+| Wadi Rum | 148 | Musandam | 185 |
+| Dead Sea | 187 | Nizwa souk | 141 |
+| Jerash | 137 | Wadi Shab | 121 |
+| Amman | 124 | Muscat | 106 |
+| Wadi Mujib | **91** | Jebel Akhdar | 132 |
+
+Wadi Mujib at 91 was kept deliberately. It is the same shape as the Rwanda
+bamboo and Mexico cenote frames: dark red canyon walls drag the mean down while
+the subject — a lit turquoise watercourse under a shaft of daylight — is the
+brightest thing in the frame and sits dead centre. **The metric lies in one
+direction.**
+
+### Collisions the pre-checks caught
+
+`jordan`'s hero is the Treasury from the Siq, and `experiences/culture-immersive`
+uses the same frame, so the Petra card could not be another Treasury. The copy
+supplied the alternative itself: it singles out the Monastery. `oman`'s hero is
+a mud-brick fort above a palm wadi, which ruled out a fort exterior for Nizwa —
+hence the souk arcade.
+
+Wadi Rum and Wahiba Sands are both "dune at golden hour" and were specced
+explicitly against each other: Rum keeps its sandstone massifs, Wahiba was told
+**no rock anywhere in frame**. Same for Wadi Mujib (tight vertical slot) against
+Wadi Shab (open pool basin).
+
+### Drive, re-verified 2026-08-25
+
+Both MIME sweeps again — 100 `image/jpeg`, 41 `image/png`. Nothing for jordan or
+oman, confirming the 2026-08-13 enumeration. Two independent queries agreeing is
+the bar; a prefix search is not.
+
+### One wart, pre-existing, now not spreading
+
+A card named for its own region produced `alt="Musandam Peninsula, Musandam
+Peninsula"`. The Python tool did the same and **eleven such alts are already
+live** — Provence, Normandy & Brittany, Crete, Peloponnese, Tuscany, Sicily,
+Brooklyn, Hudson Valley, Cusco, Lima, Brazil. The new tool collapses them;
+Musandam was fixed by hand. The eleven are backfill, not a regression.
+`australia` (Tasmania) and `india` (Kerala) will hit the same case when they
+convert, and the tool now handles it.
 
 ---
 
@@ -573,7 +673,7 @@ Two things worth carrying into every later wave:
   after launch. Not a defect.
 - ~~**The experience half of #93.**~~ **Closed 2026-08-24** — 12 of 12 pages
   on `.exp-cards--photo`, 72 of 72 cards. The remaining work is entirely
-  destination-side: 29 pages, 174 cards.
+  destination-side: 27 pages, 162 cards.
 - **M7 is 1 of 26 pages.** Every one is labelled `needs-mark`. The blocker is
   not images — it is page authoring plus two things only Mark can supply:
   a first-hand line (`CONTENT-STANDARDS` § 6) and cost figures. **One sitting

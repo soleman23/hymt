@@ -3173,5 +3173,65 @@
   "b64": "images-b64/assets__img__e-65-monte-alban-gran-plaza.jpg.b64",
   "target": "public/assets/img/e-65-monte-alban-gran-plaza.jpg",
   "bytes": 310258
+ },
+ {
+  "b64": "images-b64/assets__img__jordan-petra.jpg.b64",
+  "target": "public/assets/img/jordan-petra.jpg",
+  "bytes": 310324
+ },
+ {
+  "b64": "images-b64/assets__img__jordan-wadi-rum.jpg.b64",
+  "target": "public/assets/img/jordan-wadi-rum.jpg",
+  "bytes": 308334
+ },
+ {
+  "b64": "images-b64/assets__img__jordan-dead-sea.jpg.b64",
+  "target": "public/assets/img/jordan-dead-sea.jpg",
+  "bytes": 226792
+ },
+ {
+  "b64": "images-b64/assets__img__jordan-jerash.jpg.b64",
+  "target": "public/assets/img/jordan-jerash.jpg",
+  "bytes": 361749
+ },
+ {
+  "b64": "images-b64/assets__img__jordan-amman-and-surrounds.jpg.b64",
+  "target": "public/assets/img/jordan-amman-and-surrounds.jpg",
+  "bytes": 319803
+ },
+ {
+  "b64": "images-b64/assets__img__jordan-aqaba-and-wadi-mujib.jpg.b64",
+  "target": "public/assets/img/jordan-aqaba-and-wadi-mujib.jpg",
+  "bytes": 441605
+ },
+ {
+  "b64": "images-b64/assets__img__oman-wahiba-sands.jpg.b64",
+  "target": "public/assets/img/oman-wahiba-sands.jpg",
+  "bytes": 205726
+ },
+ {
+  "b64": "images-b64/assets__img__oman-musandam-peninsula.jpg.b64",
+  "target": "public/assets/img/oman-musandam-peninsula.jpg",
+  "bytes": 110887
+ },
+ {
+  "b64": "images-b64/assets__img__oman-nizwa.jpg.b64",
+  "target": "public/assets/img/oman-nizwa.jpg",
+  "bytes": 211417
+ },
+ {
+  "b64": "images-b64/assets__img__oman-wadi-shab-and-wadi-bani-khalid.jpg.b64",
+  "target": "public/assets/img/oman-wadi-shab-and-wadi-bani-khalid.jpg",
+  "bytes": 395876
+ },
+ {
+  "b64": "images-b64/assets__img__oman-muscat.jpg.b64",
+  "target": "public/assets/img/oman-muscat.jpg",
+  "bytes": 192641
+ },
+ {
+  "b64": "images-b64/assets__img__oman-jebel-akhdar-and-the-green-mountain.jpg.b64",
+  "target": "public/assets/img/oman-jebel-akhdar-and-the-green-mountain.jpg",
+  "bytes": 547731
  }
 ]
