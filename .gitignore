@@ -47,3 +47,8 @@ tools/image-pipeline/.browser-profile/
 tools/image-pipeline/downloads/
 tools/image-pipeline/probe/
 tools/image-pipeline/*.jsonl
+
+# Playwright MCP session output. Every page snapshot and console log it writes
+# lands here under a timestamped name, including the full text of third-party
+# sites opened while researching. Scratch only, and this repository is public.
+.playwright-mcp/
