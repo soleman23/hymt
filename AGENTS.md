@@ -68,6 +68,20 @@ This project is indexed by GitNexus as **hymt** (3902 symbols, 7444 relationship
 - The staleness hook fires whenever HEAD moves past the indexed commit, even for
   a commit that touched no code. It is a notice, not a failure; the next analyze
   clears it.
+- **If analyze looks hung, do not kill it.** A killed run leaves a lock file in
+  `.gitnexus/.hook-locks/` holding its PID, and nothing cleans that up when the
+  process dies. The next analyze then waits on the dead holder in complete
+  silence: one waited 12 hours before the lock aged out, then indexed in 29
+  seconds. `cat` the lock for its PID, check whether that process is alive, and
+  delete the lock only if it is dead and no live `index.js analyze` is running.
+- Tell waiting from working by CPU, not by output — analyze prints nothing while
+  blocked. Sample the process twice a few seconds apart; a waiter accrues none.
+  The indexing worker (`--max-old-space-size=9544 … index.js analyze`) is spawned
+  as a **child** of the analyze CLI, so a second gitnexus process is normal, not
+  a competing run. Check parentage before killing anything.
+- Do not run analyze alongside a large subagent workflow. Starved of CPU by 23
+  agents it ran past a 10-minute timeout, and killing it there is what left the
+  stale lock in the first place.
 
 ## SEO & AIO rules — apply to every page, always
 
