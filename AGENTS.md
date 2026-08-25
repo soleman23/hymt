@@ -44,6 +44,31 @@ This project is indexed by GitNexus as **hymt** (3854 symbols, 7327 relationship
 
 <!-- gitnexus:end -->
 
+## GitNexus index — how to run analyze here
+
+- `.gitnexusrc` pins `analyze.pdg = true`, so a bare
+  `node .gitnexus/run.cjs analyze` keeps the CFG/PDG layer that `explain` and
+  `pdg_query` read. Passing `--pdg` is now redundant. CLI flags still win over
+  the file, so never pass one that turns the layer off.
+- **The pin only exists on `main`.** Every session shares this one working
+  tree, and `.gitnexusrc` is read from the repo root — not from `.gitnexus/`,
+  which is index storage and gitignored. On a branch that has not merged `main`
+  since 2026-08-24 the file is simply absent, so a bare `analyze` rebuilds the
+  shared index in non-PDG mode: 3854/7327 drops to 1798/2970 and `explain` and
+  `pdg_query` go quiet without erroring. Merge `main` into your branch before
+  you analyze.
+- Analyze is no longer near-free. Measured on this repo: ~70s wall clock for an
+  already-up-to-date no-op, ~190s for a real incremental pass. The `13.3s` the
+  analyzer prints is graph-build time, not process time. Run it when the index
+  is actually stale, not reflexively after every commit.
+- The counts in the block above are generated. Never hand-edit between the
+  `gitnexus:start` / `gitnexus:end` markers. If your analyze rewrites them
+  downward, you indexed in the wrong mode — fix the branch and re-run, do not
+  commit the revert.
+- The staleness hook fires whenever HEAD moves past the indexed commit, even for
+  a commit that touched no code. It is a notice, not a failure; the next analyze
+  clears it.
+
 ## SEO & AIO rules — apply to every page, always
 
 Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRARY.md`.
