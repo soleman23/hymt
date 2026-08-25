@@ -3168,5 +3168,10 @@
   "b64": "images-b64/assets__img__e-64-stadium-pitch-tiers.jpg.b64",
   "target": "public/assets/img/e-64-stadium-pitch-tiers.jpg",
   "bytes": 308335
+ },
+ {
+  "b64": "images-b64/assets__img__e-65-monte-alban-gran-plaza.jpg.b64",
+  "target": "public/assets/img/e-65-monte-alban-gran-plaza.jpg",
+  "bytes": 310258
  }
 ]
