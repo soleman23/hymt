@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
    show — see that file's header. */
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
-  unsafeHrefs, inertCostSections, costFigureShape, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
@@ -25,6 +25,9 @@ import {
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
+/* Same helper the sitemap dates are generated with, so "today" here cannot
+   drift from the convention in tools/git-lastmod.mjs. */
+import { localDay } from "./git-lastmod.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DIST = path.join(ROOT, "dist");
@@ -368,6 +371,52 @@ if (!SITE) fail("canonical-host", "could not read `site` from astro.config.mjs")
   } else if (!(await exists(path.join(DIST, new URL(sm).pathname)))) {
     fail("sitemap-parity", `robots.txt points at ${new URL(sm).pathname}, which is not in dist/`);
   }
+}
+
+/* sitemap-future-lastmod: a lastmod dated after the build day claims a page
+   changed on a day that has not happened. Google's guidance is to stop trusting
+   a sitemap's dates once they stop being accurate, so one bad entry devalues
+   the signal for every URL in the file.
+
+   This shipped. `/` and `/about/` carried 2026-08-25 in committed dist because
+   tools/git-lastmod.mjs dated dirty files in UTC while committed files came from
+   `%cI` in local offset, so any build whose local clock was within the zone's UTC
+   offset of midnight — after 17:00 in PDT, 16:00 in PST — with an uncommitted page
+   source wrote tomorrow's date. Root cause is fixed there;
+   this guards the shape whatever produces it next — clock skew, a restored file
+   with a future mtime, or a timezone regression all land in the same place.
+
+   Both files are scanned: sitemap-index.xml carries its own lastmod and is one
+   of the two the original bad date landed in, so checking sitemap-0.xml alone
+   would leave the hole exactly where the bug already went. */
+{
+  const today = localDay(new Date());
+  /* Enumerated rather than hardcoded: @astrojs/sitemap chunks at entryLimit
+     (45,000) into sitemap-1.xml and beyond, and a fixed list would quietly stop
+     covering the file that grew. */
+  const files = (await readdir(DIST)).filter((n) => /^sitemap.*\.xml$/i.test(n)).sort();
+  let seen = 0;
+  let futures = 0;
+  for (const name of files) {
+    const xml = await readFile(path.join(DIST, name), "utf8").catch(() => "");
+    /* The pair regex needs <lastmod> adjacent to its </loc>, which is the
+       `sitemap` package's emission order rather than anything guaranteed. If
+       that drifts the predicate parses nothing and this check goes quietly
+       green, so a count mismatch is itself a failure. */
+    const declared = (xml.match(/<lastmod>/gi) || []).length;
+    const pairs = lastmodPairs(xml);
+    if (declared !== pairs.length) {
+      fail("sitemap-future-lastmod",
+        `${name}: parsed ${pairs.length} of ${declared} <lastmod> elements — the date check cannot see them all, so it is not guarding this file`);
+    }
+    seen += pairs.length;
+    for (const [loc, when] of futureLastmods(xml, today)) {
+      futures++;
+      fail("sitemap-future-lastmod",
+        `${name}: ${loc} has lastmod ${when}, after today (${today}) — dist is stale and wants a rebuild, or it was generated where the clock, the timezone, or a commit's own recorded %cI offset runs ahead of this machine`);
+    }
+  }
+  if (!futures) notes.push(`${seen} sitemap lastmod dates across ${files.length} files, all on or before ${today}`);
 }
 
 const linkResolves = async (p) => {

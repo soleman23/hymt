@@ -1010,3 +1010,49 @@ export function costFigureShape(html) {
   }
   return out;
 }
+
+/**
+ * Every [loc, date] pair a sitemap declares, in document order.
+ *
+ * A lastmod in the future is never valid — it claims a page changed on a day
+ * that has not happened. Google's guidance is to stop trusting a sitemap's
+ * dates once they stop being accurate, so one bad entry devalues the signal
+ * for every URL in the file, and it does so silently.
+ *
+ * This shipped: `/` and `/about/` carried 2026-08-25 in committed dist. See
+ * the sitemap-future-lastmod block in verify-deployment.mjs for the cause.
+ *
+ * Compares the captured YYYY-MM-DD *string* against `today`, which is
+ * lexicographic and therefore chronological. Deliberately not a Date compare
+ * against `Date.now()`: astro emits these as midnight UTC, so the offending
+ * `2026-08-25T00:00:00.000Z` was already in the past as an instant at the
+ * moment the 17:47 Pacific build wrote it. An instant compare passes on the
+ * exact dist this exists to catch; a local-day compare fails it.
+ *
+ * `today` is injected rather than read from the clock, so the fixtures are
+ * not themselves time-dependent.
+ *
+ * The `<lastmod>` must follow its `</loc>` with only whitespace between, so a
+ * URL that carries no lastmod cannot be paired with the next entry's date.
+ * Matches both the `<url>` shape in sitemap-0.xml and the `<sitemap>` shape in
+ * sitemap-index.xml.
+ */
+export function lastmodPairs(xml) {
+  const out = [];
+  const re = /<loc>([^<]*)<\/loc>\s*<lastmod>(\d{4}-\d{2}-\d{2})/g;
+  for (const m of xml.matchAll(re)) out.push([m[1], m[2]]);
+  return out;
+}
+
+/**
+ * Sitemap `lastmod` values dated after the build day, as [loc, date] pairs.
+ *
+ * Split from {@link lastmodPairs} so the caller can also ask how many dates the
+ * regex actually saw. "No future dates" and "parsed nothing at all" are the
+ * same empty array, and the second is a check that has stopped working — the
+ * verifier compares the pair count against the raw `<lastmod>` count for
+ * exactly that reason.
+ */
+export function futureLastmods(xml, today) {
+  return lastmodPairs(xml).filter(([, when]) => when > today);
+}

@@ -46,7 +46,7 @@ const t = (name, actual, expected) => {
    drifted — the exact failure mode these tests exist to prevent. */
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
-  unsafeHrefs, inertCostSections, costFigureShape, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
@@ -55,6 +55,7 @@ import {
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
+import { localDay } from "./git-lastmod.mjs";
 
 /* ── internal-link-floor ── */
 
@@ -1284,6 +1285,25 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   t("real /plan-your-trip/ carries the honeypot (#76)",
     hasHoneypot(plan), true);
 
+  /* Real sitemap output. Every fixture above builds the shape by hand, so a
+     drift in what @astrojs/sitemap actually emits would leave them all green
+     while the verifier silently saw nothing. These pin the predicate to the
+     real file instead. */
+  const smUrls = await readFile(path.join(dist, "sitemap-0.xml"), "utf8");
+  const smIdx = await readFile(path.join(dist, "sitemap-index.xml"), "utf8");
+  t("real dist/sitemap-0.xml parses every <lastmod> it declares",
+    lastmodPairs(smUrls).length, (smUrls.match(/<lastmod>/g) || []).length);
+  t("real dist/sitemap-0.xml declares lastmods at all (so the check is live)",
+    lastmodPairs(smUrls).length > 0, true);
+  t("real dist/sitemap-index.xml parses its own <lastmod> too",
+    lastmodPairs(smIdx).length, (smIdx.match(/<lastmod>/g) || []).length);
+  t("real dist/sitemap-index.xml declares one lastmod",
+    lastmodPairs(smIdx).length, 1);
+  /* Against its own newest date nothing can be "future", so a non-zero here
+     means the comparison itself is broken rather than the data. */
+  t("real dist/sitemap-0.xml has nothing after its own newest date",
+    futureLastmods(smUrls, lastmodPairs(smUrls).map(([, w]) => w).sort().at(-1)).length, 0);
+
   const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
   /* The real file, which contains `immutable` four times in comments. */
   t("real dist/.htaccess has no header gaps",
@@ -1348,6 +1368,81 @@ t("throttled routes are reported separately, so they are not silently a pass",
   remoteThrottled(THROTTLED).join(","), "/,/destinations/aspen/");
 t("a genuine 404 is not mistaken for throttling",
   remoteThrottled(THROTTLED).includes("/gone/"), false);
+
+/* ── sitemap-future-lastmod ──
+   The shape that shipped: `/` and `/about/` dated 2026-08-25 in a sitemap
+   built on 2026-08-24. An instant-compare against Date.now() passes on this
+   input, because astro writes the date as midnight UTC and that instant had
+   already passed by the time the 17:47 Pacific build ran — which is why these
+   fixtures compare local days. */
+const sm = (loc, lastmod) =>
+  `<url><loc>${loc}</loc>${lastmod ? `<lastmod>${lastmod}T00:00:00.000Z</lastmod>` : ""}</url>`;
+
+t("a lastmod after today is the shipped defect",
+  futureLastmods(sm("https://x/about/", "2026-08-25"), "2026-08-24").length, 1);
+
+t("the offending loc and date are both reported",
+  JSON.stringify(futureLastmods(sm("https://x/about/", "2026-08-25"), "2026-08-24")),
+  JSON.stringify([["https://x/about/", "2026-08-25"]]));
+
+t("today itself is not in the future",
+  futureLastmods(sm("https://x/", "2026-08-24"), "2026-08-24").length, 0);
+
+t("a past lastmod passes",
+  futureLastmods(sm("https://x/", "2026-08-18"), "2026-08-24").length, 0);
+
+t("a page with no lastmod cannot borrow the next entry's date",
+  JSON.stringify(futureLastmods(sm("https://x/no-date/", null) + sm("https://x/later/", "2026-08-25"), "2026-08-24")),
+  JSON.stringify([["https://x/later/", "2026-08-25"]]));
+
+t("the sitemap-index shape is scanned too, not just <url>",
+  futureLastmods('<sitemap><loc>https://x/sitemap-0.xml</loc><lastmod>2026-08-25T00:00:00.000Z</lastmod></sitemap>', "2026-08-24").length, 1);
+
+t("a clean sitemap yields nothing",
+  futureLastmods(sm("https://x/", "2026-08-20") + sm("https://x/about/", "2026-08-24"), "2026-08-24").length, 0);
+
+/* localDay is the fix itself, not just its guard, so these pin it directly.
+
+   An earlier draft passed only a Date and leaned on the host's ambient
+   timezone. That is inert wherever the two derivation paths happen to agree —
+   not only at UTC, where the shift is by zero and they are definitionally
+   identical, but at Europe/London too, where an August evening is +01:00 and a
+   January morning is +00:00, so neither boundary crosses midnight UTC. CI
+   runners default to UTC, so a guard written that way would have been
+   permanently green precisely where it ran most.
+
+   Injecting the offset removes the ambient dependency: every case below is
+   deterministic on any host. Offsets are in getTimezoneOffset() convention,
+   positive = west of UTC. Each of the first five fails against the pre-fix
+   `mtime.toISOString().slice(0, 10)`, the fractional ones included — those are
+   the cases whole-hour reasoning would have missed. */
+const LD = (iso, off) => localDay(new Date(iso), off);
+
+t("localDay: an evening west of UTC keeps its own day (PDT -07:00)",
+  LD("2026-08-25T06:59:00Z", 420), "2026-08-24");
+
+t("localDay: a morning east of UTC keeps its own day (JST +09:00)",
+  LD("2025-12-31T15:30:00Z", -540), "2026-01-01");
+
+t("localDay: a 45-minute offset is not rounded (Kathmandu +05:45)",
+  LD("2026-08-24T18:20:00Z", -345), "2026-08-25");
+
+t("localDay: a 12:45 offset is not rounded (Chatham +12:45)",
+  LD("2026-08-24T11:20:00Z", -765), "2026-08-25");
+
+t("localDay: a 30-minute western offset (St John's -02:30)",
+  LD("2026-08-25T01:30:00Z", 150), "2026-08-24");
+
+/* Cannot go red, and is here to say so: at offset 0 localDay IS the code it
+   replaced. Documents the one host where these fixtures prove nothing. */
+t("localDay: at UTC the shift is a no-op",
+  LD("2026-08-24T12:00:00Z", 0), "2026-08-24");
+
+/* The default is the host's own offset — the only path production takes,
+   since pageLastmod and the verifier both call localDay(d). */
+t("localDay defaults to the host offset rather than to zero",
+  localDay(new Date(2026, 7, 24, 23, 59)),
+  LD(new Date(2026, 7, 24, 23, 59).toISOString(), new Date(2026, 7, 24, 23, 59).getTimezoneOffset()));
 
 /* ── report ── */
 if (failures.length) {

@@ -104,6 +104,38 @@ function sourcesOf(pathname) {
 }
 
 /**
+ * The LOCAL calendar day of a Date, as YYYY-MM-DD.
+ *
+ * `toISOString()` is UTC, and that gap is the whole reason this exists. The
+ * committed branch below reads `%cI` — the commit date carrying its own local
+ * offset — so slicing it yields a LOCAL day. The dirty branch used to slice
+ * `mtime.toISOString()`, which yields a UTC day. The two disagree whenever the
+ * local clock is within the zone's UTC offset of midnight — the last 7 hours of
+ * a PDT day, 8 of a PST one — and the dirty branch is the one that runs for a
+ * page whose source is still uncommitted.
+ *
+ * Concretely: `/` and `/about/` shipped `<lastmod>2026-08-25</lastmod>` because
+ * the build that produced that sitemap ran at 17:47 Pacific on the 24th while
+ * both sources were uncommitted, and 17:47 -0700 is 00:47 UTC on the 25th. The
+ * date only corrected when a later rebuild happened to run after the sources
+ * were committed, so it shipped a day-ahead lastmod in the meantime.
+ *
+ * Exported so verify-deployment.mjs derives "today" the same way instead of
+ * keeping a second copy of the convention that could drift from this one.
+ *
+ * `offsetMinutes` defaults to the host's own offset, which is the only path
+ * production takes — both callers pass just a Date. It is injectable so the
+ * fixtures can pin real offsets deterministically, including the 45-minute
+ * ones. Without that they depend on the suite's ambient timezone, where the
+ * pre-fix and post-fix code agree often enough for the guard to be inert: at
+ * UTC the shift is by zero and the two are definitionally identical, and at
+ * Europe/London neither an August evening (+01:00) nor a January morning
+ * (+00:00) crosses midnight UTC either. CI runners default to UTC.
+ */
+export const localDay = (d, offsetMinutes = d.getTimezoneOffset()) =>
+  new Date(d.getTime() - offsetMinutes * 60000).toISOString().slice(0, 10);
+
+/**
  * YYYY-MM-DD the page's content last changed, or undefined when unknowable.
  * @param {string} pathname  e.g. "/destinations/italy/"
  */
@@ -113,7 +145,16 @@ export function pageLastmod(pathname) {
   for (const f of sourcesOf(pathname)) {
     let d;
     if (dirty.has(f)) {
-      try { d = statSync(path.join(ROOT, f)).mtime.toISOString().slice(0, 10); } catch { /* gone */ }
+      try {
+        /* Clamped to the build day. A future mtime — clock skew, or an archive
+           or FTP restore that preserved timestamps — would otherwise write a
+           lastmod for a day that has not happened, and the verifier can only
+           catch that after dist is already on disk. For a dirty file the claim
+           is "changed recently" anyway, so today is the honest ceiling. */
+        const seen = localDay(statSync(path.join(ROOT, f)).mtime);
+        const today = localDay(new Date());
+        d = seen > today ? today : seen;
+      } catch { /* gone */ }
     } else {
       d = committed.get(f);
     }
