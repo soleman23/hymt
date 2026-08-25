@@ -57,10 +57,15 @@ This project is indexed by GitNexus as **hymt** (3902 symbols, 7444 relationship
   shared index in non-PDG mode: 3854/7327 drops to 1798/2970 and `explain` and
   `pdg_query` go quiet without erroring. Merge `main` into your branch before
   you analyze.
-- Analyze is no longer near-free. Measured on this repo: ~70s wall clock for an
-  already-up-to-date no-op, ~190s for a real incremental pass. The `13.3s` the
-  analyzer prints is graph-build time, not process time. Run it when the index
-  is actually stale, not reflexively after every commit.
+- Analyze is not near-free, and most of its wall clock is not indexing. Measured
+  over seven runs here: the analyzer reports **13–29s** of graph build, while
+  wall clock ran **~70s** for an already-up-to-date no-op and **~145–190s** for a
+  real incremental pass on an otherwise idle machine, rising to **~410s** for the
+  same work with parallel sessions and a subagent fleet on the box. So budget
+  from what else is running, not from the number the analyzer prints, and run it
+  when the index is actually stale rather than reflexively after every commit.
+  A run that blows well past even the loaded figure is probably not running at
+  all — see the lock bullet below.
 - The counts in the block above are generated. Never hand-edit between the
   `gitnexus:start` / `gitnexus:end` markers. If your analyze rewrites them
   downward, you indexed in the wrong mode — fix the branch and re-run, do not
