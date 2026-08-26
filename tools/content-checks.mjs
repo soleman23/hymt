@@ -1094,3 +1094,53 @@ export function lastmodPairs(xml) {
 export function futureLastmods(xml, today) {
   return lastmodPairs(xml).filter(([, when]) => when > today);
 }
+
+/**
+ * Place-card alt text: `<name>, <region>`, unless the region is only an
+ * administrative wrapper around the card's own name.
+ *
+ * The naive join says the same thing twice to a screen reader:
+ *
+ *   "Musandam Peninsula, Musandam Peninsula"   name === region
+ *   "Dubai, Emirate of Dubai"                  region contains the name
+ *   "Marrakech, Marrakech-Safi"                region contains the name
+ *
+ * Only the first shape was collapsed before, so the second was about to ship
+ * three more times on `uae-gulf` and `morocco`. Eleven of the first shape are
+ * already live from the Python tool — Provence, Crete, Tuscany, Brooklyn and
+ * the rest. This governs what is GENERATED from here on; it does not rewrite
+ * them, and nothing fails a build over them.
+ *
+ * The test is whole-word containment of the name inside the region, in that
+ * direction only. Deliberately tight, because every near miss below must KEEP
+ * its region — each one carries information the name does not:
+ *
+ *   "Doha, Qatar"                     a different word entirely
+ *   "Al Ain, Emirate of Abu Dhabi"    a different emirate from the name
+ *   "Cape Town, Western Cape"         shares a word, contains no name
+ *   "Fez, Fès-Meknès"                 a transliteration, not a containment
+ *
+ * Inputs arrive in their ESCAPED source form (`Alta &amp; the Finnmark
+ * Plateau`), which is what the converted pages carry, so `&amp;` is folded
+ * before comparing. Normalisation leaves only `[a-z0-9 ]`, which is also why
+ * the containment test needs no regex escaping.
+ */
+const normAlt = (s) => s
+  .replace(/&amp;/g, "&")
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, " ")
+  .trim();
+
+export function regionIsRedundant(name, region) {
+  const n = normAlt(name);
+  const r = normAlt(region);
+  if (!n || !r) return false;
+  if (n === r) return true;
+  return new RegExp(`(^| )${n}( |$)`).test(r);
+}
+
+/** The alt string a place card should carry. See {@link regionIsRedundant}. */
+export function placeCardAlt(name, region) {
+  return regionIsRedundant(name, region) ? name : `${name}, ${region}`;
+}

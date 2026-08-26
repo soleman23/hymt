@@ -49,6 +49,7 @@ import {
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
+  placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
@@ -1009,6 +1010,54 @@ t("og-alt: a longer word containing the substring is not flagged",
 
 t("og-alt: an escaped ampersand is not an interpolation fault",
   badInterpolation("Safari &#38; Wildlife"), false);
+
+/* -- place-card alt: region redundancy -----------------------------------
+   The generator side, not a build gate. place-card-intake.mjs builds every
+   destination card's alt from these, so a regression here ships silently into
+   markup that no check reads back. Both directions are pinned: the shapes that
+   MUST collapse, and the near misses that must keep their region.
+
+   The old rule was string equality. It caught "Musandam Peninsula, Musandam
+   Peninsula" and missed "Dubai, Emirate of Dubai" — which is why these exist.
+*/
+t("place-alt: an identical region collapses (the shape the old rule caught)",
+  placeCardAlt("Musandam Peninsula", "Musandam Peninsula"), "Musandam Peninsula");
+
+t("place-alt: an emirate wrapping its own city collapses",
+  placeCardAlt("Dubai", "Emirate of Dubai"), "Dubai");
+
+t("place-alt: a two-word city inside its emirate collapses",
+  placeCardAlt("Abu Dhabi", "Emirate of Abu Dhabi"), "Abu Dhabi");
+
+t("place-alt: a hyphenated region opening with the city collapses",
+  placeCardAlt("Marrakech", "Marrakech-Safi"), "Marrakech");
+
+/* Near misses. Every one of these regions carries information the card name
+   does not, and a looser rule would eat all four. */
+t("place-alt: a different word is kept",
+  placeCardAlt("Doha", "Qatar"), "Doha, Qatar");
+
+t("place-alt: a different emirate from the name is kept",
+  placeCardAlt("Al Ain", "Emirate of Abu Dhabi"), "Al Ain, Emirate of Abu Dhabi");
+
+t("place-alt: sharing a word is not containing the name",
+  placeCardAlt("Cape Town", "Western Cape"), "Cape Town, Western Cape");
+
+t("place-alt: a transliteration is not a containment",
+  placeCardAlt("Fez", "Fès-Meknès"), "Fez, Fès-Meknès");
+
+t("place-alt: an unrelated region is kept",
+  placeCardAlt("Mahé", "Inner Granitic Islands"), "Mahé, Inner Granitic Islands");
+
+/* Escaped source form is what the pages actually carry, and the fold must not
+   change the output string — only the comparison. */
+t("place-alt: an escaped ampersand survives into the alt unchanged",
+  placeCardAlt("Aït Benhaddou &amp; the Valleys", "Drâa-Tafilalet"),
+  "Aït Benhaddou &amp; the Valleys, Drâa-Tafilalet");
+
+/* A word boundary, not a substring: "Ain" must not match inside "Spain". */
+t("place-alt: a name embedded mid-word does not collapse",
+  placeCardAlt("Ain", "Northern Spain"), "Ain, Northern Spain");
 
 /* ── htaccess-headers ── */
 

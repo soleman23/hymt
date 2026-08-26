@@ -71,6 +71,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { placeCardAlt } from "./content-checks.mjs";
 
 const CAP = 1600;
 const QUALITY = 85;
@@ -225,14 +226,12 @@ for (const { file, key } of items) {
      `alt="Alta &amp; the Finnmark Plateau, Northern Norway"` is what every
      converted page already carries.
 
-     Unless they are the same string. Some cards are named for their own
-     region — Musandam Peninsula, Tuscany, Brooklyn, Crete — and the naive
-     join reads "Musandam Peninsula, Musandam Peninsula" to a screen reader.
-     The Python tool did exactly that and eleven such alts are already live;
-     this at least stops the twelfth. */
-  const alt = card.name.trim() === card.region.trim()
-    ? card.name
-    : `${card.name}, ${card.region}`;
+     Unless the region only wraps the name administratively, in which case the
+     join says it twice. placeCardAlt owns that judgement and is pinned by
+     fixtures in tools/verify-checks.test.mjs; the equality test that used to
+     live here caught "Musandam Peninsula, Musandam Peninsula" but not
+     "Dubai, Emirate of Dubai", which was about to ship three more times. */
+  const alt = placeCardAlt(card.name.trim(), card.region.trim());
   card.img = `${card.indent}<img class="place-card__img" src="/assets/img/${slug}.jpg" ` +
     `alt="${alt}" width="${width}" height="${height}" ` +
     `loading="lazy" decoding="async">${EOL}`;
