@@ -28,7 +28,7 @@ STATE, re-derived on 2026-08-26 (third session that day):
     Closed 2026-08-26 with the Asia five. maldives is the 68th page and has
     no places-grid section at all, so it was never in either bucket.
   SITE-WIDE — zero `.place-card__ph` and zero `.exp-card__ph` remain.
-  Higgsfield credits: 1462.
+  Higgsfield credits: 1458.
 
   This Prompt is kept for the NEXT page that gets built, not for a backlog.
   A new destination page ships six placeholder cards; the loop below is how
@@ -54,7 +54,7 @@ WHAT IS LEFT: nothing. Credits were never the constraint after 2026-08-12 —
   concept quality and reviewer time were. Final per-batch spend: jordan and
   oman 13 credits for 12 cards; polar 26 for 24; Latin America 27 for 24;
   the islands 25 for 24; Africa & the Indian Ocean 28 for 24; the desert
-  three 22 for 18; the Anglo three 21 for 18; the Asia five 36 for 30.
+  three 22 for 18; the Anglo three 21 for 18; the Asia five 40 for 30.
   Budget ~1.2 credits per card for any future page.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
@@ -184,7 +184,7 @@ launch-blocker workstream see `docs/seo/HANDOFF-launch-blockers.md`.
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1462** |
+| Higgsfield credits | **1458** |
 
 ### There are no pages left on placeholders
 
@@ -985,9 +985,20 @@ came back usable with only light trimming.
 ## What the 2026-08-26 session did — the Asia five, and the rollout closed
 
 `bhutan`, `georgia-armenia`, `india`, `sri-lanka`, `vietnam-southeast-asia`
-photographed and on `.places-grid--photo`. 30 cards, **36 credits**, six
+photographed and on `.places-grid--photo`. 30 cards, **40 credits**, six
 re-rolls. 30 → 0 cards, 5 → 0 pages. **#93's destination half is closed and
 the site now has zero place-card and zero exp-card placeholders.**
+
+### Count credits from the balance, not from the number of frames you kept
+
+This batch generated 36 frames (30 + 6 re-rolls) and the balance moved
+**1498 → 1458, which is 40**. Six submissions came back
+`429 rate_limit_reached` and were resubmitted; the four-credit gap is
+unexplained by the frames actually delivered, and the most likely reading is
+that a rejected submission can still cost. **Read the balance before and after
+a batch and quote the difference** — every per-batch figure in this file above
+was derived from frames kept, so any of them may understate by a few credits
+the same way.
 
 ### Every one of the five heroes collided with a card on its own page
 
