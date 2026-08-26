@@ -3353,5 +3353,125 @@
   "b64": "images-b64/assets__img__falklands-south-georgia-carcass-saunders-and-sea-lion.jpg.b64",
   "target": "public/assets/img/falklands-south-georgia-carcass-saunders-and-sea-lion.jpg",
   "bytes": 373501
+ },
+ {
+  "b64": "images-b64/assets__img__argentina-buenos-aires.jpg.b64",
+  "target": "public/assets/img/argentina-buenos-aires.jpg",
+  "bytes": 364276
+ },
+ {
+  "b64": "images-b64/assets__img__argentina-mendoza-and-the-uco-valley.jpg.b64",
+  "target": "public/assets/img/argentina-mendoza-and-the-uco-valley.jpg",
+  "bytes": 196963
+ },
+ {
+  "b64": "images-b64/assets__img__argentina-salta-and-jujuy.jpg.b64",
+  "target": "public/assets/img/argentina-salta-and-jujuy.jpg",
+  "bytes": 326151
+ },
+ {
+  "b64": "images-b64/assets__img__argentina-iguazu-falls.jpg.b64",
+  "target": "public/assets/img/argentina-iguazu-falls.jpg",
+  "bytes": 308839
+ },
+ {
+  "b64": "images-b64/assets__img__argentina-the-lake-district.jpg.b64",
+  "target": "public/assets/img/argentina-the-lake-district.jpg",
+  "bytes": 329499
+ },
+ {
+  "b64": "images-b64/assets__img__argentina-peninsula-valdes.jpg.b64",
+  "target": "public/assets/img/argentina-peninsula-valdes.jpg",
+  "bytes": 358805
+ },
+ {
+  "b64": "images-b64/assets__img__brazil-rio-de-janeiro.jpg.b64",
+  "target": "public/assets/img/brazil-rio-de-janeiro.jpg",
+  "bytes": 184959
+ },
+ {
+  "b64": "images-b64/assets__img__brazil-the-pantanal.jpg.b64",
+  "target": "public/assets/img/brazil-the-pantanal.jpg",
+  "bytes": 420236
+ },
+ {
+  "b64": "images-b64/assets__img__brazil-iguacu-falls.jpg.b64",
+  "target": "public/assets/img/brazil-iguacu-falls.jpg",
+  "bytes": 448695
+ },
+ {
+  "b64": "images-b64/assets__img__brazil-salvador-and-bahia.jpg.b64",
+  "target": "public/assets/img/brazil-salvador-and-bahia.jpg",
+  "bytes": 233317
+ },
+ {
+  "b64": "images-b64/assets__img__brazil-the-northeast-coast.jpg.b64",
+  "target": "public/assets/img/brazil-the-northeast-coast.jpg",
+  "bytes": 355075
+ },
+ {
+  "b64": "images-b64/assets__img__brazil-the-amazon.jpg.b64",
+  "target": "public/assets/img/brazil-the-amazon.jpg",
+  "bytes": 260634
+ },
+ {
+  "b64": "images-b64/assets__img__colombia-cartagena.jpg.b64",
+  "target": "public/assets/img/colombia-cartagena.jpg",
+  "bytes": 322437
+ },
+ {
+  "b64": "images-b64/assets__img__colombia-medellin.jpg.b64",
+  "target": "public/assets/img/colombia-medellin.jpg",
+  "bytes": 246461
+ },
+ {
+  "b64": "images-b64/assets__img__colombia-the-coffee-region.jpg.b64",
+  "target": "public/assets/img/colombia-the-coffee-region.jpg",
+  "bytes": 275059
+ },
+ {
+  "b64": "images-b64/assets__img__colombia-bogota.jpg.b64",
+  "target": "public/assets/img/colombia-bogota.jpg",
+  "bytes": 127136
+ },
+ {
+  "b64": "images-b64/assets__img__colombia-santa-marta-and-the-sierra-nevada.jpg.b64",
+  "target": "public/assets/img/colombia-santa-marta-and-the-sierra-nevada.jpg",
+  "bytes": 356347
+ },
+ {
+  "b64": "images-b64/assets__img__colombia-the-pacific-coast.jpg.b64",
+  "target": "public/assets/img/colombia-the-pacific-coast.jpg",
+  "bytes": 248835
+ },
+ {
+  "b64": "images-b64/assets__img__costa-rica-arenal-and-la-fortuna.jpg.b64",
+  "target": "public/assets/img/costa-rica-arenal-and-la-fortuna.jpg",
+  "bytes": 303999
+ },
+ {
+  "b64": "images-b64/assets__img__costa-rica-monteverde.jpg.b64",
+  "target": "public/assets/img/costa-rica-monteverde.jpg",
+  "bytes": 263672
+ },
+ {
+  "b64": "images-b64/assets__img__costa-rica-manuel-antonio-and-the-central-pacific.jpg.b64",
+  "target": "public/assets/img/costa-rica-manuel-antonio-and-the-central-pacific.jpg",
+  "bytes": 239522
+ },
+ {
+  "b64": "images-b64/assets__img__costa-rica-osa-peninsula-and-corcovado.jpg.b64",
+  "target": "public/assets/img/costa-rica-osa-peninsula-and-corcovado.jpg",
+  "bytes": 306740
+ },
+ {
+  "b64": "images-b64/assets__img__costa-rica-guanacaste-and-nicoya.jpg.b64",
+  "target": "public/assets/img/costa-rica-guanacaste-and-nicoya.jpg",
+  "bytes": 463175
+ },
+ {
+  "b64": "images-b64/assets__img__costa-rica-tortuguero-and-the-caribbean.jpg.b64",
+  "target": "public/assets/img/costa-rica-tortuguero-and-the-caribbean.jpg",
+  "bytes": 202887
  }
 ]

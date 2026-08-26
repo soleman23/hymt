@@ -22,11 +22,11 @@ READ FIRST, in this order — do not start work until you have:
 STATE, re-derived on 2026-08-25 (second session that day):
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 44 of 68 on .places-grid--photo
-                 23 still on placeholder swatches (6 cards each = 138 cards)
+  DESTINATIONS — 48 of 68 on .places-grid--photo
+                 19 still on placeholder swatches (6 cards each = 114 cards)
                   1 (maldives) has no places-grid section at all
-                 44 + 23 + 1 = 68.
-  Higgsfield credits: 1621.
+                 48 + 19 + 1 = 68.
+  Higgsfield credits: 1594.
 
   jordan and oman came off the list first that day; then the POLAR BATCH —
   arctic-norway, greenland, svalbard, falklands-south-georgia — 24 cards for
@@ -38,10 +38,11 @@ STATE, re-derived on 2026-08-25 (second session that day):
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 138 destination place cards, ~140 credits plus re-rolls against
-  1621. Credits are not the constraint and have not been since 2026-08-12 —
+WHAT IS LEFT: 114 destination place cards, ~125 credits plus re-rolls against
+  1594. Credits are not the constraint and have not been since 2026-08-12 —
   concept quality and reviewer time are. jordan and oman took 13 credits for
-  12 cards; the polar batch took 26 for 24. Budget ~1.1 credits per card.
+  12 cards; polar took 26 for 24; Latin America 27 for 24. Budget ~1.1
+  credits per card.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
   went together precisely because they collide with each other, and specced
@@ -80,8 +81,12 @@ PER PAGE, the loop that works:
   e. generate — seedream_v5_lite, 16:9, one generate_image_batch (caps at 12).
      A second batch straight after returns 429 on one or two indices; that is
      not a hard block, just resubmit the failed ones.
-  f. review EVERY frame at its true 3:2 card crop and check mean luminance
-     across the set — see "Reviewing" below. The metric lies in one direction.
+  f. review EVERY frame at its true 3:2 card crop, and measure BOTH the crop
+     mean and the bottom-eighth band — see "Reviewing" below. Compute luma
+     from RAW PIXELS: sharp's stats() ignores .extract() AND .greyscale() and
+     hands back the red channel of the whole source image without erroring.
+     Then composite the bottom 30% onto a #101A30 panel and look at the seam;
+     that decides it, not a threshold.
   g. intake with **tools/place-card-intake.mjs**:
        node tools/place-card-intake.mjs <srcdir> <page> <file>:<card> ...
      <card> is the card's visible name or its slugified form; ORDER DOES NOT
@@ -163,20 +168,20 @@ reference. For the launch-blocker workstream see
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **44** |
-| Still on placeholders | **23** (138 cards) |
+| On the photo panel | **48** |
+| Still on placeholders | **19** (114 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1621** |
+| Higgsfield credits | **1594** |
 
-### The 23 pages still on placeholders
+### The 19 pages still on placeholders
 
 ```
-argentina aspen australia barbados-eastern-caribbean bhutan brazil colombia
-cook-islands costa-rica dominican-republic georgia-armenia india israel
-jamaica morocco new-zealand seychelles south-africa sri-lanka uae-gulf
-vanuatu vietnam-southeast-asia zambia-victoria-falls
+aspen australia barbados-eastern-caribbean bhutan cook-islands
+dominican-republic georgia-armenia india israel jamaica morocco new-zealand
+seychelles south-africa sri-lanka uae-gulf vanuatu vietnam-southeast-asia
+zambia-victoria-falls
 ```
 
 Remaining batches, grouped by shared visual vocabulary so cards can be
@@ -184,7 +189,6 @@ specced against each other:
 
 | Batch | Pages |
 |---|---|
-| Latin America | argentina, brazil, colombia, costa-rica |
 | Caribbean & Pacific | barbados-eastern-caribbean, dominican-republic, jamaica, cook-islands |
 | Africa & Indian Ocean | south-africa, zambia-victoria-falls, morocco, seychelles, vanuatu |
 | Asia | bhutan, india, sri-lanka, vietnam-southeast-asia, georgia-armenia |
@@ -388,6 +392,91 @@ Brooklyn, Hudson Valley, Cusco, Lima, Brazil. The new tool collapses them;
 Musandam was fixed by hand. The eleven are backfill, not a regression.
 `australia` (Tasmania) and `india` (Kerala) will hit the same case when they
 convert, and the tool now handles it.
+
+---
+
+## What the 2026-08-25 session did — Latin America, and a bad metric
+
+`argentina`, `brazil`, `colombia`, `costa-rica` photographed and on
+`.places-grid--photo`. 24 cards, **27 credits**, three re-rolls. 138 → 114
+cards, 23 → 19 pages.
+
+### READ THIS BEFORE YOU MEASURE ANYTHING
+
+**`sharp().stats()` silently ignores the pipeline in front of it — BOTH
+`.extract()` and `.greyscale()`.** So the natural-looking
+
+```js
+sharp(file).extract(region).greyscale().stats()   // WRONG, twice over
+```
+
+measures **the red channel of the whole source image**. Not the region, and
+not luminance. It never throws and the number always looks plausible.
+
+This corrupted every luminance figure in this project until it was caught. It
+hides on neutral subjects — snow, ice, pale stone — where R ≈ G ≈ B and red
+tracks luma closely, which is exactly why the polar batch's numbers looked
+sane. It falls apart on saturated colour: a sunlit turquoise sea band read
+**29** by that route and **108** by real arithmetic.
+
+Measure by decoding raw pixels and computing Rec.709 luma yourself:
+
+```js
+const {data, info} = await sharp(f).extract(region).raw().toBuffer({resolveWithObject:true});
+// sum 0.2126*R + 0.7152*G + 0.0722*B over every pixel
+```
+
+**What the bad metric cost, in both directions.** It said Carcass & Saunders
+had a base band of 52 and it was re-rolled; the real figure was far higher and
+that credit was probably wasted. It also said `tromso` and `nuuk` had bases of
+101 when they are really 79 and 81 — both were kept, correctly, but on a
+number that was wrong. Two frames flagged in this batch (`santa-marta` at a
+"29" that is really 108) were nearly re-rolled for nothing.
+
+### The threshold was never the point — composite against the panel
+
+A base band near 100 sounds alarming and is usually fine; the copy panel is
+about **luma 26**, so 79 is still three times it. What decides the question is
+hue and texture, not a number:
+
+- `tromso` base 79 — saturated orange survival suits. Low luma, enormous
+  colour separation from navy. Fine.
+- `nuuk` base 81 — sunlit gold tundra scrub. Fine.
+- `medellin` base 71 — warm red-brown roofs, varied. The weakest shipped, and
+  accepted after looking.
+
+So: crop the bottom 30%, paste it on a `#101A30` panel, and **look at the
+seam**. That answers it in one glance and no threshold does.
+
+### Three re-rolls
+
+- **Buenos Aires** came in at crop 92 beside a 166 and a 171 — the reviewer
+  had predicted "nearer 90–120" and was right. An empty auditorium cannot
+  reach the row. Moved to the San Telmo Sunday fair, which the card's copy
+  also names: 112, and it *reads* bright because the lit subject is centred.
+- **Cartagena** rendered Castillo San Felipe as a **Mesoamerican stepped
+  pyramid** — and Monte Albán is already live on experiences/culture-immersive.
+  The wrong-country landmark in a new costume. Fixed by naming the angular
+  arrowhead bastion, the garitas, dark coral stone and the modern city behind.
+- **Medellín** put a dark gondola window rail straight across the bottom edge.
+  Removed the cabin entirely rather than negating the rail.
+
+### What the adversarial pass caught this time
+
+A **season impossibility** of the Tromsø kind: Mendoza asked for frost on the
+leaves *and* ripening bunches. Frost is a spring event and fruit is late
+summer — the prompt described a destroyed crop. Also a card photographing the
+**wrong country for its own page**: Brazil's Iguaçu stood on the Argentine
+side, which would have made it a duplicate of argentina's card *and* put no
+Brazil on the Brazil page. And four cards negating text on objects that
+inherently carry it — barrio walls, museum vitrines, a Chocó panga's bow
+registration. **Remove the object, do not negate the lettering.**
+
+### One subject, two pages, two photographs
+
+Iguazú/Iguaçu is on both argentina and brazil. Each page now shows **its own
+side of the border** — Argentina from beneath Salto Bossetti, Brazil across
+the gorge — which is the Turks & Caicos precedent applied to a border.
 
 ---
 
