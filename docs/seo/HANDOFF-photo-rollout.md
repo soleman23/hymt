@@ -22,11 +22,11 @@ READ FIRST, in this order — do not start work until you have:
 STATE, re-derived on 2026-08-25 (second session that day):
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 48 of 68 on .places-grid--photo
-                 19 still on placeholder swatches (6 cards each = 114 cards)
+  DESTINATIONS — 52 of 68 on .places-grid--photo
+                 15 still on placeholder swatches (6 cards each = 90 cards)
                   1 (maldives) has no places-grid section at all
-                 48 + 19 + 1 = 68.
-  Higgsfield credits: 1594.
+                 52 + 15 + 1 = 68.
+  Higgsfield credits: 1569.
 
   jordan and oman came off the list first that day; then the POLAR BATCH —
   arctic-norway, greenland, svalbard, falklands-south-georgia — 24 cards for
@@ -38,11 +38,11 @@ STATE, re-derived on 2026-08-25 (second session that day):
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 114 destination place cards, ~125 credits plus re-rolls against
-  1594. Credits are not the constraint and have not been since 2026-08-12 —
+WHAT IS LEFT: 90 destination place cards, ~100 credits plus re-rolls against
+  1569. Credits are not the constraint and have not been since 2026-08-12 —
   concept quality and reviewer time are. jordan and oman took 13 credits for
-  12 cards; polar took 26 for 24; Latin America 27 for 24. Budget ~1.1
-  credits per card.
+  12 cards; polar took 26 for 24; Latin America 27 for 24; the islands 25
+  for 24. Budget ~1.1 credits per card.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
   went together precisely because they collide with each other, and specced
@@ -168,18 +168,17 @@ reference. For the launch-blocker workstream see
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **48** |
-| Still on placeholders | **19** (114 cards) |
+| On the photo panel | **52** |
+| Still on placeholders | **15** (90 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1594** |
+| Higgsfield credits | **1569** |
 
-### The 19 pages still on placeholders
+### The 15 pages still on placeholders
 
 ```
-aspen australia barbados-eastern-caribbean bhutan cook-islands
-dominican-republic georgia-armenia india israel jamaica morocco new-zealand
+aspen australia bhutan georgia-armenia india israel morocco new-zealand
 seychelles south-africa sri-lanka uae-gulf vanuatu vietnam-southeast-asia
 zambia-victoria-falls
 ```
@@ -189,7 +188,6 @@ specced against each other:
 
 | Batch | Pages |
 |---|---|
-| Caribbean & Pacific | barbados-eastern-caribbean, dominican-republic, jamaica, cook-islands |
 | Africa & Indian Ocean | south-africa, zambia-victoria-falls, morocco, seychelles, vanuatu |
 | Asia | bhutan, india, sri-lanka, vietnam-southeast-asia, georgia-armenia |
 | Middle East & Anglo | israel, uae-gulf, aspen, australia, new-zealand |
@@ -392,6 +390,62 @@ Brooklyn, Hudson Valley, Cusco, Lima, Brazil. The new tool collapses them;
 Musandam was fixed by hand. The eleven are backfill, not a regression.
 `australia` (Tasmania) and `india` (Kerala) will hit the same case when they
 convert, and the tool now handles it.
+
+---
+
+## What the 2026-08-25 session did — the islands, and the batch rule proved
+
+`barbados-eastern-caribbean`, `dominican-republic`, `jamaica`, `cook-islands`
+photographed and on `.places-grid--photo`. 24 cards, **25 credits**, one
+re-roll — the cleanest batch so far, on the hardest set. 114 → 90 cards,
+19 → 15 pages.
+
+### The constraint that made it work
+
+Four tropical island pages will, left alone, return 24 photographs of
+turquoise water and white sand. So each page agent was given a hard quota:
+**at most two of its six cards may be a wide water-and-sand landscape**, and
+had to declare a `cameraHeight` and `subjectClass` per card so the batch could
+be counted mechanically before a reviewer ever saw it.
+
+Result across 24: 6 water-and-sand, 5 architecture, 6 forest-or-mountain,
+3 boat-or-working, 2 food-or-market, 1 interior, 1 street. **Declaring the
+class is what made the quota enforceable** — and the reviewer's job became the
+judgement calls rather than the counting.
+
+Reuse this. It generalises to any batch whose pages share a landscape.
+
+### What the adversarial pass caught that counting could not
+
+- **A three-way twin across three pages.** Bathsheba (Barbados), Los Haitises
+  (DR) and Negril (Jamaica) were all "water-level, pitted grey limestone
+  undercut at the waterline, jade water". Negril kept it; the other two changed
+  shape entirely.
+- **A four-way arcade cluster.** Four of the five architecture cards were
+  colonnades with pale stone floors, in four different countries.
+- **Casa de Campo was a Tuscan hill town with a Dominican name attached.** The
+  negations blocked a pyramid and Greek whitewash — not the lookalike that
+  mattered. Same class as the Cartagena pyramid, pointed at Europe.
+- **Two physical impossibilities.** Bathsheba faces east, so the specified
+  mid-morning sun sat behind the sea and would have silhouetted the subject.
+  The Platinum Coast asked for a nadir that was also "looking seaward" with no
+  ocean in frame.
+- **A label that lied.** One Foot Island was declared `architecture`; the
+  prompt was a beach with a hut in it. **Read the prompt, not the class.**
+
+### The bright-bottom instruction can be followed too literally
+
+The first Blue Mountains coffee frame put a blank pale concrete band across
+the bottom **quarter** of the picture — technically a bright base, actually a
+dead zone that reads as an unfinished edge at card size. Re-rolled asking for
+the drying bed to fill the frame with only a narrow margin. Say *narrow*.
+
+### Cross-page note for a later batch
+
+`jamaica`'s hero and `sri-lanka`'s hero are near-identical skeletons — misted
+green ridges, valley cloud, low sun. Verified by eye. Sri Lanka's tea terraces
+are the only thing separating them, so when `sri-lanka` is photographed its
+Nuwara Eliya card must not be tea terraces at sunrise.
 
 ---
 

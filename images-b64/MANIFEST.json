@@ -3473,5 +3473,125 @@
   "b64": "images-b64/assets__img__costa-rica-tortuguero-and-the-caribbean.jpg.b64",
   "target": "public/assets/img/costa-rica-tortuguero-and-the-caribbean.jpg",
   "bytes": 202887
+ },
+ {
+  "b64": "images-b64/assets__img__barbados-eastern-caribbean-the-platinum-coast.jpg.b64",
+  "target": "public/assets/img/barbados-eastern-caribbean-the-platinum-coast.jpg",
+  "bytes": 603047
+ },
+ {
+  "b64": "images-b64/assets__img__barbados-eastern-caribbean-bathsheba-and-the-east-coast.jpg.b64",
+  "target": "public/assets/img/barbados-eastern-caribbean-bathsheba-and-the-east-coast.jpg",
+  "bytes": 202867
+ },
+ {
+  "b64": "images-b64/assets__img__barbados-eastern-caribbean-bridgetown-and-the-south.jpg.b64",
+  "target": "public/assets/img/barbados-eastern-caribbean-bridgetown-and-the-south.jpg",
+  "bytes": 287924
+ },
+ {
+  "b64": "images-b64/assets__img__barbados-eastern-caribbean-soufriere-and-the-pitons.jpg.b64",
+  "target": "public/assets/img/barbados-eastern-caribbean-soufriere-and-the-pitons.jpg",
+  "bytes": 437535
+ },
+ {
+  "b64": "images-b64/assets__img__barbados-eastern-caribbean-english-harbour.jpg.b64",
+  "target": "public/assets/img/barbados-eastern-caribbean-english-harbour.jpg",
+  "bytes": 168715
+ },
+ {
+  "b64": "images-b64/assets__img__barbados-eastern-caribbean-nevis-and-mustique.jpg.b64",
+  "target": "public/assets/img/barbados-eastern-caribbean-nevis-and-mustique.jpg",
+  "bytes": 230354
+ },
+ {
+  "b64": "images-b64/assets__img__dominican-republic-casa-de-campo.jpg.b64",
+  "target": "public/assets/img/dominican-republic-casa-de-campo.jpg",
+  "bytes": 352984
+ },
+ {
+  "b64": "images-b64/assets__img__dominican-republic-las-terrenas-and-playa-bonita.jpg.b64",
+  "target": "public/assets/img/dominican-republic-las-terrenas-and-playa-bonita.jpg",
+  "bytes": 337653
+ },
+ {
+  "b64": "images-b64/assets__img__dominican-republic-samana-bay-and-los-haitises.jpg.b64",
+  "target": "public/assets/img/dominican-republic-samana-bay-and-los-haitises.jpg",
+  "bytes": 425835
+ },
+ {
+  "b64": "images-b64/assets__img__dominican-republic-santo-domingo.jpg.b64",
+  "target": "public/assets/img/dominican-republic-santo-domingo.jpg",
+  "bytes": 396119
+ },
+ {
+  "b64": "images-b64/assets__img__dominican-republic-punta-cana-and-cap-cana.jpg.b64",
+  "target": "public/assets/img/dominican-republic-punta-cana-and-cap-cana.jpg",
+  "bytes": 232629
+ },
+ {
+  "b64": "images-b64/assets__img__dominican-republic-cabarete-and-the-north-coast.jpg.b64",
+  "target": "public/assets/img/dominican-republic-cabarete-and-the-north-coast.jpg",
+  "bytes": 224764
+ },
+ {
+  "b64": "images-b64/assets__img__jamaica-montego-bay-and-hanover.jpg.b64",
+  "target": "public/assets/img/jamaica-montego-bay-and-hanover.jpg",
+  "bytes": 372966
+ },
+ {
+  "b64": "images-b64/assets__img__jamaica-ocho-rios-and-oracabessa.jpg.b64",
+  "target": "public/assets/img/jamaica-ocho-rios-and-oracabessa.jpg",
+  "bytes": 453704
+ },
+ {
+  "b64": "images-b64/assets__img__jamaica-port-antonio-and-the-blue-lagoon.jpg.b64",
+  "target": "public/assets/img/jamaica-port-antonio-and-the-blue-lagoon.jpg",
+  "bytes": 480955
+ },
+ {
+  "b64": "images-b64/assets__img__jamaica-negril-and-the-west-end.jpg.b64",
+  "target": "public/assets/img/jamaica-negril-and-the-west-end.jpg",
+  "bytes": 383626
+ },
+ {
+  "b64": "images-b64/assets__img__jamaica-treasure-beach-and-the-south-coast.jpg.b64",
+  "target": "public/assets/img/jamaica-treasure-beach-and-the-south-coast.jpg",
+  "bytes": 339308
+ },
+ {
+  "b64": "images-b64/assets__img__jamaica-the-blue-mountains-and-kingston.jpg.b64",
+  "target": "public/assets/img/jamaica-the-blue-mountains-and-kingston.jpg",
+  "bytes": 579578
+ },
+ {
+  "b64": "images-b64/assets__img__cook-islands-aitutaki-lagoon.jpg.b64",
+  "target": "public/assets/img/cook-islands-aitutaki-lagoon.jpg",
+  "bytes": 356328
+ },
+ {
+  "b64": "images-b64/assets__img__cook-islands-one-foot-island.jpg.b64",
+  "target": "public/assets/img/cook-islands-one-foot-island.jpg",
+  "bytes": 180314
+ },
+ {
+  "b64": "images-b64/assets__img__cook-islands-muri-and-titikaveka.jpg.b64",
+  "target": "public/assets/img/cook-islands-muri-and-titikaveka.jpg",
+  "bytes": 187823
+ },
+ {
+  "b64": "images-b64/assets__img__cook-islands-the-cross-island-track.jpg.b64",
+  "target": "public/assets/img/cook-islands-the-cross-island-track.jpg",
+  "bytes": 362650
+ },
+ {
+  "b64": "images-b64/assets__img__cook-islands-avarua-and-the-market.jpg.b64",
+  "target": "public/assets/img/cook-islands-avarua-and-the-market.jpg",
+  "bytes": 454562
+ },
+ {
+  "b64": "images-b64/assets__img__cook-islands-atiu.jpg.b64",
+  "target": "public/assets/img/cook-islands-atiu.jpg",
+  "bytes": 459752
  }
 ]
