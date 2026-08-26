@@ -1111,9 +1111,21 @@ export function futureLastmods(xml, today) {
  * the rest. This governs what is GENERATED from here on; it does not rewrite
  * them, and nothing fails a build over them.
  *
- * The test is whole-word containment of the name inside the region, in that
- * direction only. Deliberately tight, because every near miss below must KEEP
- * its region — each one carries information the name does not:
+ * The test is whole-word containment in EITHER direction. It began as
+ * region-contains-name only, which covered "Dubai, Emirate of Dubai"; the
+ * reverse turns out to be the commoner shape on this site, because so many
+ * cards are named "<place> & <the region it is in>":
+ *
+ *   "Bay of Islands & Northland, Northland"
+ *   "Addo & the Eastern Cape, Eastern Cape"
+ *   "Aitutaki Lagoon, Aitutaki"
+ *
+ * Whichever side contains the other, the alt keeps the NAME — it is the
+ * specific thing photographed, and where the name is the longer string it
+ * already carries the region inside it.
+ *
+ * Deliberately whole-word, because every near miss below must KEEP its region —
+ * each one carries information the name does not:
  *
  *   "Doha, Qatar"                     a different word entirely
  *   "Al Ain, Emirate of Abu Dhabi"    a different emirate from the name
@@ -1137,7 +1149,14 @@ export function regionIsRedundant(name, region) {
   const r = normAlt(region);
   if (!n || !r) return false;
   if (n === r) return true;
-  return new RegExp(`(^| )${n}( |$)`).test(r);
+  return contains(r, n) || contains(n, r);
+}
+
+/* Whole-word containment. normAlt leaves only [a-z0-9 ], so the needle can
+   never carry a regex metacharacter and needs no escaping. The word boundary
+   is the load-bearing part: "island" must not match inside "Bay of Islands". */
+function contains(haystack, needle) {
+  return new RegExp(`(^| )${needle}( |$)`).test(haystack);
 }
 
 /** The alt string a place card should carry. See {@link regionIsRedundant}. */

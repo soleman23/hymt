@@ -1059,6 +1059,38 @@ t("place-alt: an escaped ampersand survives into the alt unchanged",
 t("place-alt: a name embedded mid-word does not collapse",
   placeCardAlt("Ain", "Northern Spain"), "Ain, Northern Spain");
 
+/* Reverse containment: the name contains the region. This is the commoner
+   shape here, because so many cards are named "<place> & <its region>". The
+   alt keeps the name either way. */
+t("place-alt: a name ending in its own region collapses",
+  placeCardAlt("Bay of Islands &amp; Northland", "Northland"),
+  "Bay of Islands &amp; Northland");
+
+t("place-alt: a name built on its region collapses",
+  placeCardAlt("Aitutaki Lagoon", "Aitutaki"), "Aitutaki Lagoon");
+
+t("place-alt: a two-word region inside the name collapses",
+  placeCardAlt("Addo &amp; the Eastern Cape", "Eastern Cape"),
+  "Addo &amp; the Eastern Cape");
+
+t("place-alt: reverse containment survives accent folding",
+  placeCardAlt("Galápagos &amp; Ecuador", "Ecuador"),
+  "Galápagos &amp; Ecuador");
+
+/* Reverse near misses. The word boundary is what stops these, and without it
+   the first two would both eat a region that is genuinely informative. */
+t("place-alt: a region sharing only a trailing word is kept",
+  placeCardAlt("Essaouira &amp; the Coast", "Atlantic Coast"),
+  "Essaouira &amp; the Coast, Atlantic Coast");
+
+t("place-alt: a singular region does not match a plural in the name",
+  placeCardAlt("Bay of Islands &amp; Northland", "Island"),
+  "Bay of Islands &amp; Northland, Island");
+
+t("place-alt: an unrelated region is still kept in the reverse direction",
+  placeCardAlt("Masada &amp; the Dead Sea", "Judaean Desert"),
+  "Masada &amp; the Dead Sea, Judaean Desert");
+
 /* ── htaccess-headers ── */
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored
