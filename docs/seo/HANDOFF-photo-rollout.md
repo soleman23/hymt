@@ -19,31 +19,34 @@ READ FIRST, in this order — do not start work until you have:
   (docs/seo/photography-plan.md and photography-needed.md are both STALE —
    see Open items. Read them only for the A-before-B sequencing argument.)
 
-STATE, re-derived on 2026-08-26:
+STATE, re-derived on 2026-08-26 (second session that day):
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 56 of 68 on .places-grid--photo
-                 11 still on placeholder swatches (6 cards each = 66 cards)
+  DESTINATIONS — 59 of 68 on .places-grid--photo
+                  8 still on placeholder swatches (6 cards each = 48 cards)
                   1 (maldives) has no places-grid section at all
-                 56 + 11 + 1 = 68.
-  Higgsfield credits: 1541.
+                 59 + 8 + 1 = 68.
+  Higgsfield credits: 1519.
 
   jordan and oman came off the list first on 2026-08-25; then the polar four,
   then Latin America, then the islands, then AFRICA & THE INDIAN OCEAN on
   2026-08-26 — south-africa, zambia-victoria-falls, seychelles, vanuatu, 24
-  cards for 28 credits. Every earlier version of this file said "4 pages / 24
-  cards", true at 43 pages, before M7 added 25 more each shipping 6 placeholders.
+  cards for 28 credits; then DESERT & ANCIENT the same day — morocco, israel,
+  uae-gulf, 18 cards for 22 credits, specced by a 12-agent workflow.
+  Every earlier version of this file said "4 pages / 24 cards", true at 43
+  pages, before M7 added 25 more each shipping 6 placeholders.
   RE-DERIVE, never trust a written count:
 
     node -e "const g=require('glob');" # or just grep:
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 66 destination place cards, ~75 credits plus re-rolls against
-  1541. Credits are not the constraint and have not been since 2026-08-12 —
+WHAT IS LEFT: 48 destination place cards, ~55 credits plus re-rolls against
+  1519. Credits are not the constraint and have not been since 2026-08-12 —
   concept quality and reviewer time are. jordan and oman took 13 credits for
   12 cards; polar took 26 for 24; Latin America 27 for 24; the islands 25
-  for 24; Africa & the Indian Ocean 28 for 24. Budget ~1.2 credits per card.
+  for 24; Africa & the Indian Ocean 28 for 24; the desert three 22 for 18.
+  Budget ~1.2 credits per card.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
   went together precisely because they collide with each other, and specced
@@ -167,18 +170,18 @@ launch-blocker workstream see `docs/seo/HANDOFF-launch-blockers.md`.
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **56** |
-| Still on placeholders | **11** (66 cards) |
+| On the photo panel | **59** |
+| Still on placeholders | **8** (48 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1541** |
+| Higgsfield credits | **1519** |
 
-### The 11 pages still on placeholders
+### The 8 pages still on placeholders
 
 ```
-aspen australia bhutan georgia-armenia india israel morocco new-zealand
-sri-lanka uae-gulf vietnam-southeast-asia
+aspen australia bhutan georgia-armenia india new-zealand sri-lanka
+vietnam-southeast-asia
 ```
 
 Remaining batches, grouped by shared visual vocabulary so cards can be
@@ -187,19 +190,18 @@ specced against each other:
 | Batch | Pages |
 |---|---|
 | Asia | bhutan, india, sri-lanka, vietnam-southeast-asia, georgia-armenia |
-| Desert & ancient | morocco, israel, uae-gulf |
 | Anglo & alpine | aspen, australia, new-zealand |
 
-Every one needs exactly 6, so the remainder is 66 cards. `jordan` and `oman`
+Every one needs exactly 6, so the remainder is 48 cards. `jordan` and `oman`
 came off this list on 2026-08-25; `south-africa`, `zambia-victoria-falls`,
-`seychelles` and `vanuatu` on 2026-08-26. The four originally named here were
+`seychelles` and `vanuatu` on 2026-08-26, and `morocco`, `israel` and
+`uae-gulf` later the same day. The four originally named here were
 the whole backlog at 43 destination pages; M7 then added 25 more, each shipping
 its own six placeholders. **This is the single number in this file that has
 been wrong most often — derive it.**
 
-Suggested order: **the desert three next** — morocco, israel and uae-gulf
-collide with each other and with the shipped jordan and oman, which is exactly
-what a batch is for. Then the Anglo three. **india last**: it is `needs-mark`
+Suggested order: **the Anglo three next** — aspen, australia and new-zealand.
+Then the Asia four. **india last**: it is `needs-mark`
 blocked on Mark's first-hand line and cost figures, so photographing it
 unblocks nothing.
 
@@ -736,6 +738,118 @@ Don't burn time retrying it.
 
 ---
 
+## What the 2026-08-26 session did — the desert three, specced by a workflow
+
+`morocco`, `israel`, `uae-gulf` photographed and on `.places-grid--photo`.
+18 cards, **22 credits**, four re-rolls. 66 → 48 cards, 11 → 8 pages.
+
+This batch was specced by a 12-agent workflow rather than by hand: recon on the
+three pages, a catalogue of the 18 live `jordan` / `oman` / `egypt` frames, six
+concepts drafted per page, then **three independent adversarial lenses over all
+eighteen concepts at once**, then a synthesis. 64 findings, 11 blocking, 65
+applied, 8 rejected with reasons. It is worth the setup on a batch this
+collision-heavy; it would be overkill on four polar pages.
+
+### The three lenses, and why they must see everything at once
+
+- **copy-fidelity** — does the frame deliver what the card's own copy promises,
+  and is it physically and seasonally possible?
+- **twins** — the only agent given all 18 concepts *and* all 18 shipped
+  neighbours *and* the three heroes. Twins are invisible to a per-page pass by
+  construction.
+- **render-risk** — what the model will actually produce, and what the card
+  will look like in its row: base band, row brightness, landmark misrender,
+  text-carrying objects, side-edge composition.
+
+Splitting it this way is what made the collisions legible. Two lenses hit Fez
+from opposite directions and **both were right**: copy-fidelity said the frame
+had quietly deleted the vats the copy names ("the Chouara tannery from a
+terrace above the vats"), render-risk said negating the honeycomb is negating a
+landmark's *dominant* feature and never works. The fix had to satisfy both —
+the pits return as a cropped left-edge fragment, and the words *Chouara* and
+*tannery* are banned from the prompt so the honeycomb is foreclosed by parapet
+geometry instead of by words. **Banning the attractor word works where negating
+the feature does not.** That is the one prompt trick in this file that has
+never failed.
+
+### One card was reassigned outright, on three findings at once
+
+Aït Benhaddou & the Valleys was drafted as Todra Gorge. It was simultaneously a
+twin of israel/Masada, a twin of the LIVE `egypt-aswan` frame, and physically
+impossible: a face-on wall in a north–south gorge takes no direct sun at solar
+noon, and the narrow geometry manufactures the shaded floor the concept claimed
+to refuse. Reassigned to the Dades hairpins seen obliquely from the viewpoint
+above — which also let the village be cut, so no earthen kasbah architecture
+echoes the morocco hero.
+
+### The cross-page twin no page-at-a-time pass can see
+
+morocco's **seguia** and uae-gulf's **falaj** are the same object, and both sat
+in the base band. The seguia was deleted from The High Atlas — which also
+pulled that frame off the morocco hero's own braided-water-over-pale-cobbles
+foreground. One deletion, three problems.
+
+### Astronomy caught the Negev twice
+
+The draft put a 20 per cent crescent low behind the camera to rake the chalk. A
+crescent delivers 0.01–0.02 lux against an exposure set for the Milky Way core,
+so it does nothing. Render-risk's proposed replacement window — 04:40 in
+mid-July — was also wrong: the core is roughly six hours past transit by then
+and setting in the west-south-west. The synthesis took the *hour* concept (end
+of nautical twilight) at copy-fidelity's *early-May* date, when the core is
+still about 25 degrees up, and dropped the moon entirely. **Both lenses were
+half right and the synthesis had to know the astronomy to combine them.**
+
+### The Negev also proves a rule about dark frames
+
+It measured **crop 56, base 123** — by far the darkest whole-frame in the
+rollout, and it shipped. Its copy ends "and so is the country's darkest sky",
+and one of its three tags is *Desert Skies*. A daylight makhtesh would have
+been brighter and would have thrown away the card's third claim. The base band
+is what protects the card's bottom edge, and 123 is nearly five times the
+panel; the whole-frame mean is not the test. **Read the copy before re-rolling
+a dark frame — sometimes dark is the claim.**
+
+### Four re-rolls, and what each was
+
+| Card | v1 | Why | v2 |
+|---|---|---|---|
+| Caesarea & Akko | crop 82, **base 76** | the sun sheet landed mid-frame, near floor in shade | 113 / **194** |
+| Masada | crop 195, base 239 | landmark misrender — a soft eroded mesa, not a sheer flat-topped table; blown out | 156 / 202 |
+| Ras Al Khaimah | crop 192, base 212 | pale grey limestone read as **snow**, in the UAE | 171 / 187 |
+| Abu Dhabi | crop 204, base 231 | CGI-clean and dead axially symmetric — a hero echo, since the uae hero is a floodlit symmetrical dome | 166 / 216 |
+
+Two of those four are new failure modes worth naming:
+
+- **A palette can misrender into a different climate.** "Pale grey sun-bleached
+  limestone" plus haze returned a snowfield. The fix was to state the warm
+  arid palette positively — ochre, tan, brown-grey, "sun-baked" — not to add
+  another "no snow". Negation had already been in the prompt and lost.
+- **A frame can echo the hero through composition alone.** The Louvre dome
+  shares no subject with Sheikh Zayed Grand Mosque, but shot dead-on it shared
+  the hero's axial symmetry and dome silhouette. Fixed by moving the camera off
+  axis, not by changing the subject.
+
+### The concepts came back over-specified, and that is fine
+
+The synthesised concepts ran 800–1,400 characters each and carried `x∈[0.12,
+0.88]` coordinate notation and long negation lists. Coordinates are not
+honoured by the model and negation lists are the thing this file keeps warning
+about. They were compressed to the working house shape (~150–200 words) before
+generation, keeping what is load-bearing — named hour, foreground material,
+landmark markers, object *removals* — and dropping the notation. **Let the
+adversarial pass over-specify; compress at prompt-writing time.** The reasoning
+is worth more than the wording.
+
+### Where the workflow is worth it
+
+Twelve agents, ~39 minutes, 1.19M subagent tokens, zero errors. It earned its
+keep here because 18 cards collided against 18 live neighbours across three
+pages plus three heroes — 39 frames to hold in one head. On a batch with less
+collision surface, the hand loop in the Prompt is still faster.
+
+---
+
 ## What the 2026-08-12 session did
 
 1. Converted the six regional hubs to `--photo` (PR #102, 37 cards).
@@ -1041,7 +1155,7 @@ Two things worth carrying into every later wave:
   after launch. Not a defect.
 - ~~**The experience half of #93.**~~ **Closed 2026-08-24** — 12 of 12 pages
   on `.exp-cards--photo`, 72 of 72 cards. The remaining work is entirely
-  destination-side: **11 pages, 66 cards** as of 2026-08-26 (it said 27/162
+  destination-side: **8 pages, 48 cards** as of 2026-08-26 (it said 27/162
   when the experience half closed; derive it, do not quote it).
 - **M7 is 1 of 26 pages.** Every one is labelled `needs-mark`. The blocker is
   not images — it is page authoring plus two things only Mark can supply:
@@ -1056,7 +1170,7 @@ Two things worth carrying into every later wave:
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
 - **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is **11 pages / 66 cards**,
+  lists 30 pages / 162 images; the real remainder is **8 pages / 48 cards**,
   and its "1 of 163 slots comes free" line no longer holds — 99 came free from
   Drive and 1 more from the repo. Its sequencing argument (A before B) still
   stands. Worth rewriting or deleting once the last pages ship.

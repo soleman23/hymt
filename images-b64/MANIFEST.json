@@ -3713,5 +3713,95 @@
   "b64": "images-b64/assets__img__vanuatu-upolu-and-savai-i.jpg.b64",
   "target": "public/assets/img/vanuatu-upolu-and-savai-i.jpg",
   "bytes": 476397
+ },
+ {
+  "b64": "images-b64/assets__img__morocco-fez.jpg.b64",
+  "target": "public/assets/img/morocco-fez.jpg",
+  "bytes": 265265
+ },
+ {
+  "b64": "images-b64/assets__img__morocco-marrakech.jpg.b64",
+  "target": "public/assets/img/morocco-marrakech.jpg",
+  "bytes": 331139
+ },
+ {
+  "b64": "images-b64/assets__img__morocco-the-high-atlas.jpg.b64",
+  "target": "public/assets/img/morocco-the-high-atlas.jpg",
+  "bytes": 474522
+ },
+ {
+  "b64": "images-b64/assets__img__morocco-ait-benhaddou-and-the-valleys.jpg.b64",
+  "target": "public/assets/img/morocco-ait-benhaddou-and-the-valleys.jpg",
+  "bytes": 469802
+ },
+ {
+  "b64": "images-b64/assets__img__morocco-merzouga-and-erg-chebbi.jpg.b64",
+  "target": "public/assets/img/morocco-merzouga-and-erg-chebbi.jpg",
+  "bytes": 270293
+ },
+ {
+  "b64": "images-b64/assets__img__morocco-essaouira-and-the-coast.jpg.b64",
+  "target": "public/assets/img/morocco-essaouira-and-the-coast.jpg",
+  "bytes": 257226
+ },
+ {
+  "b64": "images-b64/assets__img__israel-jerusalem.jpg.b64",
+  "target": "public/assets/img/israel-jerusalem.jpg",
+  "bytes": 218842
+ },
+ {
+  "b64": "images-b64/assets__img__israel-tel-aviv-and-jaffa.jpg.b64",
+  "target": "public/assets/img/israel-tel-aviv-and-jaffa.jpg",
+  "bytes": 223708
+ },
+ {
+  "b64": "images-b64/assets__img__israel-galilee-and-the-golan.jpg.b64",
+  "target": "public/assets/img/israel-galilee-and-the-golan.jpg",
+  "bytes": 301827
+ },
+ {
+  "b64": "images-b64/assets__img__israel-masada-and-the-dead-sea.jpg.b64",
+  "target": "public/assets/img/israel-masada-and-the-dead-sea.jpg",
+  "bytes": 362010
+ },
+ {
+  "b64": "images-b64/assets__img__israel-caesarea-and-akko.jpg.b64",
+  "target": "public/assets/img/israel-caesarea-and-akko.jpg",
+  "bytes": 253025
+ },
+ {
+  "b64": "images-b64/assets__img__israel-the-negev.jpg.b64",
+  "target": "public/assets/img/israel-the-negev.jpg",
+  "bytes": 285109
+ },
+ {
+  "b64": "images-b64/assets__img__uae-gulf-dubai.jpg.b64",
+  "target": "public/assets/img/uae-gulf-dubai.jpg",
+  "bytes": 227869
+ },
+ {
+  "b64": "images-b64/assets__img__uae-gulf-abu-dhabi.jpg.b64",
+  "target": "public/assets/img/uae-gulf-abu-dhabi.jpg",
+  "bytes": 273004
+ },
+ {
+  "b64": "images-b64/assets__img__uae-gulf-liwa-and-the-empty-quarter.jpg.b64",
+  "target": "public/assets/img/uae-gulf-liwa-and-the-empty-quarter.jpg",
+  "bytes": 201497
+ },
+ {
+  "b64": "images-b64/assets__img__uae-gulf-doha.jpg.b64",
+  "target": "public/assets/img/uae-gulf-doha.jpg",
+  "bytes": 324875
+ },
+ {
+  "b64": "images-b64/assets__img__uae-gulf-al-ain.jpg.b64",
+  "target": "public/assets/img/uae-gulf-al-ain.jpg",
+  "bytes": 435651
+ },
+ {
+  "b64": "images-b64/assets__img__uae-gulf-ras-al-khaimah.jpg.b64",
+  "target": "public/assets/img/uae-gulf-ras-al-khaimah.jpg",
+  "bytes": 340718
  }
 ]
