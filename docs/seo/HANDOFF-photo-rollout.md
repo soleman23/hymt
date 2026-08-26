@@ -1435,9 +1435,13 @@ Two things worth carrying into every later wave:
   with Mark on first-hand detail would unblock all 26 at once.**
 - **India's cost band is `held`** in `tools/cost-ranges-data.mjs`, shipping
   commented like bali/hawaii. Same for its two `NEEDS MARK` comments.
-- **No destination page sets a per-page `og:image`** — all 43 use the site
-  default. Permitted, but every social/AI share of any destination shows the
-  same picture. The `dc`/`rc` crop tooling already does this shape of work.
+- ~~**No destination page sets a per-page `og:image`.**~~ **Closed 2026-08-18**
+  by `aa7a271`, eight days before the last two entries in this section were
+  written. `tools/make-og-crops.mjs` cuts a 1200×630 `og-` crop from each
+  page's hero, writes the base64 twin and the MANIFEST entry, and generates
+  `src/lib/og-crops.ts`; `DestinationLayout`, `ExperienceLayout` and
+  `JournalLayout` look `hero.image` up in that table, so no page file passes an
+  `ogImage` prop and none needs to.
 - **`docs/seo/photography-needed.md` is stale** — it lists 25 missing heroes;
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
@@ -1447,10 +1451,34 @@ Two things worth carrying into every later wave:
   free from Drive and 1 more from the repo. Only its sequencing argument
   (A before B) still stands. **Now safe to rewrite or delete**, which the last
   page shipping was the stated condition for.
-- **No per-page `og:image` on any of the pages shipped 2026-08-26** either —
-  they inherit the site default like every other destination, per the item
-  above. All the new frames are 1600×899 masters, so an `og-` 1200×630 crop of
-  any of them is a `make-og-crops.mjs` run away whenever that item is picked
-  up. With the rollout closed, this is now the largest remaining piece of
-  photography-adjacent work: **386 destination cards and 68 heroes exist and
-  not one page sets its own `og:image`.**
+- ~~**No per-page `og:image` on any of the pages shipped 2026-08-26.**~~ **Was
+  already false when written** — it restated the bullet above from memory
+  instead of reading `dist/`, and the crops had shipped in `aa7a271` eight days
+  earlier. The last three holdouts — pages whose hero is a 1024×1405 portrait
+  that `MIN_SOURCE_RATIO` refuses to crop — **closed 2026-08-26** with
+  `HERO_FALLBACK` in `make-og-crops.mjs`: a hero too tall to crop now names a
+  landscape stand-in and the crop comes off that instead. `destinations/bali`
+  takes `e-45-ubud-yoga-pavilion` (its own hero's subject, in 16:9),
+  `destinations/botswana` takes its own `botswana-okavango-delta` place card,
+  and `travel-journal/willamette-valley-winery-route` takes
+  `napa-sonoma-the-valley-floor`. No layout changed — the table is keyed by
+  hero, which the three section layouts already look up.
+
+  Measured in a clean build: **111 of the 122 pages carrying an `og:image` ship
+  their own crop, and destinations is 68 of 68.** The 11 left on the crest
+  plate have no hero to crop — the 7 utility pages (`/`, `/about`, `/contact`,
+  `/faq`, `/plan-your-trip`, `/privacy-policy`, `/terms-and-conditions`), the
+  3 section indexes (`/destinations`, `/experiences`, `/travel-journal`), and
+  `travel-journal/aspen-book-early`, which still carries its `NEEDS IMAGE`
+  comment. **That is the floor.** No page gains a share card until it gains a
+  picture, so there is nothing further to pick up here.
+
+  Two rules if you ever add a fourth stand-in. **It must assert less about
+  place than the hero it replaces, never more** — Willamette's first draft used
+  `e-06-tuscan-landscape`, whose cypresses and villa shout Tuscany on an
+  article titled "Oregon's Answer to Burgundy", while the hero it stood in for
+  was only a generic tasting interior. And **the table is keyed by picture, not
+  by page**, so a stand-in named for a hero that two pages share would reach
+  both; the tool now exits 1 rather than let that ship. **Read `dist/` before
+  quoting any count in this section — both of these bullets were wrong on the
+  day they were written.**

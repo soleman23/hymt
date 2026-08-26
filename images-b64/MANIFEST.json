@@ -4043,5 +4043,20 @@
   "b64": "images-b64/assets__img__vietnam-southeast-asia-siem-reap-and-angkor.jpg.b64",
   "target": "public/assets/img/vietnam-southeast-asia-siem-reap-and-angkor.jpg",
   "bytes": 373176
+ },
+ {
+  "b64": "images-b64/assets__img__og-e-45-ubud-yoga-pavilion.jpg.b64",
+  "target": "public/assets/img/og-e-45-ubud-yoga-pavilion.jpg",
+  "bytes": 116994
+ },
+ {
+  "b64": "images-b64/assets__img__og-botswana-okavango-delta.jpg.b64",
+  "target": "public/assets/img/og-botswana-okavango-delta.jpg",
+  "bytes": 89109
+ },
+ {
+  "b64": "images-b64/assets__img__og-napa-sonoma-the-valley-floor.jpg.b64",
+  "target": "public/assets/img/og-napa-sonoma-the-valley-floor.jpg",
+  "bytes": 110387
  }
 ]
