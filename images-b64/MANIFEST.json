@@ -3233,5 +3233,125 @@
   "b64": "images-b64/assets__img__oman-jebel-akhdar-and-the-green-mountain.jpg.b64",
   "target": "public/assets/img/oman-jebel-akhdar-and-the-green-mountain.jpg",
   "bytes": 547731
+ },
+ {
+  "b64": "images-b64/assets__img__arctic-norway-tromso.jpg.b64",
+  "target": "public/assets/img/arctic-norway-tromso.jpg",
+  "bytes": 303648
+ },
+ {
+  "b64": "images-b64/assets__img__arctic-norway-the-lofoten-islands.jpg.b64",
+  "target": "public/assets/img/arctic-norway-the-lofoten-islands.jpg",
+  "bytes": 397327
+ },
+ {
+  "b64": "images-b64/assets__img__arctic-norway-senja.jpg.b64",
+  "target": "public/assets/img/arctic-norway-senja.jpg",
+  "bytes": 288077
+ },
+ {
+  "b64": "images-b64/assets__img__arctic-norway-alta-and-the-finnmark-plateau.jpg.b64",
+  "target": "public/assets/img/arctic-norway-alta-and-the-finnmark-plateau.jpg",
+  "bytes": 183418
+ },
+ {
+  "b64": "images-b64/assets__img__arctic-norway-lyngen-and-the-skibotn-valley.jpg.b64",
+  "target": "public/assets/img/arctic-norway-lyngen-and-the-skibotn-valley.jpg",
+  "bytes": 332203
+ },
+ {
+  "b64": "images-b64/assets__img__arctic-norway-the-coastal-route.jpg.b64",
+  "target": "public/assets/img/arctic-norway-the-coastal-route.jpg",
+  "bytes": 158307
+ },
+ {
+  "b64": "images-b64/assets__img__greenland-ilulissat.jpg.b64",
+  "target": "public/assets/img/greenland-ilulissat.jpg",
+  "bytes": 268698
+ },
+ {
+  "b64": "images-b64/assets__img__greenland-disko-island-and-eqi.jpg.b64",
+  "target": "public/assets/img/greenland-disko-island-and-eqi.jpg",
+  "bytes": 311560
+ },
+ {
+  "b64": "images-b64/assets__img__greenland-nuuk.jpg.b64",
+  "target": "public/assets/img/greenland-nuuk.jpg",
+  "bytes": 403751
+ },
+ {
+  "b64": "images-b64/assets__img__greenland-kangerlussuaq.jpg.b64",
+  "target": "public/assets/img/greenland-kangerlussuaq.jpg",
+  "bytes": 428294
+ },
+ {
+  "b64": "images-b64/assets__img__greenland-tasiilaq-and-ammassalik.jpg.b64",
+  "target": "public/assets/img/greenland-tasiilaq-and-ammassalik.jpg",
+  "bytes": 276682
+ },
+ {
+  "b64": "images-b64/assets__img__greenland-south-greenland.jpg.b64",
+  "target": "public/assets/img/greenland-south-greenland.jpg",
+  "bytes": 326307
+ },
+ {
+  "b64": "images-b64/assets__img__svalbard-longyearbyen.jpg.b64",
+  "target": "public/assets/img/svalbard-longyearbyen.jpg",
+  "bytes": 365838
+ },
+ {
+  "b64": "images-b64/assets__img__svalbard-billefjorden-and-pyramiden.jpg.b64",
+  "target": "public/assets/img/svalbard-billefjorden-and-pyramiden.jpg",
+  "bytes": 268236
+ },
+ {
+  "b64": "images-b64/assets__img__svalbard-forlandet-and-the-west-coast.jpg.b64",
+  "target": "public/assets/img/svalbard-forlandet-and-the-west-coast.jpg",
+  "bytes": 269205
+ },
+ {
+  "b64": "images-b64/assets__img__svalbard-alkefjellet-and-hinlopen.jpg.b64",
+  "target": "public/assets/img/svalbard-alkefjellet-and-hinlopen.jpg",
+  "bytes": 395918
+ },
+ {
+  "b64": "images-b64/assets__img__svalbard-the-austfonna-ice-cap.jpg.b64",
+  "target": "public/assets/img/svalbard-the-austfonna-ice-cap.jpg",
+  "bytes": 310485
+ },
+ {
+  "b64": "images-b64/assets__img__svalbard-ny-alesund.jpg.b64",
+  "target": "public/assets/img/svalbard-ny-alesund.jpg",
+  "bytes": 248523
+ },
+ {
+  "b64": "images-b64/assets__img__falklands-south-georgia-st-andrews-bay.jpg.b64",
+  "target": "public/assets/img/falklands-south-georgia-st-andrews-bay.jpg",
+  "bytes": 311897
+ },
+ {
+  "b64": "images-b64/assets__img__falklands-south-georgia-salisbury-plain-and-the-bay-of-isles.jpg.b64",
+  "target": "public/assets/img/falklands-south-georgia-salisbury-plain-and-the-bay-of-isles.jpg",
+  "bytes": 372496
+ },
+ {
+  "b64": "images-b64/assets__img__falklands-south-georgia-grytviken-and-cumberland-bay.jpg.b64",
+  "target": "public/assets/img/falklands-south-georgia-grytviken-and-cumberland-bay.jpg",
+  "bytes": 319379
+ },
+ {
+  "b64": "images-b64/assets__img__falklands-south-georgia-gold-harbour-and-drygalski-fjord.jpg.b64",
+  "target": "public/assets/img/falklands-south-georgia-gold-harbour-and-drygalski-fjord.jpg",
+  "bytes": 352896
+ },
+ {
+  "b64": "images-b64/assets__img__falklands-south-georgia-stanley-and-volunteer-point.jpg.b64",
+  "target": "public/assets/img/falklands-south-georgia-stanley-and-volunteer-point.jpg",
+  "bytes": 393592
+ },
+ {
+  "b64": "images-b64/assets__img__falklands-south-georgia-carcass-saunders-and-sea-lion.jpg.b64",
+  "target": "public/assets/img/falklands-south-georgia-carcass-saunders-and-sea-lion.jpg",
+  "bytes": 373501
  }
 ]

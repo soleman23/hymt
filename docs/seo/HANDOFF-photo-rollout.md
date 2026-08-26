@@ -19,28 +19,37 @@ READ FIRST, in this order — do not start work until you have:
   (docs/seo/photography-plan.md and photography-needed.md are both STALE —
    see Open items. Read them only for the A-before-B sequencing argument.)
 
-STATE, re-derived on 2026-08-25:
+STATE, re-derived on 2026-08-25 (second session that day):
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 40 of 68 on .places-grid--photo
-                 27 still on placeholder swatches (6 cards each = 162 cards)
+  DESTINATIONS — 44 of 68 on .places-grid--photo
+                 23 still on placeholder swatches (6 cards each = 138 cards)
                   1 (maldives) has no places-grid section at all
-                 40 + 27 + 1 = 68.
-  Higgsfield credits: 1651.
+                 44 + 23 + 1 = 68.
+  Higgsfield credits: 1621.
 
-  The 27 are the 25 M7 destination pages plus india and new-zealand. Every
-  earlier version of this file said "4 pages / 24 cards" — true at 43 pages,
-  before M7 added 25 more, each shipping 6 placeholder cards. RE-DERIVE, never
-  trust a written count:
+  jordan and oman came off the list first that day; then the POLAR BATCH —
+  arctic-norway, greenland, svalbard, falklands-south-georgia — 24 cards for
+  26 credits. Every earlier version of this file said "4 pages / 24 cards",
+  true at 43 pages, before M7 added 25 more each shipping 6 placeholder cards.
+  RE-DERIVE, never trust a written count:
 
     node -e "const g=require('glob');" # or just grep:
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 162 destination place cards, ~162 credits plus re-rolls against
-  1651. Credits are not the constraint and have not been since 2026-08-12 —
-  concept quality and reviewer time are. Work ONE PAGE AT A TIME. jordan and
-  oman took 13 credits for 12 cards, which is the rate to budget from.
+WHAT IS LEFT: 138 destination place cards, ~140 credits plus re-rolls against
+  1621. Credits are not the constraint and have not been since 2026-08-12 —
+  concept quality and reviewer time are. jordan and oman took 13 credits for
+  12 cards; the polar batch took 26 for 24. Budget ~1.1 credits per card.
+
+  BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
+  went together precisely because they collide with each other, and specced
+  side by side the adversarial pass caught three CROSS-PAGE twins that a
+  page-at-a-time loop cannot see by construction: Tromso and Disko were both
+  a water-level humpback, Alta and Tasiilaq were both a fanned dog team,
+  Ilulissat and Longyearbyen were both a 1 a.m. midnight-sun painted-timber
+  town. Each was fixed on ONE side, so the stronger claim keeps the frame.
 
 BEFORE GENERATING ANYTHING, three checks. All three have caught free images:
   1. `npm run build` prints "N tracked images referenced nowhere — free to use
@@ -154,18 +163,32 @@ reference. For the launch-blocker workstream see
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **40** |
-| Still on placeholders | **27** (162 cards) |
+| On the photo panel | **44** |
+| Still on placeholders | **23** (138 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1651** |
+| Higgsfield credits | **1621** |
 
-### The 27 pages still on placeholders
+### The 23 pages still on placeholders
 
 ```
-india new-zealand  +  the 25 M7 pages
+argentina aspen australia barbados-eastern-caribbean bhutan brazil colombia
+cook-islands costa-rica dominican-republic georgia-armenia india israel
+jamaica morocco new-zealand seychelles south-africa sri-lanka uae-gulf
+vanuatu vietnam-southeast-asia zambia-victoria-falls
 ```
+
+Remaining batches, grouped by shared visual vocabulary so cards can be
+specced against each other:
+
+| Batch | Pages |
+|---|---|
+| Latin America | argentina, brazil, colombia, costa-rica |
+| Caribbean & Pacific | barbados-eastern-caribbean, dominican-republic, jamaica, cook-islands |
+| Africa & Indian Ocean | south-africa, zambia-victoria-falls, morocco, seychelles, vanuatu |
+| Asia | bhutan, india, sri-lanka, vietnam-southeast-asia, georgia-armenia |
+| Middle East & Anglo | israel, uae-gulf, aspen, australia, new-zealand |
 
 Every one needs exactly 6, so the remainder is 162 cards. `jordan` and `oman`
 came off this list on 2026-08-25. The four originally named here were the whole
@@ -365,6 +388,75 @@ Brooklyn, Hudson Valley, Cusco, Lima, Brazil. The new tool collapses them;
 Musandam was fixed by hand. The eleven are backfill, not a regression.
 `australia` (Tasmania) and `india` (Kerala) will hit the same case when they
 convert, and the tool now handles it.
+
+---
+
+## What the 2026-08-25 session did — the polar batch, and a live bug
+
+`arctic-norway`, `greenland`, `svalbard`, `falklands-south-georgia` are
+photographed and on `.places-grid--photo`. 24 cards, **26 credits**, two
+re-rolls. 162 → 138 cards, 27 → 23 pages.
+
+### The four weak pairings in #93 were already fixed
+
+Verified by file identity and by looking at the pixels, not by trusting a
+commit message. Napa & Sonoma, the shared Alaska/Canadian-Rockies heli-ski
+frame and the portrait Botswana aerial were all fixed in `d02d80d` on
+2026-08-09; culture-immersive Mexico in `0510321`. The Botswana card loads
+`pc-e-11-…` at 1024×683, a true 3:2 crop — the 1024×1405 portrait is only
+that page's hero and the card never loads it. **The issue body had been
+stale on this point for two weeks.**
+
+### A link in card copy splits the card in two
+
+`.place-card` is an `<a>`. An `<a>` inside an `<a>` is invalid, and the
+parser's adoption agency algorithm closes the outer anchor early and
+**clones** it, so one card becomes a photograph with no body, a body with no
+photograph, and a fragment. `/destinations/argentina/` was rendering **12**
+`.place-card` elements for six cards, live, on the swatch layout.
+
+28 of these were shipped across 10 pages, every one an authoritative-source
+link inside `.place-card__desc`. Nothing caught it because the SOURCE is
+well-formed — six anchors, six closers. Only a real parser sees it. Fixed in
+`7f4d7b6` with a `nested-card-anchor` check that reads the tag stream, driven
+red against real `dist/` first.
+
+**This is why a card must be measured in a browser, not only greped.** The
+build was green on all 123 pages with three cards visibly broken.
+
+### `sharp().stats()` ignores the pipeline
+
+`sharp(buf).extract({...}).greyscale().stats()` does **not** measure the
+extracted region — `stats()` analyses the source image and silently discards
+prior pipeline operations. Every "3:2 crop luminance" number in a review is
+the whole 16:9 frame unless the crop was written to a buffer and re-opened
+first. It was caught here only because a bottom-band measurement came back
+byte-identical to the whole-frame mean for all 24 frames at once, which is
+not a thing that happens.
+
+### Measure the bottom eighth, not just the mean
+
+The copy panel sits **below** the image, so the base is the one edge where a
+dark mass costs the card its boundary. Whole-frame means hid it:
+
+| | crop | base |
+|---|---|---|
+| carcass-saunders (as generated) | 96 | **52** ← re-rolled |
+| carcass-saunders (re-roll) | 132 | 177 |
+| tromso | 182 | 101 — kept, ~4× the panel |
+| nuuk | 126 | 101 — kept |
+
+The navy panel is about luma 26. A base near 100 is four times that and holds
+its edge; 52 does not. Only one of 24 frames actually failed, and the mean
+alone would have flagged the wrong ones.
+
+### The other re-roll was a copy mismatch, not a metric
+
+The Coastal Route came back as a heritage pleasure steamer — ornate white
+looping railing — on a card whose copy says "transport with a cabin rather
+than a cruise". Every number was fine. Re-specced to a plain painted steel
+bulwark. **No check catches a frame that contradicts its own copy; that is
+what looking is for.**
 
 ---
 
