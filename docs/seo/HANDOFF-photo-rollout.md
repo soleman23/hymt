@@ -19,30 +19,31 @@ READ FIRST, in this order — do not start work until you have:
   (docs/seo/photography-plan.md and photography-needed.md are both STALE —
    see Open items. Read them only for the A-before-B sequencing argument.)
 
-STATE, re-derived on 2026-08-25 (second session that day):
+STATE, re-derived on 2026-08-26:
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 52 of 68 on .places-grid--photo
-                 15 still on placeholder swatches (6 cards each = 90 cards)
+  DESTINATIONS — 56 of 68 on .places-grid--photo
+                 11 still on placeholder swatches (6 cards each = 66 cards)
                   1 (maldives) has no places-grid section at all
-                 52 + 15 + 1 = 68.
-  Higgsfield credits: 1569.
+                 56 + 11 + 1 = 68.
+  Higgsfield credits: 1541.
 
-  jordan and oman came off the list first that day; then the POLAR BATCH —
-  arctic-norway, greenland, svalbard, falklands-south-georgia — 24 cards for
-  26 credits. Every earlier version of this file said "4 pages / 24 cards",
-  true at 43 pages, before M7 added 25 more each shipping 6 placeholder cards.
+  jordan and oman came off the list first on 2026-08-25; then the polar four,
+  then Latin America, then the islands, then AFRICA & THE INDIAN OCEAN on
+  2026-08-26 — south-africa, zambia-victoria-falls, seychelles, vanuatu, 24
+  cards for 28 credits. Every earlier version of this file said "4 pages / 24
+  cards", true at 43 pages, before M7 added 25 more each shipping 6 placeholders.
   RE-DERIVE, never trust a written count:
 
     node -e "const g=require('glob');" # or just grep:
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 90 destination place cards, ~100 credits plus re-rolls against
-  1569. Credits are not the constraint and have not been since 2026-08-12 —
+WHAT IS LEFT: 66 destination place cards, ~75 credits plus re-rolls against
+  1541. Credits are not the constraint and have not been since 2026-08-12 —
   concept quality and reviewer time are. jordan and oman took 13 credits for
   12 cards; polar took 26 for 24; Latin America 27 for 24; the islands 25
-  for 24. Budget ~1.1 credits per card.
+  for 24; Africa & the Indian Ocean 28 for 24. Budget ~1.2 credits per card.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
   went together precisely because they collide with each other, and specced
@@ -158,29 +159,26 @@ photographs of one place, which is the patagonia/El Chaltén precedent.
 
 ## Where things stand
 
-**Repo:** clean, all work pushed. HEAD was `8449977` when this was written;
-the repo has moved well past it. **The photo counts below are still accurate**
-(no photography work has happened since) but re-derive them with the snippet
-under "The 4 pages still on placeholders" rather than trusting the commit
-reference. For the launch-blocker workstream see
-`docs/seo/HANDOFF-launch-blockers.md`.
+**Repo:** clean at `main` when this was written, everything below committed.
+**Re-derive the counts** with the snippet under "The 11 pages still on
+placeholders" rather than trusting any number written here. For the
+launch-blocker workstream see `docs/seo/HANDOFF-launch-blockers.md`.
 
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **52** |
-| Still on placeholders | **15** (90 cards) |
+| On the photo panel | **56** |
+| Still on placeholders | **11** (66 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1569** |
+| Higgsfield credits | **1541** |
 
-### The 15 pages still on placeholders
+### The 11 pages still on placeholders
 
 ```
 aspen australia bhutan georgia-armenia india israel morocco new-zealand
-seychelles south-africa sri-lanka uae-gulf vanuatu vietnam-southeast-asia
-zambia-victoria-falls
+sri-lanka uae-gulf vietnam-southeast-asia
 ```
 
 Remaining batches, grouped by shared visual vocabulary so cards can be
@@ -188,20 +186,29 @@ specced against each other:
 
 | Batch | Pages |
 |---|---|
-| Africa & Indian Ocean | south-africa, zambia-victoria-falls, morocco, seychelles, vanuatu |
 | Asia | bhutan, india, sri-lanka, vietnam-southeast-asia, georgia-armenia |
-| Middle East & Anglo | israel, uae-gulf, aspen, australia, new-zealand |
+| Desert & ancient | morocco, israel, uae-gulf |
+| Anglo & alpine | aspen, australia, new-zealand |
 
-Every one needs exactly 6, so the remainder is 162 cards. `jordan` and `oman`
-came off this list on 2026-08-25. The four originally named here were the whole
-backlog at 43 destination pages; M7 then added 25 more, each shipping its own
-six placeholders. **This is the single number in this file that has been wrong
-most often — derive it.**
+Every one needs exactly 6, so the remainder is 66 cards. `jordan` and `oman`
+came off this list on 2026-08-25; `south-africa`, `zambia-victoria-falls`,
+`seychelles` and `vanuatu` on 2026-08-26. The four originally named here were
+the whole backlog at 43 destination pages; M7 then added 25 more, each shipping
+its own six placeholders. **This is the single number in this file that has
+been wrong most often — derive it.**
 
-Suggested order: jordan and oman went first, together, on 2026-08-25 —
-desert and ancient share a look and a prompt vocabulary. **new-zealand**
-next, and **india** last: india is `needs-mark` blocked on Mark's
-first-hand line and cost figures, so photographing it unblocks nothing.
+Suggested order: **the desert three next** — morocco, israel and uae-gulf
+collide with each other and with the shipped jordan and oman, which is exactly
+what a batch is for. Then the Anglo three. **india last**: it is `needs-mark`
+blocked on Mark's first-hand line and cost figures, so photographing it
+unblocks nothing.
+
+**One free frame is already on disk for that Anglo batch.**
+`p-02-north-island.jpg` is 1600×823, referenced nowhere, and it is New Zealand.
+1600/823 = 1.944, so under `object-fit:cover` it keeps 77% of itself — clear of
+the intake tool's 65% floor. Look at it before spending a credit on a
+new-zealand card. The other 26 free frames are `rc-*` 760×435 related-card
+crops (too small) or `e-*` 1024×1405 portraits (the Botswana mistake).
 
 **Counting note, corrected 2026-08-13.** Every previous version of this
 handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
@@ -603,6 +610,132 @@ what looking is for.**
 
 ---
 
+## What the 2026-08-26 session did — Africa & the Indian Ocean
+
+`south-africa`, `zambia-victoria-falls`, `seychelles`, `vanuatu` photographed
+and on `.places-grid--photo`. 24 cards, **28 credits**, four re-rolls across
+three frames. 90 → 66 cards, 15 → 11 pages.
+
+### Looking at the hero paid twice in one batch
+
+The rule in the Prompt — open the page's own hero before choosing a subject —
+had, until now, only ever prevented a near-miss. Here it caught two cards that
+would have been straight duplicates of the photograph directly above them:
+
+- **seychelles**' hero *is* Anse Source d'Argent: granite boulders, leaning
+  palm, sunset. That is the La Digue card's obvious subject and the one its
+  copy names. La Digue became the bicycle lane instead — copy-grounded
+  ("bicycles are the transport, not the activity") and a different subject
+  class from anything else on the page.
+- **vanuatu**'s hero *is* Mount Yasur erupting at dusk. That is the Tanna
+  card's obvious subject and the first clause of its copy. Tanna became the
+  grey ash plain in flat morning light with the cone smoking small and distant
+  — same mountain, opposite hour, opposite palette.
+
+Both pages would have shipped a hero and a card of the same photograph. Neither
+luminance nor the ratio guard nor the build sees this.
+
+### A new defect class: the wrong SPECIES for the card's own copy
+
+North Luangwa's copy exists to say one thing — "Black rhino were reintroduced …
+this is the only place in Zambia they live". The first frame came back a
+textbook **white rhino**: square grazing lip, long head carried low, nuchal
+hump. Every number was fine (crop 176, base 198).
+
+This is the Muscat error — a landmark rendering as the wrong country's
+landmark — in taxonomic costume, and it will recur on any card whose claim is a
+species rather than a place. The fix is the same shape: name the features that
+actually distinguish it. "Narrow pointed prehensile upper lip hooked over a
+browsed twig, small head held high" came back correct on the next try.
+
+**Where the naming convention hides it:** the slug is
+`zambia-victoria-falls-north-luangwa`, the alt is "North Luangwa, Muchinga
+Province". Nothing in the filename, the alt or the markup says "rhino", so
+nothing downstream can ever contradict the picture. Only reading the copy and
+looking at the animal catches it.
+
+### Naming a dark material in the foreground is a predictable base failure
+
+Both base-band failures in this batch were **written into the prompt**:
+
+| Frame | Foreground I asked for | base |
+|---|---|---|
+| Victoria Falls | "bare black basalt … wet and bright in hard sun" | **46** |
+| Vava'u humpbacks | "clear deep blue water" below the whale | **42** |
+
+Both sat around the carcass-saunders figure of 52 that earned a re-roll in the
+polar batch. "Wet and bright in hard sun" does not rescue black rock, and a
+sunlit surface above does not rescue deep blue water below. The panel is luma
+26; these were within 2× of it and would have lost the card's bottom edge.
+
+So add a step before submitting: **read your own foreground clause and ask what
+its luma is.** If the material named there is black rock, deep water, dense wet
+foliage or shadow, the base band will fail — change the material, not the
+lighting adjective. The fixes were "dry sun-bleached pale grey and ochre
+basalt, bone dry and dusty" (base 46 → 185) and putting the whale's white
+ventral pleats and both white pectorals across the bottom edge in bright
+turquoise rather than navy (42 → 162).
+
+### The tree-cat chain, and why the fix cascaded
+
+Sabi Sand's headline is leopards; Kafue's copy says "lion that climb". Specced
+independently, both would have been a cat lying along a horizontal branch, on
+adjacent pages in the same batch. And Sabi Sand's *other* obvious frame — a
+leopard on a sand track at night — is already live as `botswana-khwai`, a
+blue-hour spotlit leopard walking a track.
+
+So the constraint chained: Kafue keeps the tree (it is the page's actual
+claim), which pushes Sabi Sand off the branch, and Khwai pushes it off the
+night track. What is left is a leopard and cub in dappled jackalberry shade in
+late afternoon — which is the strongest of the three anyway. **A cross-page
+twin and an intra-batch twin resolved by one move.** This only works if the
+already-shipped neighbours are on screen while the concepts are written.
+
+Two more caught the same way, both dropped before generating:
+
+- **Kafue** was first specced as red lechwe exploding through floodwater, which
+  is the same "many ungulates on wet grassland" shape as **Liuwa**'s wildebeest
+  — on the same page.
+- **Aldabra** was first specced as champignon limestone undercut in jade water.
+  That is precisely the shape Negril kept in the Caribbean batch on 2026-08-25.
+  Replaced with the tortoise mass on the tidal flat, which is also the better
+  reading of "the largest giant tortoise population on earth".
+
+### Drive, swept again 2026-08-26
+
+Both MIME sweeps: 100 `image/jpeg`, 41 `image/png`. Nothing for any of the four
+pages. `africa-south-africa.png` and `africa-zambia-and-victoria-falls.png` are
+in the folder and are **hub cards** — already the two pages' heroes, not a set
+of six. That is the documented patagonia/peru trap, still live, still the first
+thing a prefix search will hand you.
+
+### One frame shipped that a stricter reviewer would re-roll
+
+`south-africa-garden-route-and-overberg` — Storms River mouth, crop 156, base
+181, well composed and bright. But the canopy reads eucalypt and the surf reads
+temperate Pacific; without the caption it could be coastal Australia, and
+`australia` is still unphotographed with a "Melbourne & the Great Ocean Road"
+card in it. It is not wrong for its copy, which names Tsitsikamma's forest and
+river gorges, so it shipped. **When australia is specced, its Great Ocean Road
+card must not be a forested river mouth** — go to the limestone stacks.
+
+### Verified in the browser, not just greped
+
+All four pages at 1440, 768 and 375 with `loading` forced to eager: 24 panels
+at exactly 3:2, every image loaded, card heights uniform within every row,
+`.place-card__arrow` baselines aligned per row (2699/2699/2699 then
+3306/3306/3306 on seychelles), zero `.place-card__ph` left, zero horizontal
+overflow at any width. Alt text came out clean on all 24 — no repeat of the
+`"X, X"` wart, since no card here is named for its own region.
+
+Note for the next session: **the Browser pane could not composite**, so
+`computer{action:"screenshot"}` timed out every time. `read_page`,
+`javascript_tool` and the DOM measurements above all worked normally — the
+measurements are the verification, and a screenshot was never the evidence.
+Don't burn time retrying it.
+
+---
+
 ## What the 2026-08-12 session did
 
 1. Converted the six regional hubs to `--photo` (PR #102, 37 cards).
@@ -908,7 +1041,8 @@ Two things worth carrying into every later wave:
   after launch. Not a defect.
 - ~~**The experience half of #93.**~~ **Closed 2026-08-24** — 12 of 12 pages
   on `.exp-cards--photo`, 72 of 72 cards. The remaining work is entirely
-  destination-side: 27 pages, 162 cards.
+  destination-side: **11 pages, 66 cards** as of 2026-08-26 (it said 27/162
+  when the experience half closed; derive it, do not quote it).
 - **M7 is 1 of 26 pages.** Every one is labelled `needs-mark`. The blocker is
   not images — it is page authoring plus two things only Mark can supply:
   a first-hand line (`CONTENT-STANDARDS` § 6) and cost figures. **One sitting
@@ -922,7 +1056,11 @@ Two things worth carrying into every later wave:
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
 - **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is **4 pages / 24 cards**,
+  lists 30 pages / 162 images; the real remainder is **11 pages / 66 cards**,
   and its "1 of 163 slots comes free" line no longer holds — 99 came free from
   Drive and 1 more from the repo. Its sequencing argument (A before B) still
-  stands. Worth rewriting or deleting once the last four pages ship.
+  stands. Worth rewriting or deleting once the last pages ship.
+- **No per-page `og:image` on the four pages shipped 2026-08-26** either — they
+  inherit the site default like every other destination, per the item above.
+  The 24 new frames are 1600×899 masters, so an `og-` 1200×630 crop of any of
+  them is a `make-og-crops.mjs` run away whenever that item is picked up.

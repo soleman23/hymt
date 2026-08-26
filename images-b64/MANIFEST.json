@@ -3593,5 +3593,125 @@
   "b64": "images-b64/assets__img__cook-islands-atiu.jpg.b64",
   "target": "public/assets/img/cook-islands-atiu.jpg",
   "bytes": 459752
+ },
+ {
+  "b64": "images-b64/assets__img__south-africa-sabi-sand.jpg.b64",
+  "target": "public/assets/img/south-africa-sabi-sand.jpg",
+  "bytes": 424033
+ },
+ {
+  "b64": "images-b64/assets__img__south-africa-kruger-national-park.jpg.b64",
+  "target": "public/assets/img/south-africa-kruger-national-park.jpg",
+  "bytes": 356308
+ },
+ {
+  "b64": "images-b64/assets__img__south-africa-cape-town.jpg.b64",
+  "target": "public/assets/img/south-africa-cape-town.jpg",
+  "bytes": 397800
+ },
+ {
+  "b64": "images-b64/assets__img__south-africa-the-cape-winelands.jpg.b64",
+  "target": "public/assets/img/south-africa-the-cape-winelands.jpg",
+  "bytes": 409091
+ },
+ {
+  "b64": "images-b64/assets__img__south-africa-garden-route-and-overberg.jpg.b64",
+  "target": "public/assets/img/south-africa-garden-route-and-overberg.jpg",
+  "bytes": 332154
+ },
+ {
+  "b64": "images-b64/assets__img__south-africa-addo-and-the-eastern-cape.jpg.b64",
+  "target": "public/assets/img/south-africa-addo-and-the-eastern-cape.jpg",
+  "bytes": 428889
+ },
+ {
+  "b64": "images-b64/assets__img__zambia-victoria-falls-victoria-falls-and-livingstone.jpg.b64",
+  "target": "public/assets/img/zambia-victoria-falls-victoria-falls-and-livingstone.jpg",
+  "bytes": 388635
+ },
+ {
+  "b64": "images-b64/assets__img__zambia-victoria-falls-south-luangwa.jpg.b64",
+  "target": "public/assets/img/zambia-victoria-falls-south-luangwa.jpg",
+  "bytes": 355765
+ },
+ {
+  "b64": "images-b64/assets__img__zambia-victoria-falls-lower-zambezi.jpg.b64",
+  "target": "public/assets/img/zambia-victoria-falls-lower-zambezi.jpg",
+  "bytes": 209440
+ },
+ {
+  "b64": "images-b64/assets__img__zambia-victoria-falls-kafue-and-the-busanga-plains.jpg.b64",
+  "target": "public/assets/img/zambia-victoria-falls-kafue-and-the-busanga-plains.jpg",
+  "bytes": 367605
+ },
+ {
+  "b64": "images-b64/assets__img__zambia-victoria-falls-north-luangwa.jpg.b64",
+  "target": "public/assets/img/zambia-victoria-falls-north-luangwa.jpg",
+  "bytes": 248090
+ },
+ {
+  "b64": "images-b64/assets__img__zambia-victoria-falls-liuwa-plain.jpg.b64",
+  "target": "public/assets/img/zambia-victoria-falls-liuwa-plain.jpg",
+  "bytes": 306168
+ },
+ {
+  "b64": "images-b64/assets__img__seychelles-mahe.jpg.b64",
+  "target": "public/assets/img/seychelles-mahe.jpg",
+  "bytes": 389890
+ },
+ {
+  "b64": "images-b64/assets__img__seychelles-praslin.jpg.b64",
+  "target": "public/assets/img/seychelles-praslin.jpg",
+  "bytes": 387526
+ },
+ {
+  "b64": "images-b64/assets__img__seychelles-la-digue.jpg.b64",
+  "target": "public/assets/img/seychelles-la-digue.jpg",
+  "bytes": 364921
+ },
+ {
+  "b64": "images-b64/assets__img__seychelles-curieuse-and-cousin.jpg.b64",
+  "target": "public/assets/img/seychelles-curieuse-and-cousin.jpg",
+  "bytes": 456507
+ },
+ {
+  "b64": "images-b64/assets__img__seychelles-the-private-islands.jpg.b64",
+  "target": "public/assets/img/seychelles-the-private-islands.jpg",
+  "bytes": 267701
+ },
+ {
+  "b64": "images-b64/assets__img__seychelles-aldabra-and-the-outer-islands.jpg.b64",
+  "target": "public/assets/img/seychelles-aldabra-and-the-outer-islands.jpg",
+  "bytes": 410762
+ },
+ {
+  "b64": "images-b64/assets__img__vanuatu-espiritu-santo.jpg.b64",
+  "target": "public/assets/img/vanuatu-espiritu-santo.jpg",
+  "bytes": 453512
+ },
+ {
+  "b64": "images-b64/assets__img__vanuatu-tanna.jpg.b64",
+  "target": "public/assets/img/vanuatu-tanna.jpg",
+  "bytes": 416611
+ },
+ {
+  "b64": "images-b64/assets__img__vanuatu-efate-and-port-vila.jpg.b64",
+  "target": "public/assets/img/vanuatu-efate-and-port-vila.jpg",
+  "bytes": 229527
+ },
+ {
+  "b64": "images-b64/assets__img__vanuatu-vava-u-and-ha-apai.jpg.b64",
+  "target": "public/assets/img/vanuatu-vava-u-and-ha-apai.jpg",
+  "bytes": 229050
+ },
+ {
+  "b64": "images-b64/assets__img__vanuatu-guadalcanal-and-marovo.jpg.b64",
+  "target": "public/assets/img/vanuatu-guadalcanal-and-marovo.jpg",
+  "bytes": 415841
+ },
+ {
+  "b64": "images-b64/assets__img__vanuatu-upolu-and-savai-i.jpg.b64",
+  "target": "public/assets/img/vanuatu-upolu-and-savai-i.jpg",
+  "bytes": 476397
  }
 ]
