@@ -88,10 +88,9 @@
   background:var(--bg-card);position:relative;
   display:flex;align-items:center;justify-content:center;min-height:420px;
 }
-.exp-featured__image-ph {
-  font-family:var(--font-d);font-size:10px;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;color:rgba(138,155,176,.3);
-  text-align:center;padding:24px;
+.exp-featured__image--photo { overflow:hidden }
+.exp-featured__img {
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
 }
 .exp-featured__content {
   padding:64px 60px;display:flex;flex-direction:column;justify-content:center;
@@ -266,9 +265,7 @@
 <!-- ══ FEATURED EXPERIENCE ══ -->
 <section class="exp-featured">
   <div class="exp-featured__grid">
-    <div class="exp-featured__image">
-      <span class="exp-featured__image-ph">Destination Photography<br>Botswana · Moremi Game Reserve</span>
-    </div>
+    <div class="exp-featured__image exp-featured__image--photo"><img class="exp-featured__img" src="/assets/img/xf-e-16-safari-vehicle-sunrise.jpg" alt="A safari vehicle at sunrise with guests watching an elephant herd cross the plain" width="1100" height="1040" loading="lazy" decoding="async"></div>
     <div class="exp-featured__content">
       <div class="label" style="margin-bottom:16px">Currently Featured</div>
       <h2 class="exp-featured__title">Safari &amp; Wildlife —<br>Africa Done Right</h2>

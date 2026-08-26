@@ -1319,8 +1319,14 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      src/content-pages/destinations__<slug>.html returns, because that is the
      file an author opens when this check goes red. If these drift, the
      predicate has started measuring something else. */
+  /* 3269 until the intro panel took a photograph: the placeholder plate's
+     "Destination Photography / …" span was visible text and counted, and the
+     caption changed length with it. The invariant above was re-checked at the
+     new number — bodyWords(dist) still equals a word count of
+     src/content-pages/destinations__italy.html — so this is the copy moving,
+     not the predicate. */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3269);
+    bodyWords(italy), 3260);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");
