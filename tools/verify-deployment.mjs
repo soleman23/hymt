@@ -23,6 +23,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
+  nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
@@ -723,6 +724,14 @@ for (const file of htmlFiles) {
      this; the defect was visible only in a browser. */
   for (const defect of photoGridDefects(html)) {
     fail("photo-grid", `${url}: ${defect}`);
+  }
+
+  /* nested-card-anchor (#93): a card IS an <a>, so a link in its copy is
+     invalid and the parser splits the card into pieces. Source-shape checks
+     cannot see this — argentina shipped 12 .place-card elements for 6 cards
+     while every check here stayed green. */
+  for (const defect of nestedCardAnchors(html)) {
+    fail("nested-card-anchor", `${url}: ${defect}`);
   }
 
   /* accordion-noscript (P0-1): the answer hide rule stays inside

@@ -51,7 +51,7 @@ import {
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, photoGridDefects, bodyWords, crumbTrail,
+  htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
@@ -1120,6 +1120,45 @@ t("photo-grid: two broken grids on one page are two",
 
 t("photo-grid: a page with no grid reports nothing",
   photoGridDefects(`<main><p>nothing</p></main>`).length, 0);
+
+/* ── nested-card-anchor ── */
+
+/* The exact shape that shipped: an authoritative-source link inside the copy
+   of a card that is ITSELF an <a>. 28 of these were live across 10 pages.
+   The source is well-formed, so every source-shape check above stays green;
+   the parser is what splits the card. argentina rendered 12 .place-card
+   elements for its 6 cards. */
+const linkedCard = `<a class="place-card" href="/plan-your-trip/"><img class="place-card__img" src="/assets/img/x.jpg" alt="X" width="1600" height="900" loading="lazy" decoding="async"><div class="place-card__name">Alta</div><div class="place-card__desc">Carvings <a href="https://whc.unesco.org/en/list/352/" rel="noopener">UNESCO World Heritage</a> since 1985.</div></a>`;
+
+t("nested-card-anchor: a link inside a place-card is caught",
+  nestedCardAnchors(grid(" places-grid--photo", linkedCard)).length, 1);
+
+t("nested-card-anchor: the report names the card",
+  nestedCardAnchors(grid(" places-grid--photo", linkedCard))[0].includes("Alta"), true);
+
+/* It is a defect on the un-converted pages too — 9 of the 10 were still on
+   swatches. A check that only fires under --photo would have missed them. */
+t("nested-card-anchor: caught on a swatch grid with no --photo modifier",
+  nestedCardAnchors(grid("", linkedCard)).length, 1);
+
+t("nested-card-anchor: a clean card reports nothing",
+  nestedCardAnchors(grid(" places-grid--photo", photoCard + photoCard)).length, 0);
+
+t("nested-card-anchor: a swatch card reports nothing",
+  nestedCardAnchors(grid("", swatchCard)).length, 0);
+
+t("nested-card-anchor: two broken cards are two",
+  nestedCardAnchors(grid("", linkedCard + linkedCard)).length, 2);
+
+t("nested-card-anchor: exp-card is checked the same way",
+  nestedCardAnchors(`<a class="exp-card" href="/x/"><div class="exp-card__desc">see <a href="https://example.org/">this</a></div></a>`).length, 1);
+
+/* A link that is a SIBLING of the card, not inside it, is ordinary markup. */
+t("nested-card-anchor: a link after the card closes is not nested",
+  nestedCardAnchors(`${photoCard}<a href="https://example.org/">after</a>`).length, 0);
+
+t("nested-card-anchor: a page with no cards reports nothing",
+  nestedCardAnchors(`<main><p><a href="/x/">ordinary link</a></p></main>`).length, 0);
 
 /* ── schema-itemlist ── */
 

@@ -887,6 +887,44 @@ export function photoGridDefects(html) {
 }
 
 /**
+ * A link nested inside a card's own link (#93).
+ *
+ * `.place-card` and `.exp-card` ARE anchors. HTML forbids an <a> inside an
+ * <a>, and the parser does not merely tolerate it — the adoption agency
+ * algorithm closes the outer anchor early and CLONES it, so one card becomes
+ * several DOM nodes: a photograph with no body, a body with no photograph,
+ * and a stray fragment.
+ *
+ * 28 of these shipped across 10 destination pages, every one an
+ * authoritative-source link inside `.place-card__desc`. `/destinations/
+ * argentina/` rendered **12** `.place-card` elements for its six cards, live,
+ * on the swatch layout — and every check in this file stayed green, because
+ * the SOURCE is well-formed. Only a real HTML parser sees it. That is the
+ * whole reason this check reads the tag stream rather than trusting nesting.
+ *
+ * A swatch card hides the damage; `--photo` puts it in the middle of the
+ * page. So this deliberately does NOT require the `--photo` modifier — the
+ * defect is equally real on the pages still waiting to be converted.
+ */
+export function nestedCardAnchors(html) {
+  const out = [];
+  const OPEN = /<a\b[^>]*class="[^"]*\b(place-card|exp-card)\b[^"]*"[^>]*>/gi;
+  for (const m of html.matchAll(OPEN)) {
+    const rest = html.slice(m.index + m[0].length);
+    /* The card should end at its own </a>. A nested <a> steals that closer,
+       so scan to whichever tag comes first: an opener means a nested link. */
+    const next = rest.search(/<a\b|<\/a>/i);
+    if (next === -1 || !/^<a\b/i.test(rest.slice(next))) continue;
+    const name = (rest.slice(0, next).match(/-card__name">([^<]*)/) ?? [])[1];
+    out.push(
+      `a .${m[1]} is itself an <a> and contains another <a>${name ? ` (${name.trim()})` : ""}` +
+      " — the HTML parser splits it into separate cards, so the photograph and the copy land on different tiles",
+    );
+  }
+  return out;
+}
+
+/**
  * ItemList defects in a page's JSON-LD.
  *
  * The journal hub's ItemList is parsed out of the hub HTML, and the featured
