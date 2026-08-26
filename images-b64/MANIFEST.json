@@ -3803,5 +3803,95 @@
   "b64": "images-b64/assets__img__uae-gulf-ras-al-khaimah.jpg.b64",
   "target": "public/assets/img/uae-gulf-ras-al-khaimah.jpg",
   "bytes": 340718
+ },
+ {
+  "b64": "images-b64/assets__img__aspen-aspen-mountain.jpg.b64",
+  "target": "public/assets/img/aspen-aspen-mountain.jpg",
+  "bytes": 352285
+ },
+ {
+  "b64": "images-b64/assets__img__aspen-aspen-highlands.jpg.b64",
+  "target": "public/assets/img/aspen-aspen-highlands.jpg",
+  "bytes": 248837
+ },
+ {
+  "b64": "images-b64/assets__img__aspen-snowmass.jpg.b64",
+  "target": "public/assets/img/aspen-snowmass.jpg",
+  "bytes": 202728
+ },
+ {
+  "b64": "images-b64/assets__img__aspen-buttermilk.jpg.b64",
+  "target": "public/assets/img/aspen-buttermilk.jpg",
+  "bytes": 254331
+ },
+ {
+  "b64": "images-b64/assets__img__aspen-the-core.jpg.b64",
+  "target": "public/assets/img/aspen-the-core.jpg",
+  "bytes": 283776
+ },
+ {
+  "b64": "images-b64/assets__img__aspen-maroon-bells-and-the-passes.jpg.b64",
+  "target": "public/assets/img/aspen-maroon-bells-and-the-passes.jpg",
+  "bytes": 354539
+ },
+ {
+  "b64": "images-b64/assets__img__australia-sydney-and-the-coast.jpg.b64",
+  "target": "public/assets/img/australia-sydney-and-the-coast.jpg",
+  "bytes": 380166
+ },
+ {
+  "b64": "images-b64/assets__img__australia-the-great-barrier-reef.jpg.b64",
+  "target": "public/assets/img/australia-the-great-barrier-reef.jpg",
+  "bytes": 266966
+ },
+ {
+  "b64": "images-b64/assets__img__australia-uluru-and-the-red-centre.jpg.b64",
+  "target": "public/assets/img/australia-uluru-and-the-red-centre.jpg",
+  "bytes": 406802
+ },
+ {
+  "b64": "images-b64/assets__img__australia-tasmania.jpg.b64",
+  "target": "public/assets/img/australia-tasmania.jpg",
+  "bytes": 373435
+ },
+ {
+  "b64": "images-b64/assets__img__australia-the-kimberley.jpg.b64",
+  "target": "public/assets/img/australia-the-kimberley.jpg",
+  "bytes": 367380
+ },
+ {
+  "b64": "images-b64/assets__img__australia-melbourne-and-the-great-ocean-road.jpg.b64",
+  "target": "public/assets/img/australia-melbourne-and-the-great-ocean-road.jpg",
+  "bytes": 244172
+ },
+ {
+  "b64": "images-b64/assets__img__new-zealand-queenstown-and-fiordland.jpg.b64",
+  "target": "public/assets/img/new-zealand-queenstown-and-fiordland.jpg",
+  "bytes": 303510
+ },
+ {
+  "b64": "images-b64/assets__img__new-zealand-marlborough-and-abel-tasman.jpg.b64",
+  "target": "public/assets/img/new-zealand-marlborough-and-abel-tasman.jpg",
+  "bytes": 312560
+ },
+ {
+  "b64": "images-b64/assets__img__new-zealand-rotorua-and-taupo.jpg.b64",
+  "target": "public/assets/img/new-zealand-rotorua-and-taupo.jpg",
+  "bytes": 381144
+ },
+ {
+  "b64": "images-b64/assets__img__new-zealand-bay-of-islands-and-northland.jpg.b64",
+  "target": "public/assets/img/new-zealand-bay-of-islands-and-northland.jpg",
+  "bytes": 377151
+ },
+ {
+  "b64": "images-b64/assets__img__new-zealand-hawke-s-bay-and-napier.jpg.b64",
+  "target": "public/assets/img/new-zealand-hawke-s-bay-and-napier.jpg",
+  "bytes": 214957
+ },
+ {
+  "b64": "images-b64/assets__img__new-zealand-stewart-island.jpg.b64",
+  "target": "public/assets/img/new-zealand-stewart-island.jpg",
+  "bytes": 203776
  }
 ]

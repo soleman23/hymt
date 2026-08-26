@@ -22,17 +22,19 @@ READ FIRST, in this order — do not start work until you have:
 STATE, re-derived on 2026-08-26 (second session that day):
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 59 of 68 on .places-grid--photo
-                  8 still on placeholder swatches (6 cards each = 48 cards)
+  DESTINATIONS — 62 of 68 on .places-grid--photo
+                  5 still on placeholder swatches (6 cards each = 30 cards)
                   1 (maldives) has no places-grid section at all
-                 59 + 8 + 1 = 68.
-  Higgsfield credits: 1519.
+                 62 + 5 + 1 = 68.
+  Higgsfield credits: 1498.
 
   jordan and oman came off the list first on 2026-08-25; then the polar four,
   then Latin America, then the islands, then AFRICA & THE INDIAN OCEAN on
   2026-08-26 — south-africa, zambia-victoria-falls, seychelles, vanuatu, 24
   cards for 28 credits; then DESERT & ANCIENT the same day — morocco, israel,
-  uae-gulf, 18 cards for 22 credits, specced by a 12-agent workflow.
+  uae-gulf, 18 cards for 22 credits, specced by a 12-agent workflow; then
+  ANGLO & ALPINE — aspen, australia, new-zealand, 18 cards for 21 credits,
+  same workflow shape.
   Every earlier version of this file said "4 pages / 24 cards", true at 43
   pages, before M7 added 25 more each shipping 6 placeholders.
   RE-DERIVE, never trust a written count:
@@ -41,12 +43,12 @@ STATE, re-derived on 2026-08-26 (second session that day):
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 48 destination place cards, ~55 credits plus re-rolls against
-  1519. Credits are not the constraint and have not been since 2026-08-12 —
+WHAT IS LEFT: 30 destination place cards, ~35 credits plus re-rolls against
+  1498. Credits are not the constraint and have not been since 2026-08-12 —
   concept quality and reviewer time are. jordan and oman took 13 credits for
   12 cards; polar took 26 for 24; Latin America 27 for 24; the islands 25
-  for 24; Africa & the Indian Ocean 28 for 24; the desert three 22 for 18.
-  Budget ~1.2 credits per card.
+  for 24; Africa & the Indian Ocean 28 for 24; the desert three 22 for 18;
+  the Anglo three 21 for 18. Budget ~1.2 credits per card.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
   went together precisely because they collide with each other, and specced
@@ -170,18 +172,17 @@ launch-blocker workstream see `docs/seo/HANDOFF-launch-blockers.md`.
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **59** |
-| Still on placeholders | **8** (48 cards) |
+| On the photo panel | **62** |
+| Still on placeholders | **5** (30 cards) |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1519** |
+| Higgsfield credits | **1498** |
 
-### The 8 pages still on placeholders
+### The 5 pages still on placeholders
 
 ```
-aspen australia bhutan georgia-armenia india new-zealand sri-lanka
-vietnam-southeast-asia
+bhutan georgia-armenia india sri-lanka vietnam-southeast-asia
 ```
 
 Remaining batches, grouped by shared visual vocabulary so cards can be
@@ -189,28 +190,35 @@ specced against each other:
 
 | Batch | Pages |
 |---|---|
-| Asia | bhutan, india, sri-lanka, vietnam-southeast-asia, georgia-armenia |
-| Anglo & alpine | aspen, australia, new-zealand |
+| Asia — the last one | bhutan, sri-lanka, vietnam-southeast-asia, georgia-armenia, india |
 
-Every one needs exactly 6, so the remainder is 48 cards. `jordan` and `oman`
+Every one needs exactly 6, so the remainder is 30 cards. `jordan` and `oman`
 came off this list on 2026-08-25; `south-africa`, `zambia-victoria-falls`,
-`seychelles` and `vanuatu` on 2026-08-26, and `morocco`, `israel` and
-`uae-gulf` later the same day. The four originally named here were
+`seychelles` and `vanuatu` on 2026-08-26, `morocco`, `israel` and
+`uae-gulf` later the same day, and `aspen`, `australia` and `new-zealand`
+after them. The four originally named here were
 the whole backlog at 43 destination pages; M7 then added 25 more, each shipping
 its own six placeholders. **This is the single number in this file that has
 been wrong most often — derive it.**
 
-Suggested order: **the Anglo three next** — aspen, australia and new-zealand.
-Then the Asia four. **india last**: it is `needs-mark`
+Suggested order: **the Asia five are all that is left**, and they are one
+natural batch. **india last within it**: it is `needs-mark`
 blocked on Mark's first-hand line and cost figures, so photographing it
 unblocks nothing.
 
-**One free frame is already on disk for that Anglo batch.**
-`p-02-north-island.jpg` is 1600×823, referenced nowhere, and it is New Zealand.
-1600/823 = 1.944, so under `object-fit:cover` it keeps 77% of itself — clear of
-the intake tool's 65% floor. Look at it before spending a credit on a
-new-zealand card. The other 26 free frames are `rc-*` 760×435 related-card
-crops (too small) or `e-*` 1024×1405 portraits (the Botswana mistake).
+**There are no free frames for these pages. `p-02-north-island.jpg` is a
+trap — do not chase it.** An earlier version of this file said it was 1600×823,
+referenced nowhere, New Zealand, and clear of the intake floor at 77%. The
+first three are true and the fourth is irrelevant, because **the picture is not
+New Zealand**. It is a tropical aerial: turquoise reef, coconut palms, white
+sand, one thatched villa roof — a Seychelles-class private island. The filename
+lied and the earlier note was written from the filename and the dimensions
+without opening the file.
+
+That is the `search-asset-families` lesson in its purest form: **look at the
+candidate, never filename-match.** The other 26 free frames are `rc-*` 760×423
+related-card crops (too small for a 1600px master) or `e-*` 1024×1405 portraits
+(the Botswana mistake). Nothing is free for aspen, australia or new-zealand.
 
 **Counting note, corrected 2026-08-13.** Every previous version of this
 handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
@@ -850,6 +858,124 @@ collision surface, the hand loop in the Prompt is still faster.
 
 ---
 
+## What the 2026-08-26 session did — the Anglo three, and four ski mountains
+
+`aspen`, `australia`, `new-zealand` photographed and on `.places-grid--photo`.
+18 cards, **21 credits**, three re-rolls. 48 → 30 cards, 8 → 5 pages. Same
+12-agent workflow shape as the desert batch: 59 findings, 10 blocking, 25
+applied, 6 rejected.
+
+### Four ski mountains in one valley — the hardest page yet
+
+`aspen` has six cards and **four of them are ski mountains a few miles apart**.
+Specced independently they are four photographs of pistes between conifers
+under blue sky, twice per row. The thing that solved it was making recon
+return, for every card, not its obvious subject but **what that place is FOR
+according to its own copy** — the job it does that its siblings do not. From
+that, four axes were forced apart at once and written down:
+
+| | Terrain | Vantage | Hour | Weather |
+|---|---|---|---|---|
+| Aspen Mountain | one steep ungroomed mogul fall line, no apron | 300mm from a bench two miles off | 11:00 | cloudless cobalt, hard cross-light |
+| Highlands | wind-scoured knife ridge, **no piste in frame at all** | standing on the boot track, boot height | 09:30 | hazy, near-monochrome, valley inversion |
+| Snowmass | wide multi-tier groomed fan | close wide-angle at the base | 12:30 | high overcast, shadowless |
+| Buttermilk | one broad shallow convex teaching roll | low and open, 60% empty sky | 15:30 | cumulus, low raking sun |
+
+**The hour table is now load-bearing.** Highlands and Buttermilk were still
+twins after the first pass — both treeless, structureless, near-monochrome, at
+09:30 and 09:20 — and Buttermilk moved, because Highlands' hour is fixed by
+inversion physics while Buttermilk's had been chosen only for snow firmness. If
+a re-roll ever changes one of those four hours or sky states, **re-run the
+four-way comparison before accepting it**. Record the hours next to the prompts.
+
+### Look at the hero: three for three
+
+Third consecutive batch, and this time two of three heroes collided head-on:
+
+- **aspen's hero IS the Maroon Bells** and the page has a card called "Maroon
+  Bells & the Passes". The card went to Independence Pass. Note how the
+  exclusion was finally secured: not by negating the Bells in the prompt but by
+  **fixing the look direction** — facing east-north-east puts them 110 degrees
+  off axis behind the photographer, so they cannot appear.
+- **new-zealand's hero IS a fiord at dawn** and the page has "Queenstown &
+  Fiordland". The card went to the Shotover canyon.
+
+And two cards were echoing a hero by **composition with no shared subject**:
+Tasmania was reassembling australia's hero shape — a free-standing mass on a
+clean horizon — and was rebuilt into three bands with the crest exiting the
+right edge; Rotorua was reassembling the NZ hero's signature of white vertical
+ribbon + horizontal cloud band + dark bush, and became a widening ragged boil
+with diagonal steam.
+
+### Southern-hemisphere months are a live trap
+
+Two blocking findings were solar-geometry errors that only bite below the
+equator or at a named clock time:
+
+- **Sydney at 07:00 AEDT** was specced for side-light and an eastern sea band.
+  At 07:00 the sun is **5.6 degrees** up, not the 20–25 the frame needed. Moved
+  to 08:15 — and removing the horizon to fix the light also dropped australia
+  from four flat-sea-horizon frames to three.
+- **Doha, Al Ain, Ras Al Khaimah and Dubai** in the previous batch and
+  **Buttermilk, Kata Tjuta and Melbourne** in this one all had their month or
+  hour moved because the stated sun elevation and the stated light did not
+  agree. Always state the month, and check the elevation against it.
+
+### Melbourne's limestone is in the cliff FACE, not on top
+
+The draft put karst pavement on the clifftop at Port Campbell. It is not there:
+the limestone is exposed in the cliff and the stacks, and the clifftop is bare
+calcareous sand and heath. Correcting it cascaded — the proposed replacement
+foreground was tussock, which would have been a **third straw foreground on one
+page**, beside Tasmania in the same row and under Kata Tjuta at the two-column
+breakpoint. Weighted to near-white sand instead, leaving Tasmania the only
+hummock-and-cobble moor.
+
+### Accuracy can lose to the text rule
+
+Shotover's jet boats really are red. But a red boat there is one specific
+liveried commercial vessel, and every training image of it carries the
+operator's name in metre-high letters along the hull. **The colour was dropped
+and the hull became plain brushed aluminium**, with the red preserved on the
+passengers' splash jackets. When a true detail is also the strongest attractor
+for lettering, the text rule wins. The helmets went in the same fix — commercial
+jet boats do not use them, and helmet plus spray plus canyon returns a raft crew.
+
+### Three re-rolls
+
+| Card | v1 | Why | v2 |
+|---|---|---|---|
+| Stewart Island | 45 / **84** | torch falloff reached both bottom corners | 63 / **142** |
+| Kimberley | 159 / **95** | shot into the sun, and the vessel's own roof edge cut a dark diagonal across the top | 175 / 119 |
+| Great Barrier Reef | 198 / 214 | **numbers fine, frame wrong** | 197 / 224 |
+
+The Reef is the one worth remembering. Every measurement passed and the picture
+was attractive, but its copy is about *"the liveaboards working the northern
+Ribbon Reefs"* and *"which operator, and how far out they go"* — and what came
+back was a **sailing charter catamaran** with a mast, in inshore-pale water.
+That is the Coastal Route steamer again: no check in this repo can catch a
+frame that contradicts its own copy. Re-specced as a mastless motor dive vessel
+with a flat open aft working deck at the crest.
+
+### The dark-frame rule, now with a second data point
+
+Stewart Island ships at **crop 63, base 142** — the page's only night frame,
+and the second-darkest in the rollout after the Negev's 56. Its copy is about
+kiwi at night on the beach, so night is the claim. **Judge a night card on its
+base band alone; the frame mean is not the test.** Both dark cards that shipped
+did so on a base above 120 while their means were under 65.
+
+### Where the workflow is worth it, refined
+
+Twelve agents, ~46 minutes, 1.47M subagent tokens, zero errors — against ~39
+minutes for the desert batch. Worth it again here because 18 cards collided
+against 30 catalogued live frames plus three heroes. Asking for concepts under
+900 characters also worked: the desert batch returned 800–1400 characters
+stuffed with coordinate notation that had to be compressed by hand, and these
+came back usable with only light trimming.
+
+---
+
 ## What the 2026-08-12 session did
 
 1. Converted the six regional hubs to `--photo` (PR #102, 37 cards).
@@ -1155,7 +1281,7 @@ Two things worth carrying into every later wave:
   after launch. Not a defect.
 - ~~**The experience half of #93.**~~ **Closed 2026-08-24** — 12 of 12 pages
   on `.exp-cards--photo`, 72 of 72 cards. The remaining work is entirely
-  destination-side: **8 pages, 48 cards** as of 2026-08-26 (it said 27/162
+  destination-side: **5 pages, 30 cards** as of 2026-08-26 (it said 27/162
   when the experience half closed; derive it, do not quote it).
 - **M7 is 1 of 26 pages.** Every one is labelled `needs-mark`. The blocker is
   not images — it is page authoring plus two things only Mark can supply:
@@ -1170,7 +1296,7 @@ Two things worth carrying into every later wave:
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
 - **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is **8 pages / 48 cards**,
+  lists 30 pages / 162 images; the real remainder is **5 pages / 30 cards**,
   and its "1 of 163 slots comes free" line no longer holds — 99 came free from
   Drive and 1 more from the repo. Its sequencing argument (A before B) still
   stands. Worth rewriting or deleting once the last pages ship.
