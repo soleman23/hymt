@@ -3893,5 +3893,155 @@
   "b64": "images-b64/assets__img__new-zealand-stewart-island.jpg.b64",
   "target": "public/assets/img/new-zealand-stewart-island.jpg",
   "bytes": 203776
+ },
+ {
+  "b64": "images-b64/assets__img__bhutan-paro-valley.jpg.b64",
+  "target": "public/assets/img/bhutan-paro-valley.jpg",
+  "bytes": 364330
+ },
+ {
+  "b64": "images-b64/assets__img__bhutan-thimphu.jpg.b64",
+  "target": "public/assets/img/bhutan-thimphu.jpg",
+  "bytes": 598470
+ },
+ {
+  "b64": "images-b64/assets__img__bhutan-punakha.jpg.b64",
+  "target": "public/assets/img/bhutan-punakha.jpg",
+  "bytes": 453732
+ },
+ {
+  "b64": "images-b64/assets__img__bhutan-phobjikha-and-gangtey.jpg.b64",
+  "target": "public/assets/img/bhutan-phobjikha-and-gangtey.jpg",
+  "bytes": 382556
+ },
+ {
+  "b64": "images-b64/assets__img__bhutan-bumthang.jpg.b64",
+  "target": "public/assets/img/bhutan-bumthang.jpg",
+  "bytes": 313746
+ },
+ {
+  "b64": "images-b64/assets__img__bhutan-haa-valley.jpg.b64",
+  "target": "public/assets/img/bhutan-haa-valley.jpg",
+  "bytes": 387021
+ },
+ {
+  "b64": "images-b64/assets__img__georgia-armenia-tbilisi.jpg.b64",
+  "target": "public/assets/img/georgia-armenia-tbilisi.jpg",
+  "bytes": 295134
+ },
+ {
+  "b64": "images-b64/assets__img__georgia-armenia-kakheti.jpg.b64",
+  "target": "public/assets/img/georgia-armenia-kakheti.jpg",
+  "bytes": 306704
+ },
+ {
+  "b64": "images-b64/assets__img__georgia-armenia-kazbegi.jpg.b64",
+  "target": "public/assets/img/georgia-armenia-kazbegi.jpg",
+  "bytes": 253615
+ },
+ {
+  "b64": "images-b64/assets__img__georgia-armenia-upper-svaneti.jpg.b64",
+  "target": "public/assets/img/georgia-armenia-upper-svaneti.jpg",
+  "bytes": 534455
+ },
+ {
+  "b64": "images-b64/assets__img__georgia-armenia-yerevan-and-the-ararat-plain.jpg.b64",
+  "target": "public/assets/img/georgia-armenia-yerevan-and-the-ararat-plain.jpg",
+  "bytes": 396781
+ },
+ {
+  "b64": "images-b64/assets__img__georgia-armenia-vayots-dzor-and-tatev.jpg.b64",
+  "target": "public/assets/img/georgia-armenia-vayots-dzor-and-tatev.jpg",
+  "bytes": 293515
+ },
+ {
+  "b64": "images-b64/assets__img__india-delhi.jpg.b64",
+  "target": "public/assets/img/india-delhi.jpg",
+  "bytes": 317552
+ },
+ {
+  "b64": "images-b64/assets__img__india-agra.jpg.b64",
+  "target": "public/assets/img/india-agra.jpg",
+  "bytes": 293025
+ },
+ {
+  "b64": "images-b64/assets__img__india-jaipur.jpg.b64",
+  "target": "public/assets/img/india-jaipur.jpg",
+  "bytes": 452107
+ },
+ {
+  "b64": "images-b64/assets__img__india-udaipur-and-the-lakes.jpg.b64",
+  "target": "public/assets/img/india-udaipur-and-the-lakes.jpg",
+  "bytes": 263615
+ },
+ {
+  "b64": "images-b64/assets__img__india-kerala.jpg.b64",
+  "target": "public/assets/img/india-kerala.jpg",
+  "bytes": 330905
+ },
+ {
+  "b64": "images-b64/assets__img__india-ranthambore.jpg.b64",
+  "target": "public/assets/img/india-ranthambore.jpg",
+  "bytes": 469128
+ },
+ {
+  "b64": "images-b64/assets__img__sri-lanka-sigiriya-and-dambulla.jpg.b64",
+  "target": "public/assets/img/sri-lanka-sigiriya-and-dambulla.jpg",
+  "bytes": 276967
+ },
+ {
+  "b64": "images-b64/assets__img__sri-lanka-anuradhapura-and-polonnaruwa.jpg.b64",
+  "target": "public/assets/img/sri-lanka-anuradhapura-and-polonnaruwa.jpg",
+  "bytes": 343089
+ },
+ {
+  "b64": "images-b64/assets__img__sri-lanka-kandy.jpg.b64",
+  "target": "public/assets/img/sri-lanka-kandy.jpg",
+  "bytes": 283584
+ },
+ {
+  "b64": "images-b64/assets__img__sri-lanka-nuwara-eliya-and-ella.jpg.b64",
+  "target": "public/assets/img/sri-lanka-nuwara-eliya-and-ella.jpg",
+  "bytes": 335141
+ },
+ {
+  "b64": "images-b64/assets__img__sri-lanka-yala-and-wilpattu.jpg.b64",
+  "target": "public/assets/img/sri-lanka-yala-and-wilpattu.jpg",
+  "bytes": 438500
+ },
+ {
+  "b64": "images-b64/assets__img__sri-lanka-galle-and-the-south-coast.jpg.b64",
+  "target": "public/assets/img/sri-lanka-galle-and-the-south-coast.jpg",
+  "bytes": 258703
+ },
+ {
+  "b64": "images-b64/assets__img__vietnam-southeast-asia-hanoi.jpg.b64",
+  "target": "public/assets/img/vietnam-southeast-asia-hanoi.jpg",
+  "bytes": 299900
+ },
+ {
+  "b64": "images-b64/assets__img__vietnam-southeast-asia-ha-long-and-lan-ha-bay.jpg.b64",
+  "target": "public/assets/img/vietnam-southeast-asia-ha-long-and-lan-ha-bay.jpg",
+  "bytes": 281565
+ },
+ {
+  "b64": "images-b64/assets__img__vietnam-southeast-asia-hue.jpg.b64",
+  "target": "public/assets/img/vietnam-southeast-asia-hue.jpg",
+  "bytes": 212829
+ },
+ {
+  "b64": "images-b64/assets__img__vietnam-southeast-asia-hoi-an.jpg.b64",
+  "target": "public/assets/img/vietnam-southeast-asia-hoi-an.jpg",
+  "bytes": 479423
+ },
+ {
+  "b64": "images-b64/assets__img__vietnam-southeast-asia-ho-chi-minh-city-and-the-mekong.jpg.b64",
+  "target": "public/assets/img/vietnam-southeast-asia-ho-chi-minh-city-and-the-mekong.jpg",
+  "bytes": 303041
+ },
+ {
+  "b64": "images-b64/assets__img__vietnam-southeast-asia-siem-reap-and-angkor.jpg.b64",
+  "target": "public/assets/img/vietnam-southeast-asia-siem-reap-and-angkor.jpg",
+  "bytes": 373176
  }
 ]

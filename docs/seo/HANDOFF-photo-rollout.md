@@ -19,14 +19,21 @@ READ FIRST, in this order — do not start work until you have:
   (docs/seo/photography-plan.md and photography-needed.md are both STALE —
    see Open items. Read them only for the A-before-B sequencing argument.)
 
-STATE, re-derived on 2026-08-26 (second session that day):
+STATE, re-derived on 2026-08-26 (third session that day):
+  THE ROLLOUT IS COMPLETE. There is no backlog left to pick up.
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
-  DESTINATIONS — 62 of 68 on .places-grid--photo
-                  5 still on placeholder swatches (6 cards each = 30 cards)
-                  1 (maldives) has no places-grid section at all
-                 62 + 5 + 1 = 68.
-  Higgsfield credits: 1498.
+  DESTINATIONS — DONE. 67 of 67 pages that carry a places-grid are on
+    .places-grid--photo, 386 of 386 cards photographed, zero placeholders.
+    Closed 2026-08-26 with the Asia five. maldives is the 68th page and has
+    no places-grid section at all, so it was never in either bucket.
+  SITE-WIDE — zero `.place-card__ph` and zero `.exp-card__ph` remain.
+  Higgsfield credits: 1462.
+
+  This Prompt is kept for the NEXT page that gets built, not for a backlog.
+  A new destination page ships six placeholder cards; the loop below is how
+  you photograph them. Everything under "Reviewing", "Gotchas" and the
+  per-batch sections is the accumulated failure list and still applies.
 
   jordan and oman came off the list first on 2026-08-25; then the polar four,
   then Latin America, then the islands, then AFRICA & THE INDIAN OCEAN on
@@ -43,12 +50,12 @@ STATE, re-derived on 2026-08-26 (second session that day):
     grep -L 'places-grid--photo' src/content-pages/destinations__*.html \
       | xargs grep -l 'places-grid' | wc -l
 
-WHAT IS LEFT: 30 destination place cards, ~35 credits plus re-rolls against
-  1498. Credits are not the constraint and have not been since 2026-08-12 —
-  concept quality and reviewer time are. jordan and oman took 13 credits for
-  12 cards; polar took 26 for 24; Latin America 27 for 24; the islands 25
-  for 24; Africa & the Indian Ocean 28 for 24; the desert three 22 for 18;
-  the Anglo three 21 for 18. Budget ~1.2 credits per card.
+WHAT IS LEFT: nothing. Credits were never the constraint after 2026-08-12 —
+  concept quality and reviewer time were. Final per-batch spend: jordan and
+  oman 13 credits for 12 cards; polar 26 for 24; Latin America 27 for 24;
+  the islands 25 for 24; Africa & the Indian Ocean 28 for 24; the desert
+  three 22 for 18; the Anglo three 21 for 18; the Asia five 36 for 30.
+  Budget ~1.2 credits per card for any future page.
 
   BATCH BY SHARED VISUAL VOCABULARY, not one page at a time. The polar four
   went together precisely because they collide with each other, and specced
@@ -172,53 +179,52 @@ launch-blocker workstream see `docs/seo/HANDOFF-launch-blockers.md`.
 | | |
 |---|---|
 | Destination pages | **68** |
-| On the photo panel | **62** |
-| Still on placeholders | **5** (30 cards) |
+| On the photo panel | **67 of 67 that carry a grid — 386 cards, closed 2026-08-26** |
+| Still on placeholders | **0** |
 | No places-grid at all | **1** (maldives) |
 | Experience pages | **12 of 12 photographed — closed 2026-08-24** |
 | `/destinations/` index | 65 of 65 photographed, 65 distinct images |
-| Higgsfield credits | **1498** |
+| Higgsfield credits | **1462** |
 
-### The 5 pages still on placeholders
+### There are no pages left on placeholders
+
+The last five — `bhutan`, `georgia-armenia`, `india`, `sri-lanka`,
+`vietnam-southeast-asia` — were photographed on 2026-08-26. Both of these
+now return nothing, and that is the check to run before believing any
+number in this file:
 
 ```
-bhutan georgia-armenia india sri-lanka vietnam-southeast-asia
+grep -rl 'place-card__ph' src/content-pages/
+grep -rl 'exp-card__ph'   src/content-pages/
 ```
 
-Remaining batches, grouped by shared visual vocabulary so cards can be
-specced against each other:
-
-| Batch | Pages |
-|---|---|
-| Asia — the last one | bhutan, sri-lanka, vietnam-southeast-asia, georgia-armenia, india |
-
-Every one needs exactly 6, so the remainder is 30 cards. `jordan` and `oman`
-came off this list on 2026-08-25; `south-africa`, `zambia-victoria-falls`,
-`seychelles` and `vanuatu` on 2026-08-26, `morocco`, `israel` and
-`uae-gulf` later the same day, and `aspen`, `australia` and `new-zealand`
-after them. The four originally named here were
+`jordan` and `oman` came off this list on 2026-08-25; `south-africa`,
+`zambia-victoria-falls`, `seychelles` and `vanuatu` on 2026-08-26, `morocco`,
+`israel` and `uae-gulf` later the same day, then `aspen`, `australia` and
+`new-zealand`, and finally the Asia five. The four originally named here were
 the whole backlog at 43 destination pages; M7 then added 25 more, each shipping
-its own six placeholders. **This is the single number in this file that has
-been wrong most often — derive it.**
+its own six placeholders. **This was the single number in this file that was
+wrong most often — derive it, never quote it.**
 
-Suggested order: **the Asia five are all that is left**, and they are one
-natural batch. **india last within it**: it is `needs-mark`
-blocked on Mark's first-hand line and cost figures, so photographing it
-unblocks nothing.
+**The 27 remaining free frames contain nothing usable, and this was re-checked
+by opening every candidate on 2026-08-26.** Only six clear the intake geometry
+(≥1600px and ≥65% kept in a 3:2 panel), and all six were looked at, not
+filename-matched:
 
-**There are no free frames for these pages. `p-02-north-island.jpg` is a
-trap — do not chase it.** An earlier version of this file said it was 1600×823,
-referenced nowhere, New Zealand, and clear of the intake floor at 77%. The
-first three are true and the fourth is irrelevant, because **the picture is not
-New Zealand**. It is a tropical aerial: turquoise reef, coconut palms, white
-sand, one thatched villa roof — a Seychelles-class private island. The filename
-lied and the earlier note was written from the filename and the dimensions
-without opening the file.
+| Frame | What it actually is |
+|---|---|
+| `p-02-north-island.jpg` | **not New Zealand** — a tropical reef aerial with coconut palms and a thatched villa roof |
+| `i-01-maldives-season-guide.jpg` | a manta ray underwater |
+| `i-02-anniversary-table.jpg` | a candlelit beach dinner table |
+| `i-03-spring-amalfi.jpg` | Amalfi bougainvillea and a lemon terrace |
+| `p-03-four-seasons-bora-bora.jpg` | an overwater villa row |
+| `e-23-wimbledon-pimms.jpg` | **a side-by-side diptych** — two images with a seam down the middle, so it is unusable as one card frame at any size |
 
-That is the `search-asset-families` lesson in its purest form: **look at the
-candidate, never filename-match.** The other 26 free frames are `rc-*` 760×423
-related-card crops (too small for a 1600px master) or `e-*` 1024×1405 portraits
-(the Botswana mistake). Nothing is free for aspen, australia or new-zealand.
+Three of those six filenames name a place the picture is not. That is the
+`search-asset-families` lesson in its purest form: **look at the candidate,
+never filename-match.** The other 21 are `rc-*` 760×435 related-card crops and
+`og-*` 1200×630 social crops (both too small for a 1600px master) or `e-*`
+1024×1405 portraits (the Botswana mistake).
 
 **Counting note, corrected 2026-08-13.** Every previous version of this
 handoff quoted "N of 43" figures that silently summed to 42 — 28+14,
@@ -976,6 +982,133 @@ came back usable with only light trimming.
 
 ---
 
+## What the 2026-08-26 session did — the Asia five, and the rollout closed
+
+`bhutan`, `georgia-armenia`, `india`, `sri-lanka`, `vietnam-southeast-asia`
+photographed and on `.places-grid--photo`. 30 cards, **36 credits**, six
+re-rolls. 30 → 0 cards, 5 → 0 pages. **#93's destination half is closed and
+the site now has zero place-card and zero exp-card placeholders.**
+
+### Every one of the five heroes collided with a card on its own page
+
+Three consecutive batches had found one or two hero collisions. This one was
+**five for five**, and each counts twice because every one of these heroes is
+also that page's regional-hub card:
+
+| Page | Hero is | Card it collided with |
+|---|---|---|
+| bhutan | Taktsang | Paro Valley — its copy opens *"Taktsang is here"* |
+| georgia-armenia | Tbilisi from Narikala at sunset | Tbilisi |
+| india | the Taj Mahal at dawn | Agra — its copy opens *"The Taj Mahal at opening"* |
+| sri-lanka | tea terraces at sunrise | Nuwara Eliya & Ella |
+| vietnam | Ha Long karst in mist | Ha Long & Lan Ha Bay |
+
+The sri-lanka one was **predicted in this file in August** and confirmed by
+looking. If the "open the hero first" step is ever dropped, this is the batch
+to point at.
+
+### The three lenses, run over all 30 concepts at once
+
+Same shape as the desert and Anglo batches: copy-fidelity, twins, render-risk.
+**28 blocking findings between them**, and they barely overlapped — only
+Kakheti's Caucasus snow wall was caught by two lenses independently.
+
+**copy-fidelity was the highest-value lens this time**, because it computed
+sun positions against each subject's actual orientation rather than checking
+that an hour sounded plausible:
+
+- **Gal Vihara's images face south. At 7.94°N in July the sun rises at azimuth
+  68° and sets at 292°, so it never enters the 90–270° window a south face
+  needs — the relief is unlit at every hour of the day.** At the drafted 11:00:
+  93% on the sand at its base, 0% on the subject.
+- **Ngo Mon is the Citadel's south gate**, so mid-June gave it 0% too. The
+  grey-brown brick the whole frame was built on would have sat in flat shade.
+- **Pidurangala is north of Sigiriya**, so the camera sees the rock's NNW face
+  — 0% in February. Moved to a May evening when the sun sets north of west.
+- **November is Delhi's annual air-quality minimum**; "white marble against
+  deep blue sky" is not available that month.
+
+**The rule this adds: for any card whose subject is a wall, a façade or a
+relief, work out which way it faces before choosing the hour.** A landscape
+forgives a wrong hour; a flat vertical surface does not.
+
+### The finding no arithmetic could have produced
+
+Nuwara Eliya was drafted as the World's End escarpment dropping into "a bright
+void of low cloud". The card's own copy says the walk is *"worth the six
+o'clock start — the escarpment at World's End clouds over most mornings by
+nine"*. **The frame was a photograph of the exact condition the copy tells you
+to get up early to beat**, and it simultaneously contradicted its own "the
+southern plains far below". Fixed to the plains visible to a hazy horizon with
+a few cloud shreds below the rim only. No metric sees this; only reading does.
+
+### Six re-rolls, and the two classes worth naming
+
+| Card | v1 | Why | v2 |
+|---|---|---|---|
+| Phobjikha | 146 / **81** | **wrong species** | 178 / 148 |
+| Sigiriya | 127 / **43** | base band — dark canopy at the bottom edge | 165 / 139 |
+| Haa Valley | 143 / 173 | **numbers fine, frame wrong** — came back Austria | 129 / 165 |
+| Agra | 135 / 151 | landmark misrender — a pagoda | 122 / 119 |
+| Hue | 168 / 165 | landmark misrender — the Forbidden City | 184 / 190 |
+| Kandy | 187 / 230 | 40% empty sky, quarter-frame blank paving | 145 / 218 |
+
+- **The species error survived being explicitly guarded against.** Render-risk
+  caught that the draft's *"black head and neck, white body, red crown"* is a
+  **red-crowned crane**, a Japanese bird. I rewrote it — and the model returned
+  a red-crowned crane anyway, in a frost-and-conifer landscape that read
+  Hokkaido, on a Bhutan page with `japan` live on the site. What finally worked
+  was foreclosing it: *"its entire head and its entire long neck are solid
+  black from bill to shoulders, with no white on the neck at all"*. **State the
+  feature that the wrong species cannot have, not the features the right one
+  has.**
+- **Two landmarks misrendered into the wrong country in one batch**, both
+  predicted by render-risk and both from a word rather than a shape. *"Five
+  tiers, each smaller than the one below"* fetched a **pagoda** for the Panch
+  Mahal; the fix was to ban *tier* and say *"every roof is a plain flat
+  horizontal stone slab with a straight square edge, no curve, no upswept
+  corner"*, plus *"broader than it is tall"*. Hue's Ngo Mon came back as the
+  **Meridian Gate of the Forbidden City**, which it is modelled on and which
+  outweighs it hundreds to one in training data; negating features was never
+  going to win, so the subject moved to Thien Mu's seven-storey tower — which
+  the copy supports as part of the same World Heritage complex.
+
+### Two frames shipped that a stricter reviewer would question
+
+Recorded rather than buried, as with `south-africa-garden-route`:
+
+- **`georgia-armenia-yerevan-and-the-ararat-plain`** — rose tuff with Armenian
+  geometric carving, correct for the copy's *"Yerevan is built in pink tuff"*,
+  but it says "Armenia" less loudly than the page's other five. It got there
+  legitimately: the drafted roofscape-with-Ararat was a **composition-only
+  echo of the hero** (same high vantage, same warm lower two-thirds, same hazy
+  band across the top, no shared subject), and going into the Cascade was the
+  fix. The identity cost was the price of not repeating the hero.
+- **`vietnam-southeast-asia-hue`** — a pale octagonal seven-storey tower over
+  the Perfume River. Genuinely Thien Mu's shape, but generic enough that it
+  could pass for a Chinese stone pagoda at card size.
+
+### Verified in the browser, not just greped
+
+All five pages at 1440, 768 and 375: 30 panels at exactly 3:2 at every
+breakpoint, card heights uniform at 584px within every row, `.place-card__arrow`
+baselines aligned per row, zero horizontal overflow, every image 200 and
+decoding at 1600×899, every `alt` and intrinsic dimension present, all lazy,
+zero `.place-card__ph` and zero `.place-card__overlay`. `a.place-card` parses
+as exactly 6 per page — the guard against the nested-anchor bug from `7f4d7b6`.
+
+**Measure loaded-ness with `img.decode()`, not `img.complete`.** Flipping
+`loading` to eager after parse does not force a synchronous fetch, so a
+naive check reported all 30 images "broken" while a HEAD request on every one
+returned 200. The handoff already said to set eager before measuring; that is
+necessary and **not sufficient** — you have to await the decode.
+
+The Browser pane still could not composite, so `computer{action:"screenshot"}`
+timed out exactly as on 2026-08-26. Unchanged: the measurements are the
+verification, a screenshot never was.
+
+---
+
 ## What the 2026-08-12 session did
 
 1. Converted the six regional hubs to `--photo` (PR #102, 37 cards).
@@ -1280,9 +1413,11 @@ Two things worth carrying into every later wave:
   holds a different version of the same subject. Needs a side-by-side call
   after launch. Not a defect.
 - ~~**The experience half of #93.**~~ **Closed 2026-08-24** — 12 of 12 pages
-  on `.exp-cards--photo`, 72 of 72 cards. The remaining work is entirely
-  destination-side: **5 pages, 30 cards** as of 2026-08-26 (it said 27/162
-  when the experience half closed; derive it, do not quote it).
+  on `.exp-cards--photo`, 72 of 72 cards.
+- ~~**The destination half of #93.**~~ **Closed 2026-08-26** with the Asia
+  five — 67 of 67 grids on `.places-grid--photo`, 386 of 386 cards, zero
+  placeholders site-wide. **#93 is fully closeable.** The whole workstream ran
+  2026-08-12 → 2026-08-26 for roughly 240 credits.
 - **M7 is 1 of 26 pages.** Every one is labelled `needs-mark`. The blocker is
   not images — it is page authoring plus two things only Mark can supply:
   a first-hand line (`CONTENT-STANDARDS` § 6) and cost figures. **One sitting
@@ -1296,11 +1431,15 @@ Two things worth carrying into every later wave:
   22 of those subjects now exist. It would send someone hunting for images
   that ship.
 - **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is **5 pages / 30 cards**,
-  and its "1 of 163 slots comes free" line no longer holds — 99 came free from
-  Drive and 1 more from the repo. Its sequencing argument (A before B) still
-  stands. Worth rewriting or deleting once the last pages ship.
-- **No per-page `og:image` on the four pages shipped 2026-08-26** either — they
-  inherit the site default like every other destination, per the item above.
-  The 24 new frames are 1600×899 masters, so an `og-` 1200×630 crop of any of
-  them is a `make-og-crops.mjs` run away whenever that item is picked up.
+  lists 30 pages / 162 images; the real remainder is **zero** — Workstream B
+  is finished. Its "1 of 163 slots comes free" line never held either: 99 came
+  free from Drive and 1 more from the repo. Only its sequencing argument
+  (A before B) still stands. **Now safe to rewrite or delete**, which the last
+  page shipping was the stated condition for.
+- **No per-page `og:image` on any of the pages shipped 2026-08-26** either —
+  they inherit the site default like every other destination, per the item
+  above. All the new frames are 1600×899 masters, so an `og-` 1200×630 crop of
+  any of them is a `make-og-crops.mjs` run away whenever that item is picked
+  up. With the rollout closed, this is now the largest remaining piece of
+  photography-adjacent work: **386 destination cards and 68 heroes exist and
+  not one page sets its own `og:image`.**
