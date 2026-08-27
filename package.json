@@ -2,6 +2,9 @@
   "name": "hym-travel",
   "type": "module",
   "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node tools/restore-images.mjs && node tools/verify-checks.test.mjs && node tools/verify-deployment.mjs",

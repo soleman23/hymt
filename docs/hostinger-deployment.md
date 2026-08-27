@@ -4,17 +4,53 @@ The deliverable is a static site: 122 pages plus a custom 404 (123 built HTML
 files), ready to serve. Derive that rather than trusting it —
 `grep -o "<loc>" dist/sitemap-0.xml | wc -l` — every count in this file has
 rotted at least once.
-Edit the Astro source, run `npm run build`, and upload `dist/`.
+The production source of truth is `soleman23/hymt`. Hostinger builds the static
+Astro site from GitHub and serves the generated `dist/` directory.
 
 ---
 
-## Deploy the static site (≈15 minutes)
+## Deploy the static site
 
-### 1. Upload
-1. Hostinger hPanel → **Files → File Manager** → open `public_html`.
-2. Delete Hostinger's default `index.php`/placeholder files.
-3. Upload `hymtravel-static-site.zip` into `public_html`.
-4. Right-click the zip → **Extract**. The contents (`index.html`, folders like `destinations/`, `assets/`, `sitemap.xml`, `robots.txt`) must sit **directly inside `public_html`** — not in a subfolder. Delete the zip afterward.
+### 1. GitHub deployment (primary)
+
+Keep the site on `brown-goose-754147.hostingersite.com` until its staging gate
+passes. In hPanel, the web app settings must be:
+
+| Setting | Required value |
+|---|---|
+| Repository | `soleman23/hymt` |
+| Branch | `main`, after the intended release PRs are merged |
+| Framework | Astro |
+| Node.js | 22.x (also pinned in `package.json`) |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+Use the website dashboard's **Change repository** flow if hPanel names any
+other repository. Review the overwrite warning, then start a new deployment.
+Record the deployed commit SHA and retain the full successful build log.
+
+The 2026-08-27 audit found the temporary site connected to the obsolete
+`soleman23/hymtwebsite` repository at `acbba39b`; its three 2026-07-30 rebuilds
+all failed with a Rollup native-module/GLIBC error. Do not patch or deploy that
+repository as a substitute for switching the source to `soleman23/hymt`.
+
+After the deployment, confirm that the temporary URL serves that exact commit,
+then run `npm run verify:remote`. Inspect `.htaccess`, `robots.txt`, the sitemap,
+the two Wix migration redirects, and at least one version-specific page/title.
+Changing the repository is tracked and gated in #114.
+
+### 1a. Manual upload (fallback only)
+
+Use this only if Hostinger's GitHub deployment is unavailable and record why in
+the launch issue. Do not alternate between GitHub deployments and manual files;
+that makes the deployed commit and stale-file behavior unknowable.
+
+1. Build locally with Node 22: `npm ci && npm run build`.
+2. Hostinger hPanel → **Files → File Manager** → open `public_html`.
+3. Upload a zip containing the **contents** of `dist/`.
+4. Extract it directly into `public_html`; do not leave an extra `dist` folder.
+5. Confirm hidden file `public_html/.htaccess` exists and read a deployed file
+   back before treating the upload as successful.
 
 (Alternative: FTP with the credentials in hPanel → Files → FTP Accounts.)
 
@@ -45,9 +81,9 @@ Edit the Astro source, run `npm run build`, and upload `dist/`.
 
 ### 1b. Purge the CDN cache
 
-**Uploading is not deploying.** Hostinger fronts the site with a CDN
+**A completed build or upload is not proof of fresh edge content.** Hostinger fronts the site with a CDN
 (`server: hcdn`), and static assets are cached at the edge. After any upload
-that changes an image, font or stylesheet, purge the CDN cache in hPanel or
+or deployment that changes an existing image, font or stylesheet URL, purge the CDN cache in hPanel or
 visitors keep getting the old file.
 
 Two clean `582/582` uploads on 2026-08-18 changed nothing that anyone could

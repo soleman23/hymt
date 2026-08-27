@@ -86,6 +86,10 @@ http and https, in one, and that is what makes it survive the DNS change.
 
 ### 1.3 Snapshot Wix and stage the complete Hostinger zone
 
+Prerequisite: #114 is complete. The temporary Hostinger web app must already be
+deploying `soleman23/hymt` successfully; do not attach the production domain to
+the obsolete `hymtwebsite` source or a failed build.
+
 - [ ] Set the TTL on the `hymtravel.com` A/CNAME records to **300 seconds** at
       least 48 hours before cutover. This is the single most useful thing you
       can do to make the web switch reversible. After the seven-day stability
@@ -143,9 +147,11 @@ record is not carried across, the Domain property silently unverifies and the
 Nothing proceeds until all of these pass.
 
 ### 2.1 Build gates
-- [ ] `npm install && npm run build`
+- [ ] With Node 22, `npm ci && npm run build`
 - [ ] `node tools/verify-deployment.mjs` — zero failures
 - [ ] `npm run verify:remote` against the staging host — zero failures
+- [ ] hPanel names `soleman23/hymt` / `main`; its deployed SHA matches the
+      intended release commit and its build log is successful (#114)
 - [ ] All Phase 0–3 tasks in `SEO-AIO-PLAN.md` complete
 
 ### 2.2 Crawl the staging site
@@ -268,9 +274,12 @@ Budget two hours including checks. Do not do this on a Friday.
 - [ ] `node tools/set-journal-dates.mjs --date <today's date>` — stamps
       `publishDate` on every journal post per DECISIONS.md D6 (posts are
       dated the day they go live; never backdate). Commit the result.
-- [ ] `git pull && npm install && npm run build`
+- [ ] Merge every approved release change into `main`; record the release SHA
+- [ ] With Node 22, `git pull && npm ci && npm run build`
 - [ ] `node tools/verify-deployment.mjs` clean
-- [ ] Upload `dist/` to Hostinger `public_html` (see `docs/hostinger-deployment.md`)
+- [ ] In hPanel, deploy that exact `soleman23/hymt` `main` SHA using Astro,
+      build command `npm run build`, and output directory `dist`
+- [ ] Retain the successful Hostinger build log and confirm the deployed SHA
 - [ ] `npm run verify:remote` clean
 - [ ] Confirm `public/.htaccess` landed and is not being ignored
 
