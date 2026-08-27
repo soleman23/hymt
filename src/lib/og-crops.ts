@@ -89,6 +89,7 @@ export const OG_CROPS: Record<string, string> = {
   "/assets/img/jh-16-empty-piazza-shoulder.jpg": "/assets/img/og-jh-16-empty-piazza-shoulder.jpg",
   "/assets/img/jh-17-planning-desk-window.jpg": "/assets/img/og-jh-17-planning-desk-window.jpg",
   "/assets/img/jh-18-balcony-partial-sea-view.jpg": "/assets/img/og-jh-18-balcony-partial-sea-view.jpg",
+  "/assets/img/jh-19-aspen-winter-core-dusk.jpg": "/assets/img/og-jh-19-aspen-winter-core-dusk.jpg",
   "/assets/img/middle-east-georgia-and-armenia.jpg": "/assets/img/og-middle-east-georgia-and-armenia.jpg",
   "/assets/img/middle-east-israel.jpg": "/assets/img/og-middle-east-israel.jpg",
   "/assets/img/middle-east-uae-and-the-gulf.jpg": "/assets/img/og-middle-east-uae-and-the-gulf.jpg",

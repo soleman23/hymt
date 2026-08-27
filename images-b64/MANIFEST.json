@@ -5963,5 +5963,10 @@
   "b64": "images-b64/assets__img__xf-jh-11-augusta-azalea-hole.jpg.b64",
   "target": "public/assets/img/xf-jh-11-augusta-azalea-hole.jpg",
   "bytes": 210212
+ },
+ {
+  "b64": "images-b64/assets__img__og-jh-19-aspen-winter-core-dusk.jpg.b64",
+  "target": "public/assets/img/og-jh-19-aspen-winter-core-dusk.jpg",
+  "bytes": 104262
  }
 ]

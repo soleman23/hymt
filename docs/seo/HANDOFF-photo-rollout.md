@@ -1464,14 +1464,27 @@ Two things worth carrying into every later wave:
   `napa-sonoma-the-valley-floor`. No layout changed — the table is keyed by
   hero, which the three section layouts already look up.
 
-  Measured in a clean build: **111 of the 122 pages carrying an `og:image` ship
-  their own crop, and destinations is 68 of 68.** The 11 left on the crest
+  Measured in a clean build: **112 of the 122 pages carrying an `og:image` ship
+  their own crop, and destinations is 68 of 68.** The 10 left on the crest
   plate have no hero to crop — the 7 utility pages (`/`, `/about`, `/contact`,
-  `/faq`, `/plan-your-trip`, `/privacy-policy`, `/terms-and-conditions`), the
-  3 section indexes (`/destinations`, `/experiences`, `/travel-journal`), and
-  `travel-journal/aspen-book-early`, which still carries its `NEEDS IMAGE`
-  comment. **That is the floor.** No page gains a share card until it gains a
-  picture, so there is nothing further to pick up here.
+  `/faq`, `/plan-your-trip`, `/privacy-policy`, `/terms-and-conditions`) and
+  the 3 section indexes (`/destinations`, `/experiences`, `/travel-journal`).
+  **That is the floor.** No page gains a share card until it gains a picture,
+  so there is nothing further to pick up here.
+
+  **Corrected 2026-08-26.** This read *111 of 122* and listed an eleventh page,
+  `travel-journal/aspen-book-early`, as one "which still carries its
+  `NEEDS IMAGE` comment". That was wrong when written, and it filed a real gap
+  under the floor where nobody would look for it. The page had already taken a
+  hero — `jh-19-aspen-winter-core-dusk.jpg`, 1600x900, ratio 1.78, comfortably
+  over `MIN_SOURCE_RATIO` — and `grep 'NEEDS IMAGE'` on it returns nothing.
+  What was missing was only the crop, which a plain
+  `node tools/make-og-crops.mjs` cut with no `HERO_FALLBACK` entry and no
+  editorial call. **A page whose picture has arrived is not part of the
+  floor.** Count a page as blocked from its `image:` field, never from prose
+  written about it earlier — this claim survived three rewrites of the
+  surrounding numbers because each rewrite re-derived the counts and left the
+  sentence beside them alone.
 
   Two rules if you ever add a fourth stand-in. **It must assert less about
   place than the hero it replaces, never more** — Willamette's first draft used
