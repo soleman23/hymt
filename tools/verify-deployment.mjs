@@ -956,8 +956,8 @@ for (const file of htmlFiles) {
       fail("page-length",
         `${url} body copy is ${n} words, over the ${DEST_MAX_WORDS} ceiling in ` +
           `CONTENT-STANDARDS § 3.4 by ${n - DEST_MAX_WORDS}. Cut, do not pad — ` +
-          `the built set runs 1,215–3,402 and the template pages sit at ` +
-          `India 3,225 / Italy 3,269.`);
+          `the built set runs 1,365–3,438 across 59 country pages and the ` +
+          `template pages sit at India 3,305 / Italy 3,235.`);
     }
   }
 

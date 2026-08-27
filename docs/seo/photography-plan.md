@@ -89,6 +89,71 @@ Italy six regional ones. Unlike the hubs, there is no library to draw on: hub
 cards pointed at sub-destinations that already owned a hero, which is why 18 of
 those 37 slots came free. Here only 1 of 163 does.
 
+### Workstream C — the "Trips We Plan Often" tiles
+
+> Added 2026-08-26. This workstream did not exist in the 2026-08-12 plan, and
+> that omission is the finding: A and B between them cover heroes and place
+> cards, so 280 unfilled slots on 75 pages sat outside every count in this
+> document while both other workstreams were declared finished.
+
+The featured-itinerary tile beside each trip's copy. It renders through **two**
+card families under the identical `<h2>Trips We Plan Often</h2>`, which is why
+a grep for one finds 87% of the problem and stops:
+
+| Family | Slot | Pages | Tiles | Crop | Prefix |
+|---|---|---|---|---|---|
+| `.itin-image` | destination pages | 66 | 244 | 600×1000 (9:16 master) | `ni-` |
+| `.event-image` | experiences pages | 9 | 36 | 600×700 (3:4 master) | `ev-` |
+
+```bash
+# every page carrying the heading, and what is still a plate on it
+grep -rlo 'Trips We Plan Often' dist --include='*.html' | wc -l   # 74
+grep -rho 'class="itin-image"'  dist --include='*.html' | wc -l   # itin plates
+grep -rho 'class="event-image"' dist --include='*.html' | wc -l   # event plates
+```
+
+Four destination pages carry the same `.itin-card` section under a **different
+heading** — `antarctica` and `polar-regions` ("Expeditions We Plan Often"),
+`svalbard` ("Voyages and Weeks We Plan Often") and `sri-lanka` ("Four Ways
+Round the Island"). Count by the card class, never by the heading.
+
+**Generated, not reused.** Of 884 tracked images, 18 were referenced nowhere and
+all 18 are landscape `rc-`/`e-` tiles — nothing portrait, nothing square. Every
+destination's own slug family is already fully consumed by its place cards, so
+reusing would have put each photograph on the page twice, four times over.
+Cost was 1.5 credits per frame on `seedream_v5_pro` at 1.5k, ~420 for the set,
+against a balance of 1,458.
+
+Prompts and alt text for all 280 are tracked in
+[`tools/itin-brief.json`](../../tools/itin-brief.json);
+[`tools/make-itin-crops.mjs`](../../tools/make-itin-crops.mjs) builds both crop
+boxes from the 9:16 and 3:4 masters in `tools/itin-masters/` (gitignored, same
+rule as `tools/hero-masters/`).
+
+### The last fifteen, and the two that stay
+
+The same pass closed every other plate on the site — 8 related-article
+thumbnails, 2 Maldives stay cards, 4 in-article images and the
+`/travel-journal/aspen-book-early/` hero. Six of the eight thumbnails cost
+nothing: a related card should show the post it links to, and `jc-jh-03/14/17`
+were already built for the journal index.
+
+Two things are left on purpose.
+
+- **`/contact/` — "Portrait Photography / Mark Sole".** A real, named person.
+  A generated likeness of someone is not a photograph of them, so this needs a
+  real headshot from Mark. It is the one plate a tool cannot close.
+- **`/destinations/` — "Iceberg Photography".** Not a plate. It is a Greenland
+  activity tag beside "Icefjord" and "Dog Sledding", and it is correct copy.
+
+**The plate is now a check, not a convention.** `PLACEHOLDER_PATTERNS` in
+`tools/content-checks.mjs` fails any page shipping `Destination`, `Experience`,
+`Itinerary`, `Journey`, `Event`, `Article` or `Atoll Photography` as visible
+copy. It is a fixed list of nouns rather than `/\w+ Photography/` **because of
+the Greenland tag** — the general form reads better and would fail that page
+forever. Add `Portrait` the day Mark's headshot lands; do not reach for the
+general pattern.
+
 ## Sequencing: A before B
 
 Three reasons, in order of weight:

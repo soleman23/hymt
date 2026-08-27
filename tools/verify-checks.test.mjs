@@ -256,6 +256,44 @@ t("placeholder: NEEDS MARK in visible copy fails",
 t("placeholder: the pre-existing tokens still fail",
   phHits(`<p>TBD</p>`), 1);
 
+/* The unfilled photo plate. These are the exact shapes that shipped: the
+   .itin-image plate on 66 destination pages, its "Journey Photography" wording
+   variant, and the .event-image plate on the nine experiences pages. All three
+   were invisible to every check for as long as they existed. */
+t("placeholder: an unfilled .itin-image plate fails",
+  phHits(`<div class="itin-image" style="background:#1a1610">Itinerary Photography<br>Tuscany &amp; Amalfi · Italy</div>`), 1);
+
+t("placeholder: the Journey Photography wording of the same plate fails",
+  phHits(`<div class="itin-image" style="background:#141a10">Journey Photography<br>Napa Harvest Week</div>`), 1);
+
+t("placeholder: an unfilled .event-image plate fails",
+  phHits(`<div class="event-image" style="background:#141a1e">Event Photography<br>Family Resort · Riviera Maya</div>`), 1);
+
+/* …and the filled slot passes, which is the half that proves the check is
+   measuring the plate and not the word "photograph" or the card class. */
+t("placeholder: the same slot carrying a photograph passes",
+  phHits(`<div class="itin-image itin-image--photo"><img class="itin-image__img" src="/assets/img/ni-europe-amalfi-coast-terrace.jpg" alt="A table set with wine and lemons on an Amalfi Coast terrace above the sea" width="600" height="1000" loading="lazy" decoding="async"></div>`), 0);
+
+t("placeholder: an unfilled .stay-card__image plate fails",
+  phHits(`<div class="stay-card__image" style="background:#102830">Atoll Photography<br>Baa Atoll UNESCO</div>`), 1);
+
+t("placeholder: an unfilled in-article .post-image__ph plate fails",
+  phHits(`<span class="post-image__ph">Article Photography<br>Okavango Delta · Floodplains Rising</span>`), 1);
+
+/* Prose about photography is not a plate, and neither is a destination tag.
+   This is why the token list is a fixed alternation rather than
+   /\w+ Photography/: /destinations/ ships "Iceberg Photography" as a Greenland
+   activity beside "Icefjord" and "Dog Sledding", and the general pattern would
+   fail that page over correct copy. If this fixture ever goes red, someone has
+   widened the token list to the general form — put it back. */
+t("placeholder: ordinary copy mentioning photography passes",
+  phHits(`<p>Mark books a photography guide for the Serengeti crossing.</p>`), 0);
+
+t("placeholder: the Greenland card's Iceberg Photography activity tag passes",
+  phHits(`<div class="dest-card__tags"><span class="dest-tag">Icefjord</span>` +
+         `<span class="dest-tag">Dog Sledding</span>` +
+         `<span class="dest-tag">Iceberg Photography</span></div>`), 0);
+
 /* ── blank-link-rel (SEC-5) ── */
 
 t("blank-rel: target=_blank with no rel at all fails",
@@ -1319,14 +1357,16 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      src/content-pages/destinations__<slug>.html returns, because that is the
      file an author opens when this check goes red. If these drift, the
      predicate has started measuring something else. */
-  /* 3269 until the intro panel took a photograph: the placeholder plate's
-     "Destination Photography / …" span was visible text and counted, and the
-     caption changed length with it. The invariant above was re-checked at the
-     new number — bodyWords(dist) still equals a word count of
+  /* 3269 until the intro panel took a photograph, then 3260; 3235 since the
+     four featured-itinerary tiles took theirs. Both times the reason is the
+     same: an unfilled photo slot renders its own caption as visible text, so
+     removing the plate removes words. Italy's four "Itinerary Photography /
+     Rome & Tuscany" plates were 25 of them. The invariant above was re-checked
+     at each new number — bodyWords(dist) still equals a word count of
      src/content-pages/destinations__italy.html — so this is the copy moving,
      not the predicate. */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3260);
+    bodyWords(italy), 3235);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");

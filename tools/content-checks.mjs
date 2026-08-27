@@ -45,6 +45,24 @@ export const PLACEHOLDER_PATTERNS = [
   ["XXX", /\bXXX\b/],
   ["Placeholder", /placeholder/i],
   ["NEEDS FIGURE / NEEDS MARK", /\bNEEDS (?:FIGURE|MARK)\b/],
+  /* An unfilled photo slot renders its own caption as visible copy — a flat
+     colour plate reading "Itinerary Photography / Tuscany & Amalfi". 295 of
+     them shipped, 280 in the "Trips We Plan Often" section alone, while every
+     check stayed green: none of the tokens above appear in that wording, and
+     the sweep that closed the first two plate families grepped for the two
+     nouns it already knew rather than counting `<Noun> Photography`.
+
+     A LIST OF NOUNS, NOT /\w+ Photography/. The general form looks obviously
+     better and is wrong: /destinations/ ships
+     `<span class="dest-tag">Iceberg Photography</span>` on the Greenland card,
+     beside "Icefjord" and "Dog Sledding". That is a real activity, correct
+     copy, and the general pattern would fail that page forever.
+
+     One noun is deliberately absent. /contact/ still plates "Portrait
+     Photography / Mark Sole" — a real, named person, whose headshot has to be
+     a photograph OF HIM. Add Portrait here the day that image lands. */
+  ["Unfilled photo plate",
+   /\b(?:Destination|Experience|Itinerary|Journey|Event|Article|Atoll) Photography\b/],
 ];
 
 /**

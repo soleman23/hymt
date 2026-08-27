@@ -399,6 +399,12 @@
   font-family:var(--font-d);font-size:9px;font-weight:600;
   letter-spacing:.14em;text-transform:uppercase;color:rgba(138,155,176,.25);
 }
+/* Photo variant, same shape as .itin-image--photo above. The plate itself has
+   no overflow or positioning context — it never needed one to centre a line of
+   text — so both come with the modifier rather than being added to the base
+   rule, where they would do nothing for the unfilled cards. */
+.stay-card__image--photo { position:relative;overflow:hidden }
+.stay-card__img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover }
 .stay-card__body { padding:24px }
 .stay-card__atoll {
   font-family:var(--font-d);font-size:9px;font-weight:700;
