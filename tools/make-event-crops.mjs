@@ -62,8 +62,11 @@ const SOURCES = [
   ["ev", "e-24-augusta-masters-flag.jpg"],
   ["ev", "e-32-monaco-harbour-dusk.jpg"],
   ["ev", "e-22-heli-ski-landing.jpg"],
-  /* /experiences/ featured block */
+  /* /experiences/ featured block. e-16 built the safari block the featured
+     slot carried until the Masters field report took it over; it stays
+     listed so the crop survives a --force rebuild if the slot swaps back. */
   ["xf", "e-16-safari-vehicle-sunrise.jpg"],
+  ["xf", "jh-11-augusta-azalea-hole.jpg"],
 ];
 
 const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));

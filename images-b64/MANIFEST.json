@@ -5958,5 +5958,10 @@
   "b64": "images-b64/assets__img__ev-wellness-retreat-travel-tulum-cenote-light.jpg.b64",
   "target": "public/assets/img/ev-wellness-retreat-travel-tulum-cenote-light.jpg",
   "bytes": 71216
+ },
+ {
+  "b64": "images-b64/assets__img__xf-jh-11-augusta-azalea-hole.jpg.b64",
+  "target": "public/assets/img/xf-jh-11-augusta-azalea-hole.jpg",
+  "bytes": 210212
  }
 ]
