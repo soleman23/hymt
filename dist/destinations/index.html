@@ -133,43 +133,6 @@ a.dest-card:hover .dest-card__desc { max-height:60px;opacity:1 }
   padding:32px 0 0;
 }
 
-/* COMPARE */
-.compare-section {
-  padding:80px 52px;background:var(--bg-surface);
-  border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);
-}
-.compare-header { margin-bottom:48px }
-.compare-title {
-  font-family:var(--font-d);font-size:clamp(24px,2.8vw,36px);font-weight:700;
-  letter-spacing:-.02em;color:var(--text-primary);margin-bottom:10px;
-}
-.compare-sub {
-  font-family:var(--font-b);font-size:15px;color:var(--text-secondary);
-  line-height:1.6;max-width:52ch;
-}
-.compare-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:3px }
-.compare-card {
-  background:var(--bg-elevated);border:1px solid var(--border-subtle);
-  padding:36px 32px;transition:border-color .2s;
-}
-.compare-card:hover { border-color:var(--border-gold) }
-.compare-card__vs {
-  font-family:var(--font-d);font-size:17px;font-weight:700;
-  letter-spacing:-.01em;color:var(--text-primary);margin-bottom:10px;
-}
-.compare-card__desc {
-  font-family:var(--font-b);font-size:13px;color:var(--text-secondary);
-  line-height:1.65;margin-bottom:20px;
-}
-.compare-card__cta {
-  font-family:var(--font-d);font-size:10px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--gold-500);
-  display:inline-flex;align-items:center;gap:8px;
-  background:none;border:none;cursor:pointer;padding:0;transition:gap .15s;
-}
-.compare-card__cta:hover { gap:14px }
-.compare-card__cta::after { content:'→' }
-
 /* FINAL CTA */
 .final-cta {
   padding:96px 52px;background:var(--bg-page);
@@ -211,10 +174,9 @@ a.dest-card:hover .dest-card__desc { max-height:60px;opacity:1 }
 
 @media(max-width:900px){
   .dest-grid{grid-template-columns:repeat(2,1fr)}
-  .compare-grid{grid-template-columns:1fr}
   .final-cta{grid-template-columns:1fr;gap:40px}
   .final-cta__aside{padding-left:0;border-left:none;flex-direction:row;flex-wrap:wrap;gap:28px;border-top:1px solid var(--border-gold);padding-top:28px}
-  .page-hero__content,.dest-section,.compare-section,.final-cta{padding-left:28px;padding-right:28px}
+  .page-hero__content,.dest-section,.final-cta{padding-left:28px;padding-right:28px}
   .filter-bar__inner{padding:0 20px}
 }
 @media(max-width:540px){
@@ -1309,33 +1271,6 @@ a.dest-card:hover .dest-card__desc { max-height:60px;opacity:1 }
   </div>
 
   <p class="dest-empty" id="destEmpty" hidden>No destinations in this region yet.</p>
-</section>
-
-
-<!-- ══ COMPARE SECTION ══ -->
-<section class="compare-section">
-  <div class="compare-header">
-    <div class="label" style="margin-bottom:12px">Can't Decide?</div>
-    <h2 class="compare-title">Destination Comparisons</h2>
-    <p class="compare-sub">Still weighing your options? These are the comparisons we're asked most often — and the answers are almost never what people expect.</p>
-  </div>
-  <div class="compare-grid">
-    <div class="compare-card">
-      <div class="compare-card__vs">Maldives vs. Seychelles</div>
-      <p class="compare-card__desc">Both in the Indian Ocean — One is built for overwater living, the other for island exploration. The differences run deeper than most guides suggest — the right choice depends on whether you want seclusion or discovery.</p>
-      <a class="compare-card__cta" href="/plan-your-trip/">Ask Mark</a>
-    </div>
-    <div class="compare-card">
-      <div class="compare-card__vs">St. Barth's vs. Turks &amp; Caicos</div>
-      <p class="compare-card__desc">French sophistication or effortless family ease? Both deliver exceptional beaches and first-class hotels — but the atmosphere and logistics are entirely different. Worth a conversation before you book either.</p>
-      <a class="compare-card__cta" href="/plan-your-trip/">Ask Mark</a>
-    </div>
-    <div class="compare-card">
-      <div class="compare-card__vs">Amalfi Coast vs. French Riviera</div>
-      <p class="compare-card__desc">Mediterranean culture or Mediterranean glamour? Each has the cliff roads, the blue water, and the impossibly good food. The right choice is entirely personal — and the wrong choice is still a very good trip.</p>
-      <a class="compare-card__cta" href="/plan-your-trip/">Ask Mark</a>
-    </div>
-  </div>
 </section>
 
 
