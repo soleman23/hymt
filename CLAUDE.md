@@ -134,10 +134,11 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never ship "Lorem ipsum", "TBD", "Coming soon", or a placeholder image.
 
 ### Never do
-- Never reference a prior website, platform, or migration for this domain.
-  This was launched as a fresh site: no redirect maps for legacy paths, no
-  Change-of-Address submissions, no "old site" assumptions — in code, docs,
-  prompts, or commit messages. Unknown paths 404 by design.
+- Never carry Wix code, pages, hosting, or runtime dependencies into this site.
+  This is a same-domain platform migration from Wix to Hostinger: preserve
+  confirmed legacy URL equity with explicit Hostinger-side redirects, but do
+  not submit Search Console Change of Address because the domain is unchanged.
+  Unknown, unconfirmed paths still 404 by design.
 - Never add `AggregateRating` to HYMT-controlled reviews.
 - Never add `WebSite`+`SearchAction` sitelinks-searchbox markup (deprecated).
 - Never chase `FAQPage` or `HowTo` rich results — they no longer render.

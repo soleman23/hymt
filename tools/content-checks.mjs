@@ -823,6 +823,28 @@ export function htaccessGaps(text) {
     .join("\n");
   const out = [];
 
+  /* Same-domain Wix migration paths. These are deliberately absolute and
+     precede the structural host/protocol rules in public/.htaccess so an old
+     URL never pays for a redirect chain. */
+  const legacyRedirects = [
+    ["terms-conditions", "https://www.hymtravel.com/terms-and-conditions/"],
+    ["trips", "https://www.hymtravel.com/travel-journal/"],
+  ];
+  const firstStructuralRule = live.search(/^\s*RewriteCond\s+%\{(?:HTTP_HOST|HTTPS)\}/mi);
+  for (const [from, want] of legacyRedirects) {
+    const m = new RegExp(`^\\s*RewriteRule\\s+\\^${from}/\\?\\$\\s+(\\S+)\\s+\\[([^\\]]+)\\]`, "mi").exec(live);
+    if (!m) out.push(`legacy redirect /${from} is missing`);
+    else {
+      if (m[1] !== want) out.push(`legacy redirect /${from} points at ${m[1]}, expected ${want}`);
+      if (!/(?:^|,)R=301(?:,|$)/i.test(m[2]) || !/(?:^|,)L(?:,|$)/i.test(m[2])) {
+        out.push(`legacy redirect /${from} must be a terminating 301`);
+      }
+      if (firstStructuralRule !== -1 && m.index > firstStructuralRule) {
+        out.push(`legacy redirect /${from} must precede the host/protocol rules to avoid a redirect chain`);
+      }
+    }
+  }
+
   for (const [name, value] of HTACCESS_SECURITY_HEADERS) {
     const re = new RegExp(`^\\s*Header\\s+(?:always\\s+)?set\\s+${name}\\s+"([^"]*)"`, "mi");
     const m = re.exec(live);

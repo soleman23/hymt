@@ -16,7 +16,7 @@ cp -r /path/to/unzipped/docs/seo docs/seo
 
 # 2. Commit it
 git add docs/seo
-git commit -m "Add SEO + AIO program docs (fresh launch)"
+git commit -m "Add SEO + AIO program docs (same-domain migration)"
 git push
 ```
 
@@ -36,9 +36,9 @@ Do not modify any existing content in either file. Commit as
 ```
 
 This is the step that makes the rules permanent: every future Claude Code
-session in this repo reads `CLAUDE.md` automatically, including the fresh-launch
-rule (never reference a prior website, platform, or migration for this domain)
-and the per-page standards.
+session in this repo reads `CLAUDE.md` automatically, including the same-domain
+migration rule (no Wix runtime dependency, preserve confirmed legacy URLs, and
+no Search Console Change of Address) and the per-page standards.
 
 ## Step 3 — Run the phases
 
@@ -215,8 +215,10 @@ monthly targets live in `docs/seo/KEYWORD-MAP.md` § 3.
 Once Step 2 is done, `CLAUDE.md`/`AGENTS.md` carry the standing rules into
 every future session automatically. The three that matter most:
 
-1. **Fresh launch, permanently.** No prior website, platform, or migration is
-   ever referenced for this domain. Unknown paths 404 by design.
+1. **Same-domain migration, permanently.** Wix is not part of the new runtime;
+   confirmed legacy paths receive Hostinger-side 301s, unknown paths 404, and
+   Search Console Change of Address is never submitted for this unchanged
+   domain.
 2. **The verifier is the law.** Every machine-checkable standard lives in
    `tools/verify-deployment.mjs` and fails the build. If a rule matters and
    is not in the verifier, adding it there is the fix.
