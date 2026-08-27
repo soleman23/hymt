@@ -7,6 +7,12 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Same-domain Wix migration redirects. Keep these before the structural
+  # host/protocol rules so every old URL reaches its canonical replacement in
+  # one hop, including http:// and apex requests.
+  RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
+  RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+
   # Force apex → www.hymtravel.com (the canonical host used by every
   # <link rel="canonical">, og:url and sitemap entry on the site).
   # Scoped to hymtravel.com on purpose: a blanket www rule would send

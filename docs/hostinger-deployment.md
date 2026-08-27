@@ -101,8 +101,31 @@ rename's own commit: anything in `images-b64/MANIFEST.json` at the previous
 deployed commit whose `target` is absent now is a candidate.
 
 ### 2. Point the domain
-- If `hymtravel.com` is registered **at Hostinger**: hPanel → Domains → assign to this hosting plan. Done.
-- If registered elsewhere (e.g. GoDaddy/Namecheap): either change nameservers to Hostinger's (shown in hPanel → Domains → DNS) — simplest — or create an **A record** pointing `@` and `www` to your hosting IP (hPanel → Hosting Details).
+
+`hymtravel.com` currently uses Wix for registration, DNS and the production
+website. The final state is complete Wix separation, but website cutover, DNS
+delegation and registrar transfer are separate gates:
+
+1. Attach `hymtravel.com` to this existing Hostinger site. Record the exact
+   nameservers and web target shown in this site's hPanel; never infer them from
+   the shared `hostingersite.com` preview hostname.
+2. Export or screenshot the complete Wix zone privately. Clone every record
+   into Hostinger: all five Google Workspace MX records with priorities, SPF,
+   DMARC, GSC verification, any DKIM/CAA/SRV records, and every discovered
+   subdomain. Query each Hostinger authoritative nameserver directly and diff
+   its answers against Wix before delegation.
+3. Lower the current Wix web-record TTLs to 300 at least 48 hours ahead. This
+   improves web-record rollback but does not shorten parent nameserver caches;
+   a delegation change can still take 24–48 hours.
+4. At cutover, point the Wix-hosted web records to the exact Hostinger target
+   first. Verify the Hostinger site, SSL, redirects, forms and production robots
+   behavior, then change the registrar nameservers to Hostinger. Keeping both
+   zones equivalent prevents resolvers on old and new delegation paths from
+   seeing different mail or verification records.
+5. Keep Wix hosting and its DNS zone intact through the rollback window. After
+   Hostinger DNS, SSL, Google Workspace and GSC have been stable for at least
+   seven days, transfer the registrar to Hostinger. Only then cancel Wix and
+   remove the Wix site.
 
 ### 3. SSL (HTTPS)
 hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://www.hymtravel.com` loads with the padlock.
@@ -178,7 +201,10 @@ staging host and make three working forms look broken.
 ### 5. Post-launch
 - Google Search Console → add property → submit `https://www.hymtravel.com/sitemap-index.xml` (the build generates `sitemap-index.xml` + `sitemap-0.xml`; there is no `sitemap.xml` anymore).
 - `robots.txt` is already in place.
-- Email: set up mark@hymtravel.com in hPanel → Emails (or point MX to Google Workspace if you prefer Gmail).
+- Email remains on Google Workspace. Preserve all five MX records, SPF, DMARC,
+  GSC verification, and the Google Admin DKIM selector if one exists. Test both
+  inbound and outbound mail, including SPF/DKIM/DMARC results in message
+  headers, before and after nameserver delegation.
 
 ---
 

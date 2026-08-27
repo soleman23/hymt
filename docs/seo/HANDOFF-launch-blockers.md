@@ -270,22 +270,27 @@ must-revalidate` and comes back `DYNAMIC`, i.e. never edge-cached — so stale
 HTML means the upload did not happen, not that the CDN is holding it. The purge
 only ever matters for `/assets/` and `/_astro/`.
 
-Per CLAUDE.md this changes **nothing** about the launch plan: no redirect maps,
-no Change-of-Address, no legacy-path assumptions. It is recorded here only
-because it silently invalidates verification steps.
+This is a same-domain migration from a live Wix site. It changes the launch
+plan in two ways: confirmed Wix URLs need Hostinger-side redirects, and the
+existing search property must remain verified. Search Console Change of
+Address still does not apply because the domain is unchanged.
 
 ### 2. Nameservers are not Hostinger's
 
-`hymtravel.com` uses `ns4/ns5.wixdns.net`. Runbook § 4.2 says to point the A
-record and www CNAME "at Hostinger per hPanel" — **that cannot be done in hPanel
-while the nameservers are elsewhere.** Whoever executes § 4.2 needs to resolve
-this first, and § 1.2's DNS TXT for GSC has to go at the *current* host.
+`hymtravel.com` uses `ns4/ns5.wixdns.net`. Complete separation requires a staged
+Hostinger zone and then a registrar-level nameserver change. Before delegation,
+copy every Wix record into Hostinger, query both Hostinger nameservers directly,
+and put the GSC TXT in both zones. Use a synchronized cutover: point the Wix web
+records at Hostinger first, verify the site, then change nameservers. Parent NS
+caches can keep the transition split for 24–48 hours.
 
 ### 3. MX is live Google Workspace
 
-Five records, `aspmx.l` plus `alt1`–`alt4`, with an SPF TXT. #99's warning about
-MX is not theoretical: a nameserver move that drops them kills Mark's email
-silently. Snapshot before touching anything.
+Five records, `aspmx.l` plus `alt1`–`alt4`, with SPF and DMARC TXT records.
+#99's warning about MX is not theoretical: a nameserver move that drops them
+kills Mark's email silently. Export the complete Wix zone, check Google Admin
+for a non-obvious DKIM selector, clone the zone in Hostinger, and test inbound
+and outbound mail before touching delegation.
 
 ### 4. The CDN cache — uploading is not deploying
 

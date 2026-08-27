@@ -1132,6 +1132,12 @@ t("place-alt: an unrelated region is still kept in the reverse direction",
 /* ── htaccess-headers ── */
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored
+<IfModule mod_rewrite.c>
+  RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
+  RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+  RewriteCond %{HTTP_HOST} ^hymtravel\.com$ [NC]
+  RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
+</IfModule>
 <IfModule mod_headers.c>
   SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
@@ -1145,6 +1151,22 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
+
+t("htaccess: a missing legacy redirect is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
+
+t("htaccess: a legacy redirect with the wrong target is caught",
+  htaccessGaps(HT_GOOD.replace("https://www.hymtravel.com/travel-journal/", "https://www.hymtravel.com/")).length, 1);
+
+t("htaccess: a temporary legacy redirect is caught",
+  htaccessGaps(HT_GOOD.replace("[R=301,L,NE]", "[R=302,L,NE]")).length, 1);
+
+t("htaccess: legacy redirects below structural rules are caught",
+  htaccessGaps(HT_GOOD
+    .replace(/^\s*RewriteRule \^(?:terms-conditions|trips).*\n/gm, "")
+    .replace("</IfModule>", `  RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
+  RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+</IfModule>`)).length, 2);
 
 /* THE false-positive guard. `immutable` appears 4x in the real file today and
    every one is a comment explaining why it was removed (#107). A predicate
@@ -1192,10 +1214,11 @@ t("htaccess: no CSP header at all is one offender, not eleven",
 t("htaccess: an ENFORCING CSP satisfies the check as well as report-only",
   htaccessGaps(HT_GOOD.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy")).length, 0);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 8:
-   the 4 security headers, both staging lines, the CSP once, the cache once. */
-t("htaccess: an empty file reports all 8 gaps and does not throw",
-  htaccessGaps("").length, 8);
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 10:
+   both migration redirects, the 4 security headers, both staging lines, the
+   CSP once, and the cache once. */
+t("htaccess: an empty file reports all 10 gaps and does not throw",
+  htaccessGaps("").length, 10);
 
 /* ── photo-grid (#93) ── */
 

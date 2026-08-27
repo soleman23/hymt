@@ -1,14 +1,16 @@
-# HYMT Launch Runbook — DNS cutover to production
+# HYMT Launch Runbook — Wix-to-Hostinger production migration
 
 **Going live:** the Astro build in `soleman23/hymt`, deployed to Hostinger,
 on `https://www.hymtravel.com`
 **Staging:** `https://brown-goose-754147.hostingersite.com`
 
-This is a **fresh launch**. The domain is treated as brand new: no legacy URLs
-to redirect, no prior properties to migrate, no baseline to preserve.
-Measurement starts from zero on launch day. Do not add redirect maps,
-Change-of-Address submissions, or any "old site" assumptions to this
-runbook — there is no old site in scope.
+This is a **same-domain platform migration**. Wix currently serves the
+production domain; the Astro site will replace it on Hostinger without carrying
+forward any Wix page, code, hosting, or runtime dependency. Preserve confirmed
+Wix URLs with Hostinger-side 301 redirects and keep the existing Domain property
+verified. Do not submit Search Console Change of Address because the hostname is
+unchanged. New-site analytics measurement starts on launch day; existing search
+history does not reset.
 
 Read this whole document before starting. The cutover itself takes about an
 hour of work plus DNS propagation; the preparation is what determines whether
@@ -18,11 +20,12 @@ it goes well.
 
 ## 0. The shape of this launch
 
-A static site going live on its domain in one step. Because nothing is
-being carried over, the entire risk profile is forward-looking: **getting every
-page discovered, crawled and indexed properly, from nothing.** Weight the
-post-launch indexing work accordingly — that is where launches like this
-succeed or fail.
+A static site, DNS authority and registrar move off Wix in separate gates. The
+website cutover and nameserver delegation happen in a synchronized window;
+registrar transfer happens only after at least seven stable days. The risk is
+both forward-looking and continuity-sensitive: **get every new page discovered
+while preserving the small set of URLs, mail records and verification records
+already attached to the domain.**
 
 > **The page count is derived, never quoted.** It moves whenever M7 lands
 > another destination page — it went 94 → 96 → 97 while this runbook still
@@ -46,10 +49,9 @@ succeed or fail.
 > (2026-08-17) it was 98 built pages / 97 sitemap URLs.** That line is dated
 > because it is a snapshot, not a criterion.
 
-Unknown paths on the domain 404 by design. The custom `/404.html` and the
-`.htaccess` `ErrorDocument` rule handle that; anything a search engine may have
-associated with the domain historically simply drops out on its own. That is
-the intended behaviour, not a gap.
+Unknown, unconfirmed paths on the domain 404 by design. Confirmed Wix paths are
+different: each must have an equivalent route or an explicit 301 fixture. The
+custom `/404.html` and `.htaccess` `ErrorDocument` rule handle everything else.
 
 ---
 
@@ -73,20 +75,43 @@ only as good as the property being live before there is anything to watch.
 http and https, in one, and that is what makes it survive the DNS change.
 
 1. [ ] GSC → Add property → **Domain** → `hymtravel.com` → copy the TXT record
-2. [ ] Add the TXT at the **current** DNS host — not at Hostinger, unless
-       Hostinger is already the DNS host today. Verify.
-3. [ ] Bing Webmaster Tools → **Import from GSC** (do not verify separately)
-4. [ ] Confirm the staging host appears in **neither**. Do not verify or submit
+2. [ ] Add the TXT at the **current Wix DNS host** and verify it there
+3. [ ] Add the identical TXT to the staged Hostinger zone and query each
+       assigned Hostinger nameserver directly before delegation
+4. [ ] Bing Webmaster Tools → **Import from GSC** (do not verify separately)
+5. [ ] Confirm the staging host appears in **neither**. Do not verify or submit
        `hostingersite.com` anywhere, ever.
-5. [ ] Record the TXT value in the table in § 1.3 — it is part of the rollback
+6. [ ] Record the TXT value in the private snapshot described in § 1.3 — it is part of the rollback
        picture, not just a setup step
 
-### 1.3 Lower the DNS TTL
+### 1.3 Snapshot Wix and stage the complete Hostinger zone
+
 - [ ] Set the TTL on the `hymtravel.com` A/CNAME records to **300 seconds** at
       least 48 hours before cutover. This is the single most useful thing you
-      can do to make the switch reversible. Raise it back to 3600 a week after.
-- [ ] Record the current DNS values (A, CNAME, MX, TXT) somewhere safe. They
-      are the rollback.
+      can do to make the web switch reversible. After the seven-day stability
+      window, raise the **authoritative Hostinger web-record TTLs** to 3600;
+      leave the Wix rollback zone unchanged until it is retired.
+- [ ] Record the timestamp when the 300-second values are publicly visible. #32
+      cannot begin until 48 hours after that timestamp.
+- [ ] Export or screenshot the **complete Wix DNS zone** somewhere private and
+      durable. Public DNS cannot enumerate a zone, so a resolver snapshot alone
+      is not sufficient.
+- [ ] In hPanel, attach `hymtravel.com` to the existing Hostinger site. Record
+      the exact nameservers and web destination hPanel assigns. Never infer them
+      from the shared `hostingersite.com` preview hostname or its CDN IPs.
+- [ ] Clone every Wix record into Hostinger before delegation: A, AAAA, every
+      CNAME and subdomain, all five Google Workspace MX records with priorities,
+      every TXT record, SPF, DMARC, the GSC verification TXT, any DKIM selector,
+      CAA and SRV records, plus the current DNSSEC state.
+- [ ] Query **each** Hostinger authoritative nameserver directly and diff its
+      answers against Wix. Only the intentional web-target differences may
+      remain.
+- [ ] Send and receive a baseline Google Workspace message and retain the
+      headers showing SPF/DKIM/DMARC results.
+
+Lowering A/CNAME TTL does **not** lower the parent delegation or cached NS TTL.
+The current Wix nameserver TTL has been observed as high as 86,400 seconds, so
+nameserver propagation and rollback must be treated as a 24–48-hour event.
 
 #### The rollback table — fill this in before touching anything
 
@@ -94,16 +119,18 @@ Keep this filled in **outside the repo as well** (the repo is public). What
 matters is that these values exist somewhere retrievable at 2am, not that they
 live here.
 
-| Record | Type | Current value | TTL | Noted on |
-|---|---|---|---|---|
-| `@` | A | | | |
-| `www` | A / CNAME | | | |
-| `@` | MX | | | |
-| `@` | TXT (SPF) | | | |
-| `@` | TXT (GSC verification, § 1.2) | | | |
-| Nameservers | NS | | | |
-| Registrar | — | | — | |
-| DNS host (if different) | — | | — | |
+| Record set | Required fields in the private snapshot |
+|---|---|
+| `@` A / AAAA | Every value, TTL |
+| `www` and every subdomain | Name, type, value, TTL |
+| `@` MX | One row per target: priority, value, TTL |
+| All TXT | Name, exact private value, TTL; include SPF and GSC |
+| DKIM / DMARC | Selector or name, value, TTL; confirm against Google Admin |
+| CAA / SRV | Name, flags/priority/weight/port, value, TTL |
+| Nameservers / SOA | Every value, TTL, serial and timing fields |
+| DNSSEC | DS/DNSKEY state and migration decision |
+| Registrar / DNS host | Provider, lock status, account owner and noted-on timestamp |
+| Hostinger target | Exact hPanel web destination and both assigned nameservers |
 
 **The GSC TXT row is the one people forget.** If the nameservers move and that
 record is not carried across, the Domain property silently unverifies and the
@@ -200,26 +227,35 @@ confirming the numbers still hold. See #95.
 
 ## 3. Redirect posture
 
-There is no redirect map. This is deliberate.
+The live Wix sitemap exposes four production URLs. Two already have equivalent
+new routes (`/` and `/privacy-policy`); two require explicit migration rules in
+`public/.htaccess`:
 
-The only redirects on this site are the structural ones already in
-`public/.htaccess`: HTTP→HTTPS, apex→www, and the pretty-directory rule
-(`/about` → `/about/`). Verify each is a **single hop** — chained redirects
-leak equity and are entirely avoidable:
+| Wix path | Hostinger destination |
+|---|---|
+| `/terms-conditions` | `/terms-and-conditions/` |
+| `/trips` | `/travel-journal/` |
+
+These rules run before HTTP→HTTPS and apex→www so every old URL reaches its
+canonical destination in a **single hop**. The structural pretty-directory rule
+still handles `/privacy-policy` → `/privacy-policy/`. Chained redirects leak
+equity and are entirely avoidable:
 
 ```bash
 # after deploying to staging, against the staging host
-for u in /about /about/ /destinations/italy /nonexistent; do
+for u in /about /about/ /destinations/italy /privacy-policy \
+         /terms-conditions /trips /nonexistent; do
   printf '%-24s ' "$u"
   curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' \
     "https://brown-goose-754147.hostingersite.com$u"
 done
 ```
 
-Expect `301 → /about/` for the bare paths, `200` for the canonical forms, and
-`404` for the last. If anyone proposes adding legacy-path redirects later,
-the answer is: this was launched as a fresh site, unknown paths 404, and that
-is the design.
+Expect `301` to the canonical destinations for the bare and Wix paths, `200`
+for canonical forms, and `404` for the last. The build verifier asserts both
+Wix mappings so they cannot silently disappear. Add future legacy rules only
+for URLs confirmed by crawl data, backlinks or search-console evidence;
+unknown, unconfirmed paths still 404 by design.
 
 ---
 
@@ -238,16 +274,10 @@ Budget two hours including checks. Do not do this on a Friday.
 - [ ] `npm run verify:remote` clean
 - [ ] Confirm `public/.htaccess` landed and is not being ignored
 
-### 4.2 Switch DNS (T-0)
-- [ ] Point `hymtravel.com` A record and `www` CNAME at Hostinger per hPanel
-- [ ] Enable free SSL in hPanel; wait for the certificate to issue
-- [ ] Confirm the certificate covers **both** `hymtravel.com` and
-      `www.hymtravel.com`
+### 4.1b Purge the CDN cache — **a deploy alone does not change what is served**
 
-### 4.2b Purge the CDN cache — **a deploy alone does not change what is served**
-
-- [ ] hPanel → purge / clear the CDN cache **after** the upload, **before** any
-      verification below
+- [ ] hPanel → purge / clear the CDN cache **after** the upload and **before**
+      changing DNS or performing any production verification
 
 This is not optional and it is not belt-and-braces. On 2026-08-18 two clean
 `582/582` deploys changed nothing a visitor could see, because Hostinger's edge
@@ -256,15 +286,37 @@ on non-content-addressed image URLs) is fixed in `public/.htaccess`, but **the
 entries already in the cache are not evicted by fixing the header** — and the
 same will be true of any future asset change.
 
-Verify with a **GET**, never a HEAD:
+Verify with a **GET**, never a HEAD. Before DNS changes, use the staging host:
 
 ```bash
-curl -s -D - -o /dev/null https://www.hymtravel.com/assets/img/<some-image>.jpg \
+curl -s -D - -o /dev/null \
+  https://brown-goose-754147.hostingersite.com/assets/img/<some-image>.jpg \
   | grep -i "x-hcdn-cache-status\|content-length"
 ```
 
 A `HEAD` reaches origin and will happily report the new file while every real
 visitor is still served the old one. That mistake cost an hour; see #107.
+
+### 4.2 Switch the website, then delegate DNS (T-0)
+
+Do not combine these into one blind change. During nameserver propagation,
+resolvers will use both the old Wix zone and the new Hostinger zone. They must
+serve the same website, mail and verification state.
+
+- [ ] Confirm the private zone export, direct Hostinger-NS diff, Google Workspace
+      baseline and 48-hour TTL gate in § 1.3 are complete
+- [ ] In the **current Wix zone**, point the apex and `www` web records at the
+      exact Hostinger destination shown for this site in hPanel
+- [ ] Enable/request free SSL in hPanel; wait for the certificate to issue
+- [ ] Confirm the certificate covers **both** `hymtravel.com` and
+       `www.hymtravel.com`
+- [ ] Verify the unique Hostinger-build title, critical routes, redirects,
+      forms and production crawler behavior through the public domain
+- [ ] At the Wix registrar, replace `ns4/ns5.wixdns.net` with the exact
+      Hostinger nameservers recorded in § 1.3
+- [ ] Query the parent delegation plus every old and new authoritative
+      nameserver. Web, MX, SPF, DKIM, DMARC and GSC answers must remain
+      equivalent throughout propagation.
 
 ### 4.3 Verify propagation (T+15 to T+60)
 
@@ -350,14 +402,35 @@ done
 - [ ] Any directory listing
 - [ ] Business cards and print collateral (note for the next reprint)
 
+### 4.7 Complete registrar separation after the rollback window
+
+Do not couple registrar transfer to launch-day DNS delegation. After the site,
+Hostinger DNS, SSL, Google Workspace mail and GSC have been stable for at least
+seven days:
+
+- [ ] Unlock the domain at Wix and obtain the transfer authorization/EPP code
+- [ ] Transfer the domain registration to Hostinger while retaining the already
+      working Hostinger nameservers
+- [ ] Verify registrar, renewal, contacts, nameservers, DNS, mail and GSC again
+- [ ] Only then cancel Wix hosting/subscriptions and remove the Wix site
+
 ---
 
 ## 5. Rollback
 
-If something is badly wrong in the first hours, revert the DNS records to the
-values captured in § 1.3. With a 300-second TTL you are back within about ten
-minutes. Nothing else needs undoing — the Astro build and the Hostinger
-deployment are untouched and simply stop being reachable.
+Keep Wix hosting and the old Wix DNS zone intact through the rollback window.
+There are two different rollback paths:
+
+1. **Fast website rollback:** change the Hostinger zone's web records back to
+   the captured Wix values. Also change the still-authoritative Wix web records
+   if delegation is incomplete. A 300-second web TTL makes this path fast for
+   resolvers using the edited zone.
+2. **Delegation rollback:** change the registrar nameservers back to the captured
+   Wix values. This is a slow fallback: cached NS and parent-delegation data can
+   take 24–48 hours to converge. Never promise a ten-minute nameserver rollback.
+
+Do not cancel Wix, delete its site, transfer the registrar, or remove its DNS
+zone until the seven-day stability gate in § 4.7 is complete.
 
 **Do not roll back for:** a slow start in impressions (expected — the site is
 starting from zero), pages showing as `Discovered – currently not indexed`
