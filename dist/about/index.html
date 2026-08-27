@@ -45,6 +45,19 @@
   position:relative;background:var(--bg-card);min-height:500px;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
+/* The copy column runs ~1040px tall. Stretching the panel to match forced
+   object-fit:cover to crop ~39% of the portrait's width away, which read as
+   a tight zoom on Mark. Hold the panel at the source ratio (900x1086) so
+   nothing is cropped, and stick it under the 76px nav so the shorter panel
+   travels with the reader instead of leaving a dead band beneath it.
+   Scoped above the 900px breakpoint: below it the panel is a wide band
+   whose crop is already tuned by object-position. */
+@media (min-width:901px) {
+  .story__photo {
+    align-self:start;aspect-ratio:900/1086;
+    position:sticky;top:76px;
+  }
+}
 /* #87: was a 2.6 MB PNG background-image; now a lazy JPEG the panel can defer. */
 .story__photo-img {
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -54,8 +67,13 @@
   letter-spacing:.16em;text-transform:uppercase;color:rgba(138,155,176,.3);
   text-align:center;padding:20px;
 }
+.story__photo::after {
+  content:'';position:absolute;left:0;right:0;bottom:0;height:150px;
+  background:linear-gradient(180deg,rgba(8,15,26,0),rgba(8,15,26,.8));
+  pointer-events:none;
+}
 .story__photo-caption {
-  position:absolute;bottom:24px;left:24px;right:24px;
+  position:absolute;z-index:1;bottom:24px;left:24px;right:24px;
   font-family:var(--font-d);font-size:9px;font-weight:700;
   letter-spacing:.16em;text-transform:uppercase;color:var(--gold-700);
 }
@@ -261,7 +279,7 @@ body.theme-light .pull-quote__text { color:var(--navy-800) }
 }
 </style><link rel="stylesheet" href="/_astro/index.C2S6bIDu.css"></head> <body class="theme-dark"> <a class="skip-link" href="#main">Skip to content</a> <nav class="nav" id="nav"> <a href="/"><img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52" decoding="async"></a> <ul class="nav__links" id="navLinks"> <li> <a class="nav__link" href="/experiences/">Experiences</a> </li><li> <a class="nav__link" href="/destinations/">Destinations</a> </li><li> <a class="nav__link" href="/about/" style="color:var(--gold-400);border-bottom-color:var(--gold-500)">About</a> </li><li> <a class="nav__link" href="/travel-journal/">Travel Journal</a> </li><li> <a class="nav__link" href="/contact/">Contact</a> </li> </ul> <a href="/plan-your-trip/" class="nav__cta">Plan My Trip</a> <button class="nav__mobile-toggle" id="mobileToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button> </nav> <script type="module">const n=document.getElementById("nav");window.addEventListener("scroll",()=>{n?.classList.toggle("scrolled",window.scrollY>60)},{passive:!0});const t=document.getElementById("mobileToggle"),o=document.getElementById("navLinks");t?.addEventListener("click",()=>{const e=document.body.classList.toggle("nav-open");t.setAttribute("aria-expanded",String(e))});o?.querySelectorAll("a").forEach(e=>e.addEventListener("click",()=>document.body.classList.remove("nav-open")));</script> <main id="main">  <!-- ══ PAGE HERO ══ -->
 <section class="page-hero">
-  <div class="page-hero__bg" style="background-image:url('/assets/img/u-02-agency-lifestyle.jpg');background-size:cover;background-position:center"></div>
+  <div class="page-hero__bg"></div>
   <img src="/assets/logo.png" class="page-hero__watermark" alt="" aria-hidden="true" width="256" height="256" decoding="async">
   <div class="page-hero__overlay"></div>
   <div class="page-hero__content">
