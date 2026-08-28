@@ -55,7 +55,9 @@ import {
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
-import { satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss } from "./repo-checks.mjs";
+import {
+  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, crDefect, isBinaryDistFile,
+} from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 
 /* ── internal-link-floor ── */
@@ -1692,10 +1694,10 @@ t("node-floor: process.version's leading v is optional",
   satisfiesNodeRange(">=22.12.0", "24.16.0"), true);
 
 t("node-floor: a version parses to its three numbers",
-  parseNodeVersion("v24.16.0").join("."), "24.16.0");
+  parseNodeVersion("v24.16.0")?.join("."), "24.16.0");
 
 t("node-floor: a prerelease suffix is dropped by the parser",
-  parseNodeVersion("v23.0.0-nightly20260101abc").join("."), "23.0.0");
+  parseNodeVersion("v23.0.0-nightly20260101abc")?.join("."), "23.0.0");
 
 /* ── lockfile-metadata ── */
 
@@ -1791,6 +1793,65 @@ t("lockfile: stripping libc from the real lockfile is caught on every entry",
     for (const p of Object.values(stripped.packages)) delete p.libc;
     return stripped;
   })()).length, REAL_LIBC);
+
+/* ── dist-line-endings ── */
+
+/* dist/ is stored `-text`, so a CR in built output is a byte Git keeps and the
+   deploy uploads. 123 of the 133 committed dist files used to carry mixed
+   endings and every rebuild flipped an arbitrary subset of them; one PR
+   changing a single page carried 82. */
+
+t("dist-eol: clean text has no defect",
+  crDefect("<html>\n<body>\n</body>\n</html>\n"), null);
+
+t("dist-eol: empty content has no defect",
+  crDefect(""), null);
+
+t("dist-eol: a single CRLF is caught",
+  JSON.stringify(crDefect("a\r\nb")), JSON.stringify({ count: 1, firstLine: 1 }));
+
+t("dist-eol: the reported line is where the first CR is, not the first line",
+  JSON.stringify(crDefect("a\nb\nc\r\nd")), JSON.stringify({ count: 1, firstLine: 3 }));
+
+/* The shape that made git treat ExperienceLayout.astro as binary, and the one
+   a count of CRLF pairs would miss. */
+t("dist-eol: a lone CR is caught, not only CRLF",
+  JSON.stringify(crDefect("a\rb")), JSON.stringify({ count: 1, firstLine: 1 }));
+
+t("dist-eol: every CR is counted, not just the first",
+  crDefect("a\r\nb\r\nc\r\n")?.count, 3);
+
+t("dist-eol: reads Buffers byte-exactly, the way the verifier passes them",
+  JSON.stringify(crDefect(Buffer.from("a\r\nb", "utf8"))),
+  JSON.stringify({ count: 1, firstLine: 1 }));
+
+t("dist-eol: a CR inside a line counts, not only at a line end",
+  crDefect("<p>one\rtwo</p>")?.count, 1);
+
+/* Which files get read as text. Unknown extension means check it: a text type
+   nobody listed is how the churn would come back unnoticed, and a binary type
+   nobody listed fails loudly and is a one-line fix. */
+t("dist-eol: html is text",       isBinaryDistFile("dist/index.html"), false);
+t("dist-eol: css is text",        isBinaryDistFile("dist/_astro/a.css"), false);
+t("dist-eol: xml is text",        isBinaryDistFile("dist/sitemap-0.xml"), false);
+t("dist-eol: .htaccess is text",  isBinaryDistFile("dist/.htaccess"), false);
+t("dist-eol: jpg is binary",      isBinaryDistFile("dist/assets/img/a.jpg"), true);
+t("dist-eol: woff2 is binary",    isBinaryDistFile("dist/fonts/a.woff2"), true);
+t("dist-eol: extensions match case-insensitively",
+  isBinaryDistFile("dist/assets/img/A.JPG"), true);
+t("dist-eol: a file with no extension is treated as text",
+  isBinaryDistFile("dist/CNAME"), false);
+t("dist-eol: an unlisted extension is treated as text",
+  isBinaryDistFile("dist/app.js"), false);
+
+/* Against the build's real output, which by the time these run has just been
+   written by astro. A predicate that stops matching what the build emits fails
+   here rather than in review. */
+t("dist-eol: the built home page is LF",
+  crDefect(readFileSync(path.join(ROOT, "dist", "index.html"))), null);
+
+t("dist-eol: the built .htaccess is LF — the file that failed the build",
+  crDefect(readFileSync(path.join(ROOT, "dist", ".htaccess"))), null);
 
 /* ── report ── */
 if (failures.length) {

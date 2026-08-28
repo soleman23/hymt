@@ -190,6 +190,27 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
   versions and two install shapes all kept the field — so treat the check as a
   tripwire, not as an explanation of the cause.
 
+### Line endings
+
+- Source is **LF everywhere** — `.gitattributes` sets `* text=auto eol=lf`.
+  `dist/**` stays `-text` below it, so built output is stored and deployed
+  byte-for-byte. `tools/verify-deployment.mjs` fails on any CR byte in a
+  `dist/` text file, which keeps the two halves honest.
+- **Attributes only apply on checkout.** A working tree that predates this —
+  any branch not yet merged with `main` — still holds CRLF source on disk, and
+  building from it puts CRLF straight back into `dist/`. Git will not fix it
+  for you: `git checkout-index --force` skips files it thinks are up to date.
+  On a clean tree, renormalize first and then build:
+
+  ```bash
+  git rm --cached -r . && git reset --hard
+  ```
+
+- A build is now deterministic: rebuilding an unchanged tree leaves `dist/`
+  byte-identical. If a rebuild you did not expect shows up as a diff, that is
+  a real change or a stale working tree, not noise — read it rather than
+  reverting it.
+
 ### Before every commit
 - `npm run build` must pass. It is self-contained: the Node preflight
   (`tools/check-node.mjs`), astro build, then the image restore

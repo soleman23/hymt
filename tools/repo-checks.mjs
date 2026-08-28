@@ -93,3 +93,50 @@ export function lockfileMetadataLoss(before, after) {
   }
   return losses;
 }
+
+/* Built output that is not text. Everything else under dist/ gets read as
+   text and checked for CR bytes, so a file type that appears later and is not
+   listed here fails loudly rather than going unchecked — the wrong way round
+   would let the churn back in silently. Adding an extension is a one-line fix;
+   a missed text type is another 82-file diff. */
+const BINARY_DIST_EXTENSIONS = new Set([
+  "jpg", "jpeg", "png", "webp", "avif", "gif", "ico", "svgz",
+  "woff", "woff2", "ttf", "otf", "eot",
+  "pdf", "mp4", "webm", "mov", "zip", "gz", "br",
+]);
+
+/**
+ * Is this dist/ path one of the binary outputs?
+ *
+ * A file with no extension counts as text, deliberately: unknown means check
+ * it. `dist/.htaccess` reads as extension "htaccess" and is checked, which is
+ * the point — it is the file whose 11 LF lines failed the build.
+ */
+export function isBinaryDistFile(file) {
+  const ext = /\.([A-Za-z0-9]+)$/.exec(file)?.[1]?.toLowerCase();
+  return ext ? BINARY_DIST_EXTENSIONS.has(ext) : false;
+}
+
+/**
+ * CR bytes in built output.
+ *
+ * dist/ is stored `-text`, so whatever the build writes is what Git keeps and
+ * what the deploy uploads. Once source is pinned to LF the build has one
+ * input, and any CR reappearing in the output means something upstream went
+ * back to writing CRLF. Before this check, 123 of the 133 committed dist files
+ * carried mixed endings and each rebuild flipped an arbitrary subset.
+ *
+ * Read as latin1 so the scan is byte-exact rather than codepoint-exact.
+ *
+ * @returns {{count: number, firstLine: number}|null} null when clean
+ */
+export function crDefect(content) {
+  const s = typeof content === "string" ? content : content.toString("latin1");
+  const first = s.indexOf("\r");
+  if (first === -1) return null;
+  let count = 0;
+  for (let i = 0; i < s.length; i++) if (s.charCodeAt(i) === 13) count++;
+  let firstLine = 1;
+  for (let i = 0; i < first; i++) if (s.charCodeAt(i) === 10) firstLine++;
+  return { count, firstLine };
+}

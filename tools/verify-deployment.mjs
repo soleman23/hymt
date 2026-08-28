@@ -28,7 +28,7 @@ import {
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
-import { lockfileMetadataLoss } from "./repo-checks.mjs";
+import { lockfileMetadataLoss, crDefect, isBinaryDistFile } from "./repo-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
    drift from the convention in tools/git-lastmod.mjs. */
 import { localDay } from "./git-lastmod.mjs";
@@ -1157,6 +1157,42 @@ notes.push(
     } else {
       notes.push(`package-lock.json keeps its platform metadata on ${Object.keys(working.packages ?? {}).length} entries`);
     }
+  }
+}
+
+/* ── 4d. Built output stays LF ──
+   dist/ is stored `-text`: what the build writes is what Git keeps and what
+   the deploy uploads byte-for-byte. That is only safe while the build's inputs
+   are stable, which `* text=auto eol=lf` in .gitattributes now makes them.
+
+   This check is the half that notices if they stop being stable. Before it,
+   123 of the 133 committed dist files carried mixed endings, every rebuild
+   flipped whichever subset had changed hands since the last one, and one PR
+   changing a single page carried 82 of them. It also caught a real failure:
+   public/.htaccess was CRLF while its committed dist/ copy had 11 LF lines, so
+   `npm run verify` failed on a clean checkout for two files that were
+   identical apart from line endings. */
+{
+  const distText = await walk(DIST, (f) => !isBinaryDistFile(f));
+  const offenders = [];
+  for (const file of distText) {
+    const defect = crDefect(readFileSync(file));
+    if (defect) offenders.push({ file, ...defect });
+  }
+  for (const o of offenders) {
+    fail("dist-line-endings",
+      `${rel(o.file)} carries ${o.count} CR byte${o.count === 1 ? "" : "s"}, first on line ${o.firstLine}`);
+  }
+  if (offenders.length) {
+    hints.push(
+      "dist/ is committed byte-for-byte, so a CR here becomes a diff on every rebuild that\n" +
+      "     writes it back the other way. The cause is upstream: check that .gitattributes still\n" +
+      "     carries `* text=auto eol=lf`, and that your working tree honours it — attributes only\n" +
+      "     apply on checkout, so files already on disk keep their old endings until something\n" +
+      "     rewrites them. `git rm --cached -r . && git reset --hard` on a clean tree re-checks\n" +
+      "     everything out, after which a rebuild produces LF.");
+  } else {
+    notes.push(`${distText.length} dist text files, all LF`);
   }
 }
 
