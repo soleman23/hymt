@@ -853,6 +853,10 @@ t("csp: the hash is base64 sha256 with the CSP prefix",
 t("csp: an inline script yields one hash",
   inlineScriptHashes(`<script>var x = 1;</script>`).length, 1);
 
+t("csp: inline script extraction normalises CRLF through cspScriptHash",
+  inlineScriptHashes(`<script>var a = 1;\r\nvar b = 2;\r\n</script>`).join(),
+  inlineScriptHashes(`<script>var a = 1;\nvar b = 2;\n</script>`).join());
+
 t("csp: type=module inline scripts are hashed like any other",
   inlineScriptHashes(`<script type="module">import x from "y";</script>`).length, 1);
 
@@ -1440,14 +1444,12 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     imgRatioMismatches(italy, realDims).length, 0);
 
   /* Exercise a real executable body without assuming the checkout's line
-     endings. Windows builds may preserve CRLF here while Hostinger's Linux
-     clone emits LF. The unit fixtures above prove those inputs hash alike;
-     this assertion proves the real body still travels through that helper. */
+     endings. The deterministic CRLF fixture above proves extraction travels
+     through the normalising hash helper on every platform; this assertion
+     keeps that fixture tied to the real Plan Your Trip output shape. */
   const planBody = /<script>([\s\S]*?)<\/script>/.exec(plan.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ""))?.[1] ?? "";
   t("real /plan-your-trip/ executable inline script is parsed and hashed",
     planBody.length > 0 && inlineScriptHashes(plan).includes(cspScriptHash(planBody)), true);
-  t("real /plan-your-trip/ hashes are unchanged by Linux line-ending normalisation",
-    inlineScriptHashes(plan.replace(/\r\n?/g, "\n")).join(), inlineScriptHashes(plan).join());
 
   /* Every page carries Analytics.astro; the FAQ page carries the .faq-a
      accordion in an inline <style>, and the bundled CSS carries .pf-a. */
