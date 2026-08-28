@@ -11,7 +11,7 @@
  },
  "/contact/": {
   "title": "Contact — Hit Your Mark Travel",
-  "description": "Get in touch with Mark Sole, Founder &#38; Travel Director at Hit Your Mark Travel. Call, email, or send a message — we respond within 24 hours.",
+  "description": "Get in touch with Mark Sole, Founder &amp; Travel Director at Hit Your Mark Travel. Call, email, or send a message — we respond within 24 hours.",
   "canonical": "https://www.hymtravel.com/contact/"
  },
  "/destinations/africa/": {
@@ -86,7 +86,7 @@
  },
  "/destinations/caribbean-mexico/": {
   "title": "Caribbean &amp; Mexico — Hit Your Mark Travel",
-  "description": "Turks &#38; Caicos, St. Barth's, Jamaica, Barbados, Riviera Maya and Los Cabos — the islands, properties and windows that actually deliver.",
+  "description": "Turks &amp; Caicos, St. Barth's, Jamaica, Barbados, Riviera Maya and Los Cabos — the islands, properties and windows that actually deliver.",
   "canonical": "https://www.hymtravel.com/destinations/caribbean-mexico/"
  },
  "/destinations/colombia/": {
@@ -246,7 +246,7 @@
  },
  "/destinations/north-america/": {
   "title": "North America — Hit Your Mark Travel",
-  "description": "Napa &#38; Sonoma, Hawaii, Alaska, New York, the Canadian Rockies and New Orleans — the places and properties that deliver, not the photogenic ones.",
+  "description": "Napa &amp; Sonoma, Hawaii, Alaska, New York, the Canadian Rockies and New Orleans — the places and properties that deliver, not the photogenic ones.",
   "canonical": "https://www.hymtravel.com/destinations/north-america/"
  },
  "/destinations/oman/": {
@@ -371,7 +371,7 @@
  },
  "/experiences/beach-island-escapes/": {
   "title": "Beach &amp; Island Escapes — Hit Your Mark Travel",
-  "description": "Maldives, Turks &#38; Caicos, Seychelles, St. Barth's and the South Pacific — private beach access, overwater villas, and the right week for the water.",
+  "description": "Maldives, Turks &amp; Caicos, Seychelles, St. Barth's and the South Pacific — private beach access, overwater villas, and the right week for the water.",
   "canonical": "https://www.hymtravel.com/experiences/beach-island-escapes/"
  },
  "/experiences/cruises/": {
