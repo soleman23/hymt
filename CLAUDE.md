@@ -148,9 +148,73 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never fire analytics on the staging host.
 - Never change the Web3Forms access key.
 
+### Node and npm
+
+- The build needs **Node >=22.12.0** — Astro 7's own floor, and the strictest
+  in the whole dependency tree. `package.json` → `engines.node` is the one
+  place that number is written. `tools/check-node.mjs` reads it and runs as the
+  first stage of `npm run build`, so the wrong Node fails in milliseconds with
+  a recipe instead of part-way through `astro build` with
+  `Node.js v20.19.0 is not supported by Astro!`.
+- `.npmrc` sets `engine-strict=true`, so `npm ci` / `npm install` on the wrong
+  Node is a hard `EBADENGINE` error. Without it npm prints a warning and
+  installs anyway, leaving a `node_modules` that resolves and then cannot
+  build.
+- The machine default is **20.19.0**; **24.16.0** is installed beside it and is
+  what the site is actually built on. Put the one you want first on PATH for
+  the single command (`nvm root` prints where these live):
+
+  ```bash
+  export PATH="/c/Users/reach/AppData/Local/nvm/v24.16.0:$PATH"
+  npm run build
+  ```
+
+- **Never run `nvm use`.** nvm4w switches a symlink at `C:\nvm4w\nodejs` that
+  every shell and session on this machine shares. It moved twice, unannounced
+  and in both directions, during a single session on 2026-08-28 — once between
+  two consecutive tool calls. Prepending to PATH affects only your own command.
+- An `engines` range this repo's preflight cannot parse is reported, not
+  guessed at: it understands a `>=X.Y.Z` floor and says so for anything else.
+  The value before 2026-08-28 was `22.x`, which was wrong in both directions —
+  it admitted 22.0–22.11, which Astro rejects, and excluded Node 24, the
+  version that builds the site.
+- Default to **`npm ci`**. It installs exactly what `package-lock.json` says
+  and never rewrites it. Reach for `npm install` only when you mean to change a
+  dependency, and look at what it did to the lockfile before staging.
+- `npm install` here once deleted 102 lines from `package-lock.json` — every
+  `libc` block on the Linux-targeted optional dependencies. Invisible on this
+  machine, because those packages are never installed on Windows; degrading for
+  the deploy host, which does install them. `tools/verify-deployment.mjs` now
+  compares the lockfile against HEAD and fails on any entry that lost `libc`,
+  `os` or `cpu`. That failure was **not** reproducible on demand — two npm
+  versions and two install shapes all kept the field — so treat the check as a
+  tripwire, not as an explanation of the cause.
+
+### Line endings
+
+- Source is **LF everywhere** — `.gitattributes` sets `* text=auto eol=lf`.
+  `dist/**` stays `-text` below it, so built output is stored and deployed
+  byte-for-byte. `tools/verify-deployment.mjs` fails on any CR byte in a
+  `dist/` text file, which keeps the two halves honest.
+- **Attributes only apply on checkout.** A working tree that predates this —
+  any branch not yet merged with `main` — still holds CRLF source on disk, and
+  building from it puts CRLF straight back into `dist/`. Git will not fix it
+  for you: `git checkout-index --force` skips files it thinks are up to date.
+  On a clean tree, renormalize first and then build:
+
+  ```bash
+  git rm --cached -r . && git reset --hard
+  ```
+
+- A build is now deterministic: rebuilding an unchanged tree leaves `dist/`
+  byte-identical. If a rebuild you did not expect shows up as a diff, that is
+  a real change or a stale working tree, not noise — read it rather than
+  reverting it.
+
 ### Before every commit
-- `npm run build` must pass. It is self-contained: astro build, then the image
-  restore (`node tools/restore-images.mjs`), then the check fixtures
+- `npm run build` must pass. It is self-contained: the Node preflight
+  (`tools/check-node.mjs`), astro build, then the image restore
+  (`node tools/restore-images.mjs`), then the check fixtures
   (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
 - A new verifier check must come with fixtures in `tools/verify-checks.test.mjs`
   proving it fails on the broken shape, not only that the build stays green — a
