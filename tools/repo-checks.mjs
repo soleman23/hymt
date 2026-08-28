@@ -52,3 +52,44 @@ export function satisfiesNodeRange(range, version) {
   }
   return true;
 }
+
+/* Fields npm records so an install on one platform knows which optional
+   dependencies belong on another. They describe Linux builds this machine
+   never installs, which is exactly why nothing here notices when they go
+   missing — and exactly why the deploy host would. */
+const PLATFORM_FIELDS = ["libc", "os", "cpu"];
+
+/**
+ * Platform metadata a lockfile edit dropped.
+ *
+ * An `npm install` on Windows once deleted 102 lines from package-lock.json,
+ * every one of them a `"libc": ["glibc"]` or `["musl"]` block on a
+ * Linux-targeted optional dependency. Nothing on this machine can tell: those
+ * packages are never installed here. It degrades the lockfile for the deploy
+ * host and for anything Linux that later reads it, and it is invisible in a
+ * diff that also carries a legitimate dependency change.
+ *
+ * Compares only packages present in BOTH lockfiles, so removing a dependency
+ * outright is a dependency change rather than metadata loss, and reports a
+ * value that was there and no longer is. A genuine upstream change — a package
+ * that really did drop `libc` in a new version — reads the same way and has to
+ * be confirmed by hand against the registry; that is rare and worth the stop.
+ *
+ * @returns {{pkg: string, field: string, missing: string[]}[]} empty when clean
+ */
+export function lockfileMetadataLoss(before, after) {
+  const losses = [];
+  const a = before?.packages ?? {};
+  const b = after?.packages ?? {};
+  for (const [pkg, was] of Object.entries(a)) {
+    const now = b[pkg];
+    if (!now) continue;
+    for (const field of PLATFORM_FIELDS) {
+      if (!Array.isArray(was[field])) continue;
+      const kept = Array.isArray(now[field]) ? now[field] : [];
+      const missing = was[field].filter((v) => !kept.includes(v));
+      if (missing.length) losses.push({ pkg, field, missing });
+    }
+  }
+  return losses;
+}

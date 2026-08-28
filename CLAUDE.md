@@ -148,7 +148,7 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never fire analytics on the staging host.
 - Never change the Web3Forms access key.
 
-### Node
+### Node and npm
 
 - The build needs **Node >=22.12.0** — Astro 7's own floor, and the strictest
   in the whole dependency tree. `package.json` → `engines.node` is the one
@@ -178,6 +178,17 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
   The value before 2026-08-28 was `22.x`, which was wrong in both directions —
   it admitted 22.0–22.11, which Astro rejects, and excluded Node 24, the
   version that builds the site.
+- Default to **`npm ci`**. It installs exactly what `package-lock.json` says
+  and never rewrites it. Reach for `npm install` only when you mean to change a
+  dependency, and look at what it did to the lockfile before staging.
+- `npm install` here once deleted 102 lines from `package-lock.json` — every
+  `libc` block on the Linux-targeted optional dependencies. Invisible on this
+  machine, because those packages are never installed on Windows; degrading for
+  the deploy host, which does install them. `tools/verify-deployment.mjs` now
+  compares the lockfile against HEAD and fails on any entry that lost `libc`,
+  `os` or `cpu`. That failure was **not** reproducible on demand — two npm
+  versions and two install shapes all kept the field — so treat the check as a
+  tripwire, not as an explanation of the cause.
 
 ### Before every commit
 - `npm run build` must pass. It is self-contained: the Node preflight

@@ -55,7 +55,7 @@ import {
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
-import { satisfiesNodeRange, parseNodeVersion } from "./repo-checks.mjs";
+import { satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 
 /* ── internal-link-floor ── */
@@ -1696,6 +1696,101 @@ t("node-floor: a version parses to its three numbers",
 
 t("node-floor: a prerelease suffix is dropped by the parser",
   parseNodeVersion("v23.0.0-nightly20260101abc").join("."), "23.0.0");
+
+/* ── lockfile-metadata ── */
+
+/* An `npm install` here once deleted 102 lines from package-lock.json, every
+   one a "libc" block on a Linux-targeted optional dependency. Nothing on this
+   machine installs those packages, so nothing on this machine noticed; the
+   deploy host is where it would have shown up.
+
+   These fixtures carry more weight than most, because the failure was NOT
+   reproducible on demand — two npm versions and two install shapes all
+   preserved the field when this was written. The check has to be trustworthy
+   on its own terms rather than validated against a live repro. */
+
+const LOCK = (packages) => ({ lockfileVersion: 3, packages });
+const GNU = { libc: ["glibc"], os: ["linux"], cpu: ["x64"] };
+
+t("lockfile: an unchanged lockfile loses nothing",
+  lockfileMetadataLoss(LOCK({ "node_modules/a": GNU }), LOCK({ "node_modules/a": GNU })).length, 0);
+
+t("lockfile: a deleted libc block is caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": {} })).length, 1);
+
+t("lockfile: the caught entry names the package, field and value",
+  JSON.stringify(lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": {} }))[0]),
+  JSON.stringify({ pkg: "node_modules/a", field: "libc", missing: ["glibc"] }));
+
+/* The subtle shape: musl dropped, glibc kept. A check that counted how many
+   entries carry libc would score this clean. */
+t("lockfile: a shrunk libc array is caught, not only a deleted one",
+  JSON.stringify(lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { libc: ["glibc"] } }))[0]?.missing),
+  JSON.stringify(["musl"]));
+
+t("lockfile: os is watched too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { os: ["linux"] } }),
+    LOCK({ "node_modules/a": {} })).length, 1);
+
+t("lockfile: cpu is watched too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { cpu: ["arm64"] } }),
+    LOCK({ "node_modules/a": {} })).length, 1);
+
+t("lockfile: one entry losing two fields reports both",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": GNU }),
+    LOCK({ "node_modules/a": { cpu: ["x64"] } })).length, 2);
+
+/* Removing a dependency is a dependency change and the diff shows it. Only an
+   entry that survived and came back thinner is metadata loss. */
+t("lockfile: a package removed outright is not metadata loss",
+  lockfileMetadataLoss(LOCK({ "node_modules/a": GNU }), LOCK({})).length, 0);
+
+t("lockfile: a package added with metadata is not a loss",
+  lockfileMetadataLoss(LOCK({}), LOCK({ "node_modules/a": GNU })).length, 0);
+
+t("lockfile: gaining a field is not a loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": {} }),
+    LOCK({ "node_modules/a": GNU })).length, 0);
+
+t("lockfile: an entry with no platform fields either side is clean",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0" } }),
+    LOCK({ "node_modules/a": { version: "1.0.1" } })).length, 0);
+
+t("lockfile: a lockfile with no packages key does not throw",
+  lockfileMetadataLoss({}, {}).length, 0);
+
+/* Against the real file rather than a fixture, the way the dist/ block at the
+   end of this file works — so a predicate that stops matching the shape npm
+   actually writes fails here too. The expected value is derived from the
+   lockfile, not typed in, so a dependency change moves both sides together. */
+const REAL_LOCK = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
+const REAL_LIBC = Object.values(REAL_LOCK.packages).filter((p) => Array.isArray(p.libc)).length;
+
+t("lockfile: the committed lockfile carries platform metadata to lose",
+  REAL_LIBC > 0, true);
+
+t("lockfile: the real lockfile against itself loses nothing",
+  lockfileMetadataLoss(REAL_LOCK, REAL_LOCK).length, 0);
+
+/* The reported incident, replayed on the real file: strip every libc block the
+   way that install did, and every one of them must come back named. */
+t("lockfile: stripping libc from the real lockfile is caught on every entry",
+  lockfileMetadataLoss(REAL_LOCK, (() => {
+    const stripped = JSON.parse(JSON.stringify(REAL_LOCK));
+    for (const p of Object.values(stripped.packages)) delete p.libc;
+    return stripped;
+  })()).length, REAL_LIBC);
 
 /* ── report ── */
 if (failures.length) {
