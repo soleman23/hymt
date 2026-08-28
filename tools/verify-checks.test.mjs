@@ -28,7 +28,6 @@
  */
 import { readFile, access } from "node:fs/promises";
 import { constants, readFileSync } from "node:fs";
-import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -1440,13 +1439,15 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   t("real /destinations/italy/ declares every image at its true ratio",
     imgRatioMismatches(italy, realDims).length, 0);
 
-  /* The CSP trap is real in this build, not hypothetical: Plan Your Trip's
-     inline script carries CR, so its raw-byte hash is NOT what the browser
-     will check. If this ever passes, the CR is gone and the comment above
-     cspScriptHash can be softened. */
+  /* Exercise a real executable body without assuming the checkout's line
+     endings. Windows builds may preserve CRLF here while Hostinger's Linux
+     clone emits LF. The unit fixtures above prove those inputs hash alike;
+     this assertion proves the real body still travels through that helper. */
   const planBody = /<script>([\s\S]*?)<\/script>/.exec(plan.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ""))?.[1] ?? "";
-  t("real /plan-your-trip/ inline script carries CR, so raw bytes hash differently",
-    planBody.includes("\r") && createHash("sha256").update(planBody).digest("base64") !== cspScriptHash(planBody).slice(7), true);
+  t("real /plan-your-trip/ executable inline script is parsed and hashed",
+    planBody.length > 0 && inlineScriptHashes(plan).includes(cspScriptHash(planBody)), true);
+  t("real /plan-your-trip/ hashes are unchanged by Linux line-ending normalisation",
+    inlineScriptHashes(plan.replace(/\r\n?/g, "\n")).join(), inlineScriptHashes(plan).join());
 
   /* Every page carries Analytics.astro; the FAQ page carries the .faq-a
      accordion in an inline <style>, and the bundled CSS carries .pf-a. */
@@ -1503,6 +1504,8 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src") !== null, true);
   t("real dist/.htaccess script-src covers every inline script on /",
     cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(home)).missing.length, 0);
+  t("real dist/.htaccess script-src covers every inline script on /plan-your-trip/",
+    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(plan)).missing.length, 0);
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
