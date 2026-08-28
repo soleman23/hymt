@@ -55,6 +55,7 @@ import {
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
+import { satisfiesNodeRange, parseNodeVersion } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 
 /* ── internal-link-floor ── */
@@ -1637,6 +1638,64 @@ t("localDay: at UTC the shift is a no-op",
 t("localDay defaults to the host offset rather than to zero",
   localDay(new Date(2026, 7, 24, 23, 59)),
   LD(new Date(2026, 7, 24, 23, 59).toISOString(), new Date(2026, 7, 24, 23, 59).getTimezoneOffset()));
+
+/* ── node-floor ── */
+
+/* The build machine's default Node is 20.19.0 and Astro 7 needs >=22.12.0, so
+   `npm run build` died a few seconds in with a message that named the problem
+   but not the fix. tools/check-node.mjs now fails first, in milliseconds.
+   These fixtures are the reason to believe it: each names a version that must
+   be REJECTED, not only ones that pass.
+
+   The floor is written out here rather than read from package.json on purpose.
+   Reading it would make the fixtures agree with whatever engines happens to
+   say — including the "22.x" that was there before, which was wrong in both
+   directions at once. */
+
+t("node-floor: the build machine's default Node is rejected",
+  satisfiesNodeRange(">=22.12.0", "v20.19.0"), false);
+
+/* The half of the old "22.x" range that was too loose: Astro rejects these. */
+t("node-floor: the last 22 release below the floor is rejected",
+  satisfiesNodeRange(">=22.12.0", "v22.11.0"), false);
+
+t("node-floor: a whole major below the floor is rejected",
+  satisfiesNodeRange(">=22.12.0", "v21.7.3"), false);
+
+t("node-floor: the floor itself passes",
+  satisfiesNodeRange(">=22.12.0", "v22.12.0"), true);
+
+/* The half of the old "22.x" range that was too tight: this is the version the
+   site is actually built on, and "22.x" excluded it. */
+t("node-floor: the Node the site is built on passes",
+  satisfiesNodeRange(">=22.12.0", "v24.16.0"), true);
+
+t("node-floor: a prerelease compares on its numbers, not its tag",
+  satisfiesNodeRange(">=22.12.0", "v23.0.0-nightly20260101abc"), true);
+
+/* Not understood is its own answer, distinct from pass and from fail. The
+   caller prints it rather than guessing — a comparator that returns true for a
+   range it cannot read is how the wrong Node gets through. */
+t("node-floor: the old \"22.x\" range is reported unreadable, not passed",
+  satisfiesNodeRange("22.x", "v24.16.0"), null);
+
+t("node-floor: a caret range is reported unreadable, not passed",
+  satisfiesNodeRange("^22.12.0", "v24.16.0"), null);
+
+t("node-floor: a missing engines value is unreadable",
+  satisfiesNodeRange(undefined, "v24.16.0"), null);
+
+t("node-floor: an unparseable version is unreadable",
+  satisfiesNodeRange(">=22.12.0", "not-a-version"), null);
+
+t("node-floor: process.version's leading v is optional",
+  satisfiesNodeRange(">=22.12.0", "24.16.0"), true);
+
+t("node-floor: a version parses to its three numbers",
+  parseNodeVersion("v24.16.0").join("."), "24.16.0");
+
+t("node-floor: a prerelease suffix is dropped by the parser",
+  parseNodeVersion("v23.0.0-nightly20260101abc").join("."), "23.0.0");
 
 /* ── report ── */
 if (failures.length) {

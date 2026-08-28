@@ -148,9 +148,41 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never fire analytics on the staging host.
 - Never change the Web3Forms access key.
 
+### Node
+
+- The build needs **Node >=22.12.0** — Astro 7's own floor, and the strictest
+  in the whole dependency tree. `package.json` → `engines.node` is the one
+  place that number is written. `tools/check-node.mjs` reads it and runs as the
+  first stage of `npm run build`, so the wrong Node fails in milliseconds with
+  a recipe instead of part-way through `astro build` with
+  `Node.js v20.19.0 is not supported by Astro!`.
+- `.npmrc` sets `engine-strict=true`, so `npm ci` / `npm install` on the wrong
+  Node is a hard `EBADENGINE` error. Without it npm prints a warning and
+  installs anyway, leaving a `node_modules` that resolves and then cannot
+  build.
+- The machine default is **20.19.0**; **24.16.0** is installed beside it and is
+  what the site is actually built on. Put the one you want first on PATH for
+  the single command (`nvm root` prints where these live):
+
+  ```bash
+  export PATH="/c/Users/reach/AppData/Local/nvm/v24.16.0:$PATH"
+  npm run build
+  ```
+
+- **Never run `nvm use`.** nvm4w switches a symlink at `C:\nvm4w\nodejs` that
+  every shell and session on this machine shares. It moved twice, unannounced
+  and in both directions, during a single session on 2026-08-28 — once between
+  two consecutive tool calls. Prepending to PATH affects only your own command.
+- An `engines` range this repo's preflight cannot parse is reported, not
+  guessed at: it understands a `>=X.Y.Z` floor and says so for anything else.
+  The value before 2026-08-28 was `22.x`, which was wrong in both directions —
+  it admitted 22.0–22.11, which Astro rejects, and excluded Node 24, the
+  version that builds the site.
+
 ### Before every commit
-- `npm run build` must pass. It is self-contained: astro build, then the image
-  restore (`node tools/restore-images.mjs`), then the check fixtures
+- `npm run build` must pass. It is self-contained: the Node preflight
+  (`tools/check-node.mjs`), astro build, then the image restore
+  (`node tools/restore-images.mjs`), then the check fixtures
   (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
 - A new verifier check must come with fixtures in `tools/verify-checks.test.mjs`
   proving it fails on the broken shape, not only that the build stays green — a
