@@ -28,7 +28,9 @@ import {
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
-import { lockfileMetadataLoss, crDefect, isBinaryDistFile } from "./repo-checks.mjs";
+import {
+  lockfileMetadataLoss, lockfileCheckState, crDefect, isBinaryDistFile,
+} from "./repo-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
    drift from the convention in tools/git-lastmod.mjs. */
 import { localDay } from "./git-lastmod.mjs";
@@ -1130,17 +1132,27 @@ notes.push(
 {
   let head = null;
   let working = null;
+  let headError = "";
+  let workingError = "";
+  /* Read separately so the two failure modes stay distinguishable. Folded into
+     one try, a malformed lockfile on disk was indistinguishable from a missing
+     baseline, and both ended up as a note — which report() prints with an `ok`
+     prefix before exiting 0. */
   try {
     head = JSON.parse(execFileSync("git", ["show", "HEAD:package-lock.json"],
       { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 }));
+  } catch (e) { headError = String(e.message).split("\n")[0]; }
+  try {
     working = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
-  } catch {
-    /* No git, no committed lockfile, or no lockfile on disk. */
-  }
-  if (!head || !working) {
-    /* Not a pass: saying the check did not run beats printing an ok line for
-       something nothing looked at. */
-    notes.push("package-lock.json platform metadata NOT checked — no HEAD copy to compare against");
+  } catch (e) { workingError = String(e.message).split("\n")[0]; }
+
+  const state = lockfileCheckState(head, working);
+  if (state === "unreadable-working") {
+    fail("lockfile-metadata",
+      `package-lock.json could not be read or parsed (${workingError}) — a corrupt lockfile must not pass as checked`);
+  } else if (state === "unreadable-baseline") {
+    fail("lockfile-metadata",
+      `HEAD has no readable package-lock.json to compare against (${headError}) — the tripwire cannot run, and silently skipping it is how the metadata went missing in the first place`);
   } else {
     const losses = lockfileMetadataLoss(head, working);
     for (const { pkg, field, missing } of losses) {
@@ -1150,10 +1162,11 @@ notes.push(
     if (losses.length) {
       hints.push(
         "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
-        "     dependencies on the deploy host. Restore it with `git checkout HEAD -- package-lock.json`\n" +
-        "     and install with `npm ci`, which never rewrites the lockfile. If a removal is genuine —\n" +
-        "     the package really did drop the field upstream — confirm it against the registry and say\n" +
-        "     so in the commit message.");
+        "     dependencies on the deploy host. Every entry above is the SAME package at the SAME\n" +
+        "     version and the same resolved tarball as HEAD, so this is not an upgrade dropping\n" +
+        "     support upstream — it is metadata going missing from an artifact that did not change.\n" +
+        "     Restore it with `git checkout HEAD -- package-lock.json` and install with `npm ci`,\n" +
+        "     which never rewrites the lockfile.");
     } else {
       notes.push(`package-lock.json keeps its platform metadata on ${Object.keys(working.packages ?? {}).length} entries`);
     }

@@ -56,7 +56,8 @@ import {
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 import {
-  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, crDefect, isBinaryDistFile,
+  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState,
+  crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 
@@ -1793,6 +1794,65 @@ t("lockfile: stripping libc from the real lockfile is caught on every entry",
     for (const p of Object.values(stripped.packages)) delete p.libc;
     return stripped;
   })()).length, REAL_LIBC);
+
+/* Codex review on #118, P2. Comparing by package key alone made a legitimate
+   upgrade unfixable: a package that genuinely drops musl in its next major
+   would fail this check, `npm run build` must pass before every commit, and
+   there was no override. The gate is now the artifact — same key, same
+   version, same resolved tarball — which keeps the real signal, because the
+   install this exists to catch deleted 102 libc blocks without touching a
+   single version. */
+
+t("lockfile: the same version losing a field is still caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 1);
+
+t("lockfile: an upgrade that narrows platform support is not metadata loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } })).length, 0);
+
+t("lockfile: an upgrade that drops a field entirely is not metadata loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "2.0.0" } })).length, 0);
+
+t("lockfile: a downgrade is a different artifact too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 0);
+
+t("lockfile: the same version re-resolved elsewhere is a different artifact",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://m/a-1.0.0.tgz" } })).length, 0);
+
+t("lockfile: the same version from the same tarball losing a field is caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz" } })).length, 1);
+
+/* Codex review on #118, P2. When either lockfile could not be read the check
+   pushed a note — and notes print with an `ok` prefix and exit 0, so the
+   tripwire was bypassed exactly when something was already wrong, while the
+   comment above it claimed "not a pass". Both states now fail, and the branch
+   that decides is a function so a fixture can hold it there. */
+
+t("lockfile-state: two readable lockfiles are comparable",
+  lockfileCheckState({ packages: {} }, { packages: {} }), "comparable");
+
+t("lockfile-state: an unreadable working lockfile is reported, not skipped",
+  lockfileCheckState({ packages: {} }, null), "unreadable-working");
+
+t("lockfile-state: an unreadable baseline is reported, not skipped",
+  lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
+
+t("lockfile-state: a corrupt working copy outranks a missing baseline",
+  lockfileCheckState(null, null), "unreadable-working");
+
+t("lockfile-state: a non-object working lockfile is unreadable",
+  lockfileCheckState({ packages: {} }, "not json"), "unreadable-working");
 
 /* ── dist-line-endings ── */
 

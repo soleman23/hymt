@@ -69,11 +69,21 @@ const PLATFORM_FIELDS = ["libc", "os", "cpu"];
  * host and for anything Linux that later reads it, and it is invisible in a
  * diff that also carries a legitimate dependency change.
  *
- * Compares only packages present in BOTH lockfiles, so removing a dependency
- * outright is a dependency change rather than metadata loss, and reports a
- * value that was there and no longer is. A genuine upstream change — a package
- * that really did drop `libc` in a new version — reads the same way and has to
- * be confirmed by hand against the registry; that is rare and worth the stop.
+ * Compares only entries that are still the SAME ARTIFACT on both sides: same
+ * key, same `version`, same `resolved`. Three cases are therefore not losses,
+ * because in each the metadata belongs to something else:
+ *
+ *   - the package was removed  -> a dependency change, and the diff shows it;
+ *   - the package was upgraded -> the new version's platform support is
+ *     whatever upstream published, and narrowing it is upstream's business;
+ *   - the artifact was re-resolved to a different tarball at the same version.
+ *
+ * The first draft of this compared by key alone. That made a legitimate
+ * upgrade — a package that genuinely drops `musl` in its next major —
+ * unfixable: the check would fail, `npm run build` must pass before every
+ * commit, and there was no override. Gating on the artifact removes the false
+ * positive without weakening the real signal, because the install this exists
+ * to catch deleted 102 `libc` blocks while touching no version at all.
  *
  * @returns {{pkg: string, field: string, missing: string[]}[]} empty when clean
  */
@@ -84,6 +94,8 @@ export function lockfileMetadataLoss(before, after) {
   for (const [pkg, was] of Object.entries(a)) {
     const now = b[pkg];
     if (!now) continue;
+    if (was.version !== now.version) continue;
+    if (was.resolved !== now.resolved) continue;
     for (const field of PLATFORM_FIELDS) {
       if (!Array.isArray(was[field])) continue;
       const kept = Array.isArray(now[field]) ? now[field] : [];
@@ -92,6 +104,29 @@ export function lockfileMetadataLoss(before, after) {
     }
   }
   return losses;
+}
+
+/**
+ * What the tripwire can actually do with the two lockfiles it was handed.
+ *
+ * Split out so the "cannot compare" branch is itself covered by a fixture.
+ * The first version of this check pushed a *note* when either side was
+ * unavailable — and notes print with an `ok` prefix and exit 0, so a missing
+ * or malformed lockfile read as a pass while the comment directly above it
+ * claimed the opposite. The tripwire was bypassed exactly when something was
+ * already wrong.
+ *
+ * Every one of these states is a defect here, so the caller fails on both.
+ * There is no "no git" case to be lenient about: astro.config.mjs generates
+ * sitemap lastmod through `git log`, so a build without git has already died
+ * long before this runs.
+ *
+ * @returns {"comparable"|"unreadable-working"|"unreadable-baseline"}
+ */
+export function lockfileCheckState(baseline, working) {
+  if (!working || typeof working !== "object") return "unreadable-working";
+  if (!baseline || typeof baseline !== "object") return "unreadable-baseline";
+  return "comparable";
 }
 
 /* Built output that is not text. Everything else under dist/ gets read as
