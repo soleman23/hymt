@@ -16,8 +16,9 @@ READ FIRST, in this order — do not start work until you have:
                                           failure mode found so far)
   2. docs/seo/drive-image-skips.md       (§ A closed; § B still open)
   3. CLAUDE.md § "SEO & AIO rules"       (non-negotiable page rules)
-  (docs/seo/photography-plan.md and photography-needed.md are both STALE —
-   see Open items. Read them only for the A-before-B sequencing argument.)
+  (docs/seo/photography-plan.md and photography-needed.md were both STALE;
+   corrected 2026-08-28. Both now open with a completion banner and derive
+   their figures. There is no photography backlog.)
 
 STATE, re-derived on 2026-08-26 (third session that day):
   THE ROLLOUT IS COMPLETE. There is no backlog left to pick up.
@@ -1442,15 +1443,22 @@ Two things worth carrying into every later wave:
   `src/lib/og-crops.ts`; `DestinationLayout`, `ExperienceLayout` and
   `JournalLayout` look `hero.image` up in that table, so no page file passes an
   `ogImage` prop and none needs to.
-- **`docs/seo/photography-needed.md` is stale** — it lists 25 missing heroes;
+- ~~**`docs/seo/photography-needed.md` is stale** — it lists 25 missing heroes;
   22 of those subjects now exist. It would send someone hunting for images
-  that ship.
-- **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is **zero** — Workstream B
-  is finished. Its "1 of 163 slots comes free" line never held either: 99 came
-  free from Drive and 1 more from the repo. Only its sequencing argument
-  (A before B) still stands. **Now safe to rewrite or delete**, which the last
-  page shipping was the stated condition for.
+  that ship.~~ — **corrected 2026-08-28.** All 25 ship, `/destinations/aspen/`
+  (the last unwired one) now exists, and the file is retitled: it was called
+  "the 25 missing hero images" for ten days after the last one landed, so the
+  title alone was the misleading part.
+- ~~**`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
+  lists 30 pages / 162 images; the real remainder is **zero**~~ — **corrected
+  2026-08-28.** Its "1 of 163 slots comes free" line never held either: 99 came
+  free from Drive and 1 more from the repo. Rather than deleted, it now opens
+  with a completion banner covering all three workstreams and derives every
+  figure; the sequencing argument, the wave plan and the budget are kept as the
+  record of how the work was planned and paid for. Its four "open decisions"
+  are marked resolved — three were settled by shipping rather than by anyone
+  answering them, which is exactly how a stale heading recruits someone into
+  re-deciding a closed question.
 - ~~**No per-page `og:image` on any of the pages shipped 2026-08-26.**~~ **Was
   already false when written** — it restated the bullet above from memory
   instead of reading `dist/`, and the crops had shipped in `aa7a271` eight days

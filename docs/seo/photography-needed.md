@@ -1,27 +1,56 @@
-# Destination photography needed — the 25 missing hero images
+# Destination hero photography — commissioned, delivered, closed
 
-> ## ⚠ SUPERSEDED 2026-08-18. Every subject below now ships.
+> ## ⚠ HISTORICAL RECORD. Nothing below is outstanding.
 >
-> Re-derived against the repo on 2026-08-18: **all 25 subjects have a
-> shippable asset** — present in `images-b64/MANIFEST.json`, with a base64
-> twin, resolving on disk. 24 are already wired as `/destinations/` index
-> cards. The 25th is **Aspen**, whose asset (`dh-26-aspen-maroon-bells.jpg`)
-> exists but is wired nowhere: `888817d` deliberately pulled the Aspen and
-> Banff cards from the grid until those pages exist.
+> **Superseded 2026-08-18; closed out 2026-08-28.** This file was titled "the
+> 25 missing hero images" for months after the last of them shipped, so the
+> title alone sent readers hunting for work that did not exist. It is kept for
+> what was commissioned and why, not as a to-do list.
 >
-> So the tier checklists below are a **historical record of what was
-> commissioned**, not a to-do list. Nothing in them is outstanding. The
-> specs table is also wrong in two ways — see the strikethroughs.
+> Re-derived 2026-08-18: **all 25 subjects have a shippable asset** — present
+> in `images-b64/MANIFEST.json`, with a base64 twin, resolving on disk. 24 were
+> wired as `/destinations/` index cards; the 25th, **Aspen**
+> (`dh-26-aspen-maroon-bells.jpg`), existed but was wired nowhere, because
+> `888817d` deliberately pulled the Aspen and Banff cards until those pages
+> existed.
 >
-> The real remaining photography is **place cards, not heroes**, and it is
-> tracked in [`photography-plan.md`](photography-plan.md) § Workstream B and
-> in #93. Derive it, never quote it:
+> Re-derived 2026-08-28: **those pages exist.** `/destinations/aspen/` ships,
+> M7 issues #40–#65 are all closed, and the grid is 68 destination pages. The
+> "when an image lands" procedure at the foot of this file has no pending
+> subject to apply to.
+>
+> The specs table is wrong in two ways — see the strikethroughs. Those
+> corrections still matter, because they describe the house format for any
+> *future* hero.
+>
+> **The place-card backlog this file used to point at is also closed.** Every
+> figure in the block below now derives to zero; they are left with their
+> historical values struck through, because a bare `# 0` teaches nothing about
+> what the command was for:
 >
 > ```bash
-> grep -rl 'place-card__ph' dist/destinations --include='*.html' | wc -l   # 4 pages
-> grep -rho 'place-card__ph' dist/destinations --include='*.html' | wc -l  # 24 cards
-> grep -rho 'exp-card__ph'   dist/experiences  --include='*.html' | wc -l  # 42 cards
+> # was 4 pages / 24 cards / 42 cards on 2026-08-18 — all zero since 2026-08-26
+> grep -rl  'place-card__ph' dist/destinations --include='*.html' | wc -l   # 0
+> grep -rho 'place-card__ph' dist/destinations --include='*.html' | wc -l   # 0
+> grep -rho 'exp-card__ph'   dist/experiences  --include='*.html' | wc -l   # 0
 > ```
+>
+> **A zero from those three greps is not "no plates sitewide."** Each names one
+> card family. The sitewide question is answered by sweeping the class shape
+> and the caption, not a known list:
+>
+> ```bash
+> grep -rho '[a-z-]*__ph\b'        dist --include='*.html' | sort | uniq -c
+> grep -rho '[A-Z][a-z]* Photography' dist --include='*.html' | sort | uniq -c
+> ```
+>
+> Today the first returns only `dest-card__ph`, twice, and **both are CSS rule
+> definitions in an inline `<style>` — a rule for a class nothing renders any
+> more**, not a plate. The second returns `Portrait Photography` (`/contact/`,
+> waiting on a real headshot from Mark) and `Iceberg Photography`
+> (`/destinations/`, a genuine Greenland activity tag beside "Icefjord" and
+> "Dog Sledding"). Both are documented as deliberate in
+> [`photography-plan.md`](photography-plan.md) § "The last fifteen".
 
 Every destination in the `/destinations/` grid now has a card. ~~**25 of them
 ship a placeholder plate instead of a photograph**~~ — **none do; the grid has

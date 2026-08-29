@@ -1,34 +1,60 @@
 # Photography plan — closing the remaining image backlog
 
 Written 2026-08-12, after the six regional hubs shipped (PR #102).
-Supersedes the counts in [`photography-needed.md`](photography-needed.md), which
-is now badly out of date: it lists 25 missing hero images, and **22 of those 25
-subjects now exist**.
 
-## Where things actually stand
+> # ✅ ALL THREE WORKSTREAMS COMPLETE — closed out 2026-08-28.
+>
+> **There is no photography backlog.** A, B and C all derive to zero, and the
+> only two unfilled slots on the site are deliberate (§ "The last fifteen").
+> Everything below — the sequencing argument, the waves, the budget, the open
+> decisions — is a **record of how it was planned and paid for**, not work to
+> pick up. Read § "How it actually finished" first; the rest is history.
+>
+> The one live instruction in this file is the **per-page intake mechanics**
+> (§ "Per-page mechanics"), which still describes how to wire any new image
+> correctly, and the **`PLACEHOLDER_PATTERNS` note** at the end of § "The last
+> fifteen", which explains why that check is a fixed noun list.
 
-> **Re-derived 2026-08-18. Both rows below were wrong; corrected in place.**
-> Workstream A is finished, and B is smaller than stated by a factor of six.
-> Every figure in the corrected table is a command, because every figure in
-> the original rotted.
+## How it actually finished
 
-| Workstream | Unblocks | Images still needed | Est. credits |
+Every figure here is a command, because **every figure originally written in
+this document rotted** — the Workstream B row alone was wrong by a factor of
+six in one direction and then, once corrected, wrong by 66 in the other.
+
+| Workstream | Scope | Images still needed | Verified |
 |---|---|---|---|
-| ~~**A — Destination heroes (M7, #40–#65)**~~ | ~~25 **new** pages~~ | ~~3 subjects + a resolution decision~~ **0 — done** | ~~~3–30~~ 0 |
-| **B — Place cards on existing sub-pages** | ~~30~~ **11 existing pages** | ~~162~~ **66** (24 destination + 42 experience) | ~66 |
+| **A — Destination heroes** (M7, #40–#65) | 25 new pages | **0** | #40–#65 all closed; 68 destination pages ship |
+| **B — Place cards on existing sub-pages** | 11 pages, 66 cards | **0** | 11/11 pages at 6 cards, 6 images, grid on `--photo` |
+| **C — "Trips We Plan Often" tiles** | 75 pages, 280 tiles | **0** | 0 `itin-image`, 0 `event-image` plates |
 
 ```bash
-grep -rho 'place-card__ph' dist/destinations --include='*.html' | wc -l   # 24, on 4 pages
-grep -rho 'exp-card__ph'   dist/experiences  --include='*.html' | wc -l   # 42, on 7 pages
+# All three now return 0. Non-zero means a regression, not a backlog.
+grep -rho 'place-card__ph' dist/destinations --include='*.html' | wc -l
+grep -rho 'exp-card__ph'   dist/experiences  --include='*.html' | wc -l
+grep -rho 'class="itin-image"\|class="event-image"' dist --include='*.html' | wc -l
 ```
 
-The 4 destination pages: `india`, `jordan`, `new-zealand`, `oman`.
-The 7 experience pages: `adventure-active-travel`, `all-inclusive-vacations`,
-`beach-island-escapes`, `family-travel`, `safari-wildlife-travel`,
-`sports-event-travel`, `wellness-retreat-travel`.
+**Do not read a zero from those as "no plates sitewide."** Each names a card
+family it already knew about, and that is precisely how 280 tiles hid behind a
+finished-looking plan (§ Workstream C). The sitewide sweep is by shape:
+
+```bash
+grep -rho '[a-z-]*__ph\b'           dist --include='*.html' | sort | uniq -c
+grep -rho '[A-Z][a-z]* Photography' dist --include='*.html' | sort | uniq -c
+```
+
+Today: `dest-card__ph` ×2, **both CSS rule definitions in an inline `<style>`
+for a class nothing renders any more** — dead CSS, not a plate, and worth
+deleting the next time `destinations.html`'s `pageCss` is touched. Plus the two
+intentional captions, `Portrait Photography` and `Iceberg Photography`.
+
+Workstream B's completed pages, for the record — 4 destination (`india`,
+`jordan`, `new-zealand`, `oman`) and 7 experience (`adventure-active-travel`,
+`all-inclusive-vacations`, `beach-island-escapes`, `family-travel`,
+`safari-wildlife-travel`, `sports-event-travel`, `wellness-retreat-travel`).
 
 Balance at time of writing: **308.7 credits** (Plus plan) — a 2026-08-12
-snapshot, not a current reading. Check the dashboard.
+snapshot, long superseded. Check the dashboard.
 
 ### Workstream A is ~~nearly~~ done and nobody noticed
 
@@ -75,7 +101,7 @@ already paid for, which makes it the first thing to do.
 > The hub batch ran 7 Pro / 12 Lite; on review the Lite frames held up just as
 > well. Workstream B should be Lite by default.
 
-### Workstream B — 162 images across 30 pages
+### Workstream B — ~~162 images across 30 pages~~ 66 across 11, all delivered
 
 | Cards needed | Pages | Images |
 |---|---|---|
@@ -117,8 +143,11 @@ heading** — `antarctica` and `polar-regions` ("Expeditions We Plan Often"),
 `svalbard` ("Voyages and Weeks We Plan Often") and `sri-lanka` ("Four Ways
 Round the Island"). Count by the card class, never by the heading.
 
-**Generated, not reused.** Of 884 tracked images, 18 were referenced nowhere and
-all 18 are landscape `rc-`/`e-` tiles — nothing portrait, nothing square. Every
+**Generated, not reused.** Of 884 tracked images ~~18~~ were referenced nowhere
+and all 18 are landscape `rc-`/`e-` tiles — nothing portrait, nothing square.
+(2026-08-28: the library is now **1,196 MANIFEST entries with 23 unreferenced**;
+the build prints that inventory on every run, so take it from there rather than
+from this sentence.) Every
 destination's own slug family is already fully consumed by its place cards, so
 reusing would have put each photograph on the page twice, four times over.
 Cost was 1.5 credits per frame on `seedream_v5_pro` at 1.5k, ~420 for the set,
@@ -249,12 +278,35 @@ place cards the 25 new M7 pages will eventually need, but not both plus a
 re-run. If budget gets tight, Wave 4 is the part to stage across billing
 periods; Waves 1–3 finish 11 of 30 pages for ~48 credits.
 
-## Open decisions
+## Open decisions — all four resolved by events
 
-1. **Pro originals at 2720×1536** — accept, upscale, or regenerate? *(rec: accept)*
-2. **Pilot page** for Wave 1 — Italy or Hawaii? *(rec: Italy)*
-3. **Refresh `photography-needed.md` now**, or fold it into Phase 1? *(rec: now —
-   it is actively misleading)*
-4. **Is M7 still the priority milestone?** The whole A-before-B argument rests on
-   those 25 pages being wanted. If they are shelved, B becomes the only work and
-   the ordering is moot.
+None of these is open. Kept because three were resolved by shipping rather than
+by anyone answering them, and a reader who finds an "Open decisions" heading
+will otherwise try to answer them again.
+
+1. ~~**Pro originals at 2720×1536** — accept, upscale, or regenerate?~~
+   **Accepted, as recommended.** The CDN caps delivery at 1600px, so the extra
+   width was never served.
+2. ~~**Pilot page** for Wave 1 — Italy or Hawaii?~~ **Moot.** The rollout
+   completed across all 11 pages; the pilot-then-review pacing did its job and
+   is preserved in § "Per-page mechanics".
+3. ~~**Refresh `photography-needed.md` now**, or fold it into Phase 1?~~
+   **Done 2026-08-28**, and later than it should have been: that file kept the
+   title "the 25 missing hero images" for ten days after the last one shipped.
+   The recommendation said "now — it is actively misleading", and it was right.
+4. ~~**Is M7 still the priority milestone?**~~ **Yes, and it landed.** All of
+   #40–#65 are closed and the site went from 98 to 123 pages. The A-before-B
+   ordering argument held: A created the pages, B polished them, and B's true
+   scope was indeed only knowable afterwards.
+
+## If you are here to do photography work
+
+There is none queued. The two genuinely unfilled slots are in § "The last
+fifteen" — `/contact/` needs a real headshot from Mark, which no tool can
+close, and the Greenland tag is correct copy that must never be "fixed".
+
+Before concluding any *new* subject is missing, read
+[`photography-needed.md`](photography-needed.md) § Specs for the house format,
+and search the place-prefixed filename families **and** `ALIASES.json` first —
+a previous pass concluded no Southern African safari frames existed while six
+`botswana-*` frames sat in the library.
