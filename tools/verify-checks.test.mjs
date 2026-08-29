@@ -54,7 +54,7 @@ import {
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps as rawHtaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
-  remoteRoutes, remoteMisses, remoteThrottled,
+  remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
@@ -1742,6 +1742,87 @@ t("throttled routes are reported separately, so they are not silently a pass",
   remoteThrottled(THROTTLED).join(","), "/,/destinations/aspen/");
 t("a genuine 404 is not mistaken for throttling",
   remoteThrottled(THROTTLED).includes("/gone/"), false);
+
+/* ── remote-coverage ──
+   "Reported separately" above was true, and separately meant notes.push(),
+   which report() prints as `ok` and exits 0 on. A half-throttled sweep
+   announced "NOT verified" under an ok prefix and returned success. These pin
+   the arithmetic the failure message is built from. */
+t("coverage: a throttled route does not count as answered",
+  remoteCoverage(THROTTLED).answered, 1);
+
+t("coverage: the definite 404 DOES count as answered — it is a real result",
+  remoteCoverage(THROTTLED).unverified.includes("/gone/"), false);
+
+t("coverage: unverified routes are listed, not just counted",
+  remoteCoverage(THROTTLED).unverified.join(","), "/,/destinations/aspen/");
+
+/* The shape that shipped green: most routes fine, a slice throttled. */
+const PARTIAL = [
+  { route: "/a/", ok: true, status: 200 },
+  { route: "/b/", ok: true, status: 200 },
+  { route: "/c/", ok: false, status: 429 },
+];
+t("coverage: a partial sweep is the real hole — 2 of 3 answered",
+  `${remoteCoverage(PARTIAL).answered}/${remoteCoverage(PARTIAL).total}`, "2/3");
+
+t("coverage: a partial sweep leaves something unverified, so it cannot pass",
+  remoteCoverage(PARTIAL).unverified.length > 0, true);
+
+/* A fully clean sweep must stay clean, or the check is just noise. */
+const ALL_OK = [
+  { route: "/a/", ok: true, status: 200 },
+  { route: "/b/", ok: true, status: 200 },
+];
+t("coverage: a clean sweep reports nothing unverified",
+  remoteCoverage(ALL_OK).unverified.length, 0);
+
+t("coverage: a clean sweep answers everything",
+  `${remoteCoverage(ALL_OK).answered}/${remoteCoverage(ALL_OK).total}`, "2/2");
+
+/* A sweep of only definite misses is a deploy failure, not a coverage one —
+   remote-pages reports it and coverage must not double-report. */
+t("coverage: definite misses are answers, not coverage gaps",
+  remoteCoverage([{ route: "/x/", ok: false, status: 404 }]).unverified.length, 0);
+
+t("coverage: an empty sweep answers nothing and has nothing unverified",
+  `${remoteCoverage([]).answered}/${remoteCoverage([]).total}`, "0/0");
+
+/* ── the WIRING, which is the only thing that was ever broken ──
+   Everything above pins arithmetic on a pure counter that was never wrong.
+   The bug was that the throttled branch called notes.push(), which report()
+   prints with an `ok` prefix and exits 0 on — so "NOT verified" shipped as a
+   pass. Reverting that one call leaves every fixture above green, which is
+   exactly how the predecessor got through: main's "throttled routes are
+   reported separately, so they are not silently a pass" was green for the
+   whole life of the bug it names.
+
+   So assert the call itself. This reads the verifier's source rather than
+   running it, because the alternative — spawning verify-deployment.mjs
+   against a stub host — would drag in all 103 other checks and fail for
+   reasons that have nothing to do with coverage. Narrow and literal on
+   purpose: it goes red on the precise edit that regressed, and on nothing
+   else. */
+const verifierSrc = await readFile(path.join(ROOT, "tools", "verify-deployment.mjs"), "utf8");
+/* Comments stripped: the branch's own comment says the words "notes.push()"
+   while explaining why it must not call it, and an unstripped match on that
+   is a fixture that fails on the correct code. */
+const throttledBranch = (/if \(throttled\.length\) \{([\s\S]*?)\n  \}/.exec(verifierSrc)?.[1] ?? "")
+  .replace(/\/\*[\s\S]*?\*\//g, "");
+
+t("coverage: the throttled branch exists and was found",
+  throttledBranch.includes("throttled.slice"), true);
+
+t("coverage: an unverified sweep FAILS — it does not merely note",
+  /\bfail\(\s*"remote-coverage"/.test(throttledBranch), true);
+
+t("coverage: and it never routes back through notes.push, which exits 0",
+  /\bnotes\.push\(/.test(throttledBranch), false);
+
+/* report() must actually exit non-zero on a failure, or the fail() above is
+   decoration. The early return on the clean path is what makes this real. */
+t("coverage: report() exits non-zero when anything failed",
+  /if \(!failures\.length\) \{[\s\S]*?\n  process\.exit\(1\);/.test(verifierSrc), true);
 
 /* ── sitemap-future-lastmod ──
    The shape that shipped: `/` and `/about/` dated 2026-08-25 in a sitemap

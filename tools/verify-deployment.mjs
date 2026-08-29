@@ -25,7 +25,7 @@ import {
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
   nestedCardAnchors,
-  bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
+  bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
@@ -1299,16 +1299,25 @@ if (REMOTE) {
   }
 
   const misses = remoteMisses(results);
-  const throttled = remoteThrottled(results);
+  const coverage = remoteCoverage(results);
+  const throttled = coverage.unverified;
   if (misses.length) {
     fail("remote-pages",
       `${misses.length} of ${routes.length} built pages do not answer on ${REMOTE}: ` +
       misses.slice(0, 8).join(", ") + (misses.length > 8 ? `, +${misses.length - 8} more` : ""));
   }
   if (throttled.length) {
-    /* Not a pass and not a failure: the host rate-limited us, so these routes
-       are simply unverified. Saying so beats implying they are fine. */
-    notes.push(`${throttled.length} of ${routes.length} routes still rate-limited after 3 tries — NOT verified`);
+    /* This used to be notes.push(), which report() prints as `ok` and exits 0
+       on — so a half-throttled sweep announced "NOT verified" under an ok
+       prefix and returned success. A route with no answer cannot count toward
+       a pass. Routes are LISTED, not counted: the count is what you re-run
+       against, the list is what you go and check by hand. */
+    fail("remote-coverage",
+      `${coverage.answered} of ${coverage.total} routes answered on ${REMOTE}; ` +
+      `${throttled.length} still rate-limited after 3 tries, so this sweep did not verify them ` +
+      `and cannot be reported as a pass: ` +
+      throttled.slice(0, 8).join(", ") + (throttled.length > 8 ? `, +${throttled.length - 8} more` : ""));
+    hints.push("remote-coverage: the host was throttling. Re-run the same command — the sweep already retries 3× with backoff, so this is a persistent limit, not a blip.");
   }
   if (!misses.length && !throttled.length) {
     notes.push(`all ${routes.length} built pages answer on ${REMOTE}`);
