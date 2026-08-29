@@ -32,6 +32,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const CONFIGURED_SITE = (await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"))
+  .match(/site:\s*'([^']+)'/)?.[1]?.replace(/\/$/, "") ?? "";
 
 let pass = 0;
 const failures = [];
@@ -49,11 +51,13 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   placeCardAlt,
-  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
+  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
-  remoteRoutes, remoteMisses, remoteThrottled,
+  htaccessGaps as rawHtaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
+const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
+  rawHtaccessGaps(text, productionSite);
 const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
@@ -925,6 +929,69 @@ t("csp: an absent header is null, not an empty string",
 t("csp: an absent directive is null",
   cspDirective(HT, "Content-Security-Policy-Report-Only", "worker-src"), null);
 
+/* ── cspHeaders: surviving the #100 flip, in both directions ──
+   csp-script-src and serve-csp-enforcing.mjs both pinned the -Report-Only
+   spelling. #100 renames the header to enforcing and its own rollback renames
+   it back, so each direction silently disabled the one check standing between
+   an edited inline script and a dead page. The first two fixtures are that
+   flip; before this change the enforcing one returned nothing. */
+const HT_ENFORCING = HT.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy");
+
+t("cspHeaders: the report-only header is found",
+  cspHeaders(HT).map((h) => h.name).join(), "Content-Security-Policy-Report-Only");
+
+t("cspHeaders: the ENFORCING header is found — #100's flip",
+  cspHeaders(HT_ENFORCING).map((h) => h.name).join(), "Content-Security-Policy");
+
+/* The prefix trap, and why the trailing \s+" in the pattern is load-bearing:
+   "Content-Security-Policy" is a strict prefix of the report-only spelling, so
+   a looser match reports the enforcing header on a report-only file — the
+   check would then pass while claiming the wrong mode. */
+t("cspHeaders: report-only is not also reported as enforcing",
+  cspHeaders(HT).length, 1);
+
+t("cspHeaders: a file with neither header yields nothing",
+  cspHeaders(`  Header set X-Frame-Options "SAMEORIGIN"`).length, 0);
+
+/* Both at once is a half-finished flip. A browser enforces one and reports on
+   the other, so two policies that can disagree ship together. */
+t("cspHeaders: both headers at once are both reported",
+  cspHeaders(HT + HT_ENFORCING).map((h) => h.name).join(),
+  "Content-Security-Policy,Content-Security-Policy-Report-Only");
+
+/* Enforcing first, so a caller taking [0] prefers the header that blocks. */
+t("cspHeaders: enforcing sorts before report-only",
+  cspHeaders(HT + HT_ENFORCING)[0].name, "Content-Security-Policy");
+
+/* ── the SAME name twice, which one .exec per name could not see ──
+   Apache documents `Header set` as replacing any previous header of that
+   name, so the LAST line ships. Reporting one meant the verifier diffed
+   dist's hashes against a policy the browser throws away — and a policy
+   missing those hashes could deploy green. Both consumers already refuse a
+   count above 1; they just never got one. */
+const HT_DUP_ENFORCING = HT_ENFORCING +
+  `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'"\n`;
+
+t("cspHeaders: two ENFORCING headers are both reported, not collapsed to one",
+  cspHeaders(HT_DUP_ENFORCING).length, 2);
+
+t("cspHeaders: two REPORT-ONLY headers are both reported too",
+  cspHeaders(HT + `\n  Header always set Content-Security-Policy-Report-Only "default-src 'self'"\n`).length, 2);
+
+/* The one that matters: the policy Apache keeps is the last, and it is not
+   the one [0] returns — so a caller reading only [0] would validate the
+   wrong policy. The count is what stops it. */
+t("cspHeaders: the duplicate's differing policy is visible, not hidden",
+  cspHeaders(HT_DUP_ENFORCING).at(-1).policy, "default-src 'self'; script-src 'self'");
+
+t("cspHeaders: the policy value comes back with the name",
+  cspHeaders(HT_ENFORCING)[0].policy.startsWith("default-src 'self'"), true);
+
+/* The whole point: the directive lookup keeps working after the rename. */
+t("csp: script-src is still readable once the header is enforcing",
+  cspDirective(HT_ENFORCING, cspHeaders(HT_ENFORCING)[0].name, "script-src"),
+  "'self' 'sha256-AAA=' https://www.googletagmanager.com");
+
 t("csp: drift - a needed hash the header lacks is missing",
   cspScriptSrcDrift("'self' 'sha256-AAA='", ["sha256-AAA=", "sha256-BBB="]).missing.join(","), "sha256-BBB=");
 
@@ -1174,6 +1241,8 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 <IfModule mod_headers.c>
   SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
+  SetEnvIfNoCase Host "^(www\\.)?hymtravel\\.com(?::[0-9]+)?$" IS_PROD=1
+  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
@@ -1184,6 +1253,9 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
+
+t("htaccess: the verifier cannot skip the configured production site",
+  rawHtaccessGaps(HT_GOOD).length, 1);
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
@@ -1247,11 +1319,65 @@ t("htaccess: no CSP header at all is one offender, not eleven",
 t("htaccess: an ENFORCING CSP satisfies the check as well as report-only",
   htaccessGaps(HT_GOOD.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy")).length, 0);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 10:
-   both migration redirects, the 4 security headers, both staging lines, the
-   CSP once, and the cache once. */
-t("htaccess: an empty file reports all 10 gaps and does not throw",
-  htaccessGaps("").length, 10);
+/* ── HSTS (#79) ──
+   Driven red against each shape it can actually ship in. The first is the
+   state of the file before this check existed, so it is the one that proves
+   the check can go red at all rather than merely staying green. */
+t("htaccess: the pre-#79 file, with no HSTS at all, is caught twice",
+  htaccessGaps(HT_GOOD
+    .replace(/^\s*Header always set Strict-Transport-Security.*$/m, "")
+    .replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 2);
+
+t("htaccess: deleting only the HSTS header is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*Header always set Strict-Transport-Security.*$/m, "")).length, 1);
+
+/* The silent one: env=IS_PROD with nothing arming IS_PROD sends the header
+   to nobody, and greps for "Strict-Transport-Security" still find it. */
+t("htaccess: an HSTS header whose SetEnvIf is gone is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 1);
+
+/* The deployment matcher is validated against Astro's configured site, not
+   against another hymtravel.com literal hidden in the verifier. */
+t("htaccess: a matcher that drifts from the configured production site is caught",
+  htaccessGaps(HT_GOOD, "https://www.example.com").length, 1);
+
+t("htaccess: a case-sensitive production matcher is caught",
+  htaccessGaps(HT_GOOD.replace("SetEnvIfNoCase Host", "SetEnvIf Host")).length, 1);
+
+t("htaccess: a production matcher that rejects an explicit port is caught",
+  htaccessGaps(HT_GOOD.replace("(?::[0-9]+)?", "")).length, 1);
+
+/* Unscoping it is a regression, not a simplification: it would pin the
+   Hostinger preview host to HTTPS on a certificate this repo does not own. */
+t("htaccess: dropping env=IS_PROD so HSTS goes to every host is caught",
+  htaccessGaps(HT_GOOD.replace(` "max-age=86400" env=IS_PROD`, ` "max-age=86400"`)).length, 1);
+
+t("htaccess: preload is refused even at the correct max-age",
+  htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=86400; preload"`)).length, 1);
+
+/* The ramp is the safety argument, so widening it in the .htaccess alone
+   must fail rather than quietly commit every visitor for a year. */
+t("htaccess: raising max-age in the .htaccess alone is caught",
+  htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=31536000; includeSubDomains"`)).length, 1);
+
+/* Same first-match-only hole as cspHeaders had: the second line is the one
+   Apache keeps, so a duplicate must fail rather than have the directives
+   checked against the dead policy above it. */
+t("htaccess: the same CSP header set twice is caught",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always set Content-Security-Policy-Report-Only "default-src 'self'"\n`).length, 1);
+
+/* One of each name still passes htaccessGaps — csp-script-src is the check
+   that refuses that, and it does. This pins the division of labour. */
+t("htaccess: one of each CSP name is not this check's failure to report",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"\n`).length, 0);
+
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 12:
+   both migration redirects, the 4 security headers, both staging lines, both
+   HSTS lines (#79), the CSP once, and the cache once. */
+t("htaccess: an empty file reports all 12 gaps and does not throw",
+  htaccessGaps("").length, 12);
 
 /* ── photo-grid (#93) ── */
 
@@ -1384,11 +1510,51 @@ t("itemlist: a clean list does not hide a broken neighbour",
   itemListDefects(collectionPage([li(1, "a"), li(2, "b")]) +
     collectionPage([li(1, "c"), li(2, "c")])).length, 1);
 
-t("itemlist: BreadcrumbList is not an ItemList",
+/* ── BreadcrumbList (was excluded, and that is what hid the bug) ──
+   This fixture used to assert the opposite — that a BreadcrumbList with two
+   identical items reported 0 — and it passed for exactly as long as 32 journal
+   posts shipped that defect. The old expectation is the bug, pinned. */
+t("breadcrumb: a duplicated item url is caught",
   itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
     { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
     { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/" },
+  ] })).length, 1);
+
+/* The exact shape that shipped on all 32 posts: Home, Travel Journal, then a
+   category crumb resolving to the same /travel-journal/ URL. */
+t("breadcrumb: the shipped journal trail is caught",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/travel-journal/" },
+    { "@type": "ListItem", position: 3, item: "https://www.hymtravel.com/travel-journal/" },
+    { "@type": "ListItem", position: 4, name: "A post" },
+  ] })).length, 1);
+
+/* And the corrected trail this commit ships — the final crumb legitimately
+   carries no `item`, which is the one position where that is valid. */
+t("breadcrumb: the corrected three-crumb trail is clean",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/travel-journal/" },
+    { "@type": "ListItem", position: 3, name: "A post" },
   ] })).length, 0);
+
+/* A destination trail repeats no URL and must stay green. */
+t("breadcrumb: a four-crumb destination trail is clean",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/destinations/" },
+    { "@type": "ListItem", position: 3, item: "https://www.hymtravel.com/destinations/africa/" },
+    { "@type": "ListItem", position: 4, name: "Kenya" },
+  ] })).length, 0);
+
+/* The label takes its noun from the node. Hardcoding "ItemList" would have
+   reported every breadcrumb defect under the wrong type. */
+t("breadcrumb: the defect is reported as a BreadcrumbList, not an ItemList",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/x/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/x/" },
+  ] }))[0].startsWith("BreadcrumbList"), true);
 
 t("itemlist: a block that does not parse is skipped, not reported here",
   itemListDefects(`<script type="application/ld+json">{not json</script>`).length, 0);
@@ -1532,12 +1698,22 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     htaccessGaps(htaccess).join(" | "), "");
   t("real dist/.htaccess does contain `immutable` in comments (so the guard is live)",
     /immutable/.test(htaccess), true);
-  t("real dist/.htaccess exists and carries the report-only CSP",
-    cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src") !== null, true);
+  /* Whichever spelling the real file ships, exactly as the verifier resolves
+     it. These three pinned "-Report-Only" and so would have gone red the day
+     #100 flips the header — with messages about missing script-src hashes,
+     which reads as CSP drift and sends the reader after the wrong bug. That
+     is the failure this whole commit exists to remove, in the file that is
+     supposed to catch it. */
+  const realCsp = cspHeaders(htaccess);
+  t("real dist/.htaccess carries exactly one CSP header, either spelling",
+    realCsp.length, 1);
+  const realCspName = realCsp[0]?.name;
+  t("real dist/.htaccess exists and carries a CSP with a script-src",
+    cspDirective(htaccess, realCspName, "script-src") !== null, true);
   t("real dist/.htaccess script-src covers every inline script on /",
-    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(home)).missing.length, 0);
+    cspScriptSrcDrift(cspDirective(htaccess, realCspName, "script-src"), inlineScriptHashes(home)).missing.length, 0);
   t("real dist/.htaccess script-src covers every inline script on /plan-your-trip/",
-    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(plan)).missing.length, 0);
+    cspScriptSrcDrift(cspDirective(htaccess, realCspName, "script-src"), inlineScriptHashes(plan)).missing.length, 0);
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
@@ -1592,6 +1768,87 @@ t("throttled routes are reported separately, so they are not silently a pass",
   remoteThrottled(THROTTLED).join(","), "/,/destinations/aspen/");
 t("a genuine 404 is not mistaken for throttling",
   remoteThrottled(THROTTLED).includes("/gone/"), false);
+
+/* ── remote-coverage ──
+   "Reported separately" above was true, and separately meant notes.push(),
+   which report() prints as `ok` and exits 0 on. A half-throttled sweep
+   announced "NOT verified" under an ok prefix and returned success. These pin
+   the arithmetic the failure message is built from. */
+t("coverage: a throttled route does not count as answered",
+  remoteCoverage(THROTTLED).answered, 1);
+
+t("coverage: the definite 404 DOES count as answered — it is a real result",
+  remoteCoverage(THROTTLED).unverified.includes("/gone/"), false);
+
+t("coverage: unverified routes are listed, not just counted",
+  remoteCoverage(THROTTLED).unverified.join(","), "/,/destinations/aspen/");
+
+/* The shape that shipped green: most routes fine, a slice throttled. */
+const PARTIAL = [
+  { route: "/a/", ok: true, status: 200 },
+  { route: "/b/", ok: true, status: 200 },
+  { route: "/c/", ok: false, status: 429 },
+];
+t("coverage: a partial sweep is the real hole — 2 of 3 answered",
+  `${remoteCoverage(PARTIAL).answered}/${remoteCoverage(PARTIAL).total}`, "2/3");
+
+t("coverage: a partial sweep leaves something unverified, so it cannot pass",
+  remoteCoverage(PARTIAL).unverified.length > 0, true);
+
+/* A fully clean sweep must stay clean, or the check is just noise. */
+const ALL_OK = [
+  { route: "/a/", ok: true, status: 200 },
+  { route: "/b/", ok: true, status: 200 },
+];
+t("coverage: a clean sweep reports nothing unverified",
+  remoteCoverage(ALL_OK).unverified.length, 0);
+
+t("coverage: a clean sweep answers everything",
+  `${remoteCoverage(ALL_OK).answered}/${remoteCoverage(ALL_OK).total}`, "2/2");
+
+/* A sweep of only definite misses is a deploy failure, not a coverage one —
+   remote-pages reports it and coverage must not double-report. */
+t("coverage: definite misses are answers, not coverage gaps",
+  remoteCoverage([{ route: "/x/", ok: false, status: 404 }]).unverified.length, 0);
+
+t("coverage: an empty sweep answers nothing and has nothing unverified",
+  `${remoteCoverage([]).answered}/${remoteCoverage([]).total}`, "0/0");
+
+/* ── the WIRING, which is the only thing that was ever broken ──
+   Everything above pins arithmetic on a pure counter that was never wrong.
+   The bug was that the throttled branch called notes.push(), which report()
+   prints with an `ok` prefix and exits 0 on — so "NOT verified" shipped as a
+   pass. Reverting that one call leaves every fixture above green, which is
+   exactly how the predecessor got through: main's "throttled routes are
+   reported separately, so they are not silently a pass" was green for the
+   whole life of the bug it names.
+
+   So assert the call itself. This reads the verifier's source rather than
+   running it, because the alternative — spawning verify-deployment.mjs
+   against a stub host — would drag in all 103 other checks and fail for
+   reasons that have nothing to do with coverage. Narrow and literal on
+   purpose: it goes red on the precise edit that regressed, and on nothing
+   else. */
+const verifierSrc = await readFile(path.join(ROOT, "tools", "verify-deployment.mjs"), "utf8");
+/* Comments stripped: the branch's own comment says the words "notes.push()"
+   while explaining why it must not call it, and an unstripped match on that
+   is a fixture that fails on the correct code. */
+const throttledBranch = (/if \(throttled\.length\) \{([\s\S]*?)\n  \}/.exec(verifierSrc)?.[1] ?? "")
+  .replace(/\/\*[\s\S]*?\*\//g, "");
+
+t("coverage: the throttled branch exists and was found",
+  throttledBranch.includes("throttled.slice"), true);
+
+t("coverage: an unverified sweep FAILS — it does not merely note",
+  /\bfail\(\s*"remote-coverage"/.test(throttledBranch), true);
+
+t("coverage: and it never routes back through notes.push, which exits 0",
+  /\bnotes\.push\(/.test(throttledBranch), false);
+
+/* report() must actually exit non-zero on a failure, or the fail() above is
+   decoration. The early return on the clean path is what makes this real. */
+t("coverage: report() exits non-zero when anything failed",
+  /if \(!failures\.length\) \{[\s\S]*?\n  process\.exit\(1\);/.test(verifierSrc), true);
 
 /* ── sitemap-future-lastmod ──
    The shape that shipped: `/` and `/about/` dated 2026-08-25 in a sitemap
