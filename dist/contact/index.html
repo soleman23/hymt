@@ -40,8 +40,13 @@
 .contact-photo {
   width:100%;aspect-ratio:3/4;background:var(--bg-card);
   display:flex;align-items:center;justify-content:center;margin-bottom:32px;
-  font-family:var(--font-d);font-size:10px;font-weight:600;
-  letter-spacing:.14em;text-transform:uppercase;color:rgba(138,155,176,.3);
+  overflow:hidden;
+}
+/* One source, two shapes: 3/4 here and 16/9 under 900px, so the crop has to
+   happen in CSS. object-fit:cover is what lets the existing 900x1086 file
+   serve both without cutting a new asset. */
+.contact-photo__img {
+  width:100%;height:100%;object-fit:cover;display:block;
 }
 .contact-name {
   font-family:var(--font-d);font-size:24px;font-weight:700;
@@ -217,6 +222,11 @@
   .contact-info { border-right:none;border-bottom:1px solid var(--border-subtle);padding:48px 28px }
   .contact-form-col { padding:48px 28px }
   .contact-photo { aspect-ratio:16/9 }
+  /* A centred cover crop of a 900x1086 portrait into 16/9 cuts the head off
+     at the mouth - checked by rendering the crop, not by eye. Biasing up the
+     580px of vertical slack keeps the whole face in frame. The 3/4 desktop
+     box needs no such nudge. */
+  .contact-photo__img { object-position:50% 10% }
   .hours-strip { grid-template-columns:1fr;padding:40px 28px }
   .faq-grid { grid-template-columns:1fr }
   .social-strip { grid-template-columns:1fr;gap:28px;padding:48px 28px }
@@ -240,7 +250,7 @@
 
   <!-- INFO -->
   <div class="contact-info">
-    <div class="contact-photo">Portrait Photography<br>Mark Sole</div>
+    <div class="contact-photo"><img class="contact-photo__img" src="/assets/img/sp-mark-sole-portrait.jpg" alt="Mark Sole, founder of Hit Your Mark Travel, hands clasped at a caf&eacute; table in a European town square" width="900" height="1086" decoding="async"></div>
     <div class="contact-name">Mark Sole</div>
     <div class="contact-title">Founder &amp; Travel Director</div>
     <p class="contact-intro">

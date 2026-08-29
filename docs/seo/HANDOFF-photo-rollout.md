@@ -18,20 +18,23 @@ READ FIRST, in this order — do not start work until you have:
   3. CLAUDE.md § "SEO & AIO rules"       (non-negotiable page rules)
   (docs/seo/photography-plan.md and photography-needed.md were both STALE;
    corrected 2026-08-28. Both now open with a completion banner and derive
-   their figures. Nothing is waiting on a frame that does not exist, and
-   nothing is waiting on Mark — but 65 unfilled portrait plates remain, and
-   that is not the same thing. See photography-plan.md § "If you are here to
-   do photography work".)
+   their figures.)
 
-STATE, re-derived on 2026-08-26 (third session that day):
-  THE CARD ROLLOUT IS COMPLETE — experiences, destinations and itineraries.
-  What is NOT complete is the 65 portrait plates: `/contact/` plus 64 across
-  the journal, every one wanting a photograph already in the repo. That is
-  wiring, not commissioning. An earlier version of this block said "there is
-  no backlog left to pick up" full stop, which is the same sentence
-  photography-plan.md retracts two files away — the correction landed there
-  and never reached here, and this file is item 1 of the list above, so
-  anyone reading in order stopped at the wrong answer.
+STATE, re-derived on 2026-08-29:
+  THE ROLLOUT IS COMPLETE — cards and portraits both. Nothing is waiting on a
+  frame that does not exist, nothing is waiting on Mark, and no page renders a
+  placeholder plate. The 65 portrait plates outstanding on 08-28 — /contact/
+  plus 64 across the journal — were filled on 08-29 with
+  sp-mark-sole-portrait.jpg, which had been in the repo since 08-10.
+
+  Two earlier versions of this block said "no backlog left to pick up" while
+  those 65 were live. It is true now, and the difference is that it derives:
+
+    grep -rho 'class="[a-z_ -]*[_-]ph"' dist --include='*.html'   # nothing
+    grep -rho '[A-Z][a-z]* Photography'  dist --include='*.html'   # 1 Iceberg
+
+  Run those before believing this paragraph. The plate class name has changed
+  twice, and each time a sweep written against the old one reported zero.
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
   DESTINATIONS — DONE. 67 of 67 pages that carry a places-grid are on
@@ -1426,20 +1429,23 @@ Two things worth carrying into every later wave:
 
 ## Open items
 
-- **65 unfilled portrait plates.** `/contact/` (`contact-photo`) plus 64
+- ~~**65 unfilled portrait plates.** `/contact/` (`contact-photo`) plus 64
   across the journal — `author-card__photo-ph` ×32 and
-  `post-byline__avatar-ph` ×32. All 65 want the same photograph, which has
-  been in the repo since 2026-08-10 as `sp-mark-sole-portrait.jpg` and
-  already ships on `/about/`. Wiring, not commissioning; agent-doable
-  without Mark. Derive the count, never quote it:
+  `post-byline__avatar-ph` ×32.~~ **Closed 2026-08-29.** All 65 carry
+  `sp-mark-sole-portrait.jpg`, which had been in the repo since 2026-08-10
+  and already shipped on `/about/` — wiring, not commissioning, and it needed
+  nothing from Mark. The `-ph` rules were deleted with the plates and
+  `Portrait` joined `PLACEHOLDER_PATTERNS`, so a plate coming back fails the
+  build. Derive it, never quote it:
 
   ```bash
-  grep -rho 'author-card__photo-ph\|post-byline__avatar-ph' dist --include='*.html' | sort | uniq -c
-  grep -rl 'Portrait Photography' dist --include='*.html'
+  grep -rho 'class="[a-z_ -]*[_-]ph"' dist --include='*.html' | sort | uniq -c
+  grep -rl  'Portrait Photography'    dist --include='*.html'
   ```
 
-  Note the class names end `-ph`, not `__ph` — the `[a-z-]*__ph\b` sweep
-  that this doc set once pointed at cannot see any of the 64.
+  Note the class names ended `-ph`, not `__ph` — the `[a-z-]*__ph\b` sweep
+  this doc set once pointed at could not see any of the 64, which is how they
+  stayed invisible through three "complete" declarations.
 - ~~**5 borrowed-hero swaps** left in `drive-image-skips.md` § A.~~ **Closed
   2026-08-13**, and it was 6 — St. Barth's was missing from the list because
   its slug is `caribbean-mexico-st-barth-s` (the apostrophe in `St. Barth's`

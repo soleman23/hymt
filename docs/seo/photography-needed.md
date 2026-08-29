@@ -72,22 +72,24 @@
 > grep -rho '[A-Z][a-z]* Photography' dist --include='*.html' | sort | uniq -c
 > ```
 >
-> Today the first returns 68 tokens: `author-card__photo-ph` ×32 and
-> `post-byline__avatar-ph` ×32, plus `dest-card__ph` ×2,
-> `journal-featured__image-ph` and `story__photo-ph` — those last four are CSS
-> rules for classes nothing renders. The second cuts straight to the 64 that
-> do render, and returns exactly the first two. The third returns
-> `Portrait Photography` (`/contact/`, the 65th, **not** waiting
-> on Mark — `sp-mark-sole-portrait.jpg` has been in the repo since 2026-08-10
-> and just needs wiring; see
-> [`photography-plan.md`](photography-plan.md) § "The last fifteen") and
-> `Iceberg Photography`
-> (`/destinations/`, a genuine Greenland activity tag beside "Icefjord" and
-> "Dog Sledding"), which is deliberate and documented in the same section.
+> **Since 2026-08-29 all three come back clean.** The first returns four
+> tokens — `dest-card__ph` ×2, `journal-featured__image-ph` and
+> `story__photo-ph` — every one a CSS rule for a class nothing renders. The
+> second, which is the one that answers the question, returns **nothing at
+> all**. The third returns only `Iceberg Photography` (`/destinations/`, a
+> genuine Greenland activity tag beside "Icefjord" and "Dog Sledding"), which
+> is deliberate and documented in
+> [`photography-plan.md`](photography-plan.md) § "The last fifteen".
+>
+> Before that change the second grep returned 64 — `author-card__photo-ph` ×32
+> and `post-byline__avatar-ph` ×32 — and the third also returned
+> `Portrait Photography` on `/contact/`. All 65 now carry
+> `sp-mark-sole-portrait.jpg`, which had been in the repo since 2026-08-10.
 >
 > Neither grep is authority on its own. A plate is whatever renders where a
 > photograph should be, and it has been given a new class name twice now.
-> Check both, and read the matched rows rather than the count.
+> Check both, and read the matched rows rather than the count — a count that
+> says "4" here would read as four plates, and all four are stylesheets.
 
 Every destination in the `/destinations/` grid now has a card. ~~**25 of them
 ship a placeholder plate instead of a photograph**~~ — **none do; the grid has
