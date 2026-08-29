@@ -56,7 +56,7 @@ import {
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 import {
-  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState,
+  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
@@ -1916,6 +1916,62 @@ t("lockfile-state: a corrupt working copy outranks having no git",
 
 t("lockfile-state: git availability defaults to present",
   lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
+
+/* ── lockfile-coverage ── */
+
+/* A loss scan reports what it FOUND, which says nothing about what it COVERED.
+   A working lockfile emptied to {"packages":{}} produces no losses at all --
+   every baseline entry is absent and skipped -- so the check announced success
+   and printed "keeps its platform metadata on 0 entries", counting the working
+   file instead of the comparison. Measured before this was added: an emptied
+   lockfile and one truncated to a single unrelated entry both exited 0.
+
+   The gate is `shared`, not `compared`. A real dependency upgrade drives
+   `compared` towards zero while `shared` stays high, and must not be mistaken
+   for a truncated file. */
+
+const COV = (pkgs) => ({ packages: pkgs });
+const A1 = { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] };
+
+t("coverage: an identical lockfile is fully covered",
+  JSON.stringify(lockfileCoverage(COV({ "node_modules/a": A1, "node_modules/b": A1 }),
+                                  COV({ "node_modules/a": A1, "node_modules/b": A1 }))),
+  JSON.stringify({ baselineEntries: 2, shared: 2, compared: 2 }));
+
+t("coverage: an emptied working lockfile shares nothing",
+  JSON.stringify(lockfileCoverage(COV({ "node_modules/a": A1 }), COV({}))),
+  JSON.stringify({ baselineEntries: 1, shared: 0, compared: 0 }));
+
+t("coverage: a lockfile truncated to unrelated entries shares nothing",
+  lockfileCoverage(COV({ "node_modules/a": A1 }), COV({ "node_modules/zzz": A1 })).shared, 0);
+
+/* The case the gate must NOT catch: everything upgraded. Keys still line up,
+   so `shared` stays at full, while `compared` drops to zero. */
+t("coverage: a wholesale upgrade still shares every key",
+  JSON.stringify(lockfileCoverage(
+    COV({ "node_modules/a": { version: "1.0.0" }, "node_modules/b": { version: "1.0.0" } }),
+    COV({ "node_modules/a": { version: "2.0.0" }, "node_modules/b": { version: "2.0.0" } }))),
+  JSON.stringify({ baselineEntries: 2, shared: 2, compared: 0 }));
+
+t("coverage: a changed integrity counts as shared but not compared",
+  JSON.stringify(lockfileCoverage(
+    COV({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } }),
+    COV({ "node_modules/a": { version: "1.0.0", integrity: "sha512-BBB" } }))),
+  JSON.stringify({ baselineEntries: 1, shared: 1, compared: 0 }));
+
+t("coverage: an empty baseline is vacuously covered",
+  JSON.stringify(lockfileCoverage(COV({}), COV({ "node_modules/a": A1 }))),
+  JSON.stringify({ baselineEntries: 0, shared: 0, compared: 0 }));
+
+/* Against the real file: the committed lockfile compared with itself covers
+   every entry, so the note the build prints is the whole file, not a subset. */
+t("coverage: the real lockfile against itself is fully covered",
+  JSON.stringify(lockfileCoverage(REAL_LOCK, REAL_LOCK)),
+  JSON.stringify({
+    baselineEntries: Object.keys(REAL_LOCK.packages).length,
+    shared: Object.keys(REAL_LOCK.packages).length,
+    compared: Object.keys(REAL_LOCK.packages).length,
+  }));
 
 /* ── dist-line-endings ── */
 

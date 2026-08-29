@@ -96,6 +96,13 @@ const PLATFORM_FIELDS = ["libc", "os", "cpu"];
  *
  * @returns {{pkg: string, field: string, missing: string[]}[]} empty when clean
  */
+/* Same artifact on both sides: same version, and — when both carry one — the
+   same content hash. Shared by the loss scan and the coverage count so the two
+   cannot drift apart and disagree about what was compared. */
+const isSameArtifact = (was, now) =>
+  was.version === now.version &&
+  !(was.integrity && now.integrity && was.integrity !== now.integrity);
+
 export function lockfileMetadataLoss(before, after) {
   const losses = [];
   const a = before?.packages ?? {};
@@ -103,8 +110,7 @@ export function lockfileMetadataLoss(before, after) {
   for (const [pkg, was] of Object.entries(a)) {
     const now = b[pkg];
     if (!now) continue;
-    if (was.version !== now.version) continue;
-    if (was.integrity && now.integrity && was.integrity !== now.integrity) continue;
+    if (!isSameArtifact(was, now)) continue;
     for (const field of PLATFORM_FIELDS) {
       if (!Array.isArray(was[field])) continue;
       const kept = Array.isArray(now[field]) ? now[field] : [];
@@ -113,6 +119,39 @@ export function lockfileMetadataLoss(before, after) {
     }
   }
   return losses;
+}
+
+/**
+ * How much of the baseline the loss scan actually looked at.
+ *
+ * lockfileMetadataLoss reports what it FOUND, which says nothing about what it
+ * COVERED. A working lockfile emptied to `{"packages":{}}`, or truncated to a
+ * handful of unrelated entries, produces no losses at all — every baseline
+ * entry is simply absent and skipped — and the check announced success. The
+ * message it printed, "keeps its platform metadata on 0 entries", counted the
+ * working file rather than the comparison, so a lockfile with nothing left in
+ * it read as verified.
+ *
+ * `shared` is the honest denominator: baseline entries that still exist by key.
+ * `compared` is those that also survived the artifact gate, and is expected to
+ * fall during a real dependency upgrade — that is a wholesale version change,
+ * not a truncated file, which is why the caller gates on `shared` and merely
+ * reports `compared`.
+ *
+ * @returns {{baselineEntries: number, shared: number, compared: number}}
+ */
+export function lockfileCoverage(baseline, working) {
+  const a = baseline?.packages ?? {};
+  const b = working?.packages ?? {};
+  let shared = 0;
+  let compared = 0;
+  for (const [pkg, was] of Object.entries(a)) {
+    const now = b[pkg];
+    if (!now) continue;
+    shared++;
+    if (isSameArtifact(was, now)) compared++;
+  }
+  return { baselineEntries: Object.keys(a).length, shared, compared };
 }
 
 /**

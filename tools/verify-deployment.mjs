@@ -29,7 +29,7 @@ import {
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
-  lockfileMetadataLoss, lockfileCheckState, crDefect, isBinaryDistFile,
+  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
    drift from the convention in tools/git-lastmod.mjs. */
@@ -1168,21 +1168,38 @@ notes.push(
     fail("lockfile-metadata",
       `HEAD has no usable package-lock.json to compare against (${headError || "no packages map"}) — git works here, so the lockfile has stopped being committed`);
   } else {
-    const losses = lockfileMetadataLoss(head, working);
-    for (const { pkg, field, missing } of losses) {
+    /* A loss scan reports what it FOUND, not what it looked at. Emptied to
+       {"packages":{}} or truncated to a few unrelated entries, the working
+       lockfile produces no losses — every baseline entry is simply absent and
+       skipped — and this used to print "keeps its platform metadata on 0
+       entries" and exit 0, counting the working file instead of the
+       comparison. Gate on shared keys, not on `compared`: a real dependency
+       upgrade legitimately drives `compared` towards zero while `shared`
+       stays high. */
+    const coverage = lockfileCoverage(head, working);
+    if (coverage.baselineEntries > 0 && coverage.shared === 0) {
       fail("lockfile-metadata",
-        `${pkg} lost ${field} ${JSON.stringify(missing)} from package-lock.json`);
-    }
-    if (losses.length) {
-      hints.push(
-        "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
-        "     dependencies on the deploy host. Every entry above is the SAME package at the SAME\n" +
-        "     version with the SAME integrity hash as HEAD, so this is not an upgrade dropping\n" +
-        "     support upstream — it is metadata going missing from an artifact that did not change.\n" +
-        "     Restore it with `git checkout HEAD -- package-lock.json` and install with `npm ci`,\n" +
-        "     which never rewrites the lockfile.");
+        `package-lock.json shares no entries with HEAD's copy — ${coverage.baselineEntries} there, ` +
+        `${Object.keys(working.packages).length} here — so the comparison covered nothing and cannot be reported as a pass`);
     } else {
-      notes.push(`package-lock.json keeps its platform metadata on ${Object.keys(working.packages ?? {}).length} entries`);
+      const losses = lockfileMetadataLoss(head, working);
+      for (const { pkg, field, missing } of losses) {
+        fail("lockfile-metadata",
+          `${pkg} lost ${field} ${JSON.stringify(missing)} from package-lock.json`);
+      }
+      if (losses.length) {
+        hints.push(
+          "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
+          "     dependencies on the deploy host. Every entry above is the SAME package at the SAME\n" +
+          "     version with the SAME integrity hash as HEAD, so this is not an upgrade dropping\n" +
+          "     support upstream — it is metadata going missing from an artifact that did not change.\n" +
+          "     Restore it with `git checkout HEAD -- package-lock.json` and install with `npm ci`,\n" +
+          "     which never rewrites the lockfile.");
+      } else {
+        /* Reports the comparison, not the file: `compared` of `baselineEntries`
+           is what was actually looked at. */
+        notes.push(`package-lock.json keeps its platform metadata — ${coverage.compared} of ${coverage.baselineEntries} HEAD entries compared`);
+      }
     }
   }
 }
