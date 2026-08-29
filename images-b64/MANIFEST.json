@@ -5973,5 +5973,10 @@
   "b64": "images-b64/assets__img__jf-e-30-derby-box-juleps.jpg.b64",
   "target": "public/assets/img/jf-e-30-derby-box-juleps.jpg",
   "bytes": 72689
+ },
+ {
+  "b64": "images-b64/assets__img__jc-napa-sonoma-the-valley-floor.jpg.b64",
+  "target": "public/assets/img/jc-napa-sonoma-the-valley-floor.jpg",
+  "bytes": 51583
  }
 ]
