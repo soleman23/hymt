@@ -826,9 +826,14 @@ export const CSP_DIRECTIVES = [
  * anywhere on a line, so a `website: '…'` key won instead; and only single
  * quotes were accepted, so switching the config to double quotes silently
  * yielded "".
+ *
+ * Anchored to a property boundary — start of line or after `{` / `,` — not to
+ * the start of a line. Line-anchoring fixed `website:` but broke the equally
+ * valid `defineConfig({ site: '…' })` on one line, which would have returned
+ * "" and failed canonical-host on every build.
  */
 export function configuredSite(astroConfigSource) {
-  return astroConfigSource.match(/^\s*site:\s*['"]([^'"]+)['"]/m)?.[1]?.replace(/\/$/, "") ?? "";
+  return astroConfigSource.match(/(?:^|[{,])\s*site\s*:\s*['"]([^'"]+)['"]/m)?.[1]?.replace(/\/$/, "") ?? "";
 }
 
 export function htaccessGaps(text, productionSite) {
@@ -885,68 +890,93 @@ export function htaccessGaps(text, productionSite) {
      be already live at cutover, because the header this replaces is one the
      Wix edge sends today and stops sending the moment DNS moves. */
   const HSTS_MAX_AGE = "max-age=86400";
-  /* matchAll, not exec, on BOTH lines — the same shape the Cache-Control
-     check below already uses. Apache's `Header set` is last-wins and it
-     evaluates every SetEnvIf, so it is the SECOND line of either kind that
-     decides what ships. Reading only the first passed an appended, unscoped
-     `preload` pin, and an appended `Host "."` that armed IS_PROD on the
-     preview host — both at zero gaps, and both the exact outcomes the
-     comment above says the scoping exists to prevent. */
-  const hstsLines = [...live.matchAll(/^[ \t]*Header\s+(always\s+)?set\s+Strict-Transport-Security\s+"([^"]*)"([^\n]*)/gim)];
+  let configuredHost = "";
+  try {
+    configuredHost = new URL(productionSite).hostname.toLowerCase();
+  } catch {
+    out.push(`could not derive the HSTS host from configured site "${productionSite}"`);
+  }
+
+  /* COUNT FIRST, judge the shape second — for both lines, and across every
+     directive form that can produce them. Reading one line with .exec, or
+     matching only the canonical spelling, let all of these through at zero
+     gaps against the real file:
+
+       Header always add Strict-Transport-Security "…preload"   (action ≠ set)
+       SetEnvIfNoCase Host . IS_PROD=1                          (unquoted)
+       SetEnvIfNoCase Host "." FOO=1 IS_PROD=1                  (extra assign)
+       env=IS_PROD.EXTRA                                        (punctuation)
+
+     mod_headers has add/append/merge/setifempty/edit besides set, and Apache
+     evaluates every SetEnv* directive, so an APPENDED line is the one that
+     decides what ships. Anything matching loosely is counted; only the single
+     survivor is then required to be exactly the canonical shape. */
+  const hstsLines = [...live.matchAll(/^[ \t]*Header\s+(?:(always|onsuccess)\s+)?(\w+)\s+Strict-Transport-Security\b([^\n]*)/gim)];
   if (hstsLines.length === 0) {
     out.push("Strict-Transport-Security header (env=IS_PROD) is missing — HSTS regresses at cutover, because the Wix edge sends it today and Hostinger will not (#79)");
   } else if (hstsLines.length > 1) {
-    out.push(`${hstsLines.length} Strict-Transport-Security headers — \`Header set\` is last-wins, so the last one ships and every scoping rule above it is dead. Keep exactly one (#79)`);
+    out.push(`${hstsLines.length} Strict-Transport-Security directives — mod_headers applies every one, so the effective policy is not the scoped line above. Keep exactly one (#79)`);
   } else {
-    const [, always, value, rest] = hstsLines[0];
-    if (!always) {
+    const [, condition, action, rest] = hstsLines[0];
+    if (condition !== "always") {
       /* Present but not `always`: it rides only the onsuccess table, so it is
          dropped on the apex→www and http→https 301s. Saying "missing" here
          sent the reader to grep for a line that is right there. */
       out.push("Strict-Transport-Security is set without `always` — it then rides only the onsuccess table and is dropped on the apex→www and http→https 301s (#79)");
     }
-    /* Terminated on purpose. Unanchored, `env=IS_PRODUCTION` — which nothing
-       arms — satisfied `env=IS_PROD`, i.e. verbatim the failure the comment
-       above claims to catch. */
-    if (!/^\s+env=IS_PROD(?![\w-])/.test(rest)) {
-      out.push(`Strict-Transport-Security is not scoped to env=IS_PROD (found "${rest.trim() || "no condition"}") — unscoped it pins the preview host to HTTPS on a certificate this repo does not control, and an env name nothing arms sends it to nobody (#79)`);
+    if (action.toLowerCase() !== "set") {
+      out.push(`Strict-Transport-Security uses \`${action}\`, not \`set\` — add/append/merge/setifempty stack a second policy instead of replacing one, so the scoped value is not what ships (#79)`);
     }
-    if (value !== HSTS_MAX_AGE) {
+    /* The whole remainder must be the value and nothing but env=IS_PROD, so a
+       punctuation-suffixed name (env=IS_PROD.EXTRA) — which Apache reads as a
+       DIFFERENT variable that nothing arms — cannot pass. */
+    const shape = /^\s+"([^"]*)"\s+env=IS_PROD\s*$/.exec(rest);
+    if (!shape) {
+      out.push(`Strict-Transport-Security is not exactly \`"<value>" env=IS_PROD\` (found "${rest.trim() || "nothing"}") — unscoped it pins the preview host to HTTPS on a certificate this repo does not control, and an env name nothing arms sends it to nobody (#79)`);
+    } else if (shape[1] !== HSTS_MAX_AGE) {
       /* Exact-match on purpose. The ramp is the whole safety argument, so a
          raise has to be a deliberate edit here rather than a silent widening
          in the .htaccess. `preload` is caught by the same equality. */
-      out.push(`HSTS is "${value}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
+      out.push(`HSTS is "${shape[1]}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
     }
   }
-  const prodEnvLines = [...live.matchAll(/^[ \t]*(SetEnvIf(?:NoCase)?)\s+Host\s+"([^"]*)"\s+IS_PROD=1/gim)];
+
+  /* Any SetEnv* directive mentioning IS_PROD at all, however it is spelled. */
+  const prodEnvLines = [...live.matchAll(/^[ \t]*SetEnv\w*\b[^\n]*\bIS_PROD\b[^\n]*/gim)];
   if (prodEnvLines.length === 0) {
     out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
   } else if (prodEnvLines.length > 1) {
-    out.push(`${prodEnvLines.length} SetEnvIf lines arm IS_PROD — Apache evaluates every one, so any extra matcher silently widens HSTS to hosts this repo holds no certificate for. Keep exactly one (#79)`);
-  } else {
-    const productionEnv = prodEnvLines[0];
-    if (productionEnv[1].toLowerCase() !== "setenvifnocase") {
-      out.push("IS_PROD must use SetEnvIfNoCase — HTTP host names are case-insensitive");
+    out.push(`${prodEnvLines.length} directives arm IS_PROD — Apache evaluates every one, so any extra matcher silently widens HSTS to hosts this repo holds no certificate for. Keep exactly one (#79)`);
+  } else if (configuredHost) {
+    /* `(www\.)?` unconditionally, whichever spelling `site` carries. Both
+       hosts serve: the apex 301s to www and `Header always set` rides that
+       301, so deriving an apex-only matcher from an apex `site` would drop
+       HSTS from the canonical host. Whether an apex `site` is itself correct
+       is a separate question, answered by the canonical-host check below. */
+    const bareHost = configuredHost.replace(/^www\./, "");
+    const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const expectedHost = `^(www\\.)?${escapedHost}(?::[0-9]+)?$`;
+    const canonical = /^[ \t]*(SetEnv\w*)\s+Host\s+"([^"]*)"\s+IS_PROD=1\s*$/.exec(prodEnvLines[0][0]);
+    if (!canonical) {
+      out.push(`IS_PROD is armed by a line that is not \`SetEnvIfNoCase Host "<pattern>" IS_PROD=1\` — an unquoted pattern or a second assignment on the line changes what it matches. Found: ${prodEnvLines[0][0].trim()}`);
+    } else if (canonical[1] !== "SetEnvIfNoCase") {
+      out.push(`IS_PROD must use SetEnvIfNoCase, not ${canonical[1]} — HTTP host names are case-insensitive`);
+    } else if (canonical[2] !== expectedHost) {
+      out.push(`IS_PROD host matcher is "${canonical[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
     }
+  }
 
-    let configuredHost = "";
-    try {
-      configuredHost = new URL(productionSite).hostname.toLowerCase();
-    } catch {
-      out.push(`could not derive the HSTS host from configured site "${productionSite}"`);
-    }
-    if (configuredHost) {
-      /* `(www\.)?` unconditionally, whichever spelling `site` carries. Both
-         hosts serve: the apex 301s to www and `Header always set` rides that
-         301, so deriving an apex-only matcher from an apex `site` would drop
-         HSTS from the canonical host and drive the very regression #79 exists
-         to prevent — on a green build. */
-      const bareHost = configuredHost.replace(/^www\./, "");
-      const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const expectedHost = `^(www\\.)?${escapedHost}(?::[0-9]+)?$`;
-      if (productionEnv[2] !== expectedHost) {
-        out.push(`IS_PROD host matcher is "${productionEnv[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
-      }
+  /* The canonical-host rewrite and astro.config.mjs `site` must name the SAME
+     host. They are two halves of one decision and nothing compared them: set
+     `site` to the apex while this rule still 301s the apex to www, and every
+     canonical, og:url and sitemap URL on the site points at a host the server
+     immediately redirects away from — on a green build. */
+  if (configuredHost) {
+    const hostRedirect = /^[ \t]*RewriteCond\s+%\{HTTP_HOST\}[^\n]*\n[ \t]*RewriteRule\s+\S+\s+https?:\/\/([^\/\s%]+)/mi.exec(live);
+    if (!hostRedirect) {
+      out.push("no canonical-host RewriteCond/RewriteRule pair — apex and www would both serve, splitting every URL in two");
+    } else if (hostRedirect[1].toLowerCase() !== configuredHost) {
+      out.push(`the canonical-host rewrite sends traffic to "${hostRedirect[1]}", but astro.config.mjs site is "${configuredHost}" — every canonical, og:url and sitemap URL would point at a host the server 301s away from`);
     }
   }
 

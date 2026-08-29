@@ -1249,9 +1249,17 @@ t("htaccess: an HSTS header whose SetEnvIf is gone is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 1);
 
 /* The deployment matcher is validated against Astro's configured site, not
-   against another hymtravel.com literal hidden in the verifier. */
+   against another hymtravel.com literal hidden in the verifier. A wholly
+   foreign site disagrees with the .htaccess twice over — the IS_PROD matcher
+   and the canonical-host rewrite — and both are real, so both are reported. */
 t("htaccess: a matcher that drifts from the configured production site is caught",
-  htaccessGaps(HT_GOOD, "https://www.example.com").length, 1);
+  htaccessGaps(HT_GOOD, "https://www.example.com").length, 2);
+
+t("htaccess: the drift names the IS_PROD matcher…",
+  htaccessGaps(HT_GOOD, "https://www.example.com").some((g) => g.includes("IS_PROD host matcher")), true);
+
+t("htaccess: …and the canonical-host rewrite",
+  htaccessGaps(HT_GOOD, "https://www.example.com").some((g) => g.includes("canonical-host rewrite")), true);
 
 t("htaccess: a case-sensitive production matcher is caught",
   htaccessGaps(HT_GOOD.replace("SetEnvIfNoCase Host", "SetEnvIf Host")).length, 1);
@@ -1301,17 +1309,72 @@ t("htaccess: and that failure names `always` instead of saying it is missing",
   htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
                                "Header set Strict-Transport-Security"))[0].includes("without `always`"), true);
 
-/* Both spellings of `site` must accept the shipped matcher. An apex value
-   deriving an apex-only matcher would drop www — the canonical host — from
-   HSTS, driving the regression #79 exists to prevent. */
-t("htaccess: an apex `site` still accepts the (www.)? matcher",
-  htaccessGaps(HT_GOOD, "https://hymtravel.com").length, 0);
+/* ── Directive forms that a `set`-only, quoted-only reading missed ──
+   Every one of these returned ZERO gaps before. mod_headers has
+   add/append/merge/setifempty besides set, Apache accepts an unquoted
+   SetEnvIf pattern and several assignments per line, and `env=` takes the
+   whole token — so each is a live way to ship the thing being guarded
+   against while the build stays green. */
+t("htaccess: an appended `Header always add` HSTS is caught",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always add Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"\n`).length, 1);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 12:
+t("htaccess: the only HSTS line using `add` instead of `set` is caught",
+  htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
+                               "Header always add Strict-Transport-Security")).length, 1);
+
+t("htaccess: `setifempty` is refused the same way",
+  htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
+                               "Header always setifempty Strict-Transport-Security")).length, 1);
+
+t("htaccess: an appended UNQUOTED SetEnvIf arming IS_PROD is caught",
+  htaccessGaps(HT_GOOD + `\n  SetEnvIfNoCase Host . IS_PROD=1\n`).length, 1);
+
+t("htaccess: the only arming line, unquoted, is caught",
+  htaccessGaps(HT_GOOD.replace(/SetEnvIfNoCase Host "[^"]*" IS_PROD=1/,
+                               "SetEnvIfNoCase Host . IS_PROD=1")).length, 1);
+
+t("htaccess: a second assignment on the arming line is caught",
+  htaccessGaps(HT_GOOD.replace("IS_PROD=1", "FOO=1 IS_PROD=1")).length, 1);
+
+t("htaccess: a plain `SetEnv IS_PROD 1`, which arms every host, is caught",
+  htaccessGaps(HT_GOOD + `\n  SetEnv IS_PROD 1\n`).length, 1);
+
+/* `env=` takes the whole token, so IS_PROD.EXTRA is a DIFFERENT variable that
+   nothing arms — production silently receives no HSTS. */
+t("htaccess: a punctuation-suffixed env name is caught",
+  htaccessGaps(HT_GOOD.replace("env=IS_PROD", "env=IS_PROD.EXTRA")).length, 1);
+
+t("htaccess: trailing junk after env=IS_PROD is caught",
+  htaccessGaps(HT_GOOD.replace("env=IS_PROD", "env=IS_PROD extra")).length, 1);
+
+/* ── canonical host: `site` and the rewrite are one decision ──
+   The (www\.)? matcher is unconditional, so HSTS covers both hosts whichever
+   spelling `site` carries. What must NOT pass is the pair disagreeing: an
+   apex `site` while this .htaccess still 301s the apex to www would point
+   every canonical, og:url and sitemap URL at a host the server redirects
+   away from. Nothing compared them before. */
+t("htaccess: an apex `site` against a www-forcing rewrite is caught",
+  htaccessGaps(HT_GOOD, "https://hymtravel.com").length, 1);
+
+t("htaccess: and it is reported as the canonical-host mismatch, not the matcher",
+  htaccessGaps(HT_GOOD, "https://hymtravel.com")[0].includes("canonical-host rewrite"), true);
+
+t("htaccess: a rewrite pointing at a host that is not `site` is caught",
+  htaccessGaps(HT_GOOD.replace("RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI}",
+                               "RewriteRule ^ https://cdn.hymtravel.com%{REQUEST_URI}")).length, 1);
+
+t("htaccess: losing the canonical-host rewrite entirely is caught",
+  htaccessGaps(HT_GOOD
+    .replace(/^\s*RewriteCond %\{HTTP_HOST\}.*\n/m, "")
+    .replace(/^\s*RewriteRule \^ https:\/\/www\.hymtravel\.com.*\n/m, "")).length, 1);
+
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 13:
    both migration redirects, the 4 security headers, both staging lines, both
-   HSTS lines (#79), the CSP once, and the cache once. */
-t("htaccess: an empty file reports all 12 gaps and does not throw",
-  htaccessGaps("").length, 12);
+   HSTS lines (#79), the canonical-host rewrite, the CSP once, and the cache
+   once. */
+t("htaccess: an empty file reports all 13 gaps and does not throw",
+  htaccessGaps("").length, 13);
 
 /* ── configuredSite ──
    One parser, two readers. Both drifts below were live in the two copies it
@@ -1324,6 +1387,17 @@ t("site: a double-quoted config is read, not silently dropped",
 
 t("site: a longer key ending in `site:` does not win",
   configuredSite(`  website: 'https://evil.example',\n  site: 'https://www.hymtravel.com',`),
+  "https://www.hymtravel.com");
+
+/* Anchoring to the start of a line fixed `website:` and broke this — an
+   equally valid single-line config, which would have returned "" and failed
+   canonical-host on every build. The anchor is a property boundary. */
+t("site: an inline single-line config is read",
+  configuredSite(`export default defineConfig({ site: 'https://www.hymtravel.com' });`),
+  "https://www.hymtravel.com");
+
+t("site: `website:` inline still does not win",
+  configuredSite(`export default defineConfig({ website: 'https://evil.example', site: 'https://www.hymtravel.com' });`),
   "https://www.hymtravel.com");
 
 t("site: a trailing slash is stripped",
