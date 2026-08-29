@@ -70,13 +70,22 @@ const PLATFORM_FIELDS = ["libc", "os", "cpu"];
  * diff that also carries a legitimate dependency change.
  *
  * Compares only entries that are still the SAME ARTIFACT on both sides: same
- * key, same `version`, same `resolved`. Three cases are therefore not losses,
+ * key, same `version`, same `integrity`. Two cases are therefore not losses,
  * because in each the metadata belongs to something else:
  *
  *   - the package was removed  -> a dependency change, and the diff shows it;
  *   - the package was upgraded -> the new version's platform support is
- *     whatever upstream published, and narrowing it is upstream's business;
- *   - the artifact was re-resolved to a different tarball at the same version.
+ *     whatever upstream published, and narrowing it is upstream's business.
+ *
+ * Identity is the content hash, NOT `resolved`. An install pointed at a mirror
+ * or an alternate registry rewrites the download URL while fetching identical
+ * bytes, so gating on the URL would skip every entry such an install touched —
+ * reopening the exact hole this check exists to close, for precisely the kind
+ * of unusual install that is most likely to mangle the lockfile. `integrity`
+ * is compared only when both sides carry one; 292 of the 293 entries here do,
+ * the exception being the root entry, which has no platform fields to lose.
+ * When either side lacks it the entry is compared rather than skipped, because
+ * the safe direction is to look.
  *
  * The first draft of this compared by key alone. That made a legitimate
  * upgrade — a package that genuinely drops `musl` in its next major —
@@ -95,7 +104,7 @@ export function lockfileMetadataLoss(before, after) {
     const now = b[pkg];
     if (!now) continue;
     if (was.version !== now.version) continue;
-    if (was.resolved !== now.resolved) continue;
+    if (was.integrity && now.integrity && was.integrity !== now.integrity) continue;
     for (const field of PLATFORM_FIELDS) {
       if (!Array.isArray(was[field])) continue;
       const kept = Array.isArray(now[field]) ? now[field] : [];
@@ -107,25 +116,49 @@ export function lockfileMetadataLoss(before, after) {
 }
 
 /**
+ * A lockfile npm would recognise: an object carrying a `packages` map.
+ *
+ * Guards against JSON that parses but is structurally wrong. `[]`, `{}` and
+ * `{"packages": []}` all satisfy `typeof x === "object"`, and an earlier
+ * version of the state check let all three through as comparable. The
+ * comparison then found no losses in a map with no entries and reported that
+ * metadata was retained "on 0 entries" — a corrupt working copy passing as
+ * verified, which is the exact case the state check was added to fail.
+ */
+const isLockfileShape = (value) =>
+  !!value && typeof value === "object" && !Array.isArray(value) &&
+  !!value.packages && typeof value.packages === "object" && !Array.isArray(value.packages);
+
+/**
  * What the tripwire can actually do with the two lockfiles it was handed.
  *
- * Split out so the "cannot compare" branch is itself covered by a fixture.
- * The first version of this check pushed a *note* when either side was
- * unavailable — and notes print with an `ok` prefix and exit 0, so a missing
- * or malformed lockfile read as a pass while the comment directly above it
- * claimed the opposite. The tripwire was bypassed exactly when something was
- * already wrong.
+ * Split out so every branch is covered by a fixture rather than only by I/O.
+ * The first version pushed a *note* whenever either side was unavailable — and
+ * notes print with an `ok` prefix and exit 0, so a malformed lockfile read as
+ * a pass while the comment directly above it claimed the opposite.
  *
- * Every one of these states is a defect here, so the caller fails on both.
- * There is no "no git" case to be lenient about: astro.config.mjs generates
- * sitemap lastmod through `git log`, so a build without git has already died
- * long before this runs.
+ * Three states, and they are deliberately not treated alike:
  *
- * @returns {"comparable"|"unreadable-working"|"unreadable-baseline"}
+ *   - `unreadable-working`  -> FAIL. The lockfile in the tree being built is
+ *     missing or corrupt. That is a defect wherever the build is running.
+ *   - `no-git`              -> SKIP. There is genuinely no baseline to compare
+ *     against, and this is a supported way to build.
+ *   - `unreadable-baseline` -> FAIL. Git works but HEAD has no usable
+ *     package-lock.json, which for this repo means it stopped being committed.
+ *
+ * The `no-git` case exists because the previous revision of this file claimed
+ * there was no such case — that astro.config.mjs needs `git log` for sitemap
+ * lastmod, so a git-less build dies earlier anyway. That was wrong.
+ * tools/git-lastmod.mjs catches unavailable git and resolves every date to
+ * undefined by design, so builds from `git archive` exports do work, and
+ * failing here broke one that had otherwise passed every check.
+ *
+ * @returns {"comparable"|"unreadable-working"|"no-git"|"unreadable-baseline"}
  */
-export function lockfileCheckState(baseline, working) {
-  if (!working || typeof working !== "object") return "unreadable-working";
-  if (!baseline || typeof baseline !== "object") return "unreadable-baseline";
+export function lockfileCheckState(baseline, working, gitAvailable = true) {
+  if (!isLockfileShape(working)) return "unreadable-working";
+  if (!gitAvailable) return "no-git";
+  if (!isLockfileShape(baseline)) return "unreadable-baseline";
   return "comparable";
 }
 

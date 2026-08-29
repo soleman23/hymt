@@ -1823,15 +1823,39 @@ t("lockfile: a downgrade is a different artifact too",
     LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } }),
     LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 0);
 
-t("lockfile: the same version re-resolved elsewhere is a different artifact",
-  lockfileMetadataLoss(
-    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", libc: ["glibc"] } }),
-    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://m/a-1.0.0.tgz" } })).length, 0);
+/* Codex review on #119, P2. Artifact identity was `resolved` — the download
+   URL. An install pointed at a mirror or an alternate registry rewrites that
+   while fetching identical bytes, so the tripwire skipped every entry such an
+   install touched: the hole reopened for precisely the unusual install most
+   likely to mangle a lockfile. Identity is the content hash. */
 
-t("lockfile: the same version from the same tarball losing a field is caught",
+t("lockfile: the same bytes fetched from a mirror are still compared",
   lockfileMetadataLoss(
-    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", libc: ["glibc"] } }),
-    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz" } })).length, 1);
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://mirror/a-1.0.0.tgz", integrity: "sha512-AAA" } })).length, 1);
+
+t("lockfile: a different integrity at the same version is a different artifact",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-BBB" } })).length, 0);
+
+t("lockfile: the same version and integrity losing a field is caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } })).length, 1);
+
+/* Entries carrying no integrity — the root entry is one of them — are compared
+   rather than skipped, on both sides and on either side alone. The safe
+   direction when identity cannot be established is to look. */
+t("lockfile: an entry with no integrity on either side is still compared",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 1);
+
+t("lockfile: integrity appearing on only one side does not skip the entry",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } })).length, 1);
 
 /* Codex review on #118, P2. When either lockfile could not be read the check
    pushed a note — and notes print with an `ok` prefix and exit 0, so the
@@ -1853,6 +1877,45 @@ t("lockfile-state: a corrupt working copy outranks a missing baseline",
 
 t("lockfile-state: a non-object working lockfile is unreadable",
   lockfileCheckState({ packages: {} }, "not json"), "unreadable-working");
+
+/* Codex review on #119, P2. `typeof [] === "object"`, so an array and an
+   object with no packages map both passed as comparable. The comparison then
+   found no losses in a map with no entries and announced that metadata was
+   retained "on 0 entries" — a corrupt working copy passing as verified, which
+   is the case the state check exists to fail. */
+
+t("lockfile-state: an array is not a lockfile",
+  lockfileCheckState({ packages: {} }, []), "unreadable-working");
+
+t("lockfile-state: an object with no packages map is not a lockfile",
+  lockfileCheckState({ packages: {} }, {}), "unreadable-working");
+
+t("lockfile-state: a packages array is not a packages map",
+  lockfileCheckState({ packages: {} }, { packages: [] }), "unreadable-working");
+
+t("lockfile-state: a null packages map is not a packages map",
+  lockfileCheckState({ packages: {} }, { packages: null }), "unreadable-working");
+
+t("lockfile-state: the same shape rules apply to the baseline",
+  lockfileCheckState({ packages: [] }, { packages: {} }), "unreadable-baseline");
+
+/* Codex review on #119, P2. Failing when git is absent broke builds from a
+   `git archive` export, which this repo supports: tools/git-lastmod.mjs
+   catches unavailable git and resolves every sitemap date to undefined rather
+   than failing. A missing baseline for that reason is a skip, not a defect —
+   but a corrupt working copy is still a defect, git or no git. */
+
+t("lockfile-state: no git means no baseline to compare against, not a failure",
+  lockfileCheckState(null, { packages: {} }, false), "no-git");
+
+t("lockfile-state: git present but no committed lockfile is still a failure",
+  lockfileCheckState(null, { packages: {} }, true), "unreadable-baseline");
+
+t("lockfile-state: a corrupt working copy outranks having no git",
+  lockfileCheckState(null, {}, false), "unreadable-working");
+
+t("lockfile-state: git availability defaults to present",
+  lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
 
 /* ── dist-line-endings ── */
 

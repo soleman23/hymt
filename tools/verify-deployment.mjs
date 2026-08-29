@@ -1146,13 +1146,27 @@ notes.push(
     working = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
   } catch (e) { workingError = String(e.message).split("\n")[0]; }
 
-  const state = lockfileCheckState(head, working);
+  /* Probed apart from the `git show` above so "there is no git here at all"
+     stays distinguishable from "git works and HEAD has no lockfile". The first
+     is a supported way to build this repo — tools/git-lastmod.mjs catches the
+     same condition and resolves every sitemap lastmod to undefined rather than
+     failing — so a `git archive` export must not be broken by this check. The
+     second means the lockfile stopped being committed, which is a defect. */
+  let gitAvailable = false;
+  try {
+    execFileSync("git", ["rev-parse", "--git-dir"], { cwd: ROOT, stdio: "ignore" });
+    gitAvailable = true;
+  } catch { /* no git binary, or not a repository */ }
+
+  const state = lockfileCheckState(head, working, gitAvailable);
   if (state === "unreadable-working") {
     fail("lockfile-metadata",
-      `package-lock.json could not be read or parsed (${workingError}) — a corrupt lockfile must not pass as checked`);
+      `package-lock.json could not be read or parsed (${workingError || "no packages map"}) — a corrupt lockfile must not pass as checked`);
+  } else if (state === "no-git") {
+    notes.push("package-lock.json platform metadata not compared — no git here, so there is no committed baseline (git-lastmod skips sitemap dates for the same reason)");
   } else if (state === "unreadable-baseline") {
     fail("lockfile-metadata",
-      `HEAD has no readable package-lock.json to compare against (${headError}) — the tripwire cannot run, and silently skipping it is how the metadata went missing in the first place`);
+      `HEAD has no usable package-lock.json to compare against (${headError || "no packages map"}) — git works here, so the lockfile has stopped being committed`);
   } else {
     const losses = lockfileMetadataLoss(head, working);
     for (const { pkg, field, missing } of losses) {
@@ -1163,7 +1177,7 @@ notes.push(
       hints.push(
         "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
         "     dependencies on the deploy host. Every entry above is the SAME package at the SAME\n" +
-        "     version and the same resolved tarball as HEAD, so this is not an upgrade dropping\n" +
+        "     version with the SAME integrity hash as HEAD, so this is not an upgrade dropping\n" +
         "     support upstream — it is metadata going missing from an artifact that did not change.\n" +
         "     Restore it with `git checkout HEAD -- package-lock.json` and install with `npm ci`,\n" +
         "     which never rewrites the lockfile.");
