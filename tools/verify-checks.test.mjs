@@ -52,7 +52,7 @@ import {
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
-  remoteRoutes, remoteMisses, remoteThrottled,
+  remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 import {
@@ -1566,6 +1566,51 @@ t("throttled routes are reported separately, so they are not silently a pass",
   remoteThrottled(THROTTLED).join(","), "/,/destinations/aspen/");
 t("a genuine 404 is not mistaken for throttling",
   remoteThrottled(THROTTLED).includes("/gone/"), false);
+
+/* ── remote-coverage ──
+   "Reported separately" above was true, and separately meant notes.push(),
+   which report() prints as `ok` and exits 0 on. A half-throttled sweep
+   announced "NOT verified" under an ok prefix and returned success. These pin
+   the arithmetic the failure message is built from. */
+t("coverage: a throttled route does not count as answered",
+  remoteCoverage(THROTTLED).answered, 1);
+
+t("coverage: the definite 404 DOES count as answered — it is a real result",
+  remoteCoverage(THROTTLED).unverified.includes("/gone/"), false);
+
+t("coverage: unverified routes are listed, not just counted",
+  remoteCoverage(THROTTLED).unverified.join(","), "/,/destinations/aspen/");
+
+/* The shape that shipped green: most routes fine, a slice throttled. */
+const PARTIAL = [
+  { route: "/a/", ok: true, status: 200 },
+  { route: "/b/", ok: true, status: 200 },
+  { route: "/c/", ok: false, status: 429 },
+];
+t("coverage: a partial sweep is the real hole — 2 of 3 answered",
+  `${remoteCoverage(PARTIAL).answered}/${remoteCoverage(PARTIAL).total}`, "2/3");
+
+t("coverage: a partial sweep leaves something unverified, so it cannot pass",
+  remoteCoverage(PARTIAL).unverified.length > 0, true);
+
+/* A fully clean sweep must stay clean, or the check is just noise. */
+const ALL_OK = [
+  { route: "/a/", ok: true, status: 200 },
+  { route: "/b/", ok: true, status: 200 },
+];
+t("coverage: a clean sweep reports nothing unverified",
+  remoteCoverage(ALL_OK).unverified.length, 0);
+
+t("coverage: a clean sweep answers everything",
+  `${remoteCoverage(ALL_OK).answered}/${remoteCoverage(ALL_OK).total}`, "2/2");
+
+/* A sweep of only definite misses is a deploy failure, not a coverage one —
+   remote-pages reports it and coverage must not double-report. */
+t("coverage: definite misses are answers, not coverage gaps",
+  remoteCoverage([{ route: "/x/", ok: false, status: 404 }]).unverified.length, 0);
+
+t("coverage: an empty sweep answers nothing and has nothing unverified",
+  `${remoteCoverage([]).answered}/${remoteCoverage([]).total}`, "0/0");
 
 /* ── sitemap-future-lastmod ──
    The shape that shipped: `/` and `/about/` dated 2026-08-25 in a sitemap

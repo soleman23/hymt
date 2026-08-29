@@ -1045,6 +1045,38 @@ export function remoteThrottled(results) {
 }
 
 /**
+ * How much of a --remote sweep actually got an answer.
+ *
+ * "Not a pass" above was true as a description and false as behaviour. The
+ * throttled routes were pushed to `notes`, and report() prints every note with
+ * an `ok` prefix and exits 0 — so a partially rate-limited sweep printed
+ *
+ *     ok  60 of 122 routes still rate-limited after 3 tries — NOT verified
+ *
+ * and returned success. The prefix contradicted the sentence, and the exit code
+ * agreed with the prefix. `verify:prod` exists to answer "is the deploy good?",
+ * and the honest answer there was "I could not tell for half of it".
+ *
+ * A route that is throttled after three tries with backoff is not transient
+ * noise; it is a route this run has no information about. Both are non-answers
+ * and neither may count toward a pass:
+ *
+ *   answered    ok, or a definite miss (remoteMisses reports those separately)
+ *   unverified  still throttled after the retries
+ *
+ * NO TOLERANCE THRESHOLD, deliberately. Any percentage floor would be a number
+ * invented here to excuse some unverified routes, and this is not on the
+ * `npm run build` path — it is only `verify:remote` / `verify:prod`, run on
+ * purpose against a deploy. Re-running is cheap; a green tick over routes
+ * nobody checked is not. Compare lockfileCoverage in repo-checks.mjs, which
+ * refuses the same way when its comparison covered nothing.
+ */
+export function remoteCoverage(results) {
+  const unverified = remoteThrottled(results);
+  return { total: results.length, answered: results.length - unverified.length, unverified };
+}
+
+/**
  * Whether every `.cost-range__figure` on the page says the kind of thing its
  * class claims it does.
  *
