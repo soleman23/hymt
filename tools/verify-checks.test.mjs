@@ -28,7 +28,6 @@
  */
 import { readFile, access } from "node:fs/promises";
 import { constants, readFileSync } from "node:fs";
-import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -49,12 +48,17 @@ import {
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
+  placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, photoGridDefects, bodyWords, crumbTrail,
+  htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
+import {
+  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
+  crDefect, isBinaryDistFile,
+} from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 
 /* ── internal-link-floor ── */
@@ -254,6 +258,44 @@ t("placeholder: NEEDS MARK in visible copy fails",
 
 t("placeholder: the pre-existing tokens still fail",
   phHits(`<p>TBD</p>`), 1);
+
+/* The unfilled photo plate. These are the exact shapes that shipped: the
+   .itin-image plate on 66 destination pages, its "Journey Photography" wording
+   variant, and the .event-image plate on the nine experiences pages. All three
+   were invisible to every check for as long as they existed. */
+t("placeholder: an unfilled .itin-image plate fails",
+  phHits(`<div class="itin-image" style="background:#1a1610">Itinerary Photography<br>Tuscany &amp; Amalfi · Italy</div>`), 1);
+
+t("placeholder: the Journey Photography wording of the same plate fails",
+  phHits(`<div class="itin-image" style="background:#141a10">Journey Photography<br>Napa Harvest Week</div>`), 1);
+
+t("placeholder: an unfilled .event-image plate fails",
+  phHits(`<div class="event-image" style="background:#141a1e">Event Photography<br>Family Resort · Riviera Maya</div>`), 1);
+
+/* …and the filled slot passes, which is the half that proves the check is
+   measuring the plate and not the word "photograph" or the card class. */
+t("placeholder: the same slot carrying a photograph passes",
+  phHits(`<div class="itin-image itin-image--photo"><img class="itin-image__img" src="/assets/img/ni-europe-amalfi-coast-terrace.jpg" alt="A table set with wine and lemons on an Amalfi Coast terrace above the sea" width="600" height="1000" loading="lazy" decoding="async"></div>`), 0);
+
+t("placeholder: an unfilled .stay-card__image plate fails",
+  phHits(`<div class="stay-card__image" style="background:#102830">Atoll Photography<br>Baa Atoll UNESCO</div>`), 1);
+
+t("placeholder: an unfilled in-article .post-image__ph plate fails",
+  phHits(`<span class="post-image__ph">Article Photography<br>Okavango Delta · Floodplains Rising</span>`), 1);
+
+/* Prose about photography is not a plate, and neither is a destination tag.
+   This is why the token list is a fixed alternation rather than
+   /\w+ Photography/: /destinations/ ships "Iceberg Photography" as a Greenland
+   activity beside "Icefjord" and "Dog Sledding", and the general pattern would
+   fail that page over correct copy. If this fixture ever goes red, someone has
+   widened the token list to the general form — put it back. */
+t("placeholder: ordinary copy mentioning photography passes",
+  phHits(`<p>Mark books a photography guide for the Serengeti crossing.</p>`), 0);
+
+t("placeholder: the Greenland card's Iceberg Photography activity tag passes",
+  phHits(`<div class="dest-card__tags"><span class="dest-tag">Icefjord</span>` +
+         `<span class="dest-tag">Dog Sledding</span>` +
+         `<span class="dest-tag">Iceberg Photography</span></div>`), 0);
 
 /* ── blank-link-rel (SEC-5) ── */
 
@@ -815,6 +857,10 @@ t("csp: the hash is base64 sha256 with the CSP prefix",
 t("csp: an inline script yields one hash",
   inlineScriptHashes(`<script>var x = 1;</script>`).length, 1);
 
+t("csp: inline script extraction normalises CRLF through cspScriptHash",
+  inlineScriptHashes(`<script>var a = 1;\r\nvar b = 2;\r\n</script>`).join(),
+  inlineScriptHashes(`<script>var a = 1;\nvar b = 2;\n</script>`).join());
+
 t("csp: type=module inline scripts are hashed like any other",
   inlineScriptHashes(`<script type="module">import x from "y";</script>`).length, 1);
 
@@ -1010,9 +1056,95 @@ t("og-alt: a longer word containing the substring is not flagged",
 t("og-alt: an escaped ampersand is not an interpolation fault",
   badInterpolation("Safari &#38; Wildlife"), false);
 
+/* -- place-card alt: region redundancy -----------------------------------
+   The generator side, not a build gate. place-card-intake.mjs builds every
+   destination card's alt from these, so a regression here ships silently into
+   markup that no check reads back. Both directions are pinned: the shapes that
+   MUST collapse, and the near misses that must keep their region.
+
+   The old rule was string equality. It caught "Musandam Peninsula, Musandam
+   Peninsula" and missed "Dubai, Emirate of Dubai" — which is why these exist.
+*/
+t("place-alt: an identical region collapses (the shape the old rule caught)",
+  placeCardAlt("Musandam Peninsula", "Musandam Peninsula"), "Musandam Peninsula");
+
+t("place-alt: an emirate wrapping its own city collapses",
+  placeCardAlt("Dubai", "Emirate of Dubai"), "Dubai");
+
+t("place-alt: a two-word city inside its emirate collapses",
+  placeCardAlt("Abu Dhabi", "Emirate of Abu Dhabi"), "Abu Dhabi");
+
+t("place-alt: a hyphenated region opening with the city collapses",
+  placeCardAlt("Marrakech", "Marrakech-Safi"), "Marrakech");
+
+/* Near misses. Every one of these regions carries information the card name
+   does not, and a looser rule would eat all four. */
+t("place-alt: a different word is kept",
+  placeCardAlt("Doha", "Qatar"), "Doha, Qatar");
+
+t("place-alt: a different emirate from the name is kept",
+  placeCardAlt("Al Ain", "Emirate of Abu Dhabi"), "Al Ain, Emirate of Abu Dhabi");
+
+t("place-alt: sharing a word is not containing the name",
+  placeCardAlt("Cape Town", "Western Cape"), "Cape Town, Western Cape");
+
+t("place-alt: a transliteration is not a containment",
+  placeCardAlt("Fez", "Fès-Meknès"), "Fez, Fès-Meknès");
+
+t("place-alt: an unrelated region is kept",
+  placeCardAlt("Mahé", "Inner Granitic Islands"), "Mahé, Inner Granitic Islands");
+
+/* Escaped source form is what the pages actually carry, and the fold must not
+   change the output string — only the comparison. */
+t("place-alt: an escaped ampersand survives into the alt unchanged",
+  placeCardAlt("Aït Benhaddou &amp; the Valleys", "Drâa-Tafilalet"),
+  "Aït Benhaddou &amp; the Valleys, Drâa-Tafilalet");
+
+/* A word boundary, not a substring: "Ain" must not match inside "Spain". */
+t("place-alt: a name embedded mid-word does not collapse",
+  placeCardAlt("Ain", "Northern Spain"), "Ain, Northern Spain");
+
+/* Reverse containment: the name contains the region. This is the commoner
+   shape here, because so many cards are named "<place> & <its region>". The
+   alt keeps the name either way. */
+t("place-alt: a name ending in its own region collapses",
+  placeCardAlt("Bay of Islands &amp; Northland", "Northland"),
+  "Bay of Islands &amp; Northland");
+
+t("place-alt: a name built on its region collapses",
+  placeCardAlt("Aitutaki Lagoon", "Aitutaki"), "Aitutaki Lagoon");
+
+t("place-alt: a two-word region inside the name collapses",
+  placeCardAlt("Addo &amp; the Eastern Cape", "Eastern Cape"),
+  "Addo &amp; the Eastern Cape");
+
+t("place-alt: reverse containment survives accent folding",
+  placeCardAlt("Galápagos &amp; Ecuador", "Ecuador"),
+  "Galápagos &amp; Ecuador");
+
+/* Reverse near misses. The word boundary is what stops these, and without it
+   the first two would both eat a region that is genuinely informative. */
+t("place-alt: a region sharing only a trailing word is kept",
+  placeCardAlt("Essaouira &amp; the Coast", "Atlantic Coast"),
+  "Essaouira &amp; the Coast, Atlantic Coast");
+
+t("place-alt: a singular region does not match a plural in the name",
+  placeCardAlt("Bay of Islands &amp; Northland", "Island"),
+  "Bay of Islands &amp; Northland, Island");
+
+t("place-alt: an unrelated region is still kept in the reverse direction",
+  placeCardAlt("Masada &amp; the Dead Sea", "Judaean Desert"),
+  "Masada &amp; the Dead Sea, Judaean Desert");
+
 /* ── htaccess-headers ── */
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored
+<IfModule mod_rewrite.c>
+  RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
+  RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+  RewriteCond %{HTTP_HOST} ^hymtravel\.com$ [NC]
+  RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
+</IfModule>
 <IfModule mod_headers.c>
   SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
@@ -1026,6 +1158,22 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
+
+t("htaccess: a missing legacy redirect is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
+
+t("htaccess: a legacy redirect with the wrong target is caught",
+  htaccessGaps(HT_GOOD.replace("https://www.hymtravel.com/travel-journal/", "https://www.hymtravel.com/")).length, 1);
+
+t("htaccess: a temporary legacy redirect is caught",
+  htaccessGaps(HT_GOOD.replace("[R=301,L,NE]", "[R=302,L,NE]")).length, 1);
+
+t("htaccess: legacy redirects below structural rules are caught",
+  htaccessGaps(HT_GOOD
+    .replace(/^\s*RewriteRule \^(?:terms-conditions|trips).*\n/gm, "")
+    .replace("</IfModule>", `  RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
+  RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+</IfModule>`)).length, 2);
 
 /* THE false-positive guard. `immutable` appears 4x in the real file today and
    every one is a comment explaining why it was removed (#107). A predicate
@@ -1073,10 +1221,11 @@ t("htaccess: no CSP header at all is one offender, not eleven",
 t("htaccess: an ENFORCING CSP satisfies the check as well as report-only",
   htaccessGaps(HT_GOOD.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy")).length, 0);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 8:
-   the 4 security headers, both staging lines, the CSP once, the cache once. */
-t("htaccess: an empty file reports all 8 gaps and does not throw",
-  htaccessGaps("").length, 8);
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 10:
+   both migration redirects, the 4 security headers, both staging lines, the
+   CSP once, and the cache once. */
+t("htaccess: an empty file reports all 10 gaps and does not throw",
+  htaccessGaps("").length, 10);
 
 /* ── photo-grid (#93) ── */
 
@@ -1120,6 +1269,45 @@ t("photo-grid: two broken grids on one page are two",
 
 t("photo-grid: a page with no grid reports nothing",
   photoGridDefects(`<main><p>nothing</p></main>`).length, 0);
+
+/* ── nested-card-anchor ── */
+
+/* The exact shape that shipped: an authoritative-source link inside the copy
+   of a card that is ITSELF an <a>. 28 of these were live across 10 pages.
+   The source is well-formed, so every source-shape check above stays green;
+   the parser is what splits the card. argentina rendered 12 .place-card
+   elements for its 6 cards. */
+const linkedCard = `<a class="place-card" href="/plan-your-trip/"><img class="place-card__img" src="/assets/img/x.jpg" alt="X" width="1600" height="900" loading="lazy" decoding="async"><div class="place-card__name">Alta</div><div class="place-card__desc">Carvings <a href="https://whc.unesco.org/en/list/352/" rel="noopener">UNESCO World Heritage</a> since 1985.</div></a>`;
+
+t("nested-card-anchor: a link inside a place-card is caught",
+  nestedCardAnchors(grid(" places-grid--photo", linkedCard)).length, 1);
+
+t("nested-card-anchor: the report names the card",
+  nestedCardAnchors(grid(" places-grid--photo", linkedCard))[0].includes("Alta"), true);
+
+/* It is a defect on the un-converted pages too — 9 of the 10 were still on
+   swatches. A check that only fires under --photo would have missed them. */
+t("nested-card-anchor: caught on a swatch grid with no --photo modifier",
+  nestedCardAnchors(grid("", linkedCard)).length, 1);
+
+t("nested-card-anchor: a clean card reports nothing",
+  nestedCardAnchors(grid(" places-grid--photo", photoCard + photoCard)).length, 0);
+
+t("nested-card-anchor: a swatch card reports nothing",
+  nestedCardAnchors(grid("", swatchCard)).length, 0);
+
+t("nested-card-anchor: two broken cards are two",
+  nestedCardAnchors(grid("", linkedCard + linkedCard)).length, 2);
+
+t("nested-card-anchor: exp-card is checked the same way",
+  nestedCardAnchors(`<a class="exp-card" href="/x/"><div class="exp-card__desc">see <a href="https://example.org/">this</a></div></a>`).length, 1);
+
+/* A link that is a SIBLING of the card, not inside it, is ordinary markup. */
+t("nested-card-anchor: a link after the card closes is not nested",
+  nestedCardAnchors(`${photoCard}<a href="https://example.org/">after</a>`).length, 0);
+
+t("nested-card-anchor: a page with no cards reports nothing",
+  nestedCardAnchors(`<main><p><a href="/x/">ordinary link</a></p></main>`).length, 0);
 
 /* ── schema-itemlist ── */
 
@@ -1199,8 +1387,16 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      src/content-pages/destinations__<slug>.html returns, because that is the
      file an author opens when this check goes red. If these drift, the
      predicate has started measuring something else. */
+  /* 3269 until the intro panel took a photograph, then 3260; 3235 since the
+     four featured-itinerary tiles took theirs. Both times the reason is the
+     same: an unfilled photo slot renders its own caption as visible text, so
+     removing the plate removes words. Italy's four "Itinerary Photography /
+     Rome & Tuscany" plates were 25 of them. The invariant above was re-checked
+     at each new number — bodyWords(dist) still equals a word count of
+     src/content-pages/destinations__italy.html — so this is the copy moving,
+     not the predicate. */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3269);
+    bodyWords(italy), 3235);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");
@@ -1251,13 +1447,13 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   t("real /destinations/italy/ declares every image at its true ratio",
     imgRatioMismatches(italy, realDims).length, 0);
 
-  /* The CSP trap is real in this build, not hypothetical: Plan Your Trip's
-     inline script carries CR, so its raw-byte hash is NOT what the browser
-     will check. If this ever passes, the CR is gone and the comment above
-     cspScriptHash can be softened. */
+  /* Exercise a real executable body without assuming the checkout's line
+     endings. The deterministic CRLF fixture above proves extraction travels
+     through the normalising hash helper on every platform; this assertion
+     keeps that fixture tied to the real Plan Your Trip output shape. */
   const planBody = /<script>([\s\S]*?)<\/script>/.exec(plan.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ""))?.[1] ?? "";
-  t("real /plan-your-trip/ inline script carries CR, so raw bytes hash differently",
-    planBody.includes("\r") && createHash("sha256").update(planBody).digest("base64") !== cspScriptHash(planBody).slice(7), true);
+  t("real /plan-your-trip/ executable inline script is parsed and hashed",
+    planBody.length > 0 && inlineScriptHashes(plan).includes(cspScriptHash(planBody)), true);
 
   /* Every page carries Analytics.astro; the FAQ page carries the .faq-a
      accordion in an inline <style>, and the bundled CSS carries .pf-a. */
@@ -1314,6 +1510,8 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src") !== null, true);
   t("real dist/.htaccess script-src covers every inline script on /",
     cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(home)).missing.length, 0);
+  t("real dist/.htaccess script-src covers every inline script on /plan-your-trip/",
+    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(plan)).missing.length, 0);
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }
@@ -1443,6 +1641,396 @@ t("localDay: at UTC the shift is a no-op",
 t("localDay defaults to the host offset rather than to zero",
   localDay(new Date(2026, 7, 24, 23, 59)),
   LD(new Date(2026, 7, 24, 23, 59).toISOString(), new Date(2026, 7, 24, 23, 59).getTimezoneOffset()));
+
+/* ── node-floor ── */
+
+/* The build machine's default Node is 20.19.0 and Astro 7 needs >=22.12.0, so
+   `npm run build` died a few seconds in with a message that named the problem
+   but not the fix. tools/check-node.mjs now fails first, in milliseconds.
+   These fixtures are the reason to believe it: each names a version that must
+   be REJECTED, not only ones that pass.
+
+   The floor is written out here rather than read from package.json on purpose.
+   Reading it would make the fixtures agree with whatever engines happens to
+   say — including the "22.x" that was there before, which was wrong in both
+   directions at once. */
+
+t("node-floor: the build machine's default Node is rejected",
+  satisfiesNodeRange(">=22.12.0", "v20.19.0"), false);
+
+/* The half of the old "22.x" range that was too loose: Astro rejects these. */
+t("node-floor: the last 22 release below the floor is rejected",
+  satisfiesNodeRange(">=22.12.0", "v22.11.0"), false);
+
+t("node-floor: a whole major below the floor is rejected",
+  satisfiesNodeRange(">=22.12.0", "v21.7.3"), false);
+
+t("node-floor: the floor itself passes",
+  satisfiesNodeRange(">=22.12.0", "v22.12.0"), true);
+
+/* The half of the old "22.x" range that was too tight: this is the version the
+   site is actually built on, and "22.x" excluded it. */
+t("node-floor: the Node the site is built on passes",
+  satisfiesNodeRange(">=22.12.0", "v24.16.0"), true);
+
+t("node-floor: a prerelease compares on its numbers, not its tag",
+  satisfiesNodeRange(">=22.12.0", "v23.0.0-nightly20260101abc"), true);
+
+/* Not understood is its own answer, distinct from pass and from fail. The
+   caller prints it rather than guessing — a comparator that returns true for a
+   range it cannot read is how the wrong Node gets through. */
+t("node-floor: the old \"22.x\" range is reported unreadable, not passed",
+  satisfiesNodeRange("22.x", "v24.16.0"), null);
+
+t("node-floor: a caret range is reported unreadable, not passed",
+  satisfiesNodeRange("^22.12.0", "v24.16.0"), null);
+
+t("node-floor: a missing engines value is unreadable",
+  satisfiesNodeRange(undefined, "v24.16.0"), null);
+
+t("node-floor: an unparseable version is unreadable",
+  satisfiesNodeRange(">=22.12.0", "not-a-version"), null);
+
+t("node-floor: process.version's leading v is optional",
+  satisfiesNodeRange(">=22.12.0", "24.16.0"), true);
+
+t("node-floor: a version parses to its three numbers",
+  parseNodeVersion("v24.16.0")?.join("."), "24.16.0");
+
+t("node-floor: a prerelease suffix is dropped by the parser",
+  parseNodeVersion("v23.0.0-nightly20260101abc")?.join("."), "23.0.0");
+
+/* ── lockfile-metadata ── */
+
+/* An `npm install` here once deleted 102 lines from package-lock.json, every
+   one a "libc" block on a Linux-targeted optional dependency. Nothing on this
+   machine installs those packages, so nothing on this machine noticed; the
+   deploy host is where it would have shown up.
+
+   These fixtures carry more weight than most, because the failure was NOT
+   reproducible on demand — two npm versions and two install shapes all
+   preserved the field when this was written. The check has to be trustworthy
+   on its own terms rather than validated against a live repro. */
+
+const LOCK = (packages) => ({ lockfileVersion: 3, packages });
+const GNU = { libc: ["glibc"], os: ["linux"], cpu: ["x64"] };
+
+t("lockfile: an unchanged lockfile loses nothing",
+  lockfileMetadataLoss(LOCK({ "node_modules/a": GNU }), LOCK({ "node_modules/a": GNU })).length, 0);
+
+t("lockfile: a deleted libc block is caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": {} })).length, 1);
+
+t("lockfile: the caught entry names the package, field and value",
+  JSON.stringify(lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": {} }))[0]),
+  JSON.stringify({ pkg: "node_modules/a", field: "libc", missing: ["glibc"] }));
+
+/* The subtle shape: musl dropped, glibc kept. A check that counted how many
+   entries carry libc would score this clean. */
+t("lockfile: a shrunk libc array is caught, not only a deleted one",
+  JSON.stringify(lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { libc: ["glibc"] } }))[0]?.missing),
+  JSON.stringify(["musl"]));
+
+t("lockfile: os is watched too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { os: ["linux"] } }),
+    LOCK({ "node_modules/a": {} })).length, 1);
+
+t("lockfile: cpu is watched too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { cpu: ["arm64"] } }),
+    LOCK({ "node_modules/a": {} })).length, 1);
+
+t("lockfile: one entry losing two fields reports both",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": GNU }),
+    LOCK({ "node_modules/a": { cpu: ["x64"] } })).length, 2);
+
+/* Removing a dependency is a dependency change and the diff shows it. Only an
+   entry that survived and came back thinner is metadata loss. */
+t("lockfile: a package removed outright is not metadata loss",
+  lockfileMetadataLoss(LOCK({ "node_modules/a": GNU }), LOCK({})).length, 0);
+
+t("lockfile: a package added with metadata is not a loss",
+  lockfileMetadataLoss(LOCK({}), LOCK({ "node_modules/a": GNU })).length, 0);
+
+t("lockfile: gaining a field is not a loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": {} }),
+    LOCK({ "node_modules/a": GNU })).length, 0);
+
+t("lockfile: an entry with no platform fields either side is clean",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0" } }),
+    LOCK({ "node_modules/a": { version: "1.0.1" } })).length, 0);
+
+t("lockfile: a lockfile with no packages key does not throw",
+  lockfileMetadataLoss({}, {}).length, 0);
+
+/* Against the real file rather than a fixture, the way the dist/ block at the
+   end of this file works — so a predicate that stops matching the shape npm
+   actually writes fails here too. The expected value is derived from the
+   lockfile, not typed in, so a dependency change moves both sides together. */
+const REAL_LOCK = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
+const REAL_LIBC = Object.values(REAL_LOCK.packages).filter((p) => Array.isArray(p.libc)).length;
+
+t("lockfile: the committed lockfile carries platform metadata to lose",
+  REAL_LIBC > 0, true);
+
+t("lockfile: the real lockfile against itself loses nothing",
+  lockfileMetadataLoss(REAL_LOCK, REAL_LOCK).length, 0);
+
+/* The reported incident, replayed on the real file: strip every libc block the
+   way that install did, and every one of them must come back named. */
+t("lockfile: stripping libc from the real lockfile is caught on every entry",
+  lockfileMetadataLoss(REAL_LOCK, (() => {
+    const stripped = JSON.parse(JSON.stringify(REAL_LOCK));
+    for (const p of Object.values(stripped.packages)) delete p.libc;
+    return stripped;
+  })()).length, REAL_LIBC);
+
+/* Codex review on #118, P2. Comparing by package key alone made a legitimate
+   upgrade unfixable: a package that genuinely drops musl in its next major
+   would fail this check, `npm run build` must pass before every commit, and
+   there was no override. The gate is now the artifact — same key, same
+   version, same resolved tarball — which keeps the real signal, because the
+   install this exists to catch deleted 102 libc blocks without touching a
+   single version. */
+
+t("lockfile: the same version losing a field is still caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 1);
+
+t("lockfile: an upgrade that narrows platform support is not metadata loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } })).length, 0);
+
+t("lockfile: an upgrade that drops a field entirely is not metadata loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "2.0.0" } })).length, 0);
+
+t("lockfile: a downgrade is a different artifact too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 0);
+
+/* Codex review on #119, P2. Artifact identity was `resolved` — the download
+   URL. An install pointed at a mirror or an alternate registry rewrites that
+   while fetching identical bytes, so the tripwire skipped every entry such an
+   install touched: the hole reopened for precisely the unusual install most
+   likely to mangle a lockfile. Identity is the content hash. */
+
+t("lockfile: the same bytes fetched from a mirror are still compared",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://mirror/a-1.0.0.tgz", integrity: "sha512-AAA" } })).length, 1);
+
+t("lockfile: a different integrity at the same version is a different artifact",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-BBB" } })).length, 0);
+
+t("lockfile: the same version and integrity losing a field is caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } })).length, 1);
+
+/* Entries carrying no integrity — the root entry is one of them — are compared
+   rather than skipped, on both sides and on either side alone. The safe
+   direction when identity cannot be established is to look. */
+t("lockfile: an entry with no integrity on either side is still compared",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 1);
+
+t("lockfile: integrity appearing on only one side does not skip the entry",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } })).length, 1);
+
+/* Codex review on #118, P2. When either lockfile could not be read the check
+   pushed a note — and notes print with an `ok` prefix and exit 0, so the
+   tripwire was bypassed exactly when something was already wrong, while the
+   comment above it claimed "not a pass". Both states now fail, and the branch
+   that decides is a function so a fixture can hold it there. */
+
+t("lockfile-state: two readable lockfiles are comparable",
+  lockfileCheckState({ packages: {} }, { packages: {} }), "comparable");
+
+t("lockfile-state: an unreadable working lockfile is reported, not skipped",
+  lockfileCheckState({ packages: {} }, null), "unreadable-working");
+
+t("lockfile-state: an unreadable baseline is reported, not skipped",
+  lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
+
+t("lockfile-state: a corrupt working copy outranks a missing baseline",
+  lockfileCheckState(null, null), "unreadable-working");
+
+t("lockfile-state: a non-object working lockfile is unreadable",
+  lockfileCheckState({ packages: {} }, "not json"), "unreadable-working");
+
+/* Codex review on #119, P2. `typeof [] === "object"`, so an array and an
+   object with no packages map both passed as comparable. The comparison then
+   found no losses in a map with no entries and announced that metadata was
+   retained "on 0 entries" — a corrupt working copy passing as verified, which
+   is the case the state check exists to fail. */
+
+t("lockfile-state: an array is not a lockfile",
+  lockfileCheckState({ packages: {} }, []), "unreadable-working");
+
+t("lockfile-state: an object with no packages map is not a lockfile",
+  lockfileCheckState({ packages: {} }, {}), "unreadable-working");
+
+t("lockfile-state: a packages array is not a packages map",
+  lockfileCheckState({ packages: {} }, { packages: [] }), "unreadable-working");
+
+t("lockfile-state: a null packages map is not a packages map",
+  lockfileCheckState({ packages: {} }, { packages: null }), "unreadable-working");
+
+t("lockfile-state: the same shape rules apply to the baseline",
+  lockfileCheckState({ packages: [] }, { packages: {} }), "unreadable-baseline");
+
+/* Codex review on #119, P2. Failing when git is absent broke builds from a
+   `git archive` export, which this repo supports: tools/git-lastmod.mjs
+   catches unavailable git and resolves every sitemap date to undefined rather
+   than failing. A missing baseline for that reason is a skip, not a defect —
+   but a corrupt working copy is still a defect, git or no git. */
+
+t("lockfile-state: no git means no baseline to compare against, not a failure",
+  lockfileCheckState(null, { packages: {} }, false), "no-git");
+
+t("lockfile-state: git present but no committed lockfile is still a failure",
+  lockfileCheckState(null, { packages: {} }, true), "unreadable-baseline");
+
+t("lockfile-state: a corrupt working copy outranks having no git",
+  lockfileCheckState(null, {}, false), "unreadable-working");
+
+t("lockfile-state: git availability defaults to present",
+  lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
+
+/* ── lockfile-coverage ── */
+
+/* A loss scan reports what it FOUND, which says nothing about what it COVERED.
+   A working lockfile emptied to {"packages":{}} produces no losses at all --
+   every baseline entry is absent and skipped -- so the check announced success
+   and printed "keeps its platform metadata on 0 entries", counting the working
+   file instead of the comparison. Measured before this was added: an emptied
+   lockfile and one truncated to a single unrelated entry both exited 0.
+
+   The gate is `shared`, not `compared`. A real dependency upgrade drives
+   `compared` towards zero while `shared` stays high, and must not be mistaken
+   for a truncated file. */
+
+const COV = (pkgs) => ({ packages: pkgs });
+const A1 = { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] };
+
+t("coverage: an identical lockfile is fully covered",
+  JSON.stringify(lockfileCoverage(COV({ "node_modules/a": A1, "node_modules/b": A1 }),
+                                  COV({ "node_modules/a": A1, "node_modules/b": A1 }))),
+  JSON.stringify({ baselineEntries: 2, shared: 2, compared: 2 }));
+
+t("coverage: an emptied working lockfile shares nothing",
+  JSON.stringify(lockfileCoverage(COV({ "node_modules/a": A1 }), COV({}))),
+  JSON.stringify({ baselineEntries: 1, shared: 0, compared: 0 }));
+
+t("coverage: a lockfile truncated to unrelated entries shares nothing",
+  lockfileCoverage(COV({ "node_modules/a": A1 }), COV({ "node_modules/zzz": A1 })).shared, 0);
+
+/* The case the gate must NOT catch: everything upgraded. Keys still line up,
+   so `shared` stays at full, while `compared` drops to zero. */
+t("coverage: a wholesale upgrade still shares every key",
+  JSON.stringify(lockfileCoverage(
+    COV({ "node_modules/a": { version: "1.0.0" }, "node_modules/b": { version: "1.0.0" } }),
+    COV({ "node_modules/a": { version: "2.0.0" }, "node_modules/b": { version: "2.0.0" } }))),
+  JSON.stringify({ baselineEntries: 2, shared: 2, compared: 0 }));
+
+t("coverage: a changed integrity counts as shared but not compared",
+  JSON.stringify(lockfileCoverage(
+    COV({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } }),
+    COV({ "node_modules/a": { version: "1.0.0", integrity: "sha512-BBB" } }))),
+  JSON.stringify({ baselineEntries: 1, shared: 1, compared: 0 }));
+
+t("coverage: an empty baseline is vacuously covered",
+  JSON.stringify(lockfileCoverage(COV({}), COV({ "node_modules/a": A1 }))),
+  JSON.stringify({ baselineEntries: 0, shared: 0, compared: 0 }));
+
+/* Against the real file: the committed lockfile compared with itself covers
+   every entry, so the note the build prints is the whole file, not a subset. */
+t("coverage: the real lockfile against itself is fully covered",
+  JSON.stringify(lockfileCoverage(REAL_LOCK, REAL_LOCK)),
+  JSON.stringify({
+    baselineEntries: Object.keys(REAL_LOCK.packages).length,
+    shared: Object.keys(REAL_LOCK.packages).length,
+    compared: Object.keys(REAL_LOCK.packages).length,
+  }));
+
+/* ── dist-line-endings ── */
+
+/* dist/ is stored `-text`, so a CR in built output is a byte Git keeps and the
+   deploy uploads. 123 of the 133 committed dist files used to carry mixed
+   endings and every rebuild flipped an arbitrary subset of them; one PR
+   changing a single page carried 82. */
+
+t("dist-eol: clean text has no defect",
+  crDefect("<html>\n<body>\n</body>\n</html>\n"), null);
+
+t("dist-eol: empty content has no defect",
+  crDefect(""), null);
+
+t("dist-eol: a single CRLF is caught",
+  JSON.stringify(crDefect("a\r\nb")), JSON.stringify({ count: 1, firstLine: 1 }));
+
+t("dist-eol: the reported line is where the first CR is, not the first line",
+  JSON.stringify(crDefect("a\nb\nc\r\nd")), JSON.stringify({ count: 1, firstLine: 3 }));
+
+/* The shape that made git treat ExperienceLayout.astro as binary, and the one
+   a count of CRLF pairs would miss. */
+t("dist-eol: a lone CR is caught, not only CRLF",
+  JSON.stringify(crDefect("a\rb")), JSON.stringify({ count: 1, firstLine: 1 }));
+
+t("dist-eol: every CR is counted, not just the first",
+  crDefect("a\r\nb\r\nc\r\n")?.count, 3);
+
+t("dist-eol: reads Buffers byte-exactly, the way the verifier passes them",
+  JSON.stringify(crDefect(Buffer.from("a\r\nb", "utf8"))),
+  JSON.stringify({ count: 1, firstLine: 1 }));
+
+t("dist-eol: a CR inside a line counts, not only at a line end",
+  crDefect("<p>one\rtwo</p>")?.count, 1);
+
+/* Which files get read as text. Unknown extension means check it: a text type
+   nobody listed is how the churn would come back unnoticed, and a binary type
+   nobody listed fails loudly and is a one-line fix. */
+t("dist-eol: html is text",       isBinaryDistFile("dist/index.html"), false);
+t("dist-eol: css is text",        isBinaryDistFile("dist/_astro/a.css"), false);
+t("dist-eol: xml is text",        isBinaryDistFile("dist/sitemap-0.xml"), false);
+t("dist-eol: .htaccess is text",  isBinaryDistFile("dist/.htaccess"), false);
+t("dist-eol: jpg is binary",      isBinaryDistFile("dist/assets/img/a.jpg"), true);
+t("dist-eol: woff2 is binary",    isBinaryDistFile("dist/fonts/a.woff2"), true);
+t("dist-eol: extensions match case-insensitively",
+  isBinaryDistFile("dist/assets/img/A.JPG"), true);
+t("dist-eol: a file with no extension is treated as text",
+  isBinaryDistFile("dist/CNAME"), false);
+t("dist-eol: an unlisted extension is treated as text",
+  isBinaryDistFile("dist/app.js"), false);
+
+/* Against the build's real output, which by the time these run has just been
+   written by astro. A predicate that stops matching what the build emits fails
+   here rather than in review. */
+t("dist-eol: the built home page is LF",
+  crDefect(readFileSync(path.join(ROOT, "dist", "index.html"))), null);
+
+t("dist-eol: the built .htaccess is LF — the file that failed the build",
+  crDefect(readFileSync(path.join(ROOT, "dist", ".htaccess"))), null);
 
 /* ── report ── */
 if (failures.length) {

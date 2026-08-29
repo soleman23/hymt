@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **hymt** (3902 symbols, 7444 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **hymt** (4232 symbols, 7910 relationships, 21 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -134,10 +134,11 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never ship "Lorem ipsum", "TBD", "Coming soon", or a placeholder image.
 
 ### Never do
-- Never reference a prior website, platform, or migration for this domain.
-  This was launched as a fresh site: no redirect maps for legacy paths, no
-  Change-of-Address submissions, no "old site" assumptions — in code, docs,
-  prompts, or commit messages. Unknown paths 404 by design.
+- Never carry Wix code, pages, hosting, or runtime dependencies into this site.
+  This is a same-domain platform migration from Wix to Hostinger: preserve
+  confirmed legacy URL equity with explicit Hostinger-side redirects, but do
+  not submit Search Console Change of Address because the domain is unchanged.
+  Unknown, unconfirmed paths still 404 by design.
 - Never add `AggregateRating` to HYMT-controlled reviews.
 - Never add `WebSite`+`SearchAction` sitelinks-searchbox markup (deprecated).
 - Never chase `FAQPage` or `HowTo` rich results — they no longer render.

@@ -1,11 +1,11 @@
 <!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>About Mark Sole — Hit Your Mark Travel</title><meta name="description" content="Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone."><link rel="canonical" href="https://www.hymtravel.com/about/"><meta name="theme-color" content="#0d1b2a"><meta property="og:type" content="website"><meta property="og:site_name" content="Hit Your Mark Travel"><meta property="og:title" content="About Mark Sole — Hit Your Mark Travel"><meta property="og:description" content="Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone."><meta property="og:url" content="https://www.hymtravel.com/about/"><meta property="og:image" content="https://www.hymtravel.com/assets/og-default.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Hit Your Mark Travel"><meta property="og:locale" content="en_US"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="About Mark Sole — Hit Your Mark Travel"><meta name="twitter:description" content="Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone."><meta name="twitter:image" content="https://www.hymtravel.com/assets/og-default.jpg"><meta name="twitter:image:alt" content="Hit Your Mark Travel"><link rel="icon" type="image/png" href="/assets/logo.png"><link rel="apple-touch-icon" href="/assets/logo.png"><!-- Self-hosted fonts (P1-3): declared in styles-master.css, served from
      /assets/fonts/. Only the two families every fold uses get preloaded;
-     font preloads require crossorigin even same-origin. --><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/raleway-var.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/dmsans-var.woff2" crossorigin><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://www.hymtravel.com/about/#mark-sole","name":"Mark Sole","givenName":"Mark","familyName":"Sole","jobTitle":"Founder & Travel Director","worksFor":{"@id":"https://www.hymtravel.com/#organization"},"url":"https://www.hymtravel.com/about/","image":"https://www.hymtravel.com/assets/img/sp-mark-sole-portrait.jpg","description":"Founder of Hit Your Mark Travel. Designs bespoke luxury itineraries across Africa, the polar regions, Europe, Asia and the South Pacific.","knowsAbout":["Luxury travel advisory","Safari planning","Polar expedition travel","Sports and event travel","Multigenerational travel"],"sameAs":["https://www.instagram.com/travelwithsoleman/"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Mark Sole","description":"Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone.","url":"https://www.hymtravel.com/about/","inLanguage":"en-US"}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.hymtravel.com/"},{"@type":"ListItem","position":2,"name":"About"}]}</script><style is:global>
+     font preloads require crossorigin even same-origin. --><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/raleway-var.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/dmsans-var.woff2" crossorigin><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://www.hymtravel.com/about/#mark-sole","name":"Mark Sole","givenName":"Mark","familyName":"Sole","jobTitle":"Founder & Travel Director","worksFor":{"@id":"https://www.hymtravel.com/#organization"},"url":"https://www.hymtravel.com/about/","image":"https://www.hymtravel.com/assets/img/sp-mark-sole-portrait.jpg","description":"Founder of Hit Your Mark Travel. Designs bespoke luxury itineraries across Africa, the polar regions, Europe, Asia and the South Pacific.","knowsAbout":["Luxury travel advisory","Safari planning","Polar expedition travel","Sports and event travel","Multigenerational travel"],"sameAs":["https://www.instagram.com/travelwithsoleman/"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Mark Sole","description":"Mark Sole is the founder and Travel Director of Hit Your Mark Travel. A lifetime of experience, a global network, and someone who actually picks up the phone.","url":"https://www.hymtravel.com/about/","inLanguage":"en-US"}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.hymtravel.com/"},{"@type":"ListItem","position":2,"name":"About"}]}</script><style>
 /* ── ABOUT PAGE EXTRAS ── */
 
 /* PAGE HERO */
 .page-hero {
-  position:relative;min-height:60vh;margin-top:76px;
+  position:relative;min-height:42vh;margin-top:76px;
   background:var(--navy-800);display:flex;align-items:flex-end;
   overflow:hidden;
 }
@@ -15,7 +15,7 @@
 }
 .page-hero__watermark {
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:min(480px,60vw);height:min(480px,60vw);object-fit:contain;
+  width:min(320px,42vw);height:min(320px,42vw);object-fit:contain;
   opacity:.04;pointer-events:none;
 }
 .page-hero__overlay {
@@ -45,6 +45,19 @@
   position:relative;background:var(--bg-card);min-height:500px;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
+/* The copy column runs ~1040px tall. Stretching the panel to match forced
+   object-fit:cover to crop ~39% of the portrait's width away, which read as
+   a tight zoom on Mark. Hold the panel at the source ratio (900x1086) so
+   nothing is cropped, and stick it under the 76px nav so the shorter panel
+   travels with the reader instead of leaving a dead band beneath it.
+   Scoped above the 900px breakpoint: below it the panel is a wide band
+   whose crop is already tuned by object-position. */
+@media (min-width:901px) {
+  .story__photo {
+    align-self:start;aspect-ratio:900/1086;
+    position:sticky;top:76px;
+  }
+}
 /* #87: was a 2.6 MB PNG background-image; now a lazy JPEG the panel can defer. */
 .story__photo-img {
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -54,8 +67,13 @@
   letter-spacing:.16em;text-transform:uppercase;color:rgba(138,155,176,.3);
   text-align:center;padding:20px;
 }
+.story__photo::after {
+  content:'';position:absolute;left:0;right:0;bottom:0;height:150px;
+  background:linear-gradient(180deg,rgba(8,15,26,0),rgba(8,15,26,.8));
+  pointer-events:none;
+}
 .story__photo-caption {
-  position:absolute;bottom:24px;left:24px;right:24px;
+  position:absolute;z-index:1;bottom:24px;left:24px;right:24px;
   font-family:var(--font-d);font-size:9px;font-weight:700;
   letter-spacing:.16em;text-transform:uppercase;color:var(--gold-700);
 }
@@ -259,9 +277,9 @@ body.theme-light .pull-quote__text { color:var(--navy-800) }
   .page-hero__content { padding:0 28px 56px }
   .philosophy { padding:64px 28px }
 }
-</style><link rel="stylesheet" href="/_astro/index.C2S6bIDu.css"></head> <body class="theme-dark"> <a class="skip-link" href="#main">Skip to content</a> <nav class="nav" id="nav"> <a href="/"><img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52" decoding="async"></a> <ul class="nav__links" id="navLinks"> <li> <a class="nav__link" href="/experiences/">Experiences</a> </li><li> <a class="nav__link" href="/destinations/">Destinations</a> </li><li> <a class="nav__link" href="/about/" style="color:var(--gold-400);border-bottom-color:var(--gold-500)">About</a> </li><li> <a class="nav__link" href="/travel-journal/">Travel Journal</a> </li><li> <a class="nav__link" href="/contact/">Contact</a> </li> </ul> <a href="/plan-your-trip/" class="nav__cta">Plan My Trip</a> <button class="nav__mobile-toggle" id="mobileToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button> </nav> <script type="module">const n=document.getElementById("nav");window.addEventListener("scroll",()=>{n?.classList.toggle("scrolled",window.scrollY>60)},{passive:!0});const t=document.getElementById("mobileToggle"),o=document.getElementById("navLinks");t?.addEventListener("click",()=>{const e=document.body.classList.toggle("nav-open");t.setAttribute("aria-expanded",String(e))});o?.querySelectorAll("a").forEach(e=>e.addEventListener("click",()=>document.body.classList.remove("nav-open")));</script> <main id="main">  <!-- ══ PAGE HERO ══ -->
+</style><link rel="stylesheet" href="/_astro/Base.DGbs3jRk.css"></head> <body class="theme-dark"> <a class="skip-link" href="#main">Skip to content</a> <nav class="nav" id="nav"> <a href="/"><img src="/assets/logo.png" class="nav__logo" alt="Hit Your Mark Travel" width="52" height="52" decoding="async"></a> <ul class="nav__links" id="navLinks"> <li> <a class="nav__link" href="/experiences/">Experiences</a> </li><li> <a class="nav__link" href="/destinations/">Destinations</a> </li><li> <a class="nav__link" href="/about/" style="color:var(--gold-400);border-bottom-color:var(--gold-500)">About</a> </li><li> <a class="nav__link" href="/travel-journal/">Travel Journal</a> </li><li> <a class="nav__link" href="/contact/">Contact</a> </li> </ul> <a href="/plan-your-trip/" class="nav__cta">Plan My Trip</a> <button class="nav__mobile-toggle" id="mobileToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button> </nav> <script type="module">var e=document.getElementById(`nav`);window.addEventListener(`scroll`,()=>{e?.classList.toggle(`scrolled`,window.scrollY>60)},{passive:!0});var t=document.getElementById(`mobileToggle`),n=document.getElementById(`navLinks`);t?.addEventListener(`click`,()=>{let e=document.body.classList.toggle(`nav-open`);t.setAttribute(`aria-expanded`,String(e))}),n?.querySelectorAll(`a`).forEach(e=>e.addEventListener(`click`,()=>document.body.classList.remove(`nav-open`)));</script> <main id="main">  <!-- ══ PAGE HERO ══ -->
 <section class="page-hero">
-  <div class="page-hero__bg" style="background-image:url('/assets/img/u-02-agency-lifestyle.jpg');background-size:cover;background-position:center"></div>
+  <div class="page-hero__bg"></div>
   <img src="/assets/logo.png" class="page-hero__watermark" alt="" aria-hidden="true" width="256" height="256" decoding="async">
   <div class="page-hero__overlay"></div>
   <div class="page-hero__content">
@@ -536,7 +554,7 @@ Destination notes, shoulder-season tips, and the occasional
   })();
 </script> <footer class="footer"> <div class="footer__top"> <div> <img src="/assets/logo.png" class="footer__brand-logo" alt="Hit Your Mark Travel" width="64" height="64" loading="lazy" decoding="async"> <div class="footer__tagline">Hit Your Mark Travel</div> <div class="footer__contact"> <a href="tel:+14085681404">(408) 568-1404</a><br> <a href="mailto:mark@hymtravel.com">mark@hymtravel.com</a><br> <a href="https://www.hymtravel.com">hymtravel.com</a> </div> </div> <div> <div class="footer__col-title">Experiences</div> <ul class="footer__links"> <li><a class="footer__link" href="/experiences/beach-island-escapes/">Beach &amp; Island Escapes</a></li> <li><a class="footer__link" href="/experiences/all-inclusive-vacations/">All-Inclusive Vacations</a></li> <li><a class="footer__link" href="/experiences/cruises/">Cruises &amp; Yachts</a></li> <li><a class="footer__link" href="/experiences/wellness-retreat-travel/">Wellness &amp; Retreats</a></li> <li><a class="footer__link" href="/experiences/safari-wildlife-travel/">Safari &amp; Wildlife</a></li> <li><a class="footer__link" href="/experiences/romance-celebration-travel/">Romance &amp; Celebration</a></li> </ul> </div> <div> <div class="footer__col-title">Destinations</div> <ul class="footer__links"> <li><a class="footer__link" href="/destinations/caribbean-mexico/">Caribbean &amp; Mexico</a></li> <li><a class="footer__link" href="/destinations/europe/">Europe</a></li> <li><a class="footer__link" href="/destinations/africa/">Africa</a></li> <li><a class="footer__link" href="/destinations/asia/">Asia</a></li> <li><a class="footer__link" href="/destinations/south-pacific/">South Pacific</a></li> <li><a class="footer__link" href="/destinations/middle-east/">Middle East</a></li> <li><a class="footer__link" href="/destinations/north-america/">North America</a></li> <li><a class="footer__link" href="/destinations/south-america/">South America</a></li> <li><a class="footer__link" href="/destinations/polar-regions/">Polar Regions</a></li> </ul> </div> <div> <div class="footer__col-title">Plan Your Trip</div> <ul class="footer__links"> <li><a class="footer__link" href="/plan-your-trip/">Start Planning</a></li> <li><a class="footer__link" href="/plan-your-trip/?type=group">Group Travel Inquiry</a></li> <li><a class="footer__link" href="/plan-your-trip/?type=honeymoon">Honeymoon Inquiry</a></li> <li><a class="footer__link" href="/faq/">FAQ</a></li> </ul> </div> <div> <div class="footer__col-title">Company</div> <ul class="footer__links"> <li><a class="footer__link" href="/about/">About Mark</a></li> <li><a class="footer__link" href="/about/#process">Travel Planning Process</a></li> <li><a class="footer__link" href="/travel-journal/">Travel Journal</a></li> <li><a class="footer__link" href="/privacy-policy/">Privacy Policy</a></li> <li><a class="footer__link" href="/terms-and-conditions/">Terms &amp; Conditions</a></li> </ul> </div> </div> <div class="footer__bottom"> <div class="footer__legal">
 CA Seller of Travel: 2165910-50 &nbsp;·&nbsp; WA Seller of Travel: 605920581 &nbsp;·&nbsp; FL Seller of Travel: ST46122
-</div> <div class="footer__copy">Hit Your Mark Travel © 2026</div> </div> </footer> <script type="module">document.documentElement.classList.add("js-accordion");document.addEventListener("click",c=>{const e=c.target.closest(".pf-q, .faq-q");if(!e)return;const a=e.closest(".pf-item, .faq-item");if(!a)return;const t=a.classList.toggle("open");e.setAttribute("aria-expanded",String(t))});document.addEventListener("click",c=>{const e=c.target.closest(".faq-cat-btn");if(!(e instanceof HTMLElement))return;const a=e.dataset.cat;document.querySelectorAll(".faq-cat-btn").forEach(t=>{t.classList.toggle("active",t===e),t.setAttribute("aria-pressed",String(t===e))}),document.querySelectorAll(".faq-group").forEach(t=>{t.style.display=a==="all"||t.dataset.cat===a?"":"none"})});</script> <script>(function(){const GA4_ID = "G-XXXXXXXXXX";
+</div> <div class="footer__copy">Hit Your Mark Travel © 2026</div> </div> </footer> <script type="module">document.documentElement.classList.add(`js-accordion`),document.addEventListener(`click`,e=>{let t=e.target.closest(`.pf-q, .faq-q`);if(!t)return;let n=t.closest(`.pf-item, .faq-item`);if(!n)return;let r=n.classList.toggle(`open`);t.setAttribute(`aria-expanded`,String(r))}),document.addEventListener(`click`,e=>{let t=e.target.closest(`.faq-cat-btn`);if(!(t instanceof HTMLElement))return;let n=t.dataset.cat;document.querySelectorAll(`.faq-cat-btn`).forEach(e=>{e.classList.toggle(`active`,e===t),e.setAttribute(`aria-pressed`,String(e===t))}),document.querySelectorAll(`.faq-group`).forEach(e=>{e.style.display=n===`all`||e.dataset.cat===n?``:`none`})});</script> <script>(function(){const GA4_ID = "G-XXXXXXXXXX";
 
 (function () {
   if (location.hostname !== 'www.hymtravel.com') return;
@@ -600,4 +618,4 @@ CA Seller of Travel: 2165910-50 &nbsp;·&nbsp; WA Seller of Travel: 605920581 &n
     }).observe(successEl, { attributes: true, attributeFilter: ['class'] });
   }
 })();
-})();</script> </body></html>
+})();</script> </body> </html>

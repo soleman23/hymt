@@ -2,18 +2,33 @@
 # Hit Your Mark Travel — line-ending policy
 # ============================================================
 #
-# dist/ is build output. `astro build` writes it and the deploy uploads it
-# to Hostinger byte-for-byte, so Git must not rewrite its line endings.
+# Source is stored AND checked out as LF, on every platform.
 #
-# core.autocrlf is true on the machine this repo is worked on, and Astro's
-# compressHTML output contains MIXED line endings — a mixed file cannot
-# round-trip through LF->CRLF->LF conversion, so Git saw ~86 dist files as
-# modified after every single rebuild while `git diff --ignore-cr-at-eol`
-# showed no actual change. Real edits were getting buried in that noise.
+# core.autocrlf is true on the machine this repo is worked on. It converts on
+# checkout but not when a tool writes a file, so source files ended up carrying
+# whichever ending last touched them: CRLF where a checkout wrote them, LF
+# where one of the tools/ scripts did. Astro inlines source bytes into the
+# built HTML, so that split leaked straight through into dist/ — 123 of the
+# 133 committed dist files carry MIXED endings, and each rebuild flipped
+# whichever subset had been rewritten since the last one. 82 such files landed
+# in one PR that changed a single page.
 #
-# -text switches conversion off entirely for these paths: what the build
-# writes is what gets stored, and what gets stored is what gets checked out.
-dist/** -text
+# It is not only noise. public/.htaccess is checked out CRLF while the copy
+# committed to dist/ has 11 LF lines, so `npm run verify` fails on a clean
+# checkout with "dist/.htaccess differs from public/.htaccess" — two files that
+# are byte-identical apart from line endings.
+#
+# eol=lf makes the working tree byte-identical to the blob everywhere, so the
+# build has one input and therefore one output. text=auto still auto-detects
+# binaries and leaves them alone.
+* text=auto eol=lf
 
-# Source stays under normal text handling: it is authored with LF, and the
-# CRLF working-tree copies round-trip cleanly because nothing here is mixed.
+# dist/ is build output. `astro build` writes it and the deploy uploads it to
+# Hostinger byte-for-byte, so Git must not rewrite its line endings. This rule
+# is LAST on purpose: the last matching pattern wins, so -text overrides the
+# eol=lf above for these paths. What the build writes is what gets stored, and
+# what gets stored is what gets checked out.
+#
+# Keeping dist/ raw is only safe once the build's inputs are stable, which is
+# what the rule above is for.
+dist/** -text

@@ -52,3 +52,8 @@ tools/image-pipeline/*.jsonl
 # lands here under a timestamped name, including the full text of third-party
 # sites opened while researching. Scratch only, and this repository is public.
 .playwright-mcp/
+
+# 9:16 generation masters for the featured-itinerary panel. Same rule as
+# tools/hero-masters/: originals stay local, only the 600x1000 web crops in
+# images-b64/ are tracked. The prompt behind each one is in tools/itin-brief.json.
+tools/itin-masters/

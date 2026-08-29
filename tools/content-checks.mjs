@@ -45,6 +45,24 @@ export const PLACEHOLDER_PATTERNS = [
   ["XXX", /\bXXX\b/],
   ["Placeholder", /placeholder/i],
   ["NEEDS FIGURE / NEEDS MARK", /\bNEEDS (?:FIGURE|MARK)\b/],
+  /* An unfilled photo slot renders its own caption as visible copy — a flat
+     colour plate reading "Itinerary Photography / Tuscany & Amalfi". 295 of
+     them shipped, 280 in the "Trips We Plan Often" section alone, while every
+     check stayed green: none of the tokens above appear in that wording, and
+     the sweep that closed the first two plate families grepped for the two
+     nouns it already knew rather than counting `<Noun> Photography`.
+
+     A LIST OF NOUNS, NOT /\w+ Photography/. The general form looks obviously
+     better and is wrong: /destinations/ ships
+     `<span class="dest-tag">Iceberg Photography</span>` on the Greenland card,
+     beside "Icefjord" and "Dog Sledding". That is a real activity, correct
+     copy, and the general pattern would fail that page forever.
+
+     One noun is deliberately absent. /contact/ still plates "Portrait
+     Photography / Mark Sole" — a real, named person, whose headshot has to be
+     a photograph OF HIM. Add Portrait here the day that image lands. */
+  ["Unfilled photo plate",
+   /\b(?:Destination|Experience|Itinerary|Journey|Event|Article|Atoll) Photography\b/],
 ];
 
 /**
@@ -805,6 +823,28 @@ export function htaccessGaps(text) {
     .join("\n");
   const out = [];
 
+  /* Same-domain Wix migration paths. These are deliberately absolute and
+     precede the structural host/protocol rules in public/.htaccess so an old
+     URL never pays for a redirect chain. */
+  const legacyRedirects = [
+    ["terms-conditions", "https://www.hymtravel.com/terms-and-conditions/"],
+    ["trips", "https://www.hymtravel.com/travel-journal/"],
+  ];
+  const firstStructuralRule = live.search(/^\s*RewriteCond\s+%\{(?:HTTP_HOST|HTTPS)\}/mi);
+  for (const [from, want] of legacyRedirects) {
+    const m = new RegExp(`^\\s*RewriteRule\\s+\\^${from}/\\?\\$\\s+(\\S+)\\s+\\[([^\\]]+)\\]`, "mi").exec(live);
+    if (!m) out.push(`legacy redirect /${from} is missing`);
+    else {
+      if (m[1] !== want) out.push(`legacy redirect /${from} points at ${m[1]}, expected ${want}`);
+      if (!/(?:^|,)R=301(?:,|$)/i.test(m[2]) || !/(?:^|,)L(?:,|$)/i.test(m[2])) {
+        out.push(`legacy redirect /${from} must be a terminating 301`);
+      }
+      if (firstStructuralRule !== -1 && m.index > firstStructuralRule) {
+        out.push(`legacy redirect /${from} must precede the host/protocol rules to avoid a redirect chain`);
+      }
+    }
+  }
+
   for (const [name, value] of HTACCESS_SECURITY_HEADERS) {
     const re = new RegExp(`^\\s*Header\\s+(?:always\\s+)?set\\s+${name}\\s+"([^"]*)"`, "mi");
     const m = re.exec(live);
@@ -882,6 +922,44 @@ export function photoGridDefects(html) {
   const bgPhotos = (html.match(/__ph[^"]*"[^>]*style="[^"]*background-image/gi) ?? []).length;
   if (bgPhotos) {
     out.push(`${bgPhotos} placeholder${bgPhotos === 1 ? " carries" : "s carry"} a background-image — a photo as CSS has no alt, no intrinsic size and cannot lazy-load; use <img>`);
+  }
+  return out;
+}
+
+/**
+ * A link nested inside a card's own link (#93).
+ *
+ * `.place-card` and `.exp-card` ARE anchors. HTML forbids an <a> inside an
+ * <a>, and the parser does not merely tolerate it — the adoption agency
+ * algorithm closes the outer anchor early and CLONES it, so one card becomes
+ * several DOM nodes: a photograph with no body, a body with no photograph,
+ * and a stray fragment.
+ *
+ * 28 of these shipped across 10 destination pages, every one an
+ * authoritative-source link inside `.place-card__desc`. `/destinations/
+ * argentina/` rendered **12** `.place-card` elements for its six cards, live,
+ * on the swatch layout — and every check in this file stayed green, because
+ * the SOURCE is well-formed. Only a real HTML parser sees it. That is the
+ * whole reason this check reads the tag stream rather than trusting nesting.
+ *
+ * A swatch card hides the damage; `--photo` puts it in the middle of the
+ * page. So this deliberately does NOT require the `--photo` modifier — the
+ * defect is equally real on the pages still waiting to be converted.
+ */
+export function nestedCardAnchors(html) {
+  const out = [];
+  const OPEN = /<a\b[^>]*class="[^"]*\b(place-card|exp-card)\b[^"]*"[^>]*>/gi;
+  for (const m of html.matchAll(OPEN)) {
+    const rest = html.slice(m.index + m[0].length);
+    /* The card should end at its own </a>. A nested <a> steals that closer,
+       so scan to whichever tag comes first: an opener means a nested link. */
+    const next = rest.search(/<a\b|<\/a>/i);
+    if (next === -1 || !/^<a\b/i.test(rest.slice(next))) continue;
+    const name = (rest.slice(0, next).match(/-card__name">([^<]*)/) ?? [])[1];
+    out.push(
+      `a .${m[1]} is itself an <a> and contains another <a>${name ? ` (${name.trim()})` : ""}` +
+      " — the HTML parser splits it into separate cards, so the photograph and the copy land on different tiles",
+    );
   }
   return out;
 }
@@ -1055,4 +1133,73 @@ export function lastmodPairs(xml) {
  */
 export function futureLastmods(xml, today) {
   return lastmodPairs(xml).filter(([, when]) => when > today);
+}
+
+/**
+ * Place-card alt text: `<name>, <region>`, unless the region is only an
+ * administrative wrapper around the card's own name.
+ *
+ * The naive join says the same thing twice to a screen reader:
+ *
+ *   "Musandam Peninsula, Musandam Peninsula"   name === region
+ *   "Dubai, Emirate of Dubai"                  region contains the name
+ *   "Marrakech, Marrakech-Safi"                region contains the name
+ *
+ * Only the first shape was collapsed before, so the second was about to ship
+ * three more times on `uae-gulf` and `morocco`. Eleven of the first shape are
+ * already live from the Python tool — Provence, Crete, Tuscany, Brooklyn and
+ * the rest. This governs what is GENERATED from here on; it does not rewrite
+ * them, and nothing fails a build over them.
+ *
+ * The test is whole-word containment in EITHER direction. It began as
+ * region-contains-name only, which covered "Dubai, Emirate of Dubai"; the
+ * reverse turns out to be the commoner shape on this site, because so many
+ * cards are named "<place> & <the region it is in>":
+ *
+ *   "Bay of Islands & Northland, Northland"
+ *   "Addo & the Eastern Cape, Eastern Cape"
+ *   "Aitutaki Lagoon, Aitutaki"
+ *
+ * Whichever side contains the other, the alt keeps the NAME — it is the
+ * specific thing photographed, and where the name is the longer string it
+ * already carries the region inside it.
+ *
+ * Deliberately whole-word, because every near miss below must KEEP its region —
+ * each one carries information the name does not:
+ *
+ *   "Doha, Qatar"                     a different word entirely
+ *   "Al Ain, Emirate of Abu Dhabi"    a different emirate from the name
+ *   "Cape Town, Western Cape"         shares a word, contains no name
+ *   "Fez, Fès-Meknès"                 a transliteration, not a containment
+ *
+ * Inputs arrive in their ESCAPED source form (`Alta &amp; the Finnmark
+ * Plateau`), which is what the converted pages carry, so `&amp;` is folded
+ * before comparing. Normalisation leaves only `[a-z0-9 ]`, which is also why
+ * the containment test needs no regex escaping.
+ */
+const normAlt = (s) => s
+  .replace(/&amp;/g, "&")
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, " ")
+  .trim();
+
+export function regionIsRedundant(name, region) {
+  const n = normAlt(name);
+  const r = normAlt(region);
+  if (!n || !r) return false;
+  if (n === r) return true;
+  return contains(r, n) || contains(n, r);
+}
+
+/* Whole-word containment. normAlt leaves only [a-z0-9 ], so the needle can
+   never carry a regex metacharacter and needs no escaping. The word boundary
+   is the load-bearing part: "island" must not match inside "Bay of Islands". */
+function contains(haystack, needle) {
+  return new RegExp(`(^| )${needle}( |$)`).test(haystack);
+}
+
+/** The alt string a place card should carry. See {@link regionIsRedundant}. */
+export function placeCardAlt(name, region) {
+  return regionIsRedundant(name, region) ? name : `${name}, ${region}`;
 }

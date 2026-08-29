@@ -8,11 +8,13 @@ Everything in this folder is written to be executed by Claude Code against the
 **Status at time of writing (2026-08-07):** dev site is built and deployed; the
 DNS cutover to the production domain has not happened yet.
 
-**This is a fresh launch.** Nothing that may previously have existed on the
-production domain is in scope: no prior site, platform, redirect map, or search
-property is referenced or migrated anywhere in these documents, and no future
-work should reintroduce any such reference. Measurement starts from zero at
-launch.
+**This is a same-domain platform migration.** Wix currently serves the
+production domain; the new site is an independent Astro deployment on
+Hostinger. No Wix page, code, hosting, or runtime dependency carries forward,
+but confirmed legacy URLs must redirect on Hostinger so search and referral
+value are not discarded. Search Console Change of Address does not apply
+because the domain is unchanged. New-site analytics measurement starts at
+launch; existing search history does not.
 
 ---
 
@@ -22,7 +24,7 @@ launch.
 |---|---|---|
 | `SEO-AIO-PLAN.md` | The master plan. Findings from the audit, then Phases 0–6 with numbered, checkable tasks. **This is the handoff document.** | Claude Code, Mark, Devin |
 | `EXECUTION-PROMPTS.md` | Repo setup steps + the exact phase-by-phase prompts to paste into Claude Code to complete the plan. | Devin |
-| `LAUNCH-RUNBOOK.md` | The fresh-launch DNS cutover, hour by hour, with rollback. | Whoever runs the cutover |
+| `LAUNCH-RUNBOOK.md` | The Wix-to-Hostinger website, DNS and registrar migration, with staged rollback. | Whoever runs the cutover |
 | `SCHEMA-LIBRARY.md` | Every JSON-LD block the site should emit, as copy-paste code, with the Astro component that generates it. | Claude Code |
 | `CONTENT-STANDARDS.md` | The permanent rules for writing any new page, destination, experience, or journal post. Structure, headings, answer capsules, E-E-A-T, metadata. | Claude Code, any writer |
 | `NEW-CONTENT-PROMPT.md` | Ready-to-paste prompts for creating a new destination / experience / journal post / landing page. | Devin, Mark |

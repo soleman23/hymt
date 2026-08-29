@@ -55,7 +55,33 @@ const site = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "
    ?type=honeymoon; both must canonical to /plan-your-trip/ or they become
    duplicate pages. Never "improve" this to include Astro.url.search. */
 const canonical = canonicalPath || Astro.url.pathname;
-const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Your Mark Travel`;
+/* Some older page props contain HTML character references because they were
+   generated from HTML source. Astro 7's Rust compiler correctly escapes prop
+   strings, so passing those references through unchanged would render visible
+   text such as "&amp;" and produce `&amp;amp;` in the document head. Decode the
+   text once here; Astro then performs the final, context-safe serialization. */
+const decodeHeadText = (value: string) => value.replace(
+  /&#(\d+);|&#x([0-9a-f]+);|&([a-z]+);/gi,
+  (entity, decimal, hexadecimal, named) => {
+    if (decimal) return String.fromCodePoint(Number(decimal));
+    if (hexadecimal) return String.fromCodePoint(Number.parseInt(hexadecimal, 16));
+    return ({
+      amp: "&",
+      apos: "'",
+      gt: ">",
+      lt: "<",
+      lsquo: "‘",
+      mdash: "—",
+      nbsp: " ",
+      ndash: "–",
+      quot: '"',
+      rsquo: "’",
+    } as Record<string, string>)[named.toLowerCase()] ?? entity;
+  },
+);
+const headTitle = decodeHeadText(title);
+const headDescription = decodeHeadText(description);
+const fullTitle = headTitle.includes("Hit Your Mark") ? headTitle : `${headTitle} — Hit Your Mark Travel`;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +89,7 @@ const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Yo
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{fullTitle}</title>
-<meta name="description" content={description}>
+<meta name="description" content={headDescription}>
 <link rel="canonical" href={`${site}${canonical}`}>
 <meta name="theme-color" content="#0d1b2a">
 
@@ -74,7 +100,7 @@ const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Yo
 <meta property="og:type" content={schemaType === "article" ? "article" : "website"}>
 <meta property="og:site_name" content="Hit Your Mark Travel">
 <meta property="og:title" content={fullTitle}>
-<meta property="og:description" content={description}>
+<meta property="og:description" content={headDescription}>
 <meta property="og:url" content={`${site}${canonical}`}>
 <meta property="og:image" content={`${site}${ogImage}`}>
 {/* Every og:image on this site is 1200x630 — the default plate and all 70
@@ -87,7 +113,7 @@ const fullTitle = title.includes("Hit Your Mark") ? title : `${title} — Hit Yo
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content={fullTitle}>
-<meta name="twitter:description" content={description}>
+<meta name="twitter:description" content={headDescription}>
 <meta name="twitter:image" content={`${site}${ogImage}`}>
 <meta name="twitter:image:alt" content={ogImageAlt}>
 

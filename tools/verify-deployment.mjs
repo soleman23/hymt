@@ -12,6 +12,7 @@ import { readFile, writeFile, readdir, access, stat } from "node:fs/promises";
 import { constants, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 /* Fixture-tested in tools/verify-checks.test.mjs. Both of these were written
    inline here first and both were wrong in ways a passing build could not
    show — see that file's header. */
@@ -23,8 +24,13 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
+  nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
+/* Toolchain checks, same import-do-not-copy rule as above. */
+import {
+  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, crDefect, isBinaryDistFile,
+} from "./repo-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
    drift from the convention in tools/git-lastmod.mjs. */
 import { localDay } from "./git-lastmod.mjs";
@@ -725,6 +731,14 @@ for (const file of htmlFiles) {
     fail("photo-grid", `${url}: ${defect}`);
   }
 
+  /* nested-card-anchor (#93): a card IS an <a>, so a link in its copy is
+     invalid and the parser splits the card into pieces. Source-shape checks
+     cannot see this — argentina shipped 12 .place-card elements for 6 cards
+     while every check here stayed green. */
+  for (const defect of nestedCardAnchors(html)) {
+    fail("nested-card-anchor", `${url}: ${defect}`);
+  }
+
   /* accordion-noscript (P0-1): the answer hide rule stays inside
      .js-accordion, in inline <style> as well as the bundled CSS below. */
   for (const m of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) {
@@ -947,8 +961,8 @@ for (const file of htmlFiles) {
       fail("page-length",
         `${url} body copy is ${n} words, over the ${DEST_MAX_WORDS} ceiling in ` +
           `CONTENT-STANDARDS § 3.4 by ${n - DEST_MAX_WORDS}. Cut, do not pad — ` +
-          `the built set runs 1,215–3,402 and the template pages sit at ` +
-          `India 3,225 / Italy 3,269.`);
+          `the built set runs 1,365–3,438 across 59 country pages and the ` +
+          `template pages sit at India 3,305 / Italy 3,235.`);
     }
   }
 
@@ -1104,6 +1118,127 @@ notes.push(
   `heaviest page fetches ${(eagerPeak / 1024 / 1024).toFixed(2)} MB of images before scroll ` +
   `(budget 1.5 MB, ${Object.keys(EAGER_IMAGE_DEBT).length} pages carrying recorded debt)`
 );
+
+/* ── 4c. package-lock.json keeps its platform metadata ──
+   An install on this machine once stripped every "libc" block off the
+   Linux-targeted optional dependencies — 102 lines, invisible here because
+   those packages are never installed on Windows, and degrading for the deploy
+   host that does install them. It shipped in a diff that also carried real
+   work, which is how it got as far as it did.
+
+   The comparison is against HEAD rather than against a recorded count, so a
+   deliberate dependency change is judged on what it actually removed instead
+   of on whether a total moved. */
+{
+  let head = null;
+  let working = null;
+  let headError = "";
+  let workingError = "";
+  /* Read separately so the two failure modes stay distinguishable. Folded into
+     one try, a malformed lockfile on disk was indistinguishable from a missing
+     baseline, and both ended up as a note — which report() prints with an `ok`
+     prefix before exiting 0. */
+  try {
+    head = JSON.parse(execFileSync("git", ["show", "HEAD:package-lock.json"],
+      { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 }));
+  } catch (e) { headError = String(e.message).split("\n")[0]; }
+  try {
+    working = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
+  } catch (e) { workingError = String(e.message).split("\n")[0]; }
+
+  /* Probed apart from the `git show` above so "there is no git here at all"
+     stays distinguishable from "git works and HEAD has no lockfile". The first
+     is a supported way to build this repo — tools/git-lastmod.mjs catches the
+     same condition and resolves every sitemap lastmod to undefined rather than
+     failing — so a `git archive` export must not be broken by this check. The
+     second means the lockfile stopped being committed, which is a defect. */
+  let gitAvailable = false;
+  try {
+    execFileSync("git", ["rev-parse", "--git-dir"], { cwd: ROOT, stdio: "ignore" });
+    gitAvailable = true;
+  } catch { /* no git binary, or not a repository */ }
+
+  const state = lockfileCheckState(head, working, gitAvailable);
+  if (state === "unreadable-working") {
+    fail("lockfile-metadata",
+      `package-lock.json could not be read or parsed (${workingError || "no packages map"}) — a corrupt lockfile must not pass as checked`);
+  } else if (state === "no-git") {
+    notes.push("package-lock.json platform metadata not compared — no git here, so there is no committed baseline (git-lastmod skips sitemap dates for the same reason)");
+  } else if (state === "unreadable-baseline") {
+    fail("lockfile-metadata",
+      `HEAD has no usable package-lock.json to compare against (${headError || "no packages map"}) — git works here, so the lockfile has stopped being committed`);
+  } else {
+    /* A loss scan reports what it FOUND, not what it looked at. Emptied to
+       {"packages":{}} or truncated to a few unrelated entries, the working
+       lockfile produces no losses — every baseline entry is simply absent and
+       skipped — and this used to print "keeps its platform metadata on 0
+       entries" and exit 0, counting the working file instead of the
+       comparison. Gate on shared keys, not on `compared`: a real dependency
+       upgrade legitimately drives `compared` towards zero while `shared`
+       stays high. */
+    const coverage = lockfileCoverage(head, working);
+    if (coverage.baselineEntries > 0 && coverage.shared === 0) {
+      fail("lockfile-metadata",
+        `package-lock.json shares no entries with HEAD's copy — ${coverage.baselineEntries} there, ` +
+        `${Object.keys(working.packages).length} here — so the comparison covered nothing and cannot be reported as a pass`);
+    } else {
+      const losses = lockfileMetadataLoss(head, working);
+      for (const { pkg, field, missing } of losses) {
+        fail("lockfile-metadata",
+          `${pkg} lost ${field} ${JSON.stringify(missing)} from package-lock.json`);
+      }
+      if (losses.length) {
+        hints.push(
+          "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
+          "     dependencies on the deploy host. Every entry above is the SAME package at the SAME\n" +
+          "     version with the SAME integrity hash as HEAD, so this is not an upgrade dropping\n" +
+          "     support upstream — it is metadata going missing from an artifact that did not change.\n" +
+          "     Restore it with `git checkout HEAD -- package-lock.json` and install with `npm ci`,\n" +
+          "     which never rewrites the lockfile.");
+      } else {
+        /* Reports the comparison, not the file: `compared` of `baselineEntries`
+           is what was actually looked at. */
+        notes.push(`package-lock.json keeps its platform metadata — ${coverage.compared} of ${coverage.baselineEntries} HEAD entries compared`);
+      }
+    }
+  }
+}
+
+/* ── 4d. Built output stays LF ──
+   dist/ is stored `-text`: what the build writes is what Git keeps and what
+   the deploy uploads byte-for-byte. That is only safe while the build's inputs
+   are stable, which `* text=auto eol=lf` in .gitattributes now makes them.
+
+   This check is the half that notices if they stop being stable. Before it,
+   123 of the 133 committed dist files carried mixed endings, every rebuild
+   flipped whichever subset had changed hands since the last one, and one PR
+   changing a single page carried 82 of them. It also caught a real failure:
+   public/.htaccess was CRLF while its committed dist/ copy had 11 LF lines, so
+   `npm run verify` failed on a clean checkout for two files that were
+   identical apart from line endings. */
+{
+  const distText = await walk(DIST, (f) => !isBinaryDistFile(f));
+  const offenders = [];
+  for (const file of distText) {
+    const defect = crDefect(readFileSync(file));
+    if (defect) offenders.push({ file, ...defect });
+  }
+  for (const o of offenders) {
+    fail("dist-line-endings",
+      `${rel(o.file)} carries ${o.count} CR byte${o.count === 1 ? "" : "s"}, first on line ${o.firstLine}`);
+  }
+  if (offenders.length) {
+    hints.push(
+      "dist/ is committed byte-for-byte, so a CR here becomes a diff on every rebuild that\n" +
+      "     writes it back the other way. The cause is upstream: check that .gitattributes still\n" +
+      "     carries `* text=auto eol=lf`, and that your working tree honours it — attributes only\n" +
+      "     apply on checkout, so files already on disk keep their old endings until something\n" +
+      "     rewrites them. `git rm --cached -r . && git reset --hard` on a clean tree re-checks\n" +
+      "     everything out, after which a rebuild produces LF.");
+  } else {
+    notes.push(`${distText.length} dist text files, all LF`);
+  }
+}
 
 /* ── 5. Optional: confirm a deploy actually landed ──
    The FTP account does not land in the web root, so an upload can report

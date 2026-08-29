@@ -29,12 +29,15 @@
  *     up at 64 pages with a unique card plus 22 sharing 9 — not 98 unique.
  *     Worth stating accurately rather than claiming per-page uniqueness.
  *
- *  3. PORTRAIT SOURCES ARE EXCLUDED. Three heroes are 1024x1405. Cropping
- *     1200x630 out of those discards 62% of the frame AND enlarges it 17%,
- *     so the result is soft and badly framed — and on one of them sharp's
- *     "attention" gravity lands on the background and slices the subject
- *     off. A share card that looks broken is worse than the brand plate,
- *     which is what those pages keep.
+ *  3. PORTRAIT SOURCES CANNOT BE CROPPED, SO THEY BORROW. Three heroes are
+ *     1024x1405. Cropping 1200x630 out of those discards 62% of the frame AND
+ *     enlarges it 17%, so the result is soft and badly framed — and on one of
+ *     them sharp's "attention" gravity lands on the background and slices the
+ *     subject off. A share card that looks broken is worse than the brand
+ *     plate. Rather than leave those three pages on the plate, each names a
+ *     landscape stand-in in HERO_FALLBACK below and crops that instead.
+ *     The choice is editorial and cannot be inferred, which is why it is a
+ *     hand-written table and not a rule.
  *
  *  4. og:image WANTS ABSOLUTE URLs and a real file. Base.astro already
  *     prefixes the site origin; the og-image verifier check then confirms
@@ -42,10 +45,11 @@
  *     MANIFEST entry to BOTH public/ and dist/, a crop with a MANIFEST entry
  *     satisfies that check on a fresh clone too.
  *
- * Quality 72 with mozjpeg, matching rc-/dc-/jc-. Measured at that setting
- * the full set is ~5.4 MB binary, ~7.2 MB base64 — about 5% on images-b64.
- * Do not iterate on quality in-tree: every --force rebuild writes new blobs
- * that stay in .git forever.
+ * Quality 72 with mozjpeg, matching rc-/dc-/jc-. Measured 2026-08-26 at that
+ * setting the full set is 98 crops, ~7.9 MB binary and ~10.5 MB base64 —
+ * 4.5% of images-b64. (It read ~5.4 MB when first written, before the 25 M7
+ * pages and the stand-ins below.) Do not iterate on quality in-tree: every
+ * --force rebuild writes new blobs that stay in .git forever.
  */
 import { readFile, writeFile, stat, readdir } from "node:fs/promises";
 import path from "node:path";
@@ -67,6 +71,32 @@ const QUALITY = 72;
 /* A source shaped like this cannot yield a decent 1200x630 card. Anything
    this wide-to-tall loses most of the frame and has to be enlarged. */
 const MIN_SOURCE_RATIO = 1.2;
+
+/* Landscape stand-ins for the three portrait heroes, keyed by the CANONICAL
+   hero path (post-alias). Each of these heroes belongs to exactly one page,
+   so keying by the picture cannot leak a stand-in onto a second page — check
+   that again before adding a fourth entry.
+
+   Why each one, since none of this is derivable:
+     e-09 (bali) — e-45 is the SAME subject in landscape. Both alts read
+       "yoga pavilion above misted rice terraces at dawn, Ubud, Bali"; e-45
+       just names Bali outright. Already ships on the wellness-retreat page.
+     e-11 (botswana) — the hero is an elephant herd from the air, which is
+       Okavango; the page's own first place card is that delta at 1600x900.
+     e-17 (willamette) — the page is Oregon Pinot and already borrows a
+       Tuscan tasting for its hero, but that hero is a generic tasting
+       interior: it never asserts a place. Its landscape sibling e-06 does —
+       cypresses and an Italian villa — which is a loud thing to put on the
+       share card of "Oregon's Answer to Burgundy", louder than the page
+       itself ever was. napa-sonoma-the-valley-floor is still borrowed, but
+       fog over vineyard rows under conifer ridges is the Willamette's own
+       look and nothing in frame contradicts Oregon. Prefer a stand-in that
+       asserts LESS than the hero, never more. */
+const HERO_FALLBACK = {
+  "/assets/img/e-09-jungle-yoga-pavilion.jpg": "e-45-ubud-yoga-pavilion.jpg",
+  "/assets/img/e-11-elephant-herd-aerial.jpg": "botswana-okavango-delta.jpg",
+  "/assets/img/e-17-tuscan-wine-tasting.jpg": "napa-sonoma-the-valley-floor.jpg",
+};
 
 const cropName = (src) => "og-" + src.replace(/\.(jpe?g|png|webp)$/i, "") + ".jpg";
 
@@ -104,12 +134,30 @@ for (const file of await walk(PAGES)) {
 
 console.log(`${[...heroes.values()].flat().length} pages declare a hero; ${heroes.size} distinct pictures after alias resolution`);
 
+/* The keying assumption behind HERO_FALLBACK, checked rather than trusted:
+   the table maps a PICTURE to a crop, so a stand-in named for a hero that
+   two pages share would silently reach both. Today all three are unshared.
+   Left as a hard exit because the wrong share card is the one failure this
+   whole file exists to avoid, and it would otherwise ship green. */
+for (const hero of Object.keys(HERO_FALLBACK)) {
+  const routes = heroes.get(hero);
+  if (!routes) {
+    console.error(`HERO_FALLBACK names ${hero}, which no page heroes any more — drop the entry.`);
+    process.exit(1);
+  }
+  if (routes.length > 1) {
+    console.error(`HERO_FALLBACK names ${hero}, shared by ${routes.length} pages (${routes.join(", ")}). Keying by picture would give all of them the same stand-in — give those pages their own heroes first.`);
+    process.exit(1);
+  }
+}
+
 const table = {};           // hero path (as declared) -> crop path
+const counted = new Set();  // crop names already tallied, see alreadyCounted
 let built = 0, skipped = 0, excluded = 0, bytes = 0;
 
 for (const [canonical, routes] of [...heroes].sort()) {
-  const base = path.basename(canonical);
-  const srcPath = path.join(IMG, base);
+  let base = path.basename(canonical);
+  let srcPath = path.join(IMG, base);
   let meta;
   try {
     meta = await sharp(srcPath).metadata();
@@ -118,7 +166,36 @@ for (const [canonical, routes] of [...heroes].sort()) {
     excluded++;
     continue;
   }
-  const ratio = meta.width / meta.height;
+  let ratio = meta.width / meta.height;
+
+  /* Too tall to crop. Swap in the page's landscape stand-in if it named one;
+     the table stays keyed by the hero, so the layouts need no change. */
+  if (ratio < MIN_SOURCE_RATIO && HERO_FALLBACK[canonical]) {
+    const stand = HERO_FALLBACK[canonical];
+    const standPath = path.join(IMG, stand);
+    let standMeta;
+    try {
+      standMeta = await sharp(standPath).metadata();
+    } catch {
+      console.log(`  EXCLUDE ${base} — stand-in ${stand} is not readable under public/assets/img`);
+      excluded++;
+      continue;
+    }
+    const standRatio = standMeta.width / standMeta.height;
+    if (standRatio < MIN_SOURCE_RATIO) {
+      /* A portrait stand-in fixes nothing. Fail loudly rather than ship the
+         soft, badly-framed card this whole rule exists to prevent. */
+      console.log(`  EXCLUDE ${base} — stand-in ${stand} is itself ${standMeta.width}x${standMeta.height} (ratio ${standRatio.toFixed(2)})`);
+      excluded++;
+      continue;
+    }
+    console.log(`  FALLBACK ${base} (ratio ${ratio.toFixed(2)}) -> ${stand} (${standMeta.width}x${standMeta.height}) for ${routes.join(", ")}`);
+    base = stand;
+    srcPath = standPath;
+    meta = standMeta;
+    ratio = standRatio;
+  }
+
   if (ratio < MIN_SOURCE_RATIO) {
     console.log(`  EXCLUDE ${base} (${meta.width}x${meta.height}, ratio ${ratio.toFixed(2)}) — ${routes.join(", ")} keep the default plate`);
     excluded++;
@@ -129,6 +206,12 @@ for (const [canonical, routes] of [...heroes].sort()) {
   const outPath = path.join(IMG, out);
   const srcStat = await stat(srcPath);
   const fresh = await stat(outPath).then((s) => s.mtimeMs > srcStat.mtimeMs, () => false);
+
+  /* One picture can reach this loop twice — once as its own page's hero and
+     again as another page's HERO_FALLBACK stand-in. It is the same crop both
+     times, so count its bytes once or the totals overstate the set. */
+  const alreadyCounted = counted.has(out);
+  counted.add(out);
 
   if (!fresh || FORCE) {
     await sharp(srcPath)
@@ -149,9 +232,8 @@ for (const [canonical, routes] of [...heroes].sort()) {
       manifest.push(created);
       byTarget.set(target, created);
     }
-    bytes += buf.length;
-    built++;
-  } else {
+    if (!alreadyCounted) { bytes += buf.length; built++; }
+  } else if (!alreadyCounted) {
     bytes += (await stat(outPath)).size;
     skipped++;
   }

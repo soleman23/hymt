@@ -81,28 +81,27 @@ rebuild any of this:
 | F19 | **Critical** | **The Contact page's "Send a message" form does not work at all.** The fields sit in a plain `<div id="contactForm">` — no `<form>`, no `action`, no Web3Forms access key — and the submit button calls `onclick="submitContact()"`, a function defined nowhere in the repo. Clicking it throws a `ReferenceError` and silently does nothing. Live on staging right now. |
 | F20 | **Critical** | **`/about/` ships six live "Placeholder:" text blocks** ("Placeholder: Mark's origin story goes here…"), visible on the staging site today. The page is largely unwritten. This also means the E-E-A-T work in P2-3 has no copy to attach to until Mark fills it in. |
 
-### 1.3 Launch model: fresh launch
+### 1.3 Launch model: same-domain platform migration
 
-This is a **fresh launch** on `www.hymtravel.com`. Whatever the domain may have
-served before is out of scope by explicit decision (Devin, 2026-08-07): no
-prior site, platform, URL set or search property is referenced, migrated,
-redirected or preserved anywhere in this program. Measurement starts from zero
-on launch day.
+This is a **Wix-to-Hostinger migration** on the unchanged production hostname,
+`www.hymtravel.com`. The Hostinger site is independent: no Wix page, code,
+hosting, or runtime dependency carries forward. Search and referral continuity
+still matters, so every confirmed Wix URL must either have an equivalent route
+or an explicit Hostinger-side 301 redirect. Search Console Change of Address
+does not apply because the domain is unchanged.
 
 Two practical consequences:
 
-1. **All the risk is forward-looking.** There are no rankings to lose; there
-   are 94 pages to get discovered, crawled and indexed from nothing. The
-   post-launch indexing work in `LAUNCH-RUNBOOK.md` is where this launch
-   succeeds or fails.
-2. **Unknown paths 404 by design.** The custom 404 page and the `.htaccess`
-   `ErrorDocument` rule handle anything pointed at a path the new site does not
-   have. Do not add legacy-path redirects; there is no legacy in scope.
+1. **The risk is both forward-looking and continuity-sensitive.** The new
+   sitemap must be discovered and indexed, while the small set of existing Wix
+   URLs must not be allowed to fall into avoidable 404s.
+2. **Only unknown paths 404 by design.** The custom 404 page and `.htaccess`
+   `ErrorDocument` rule handle unconfirmed paths. Confirmed legacy paths are a
+   redirect-fixture set and must be tested at staging and after cutover.
 
-**Standing instruction for all future work in this repo:** never reintroduce
-references to a prior website, platform, or migration for this domain. If a
-document, prompt or commit proposes a redirect map, a Change-of-Address
-submission, or an "old site" assumption, it is wrong — flag it and remove it.
+**Standing instruction for all future work in this repo:** keep Wix out of the
+new site's runtime, preserve confirmed same-domain URLs with server-side 301s,
+and never submit Change of Address for this migration.
 
 ---
 
@@ -897,9 +896,9 @@ Full procedure in `LAUNCH-RUNBOOK.md`. Summary of gates:
 7. Sitemap submitted in GSC and Bing.
 8. `verify:prod` clean; spot-check 15 URLs by hand.
 
-This is a fresh launch (§ 1.3): no redirect map, no Change-of-Address
-submission, no prior-property handling. If any of those appear in a launch
-checklist, remove them.
+This is a same-domain platform migration (§ 1.3): validate the confirmed
+legacy redirect map and preserve the existing Domain property. Do not submit
+Search Console Change of Address because the hostname is unchanged.
 
 ---
 
@@ -977,10 +976,10 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 - Never ship "Lorem ipsum", "TBD", "Coming soon", or a placeholder image.
 
 ### Never do
-- Never reference a prior website, platform, or migration for this domain.
-  This was launched as a fresh site: no redirect maps for legacy paths, no
-  Change-of-Address submissions, no "old site" assumptions — in code, docs,
-  prompts, or commit messages. Unknown paths 404 by design.
+- Never carry Wix code, pages, hosting, or runtime dependencies into this site.
+  Preserve confirmed legacy URL equity with Hostinger-side 301s, but never
+  submit Search Console Change of Address because the domain is unchanged.
+  Unknown, unconfirmed paths 404 by design.
 - Never add `AggregateRating` to HYMT-controlled reviews.
 - Never add `WebSite`+`SearchAction` sitelinks-searchbox markup (deprecated).
 - Never chase `FAQPage` or `HowTo` rich results — they no longer render.

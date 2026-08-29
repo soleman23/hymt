@@ -4,17 +4,53 @@ The deliverable is a static site: 122 pages plus a custom 404 (123 built HTML
 files), ready to serve. Derive that rather than trusting it —
 `grep -o "<loc>" dist/sitemap-0.xml | wc -l` — every count in this file has
 rotted at least once.
-Edit the Astro source, run `npm run build`, and upload `dist/`.
+The production source of truth is `soleman23/hymt`. Hostinger builds the static
+Astro site from GitHub and serves the generated `dist/` directory.
 
 ---
 
-## Deploy the static site (≈15 minutes)
+## Deploy the static site
 
-### 1. Upload
-1. Hostinger hPanel → **Files → File Manager** → open `public_html`.
-2. Delete Hostinger's default `index.php`/placeholder files.
-3. Upload `hymtravel-static-site.zip` into `public_html`.
-4. Right-click the zip → **Extract**. The contents (`index.html`, folders like `destinations/`, `assets/`, `sitemap.xml`, `robots.txt`) must sit **directly inside `public_html`** — not in a subfolder. Delete the zip afterward.
+### 1. GitHub deployment (primary)
+
+Keep the site on `brown-goose-754147.hostingersite.com` until its staging gate
+passes. In hPanel, the web app settings must be:
+
+| Setting | Required value |
+|---|---|
+| Repository | `soleman23/hymt` |
+| Branch | `main`, after the intended release PRs are merged |
+| Framework | Astro |
+| Node.js | 22.x (also pinned in `package.json`) |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+Use the website dashboard's **Change repository** flow if hPanel names any
+other repository. Review the overwrite warning, then start a new deployment.
+Record the deployed commit SHA and retain the full successful build log.
+
+The 2026-08-27 audit found the temporary site connected to the obsolete
+`soleman23/hymtwebsite` repository at `acbba39b`; its three 2026-07-30 rebuilds
+all failed with a Rollup native-module/GLIBC error. Do not patch or deploy that
+repository as a substitute for switching the source to `soleman23/hymt`.
+
+After the deployment, confirm that the temporary URL serves that exact commit,
+then run `npm run verify:remote`. Inspect `.htaccess`, `robots.txt`, the sitemap,
+the two Wix migration redirects, and at least one version-specific page/title.
+Changing the repository is tracked and gated in #114.
+
+### 1a. Manual upload (fallback only)
+
+Use this only if Hostinger's GitHub deployment is unavailable and record why in
+the launch issue. Do not alternate between GitHub deployments and manual files;
+that makes the deployed commit and stale-file behavior unknowable.
+
+1. Build locally with Node 22: `npm ci && npm run build`.
+2. Hostinger hPanel → **Files → File Manager** → open `public_html`.
+3. Upload a zip containing the **contents** of `dist/`.
+4. Extract it directly into `public_html`; do not leave an extra `dist` folder.
+5. Confirm hidden file `public_html/.htaccess` exists and read a deployed file
+   back before treating the upload as successful.
 
 (Alternative: FTP with the credentials in hPanel → Files → FTP Accounts.)
 
@@ -45,9 +81,9 @@ Edit the Astro source, run `npm run build`, and upload `dist/`.
 
 ### 1b. Purge the CDN cache
 
-**Uploading is not deploying.** Hostinger fronts the site with a CDN
+**A completed build or upload is not proof of fresh edge content.** Hostinger fronts the site with a CDN
 (`server: hcdn`), and static assets are cached at the edge. After any upload
-that changes an image, font or stylesheet, purge the CDN cache in hPanel or
+or deployment that changes an existing image, font or stylesheet URL, purge the CDN cache in hPanel or
 visitors keep getting the old file.
 
 Two clean `582/582` uploads on 2026-08-18 changed nothing that anyone could
@@ -101,8 +137,31 @@ rename's own commit: anything in `images-b64/MANIFEST.json` at the previous
 deployed commit whose `target` is absent now is a candidate.
 
 ### 2. Point the domain
-- If `hymtravel.com` is registered **at Hostinger**: hPanel → Domains → assign to this hosting plan. Done.
-- If registered elsewhere (e.g. GoDaddy/Namecheap): either change nameservers to Hostinger's (shown in hPanel → Domains → DNS) — simplest — or create an **A record** pointing `@` and `www` to your hosting IP (hPanel → Hosting Details).
+
+`hymtravel.com` currently uses Wix for registration, DNS and the production
+website. The final state is complete Wix separation, but website cutover, DNS
+delegation and registrar transfer are separate gates:
+
+1. Attach `hymtravel.com` to this existing Hostinger site. Record the exact
+   nameservers and web target shown in this site's hPanel; never infer them from
+   the shared `hostingersite.com` preview hostname.
+2. Export or screenshot the complete Wix zone privately. Clone every record
+   into Hostinger: all five Google Workspace MX records with priorities, SPF,
+   DMARC, GSC verification, any DKIM/CAA/SRV records, and every discovered
+   subdomain. Query each Hostinger authoritative nameserver directly and diff
+   its answers against Wix before delegation.
+3. Lower the current Wix web-record TTLs to 300 at least 48 hours ahead. This
+   improves web-record rollback but does not shorten parent nameserver caches;
+   a delegation change can still take 24–48 hours.
+4. At cutover, point the Wix-hosted web records to the exact Hostinger target
+   first. Verify the Hostinger site, SSL, redirects, forms and production robots
+   behavior, then change the registrar nameservers to Hostinger. Keeping both
+   zones equivalent prevents resolvers on old and new delegation paths from
+   seeing different mail or verification records.
+5. Keep Wix hosting and its DNS zone intact through the rollback window. After
+   Hostinger DNS, SSL, Google Workspace and GSC have been stable for at least
+   seven days, transfer the registrar to Hostinger. Only then cancel Wix and
+   remove the Wix site.
 
 ### 3. SSL (HTTPS)
 hPanel → **Security → SSL** → Install the **free Let's Encrypt** certificate on the domain. Hostinger's "Force HTTPS" toggle and the `.htaccess` redirect both do the same job — enable the hPanel toggle and the site's HTTPS is locked in from every angle. Verify `https://www.hymtravel.com` loads with the padlock.
@@ -178,7 +237,10 @@ staging host and make three working forms look broken.
 ### 5. Post-launch
 - Google Search Console → add property → submit `https://www.hymtravel.com/sitemap-index.xml` (the build generates `sitemap-index.xml` + `sitemap-0.xml`; there is no `sitemap.xml` anymore).
 - `robots.txt` is already in place.
-- Email: set up mark@hymtravel.com in hPanel → Emails (or point MX to Google Workspace if you prefer Gmail).
+- Email remains on Google Workspace. Preserve all five MX records, SPF, DMARC,
+  GSC verification, and the Google Admin DKIM selector if one exists. Test both
+  inbound and outbound mail, including SPF/DKIM/DMARC results in message
+  headers, before and after nameserver delegation.
 
 ---
 
