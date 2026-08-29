@@ -47,7 +47,10 @@
 > Today the first returns only `dest-card__ph`, twice, and **both are CSS rule
 > definitions in an inline `<style>` — a rule for a class nothing renders any
 > more**, not a plate. The second returns `Portrait Photography` (`/contact/`,
-> waiting on a real headshot from Mark) and `Iceberg Photography`
+> **not** waiting on Mark — `sp-mark-sole-portrait.jpg` has been in the repo
+> since 2026-08-10 and just needs wiring; see
+> [`photography-plan.md`](photography-plan.md) § "The last fifteen") and
+> `Iceberg Photography`
 > (`/destinations/`, a genuine Greenland activity tag beside "Icefjord" and
 > "Dog Sledding"). Both are documented as deliberate in
 > [`photography-plan.md`](photography-plan.md) § "The last fifteen".

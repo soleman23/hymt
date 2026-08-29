@@ -167,13 +167,31 @@ thumbnails, 2 Maldives stay cards, 4 in-article images and the
 nothing: a related card should show the post it links to, and `jc-jh-03/14/17`
 were already built for the journal index.
 
-Two things are left on purpose.
+~~Two things are left on purpose.~~ **One is. The other was closable the whole
+time.**
 
-- **`/contact/` — "Portrait Photography / Mark Sole".** A real, named person.
+- **`/contact/` — "Portrait Photography / Mark Sole".** ~~A real, named person.
   A generated likeness of someone is not a photograph of them, so this needs a
-  real headshot from Mark. It is the one plate a tool cannot close.
+  real headshot from Mark. It is the one plate a tool cannot close.~~
+  — **wrong, and wrong when written.** The reasoning is sound and the premise
+  was false: **`sp-mark-sole-portrait.jpg` is a real photograph of Mark and has
+  been in the repo since `17b3c4a`, 2026-08-10** — sixteen days before this
+  bullet was written. It ships on `/about/` at 900×1086 as `.story__photo-img`,
+  and `off-site-profiles.md` already names it as the canonical crop for
+  third-party profiles. `/contact/` still ships the plate at
+  `src/content-pages/contact.html:19`. **This is agent-doable and needs nothing
+  from Mark.** 32 journal `author-card__photo-ph` slots are the same story and
+  the same asset.
+
+  Worth naming the failure mode, because "needs a human" is the most expensive
+  thing a doc can say falsely: a correct-sounding *rule* ("a generated likeness
+  is not a photograph of them") was never re-checked against the *inventory*,
+  so a plate that could have been closed for zero credits was filed under
+  human-blocked for two and a half weeks. Two subsequent passes, including one
+  explicitly correcting this file, repeated it without grepping for a portrait.
 - **`/destinations/` — "Iceberg Photography".** Not a plate. It is a Greenland
   activity tag beside "Icefjord" and "Dog Sledding", and it is correct copy.
+  **This one is genuinely permanent.**
 
 **The plate is now a check, not a convention.** `PLACEHOLDER_PATTERNS` in
 `tools/content-checks.mjs` fails any page shipping `Destination`, `Experience`,
@@ -301,9 +319,24 @@ will otherwise try to answer them again.
 
 ## If you are here to do photography work
 
-There is none queued. The two genuinely unfilled slots are in § "The last
-fifteen" — `/contact/` needs a real headshot from Mark, which no tool can
-close, and the Greenland tag is correct copy that must never be "fixed".
+**No new photography is needed.** Nothing on the site requires a frame that
+does not exist, and nothing is waiting on Mark.
+
+There is, however, **wiring** work — an existing asset that is not on the pages
+that want it:
+
+- `/contact/`'s portrait plate (`src/content-pages/contact.html:19`) and the
+  **32 journal `author-card__photo-ph` slots** both want
+  `sp-mark-sole-portrait.jpg`, which has shipped on `/about/` since 2026-08-10.
+  See § "The last fifteen" for why this sat mislabelled as human-blocked.
+
+The only genuinely permanent exception is the Greenland "Iceberg Photography"
+tag, which is correct copy and must never be "fixed".
+
+Before concluding any new subject is missing, search the place-prefixed
+filename families **and** `ALIASES.json` — and grep the library for the subject
+itself. The portrait above was found by neither of the two passes that
+declared it absent.
 
 Before concluding any *new* subject is missing, read
 [`photography-needed.md`](photography-needed.md) § Specs for the house format,
