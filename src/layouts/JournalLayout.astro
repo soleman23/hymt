@@ -41,7 +41,12 @@ interface Props {
   modifiedDate?: string;
   /** Breadcrumb leaf and hero headline are separate: the crumb is usually shorter. */
   name: string;
-  category: { label: string; href?: string };
+  /** Label only. There is no category URL to link to — #105 shipped the
+      journal filters as JS `<button data-filter>` controls, not routes — and
+      the `href` that used to sit here fed the duplicate crumb this layout no
+      longer emits. Leaving it declared invited the next reader to look for
+      the link it feeds, which is the confusion the crumb itself caused. */
+  category: { label: string };
   hero: {
     image?: string;
     /** Placeholder plate shown while no photograph exists. */
