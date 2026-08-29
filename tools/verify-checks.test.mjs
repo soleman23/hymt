@@ -32,8 +32,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const CONFIGURED_SITE = (await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"))
-  .match(/site:\s*'([^']+)'/)?.[1]?.replace(/\/$/, "") ?? "";
+/* Same parser the verifier uses, imported rather than copied — this file had
+   its own second copy, which is the drift the value it reads exists to end. */
+const CONFIGURED_SITE = configuredSite(await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"));
 
 let pass = 0;
 const failures = [];
@@ -53,7 +54,7 @@ import {
   placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps as rawHtaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  htaccessGaps as rawHtaccessGaps, configuredSite, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
@@ -1271,11 +1272,65 @@ t("htaccess: preload is refused even at the correct max-age",
 t("htaccess: raising max-age in the .htaccess alone is caught",
   htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=31536000; includeSubDomains"`)).length, 1);
 
+/* ── The APPENDED shapes, which first-match-only reading let through ──
+   Every one of these returned zero gaps before matchAll: `Header set` is
+   last-wins and Apache evaluates every SetEnvIf, so a second line is the one
+   that decides what ships. Deleting a line was covered; adding one was not. */
+t("htaccess: a second, unscoped HSTS header is caught",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"\n`).length, 1);
+
+t("htaccess: a second SetEnvIf arming IS_PROD on the preview host is caught",
+  htaccessGaps(HT_GOOD +
+    `\n  SetEnvIfNoCase Host "hostingersite\\.com$" IS_PROD=1\n`).length, 1);
+
+/* The env name is terminated, so a rename on the header line alone — which
+   leaves nothing arming the variable — no longer reads as shipped. */
+t("htaccess: an env name nothing arms is caught",
+  htaccessGaps(HT_GOOD.replace("env=IS_PROD", "env=IS_PRODUCTION")).length, 1);
+
+/* Present but not `always` rides only the onsuccess table, so it is dropped
+   on the 301s. It must fail, and the message must name `always` rather than
+   claim the header is missing — the reader greps, finds it, and stops
+   trusting the verifier. */
+t("htaccess: HSTS without `always` is caught",
+  htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
+                               "Header set Strict-Transport-Security")).length, 1);
+
+t("htaccess: and that failure names `always` instead of saying it is missing",
+  htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
+                               "Header set Strict-Transport-Security"))[0].includes("without `always`"), true);
+
+/* Both spellings of `site` must accept the shipped matcher. An apex value
+   deriving an apex-only matcher would drop www — the canonical host — from
+   HSTS, driving the regression #79 exists to prevent. */
+t("htaccess: an apex `site` still accepts the (www.)? matcher",
+  htaccessGaps(HT_GOOD, "https://hymtravel.com").length, 0);
+
 /* An empty file — the "someone renamed public/.htaccess" case. Exactly 12:
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the CSP once, and the cache once. */
 t("htaccess: an empty file reports all 12 gaps and does not throw",
   htaccessGaps("").length, 12);
+
+/* ── configuredSite ──
+   One parser, two readers. Both drifts below were live in the two copies it
+   replaces: a `website:` key won over `site:`, and double quotes yielded "". */
+t("site: the shipped single-quoted config is read",
+  configuredSite(`  site: 'https://www.hymtravel.com',`), "https://www.hymtravel.com");
+
+t("site: a double-quoted config is read, not silently dropped",
+  configuredSite(`  site: "https://www.hymtravel.com",`), "https://www.hymtravel.com");
+
+t("site: a longer key ending in `site:` does not win",
+  configuredSite(`  website: 'https://evil.example',\n  site: 'https://www.hymtravel.com',`),
+  "https://www.hymtravel.com");
+
+t("site: a trailing slash is stripped",
+  configuredSite(`  site: 'https://www.hymtravel.com/',`), "https://www.hymtravel.com");
+
+t("site: a config with no site at all is empty, not a throw",
+  configuredSite(`export default {}`), "");
 
 /* ── photo-grid (#93) ── */
 

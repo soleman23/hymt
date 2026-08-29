@@ -816,6 +816,21 @@ export const CSP_DIRECTIVES = [
   ["object-src", "'none'"],
 ];
 
+/**
+ * The production origin, read from astro.config.mjs source — the one place
+ * the domain is written.
+ *
+ * Exported because two readers need it (verify-deployment.mjs and the check
+ * fixtures) and they had a copy each, which is the drift this very function
+ * exists to prevent. Two shapes the old copies got wrong: `site:` was matched
+ * anywhere on a line, so a `website: '…'` key won instead; and only single
+ * quotes were accepted, so switching the config to double quotes silently
+ * yielded "".
+ */
+export function configuredSite(astroConfigSource) {
+  return astroConfigSource.match(/^\s*site:\s*['"]([^'"]+)['"]/m)?.[1]?.replace(/\/$/, "") ?? "";
+}
+
 export function htaccessGaps(text, productionSite) {
   const live = text
     .split(/\r?\n/)
@@ -870,19 +885,46 @@ export function htaccessGaps(text, productionSite) {
      be already live at cutover, because the header this replaces is one the
      Wix edge sends today and stops sending the moment DNS moves. */
   const HSTS_MAX_AGE = "max-age=86400";
-  const hsts = /^\s*Header\s+always\s+set\s+Strict-Transport-Security\s+"([^"]*)"\s+env=IS_PROD/mi.exec(live);
-  if (!hsts) {
+  /* matchAll, not exec, on BOTH lines — the same shape the Cache-Control
+     check below already uses. Apache's `Header set` is last-wins and it
+     evaluates every SetEnvIf, so it is the SECOND line of either kind that
+     decides what ships. Reading only the first passed an appended, unscoped
+     `preload` pin, and an appended `Host "."` that armed IS_PROD on the
+     preview host — both at zero gaps, and both the exact outcomes the
+     comment above says the scoping exists to prevent. */
+  const hstsLines = [...live.matchAll(/^[ \t]*Header\s+(always\s+)?set\s+Strict-Transport-Security\s+"([^"]*)"([^\n]*)/gim)];
+  if (hstsLines.length === 0) {
     out.push("Strict-Transport-Security header (env=IS_PROD) is missing — HSTS regresses at cutover, because the Wix edge sends it today and Hostinger will not (#79)");
-  } else if (hsts[1] !== HSTS_MAX_AGE) {
-    /* Exact-match on purpose. The ramp is the whole safety argument, so a
-       raise has to be a deliberate edit here rather than a silent widening
-       in the .htaccess. `preload` is caught by the same equality. */
-    out.push(`HSTS is "${hsts[1]}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
-  }
-  const productionEnv = /^\s*(SetEnvIf(?:NoCase)?)\s+Host\s+"([^"]*)"\s+IS_PROD=1/mi.exec(live);
-  if (!productionEnv) {
-    out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
+  } else if (hstsLines.length > 1) {
+    out.push(`${hstsLines.length} Strict-Transport-Security headers — \`Header set\` is last-wins, so the last one ships and every scoping rule above it is dead. Keep exactly one (#79)`);
   } else {
+    const [, always, value, rest] = hstsLines[0];
+    if (!always) {
+      /* Present but not `always`: it rides only the onsuccess table, so it is
+         dropped on the apex→www and http→https 301s. Saying "missing" here
+         sent the reader to grep for a line that is right there. */
+      out.push("Strict-Transport-Security is set without `always` — it then rides only the onsuccess table and is dropped on the apex→www and http→https 301s (#79)");
+    }
+    /* Terminated on purpose. Unanchored, `env=IS_PRODUCTION` — which nothing
+       arms — satisfied `env=IS_PROD`, i.e. verbatim the failure the comment
+       above claims to catch. */
+    if (!/^\s+env=IS_PROD(?![\w-])/.test(rest)) {
+      out.push(`Strict-Transport-Security is not scoped to env=IS_PROD (found "${rest.trim() || "no condition"}") — unscoped it pins the preview host to HTTPS on a certificate this repo does not control, and an env name nothing arms sends it to nobody (#79)`);
+    }
+    if (value !== HSTS_MAX_AGE) {
+      /* Exact-match on purpose. The ramp is the whole safety argument, so a
+         raise has to be a deliberate edit here rather than a silent widening
+         in the .htaccess. `preload` is caught by the same equality. */
+      out.push(`HSTS is "${value}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
+    }
+  }
+  const prodEnvLines = [...live.matchAll(/^[ \t]*(SetEnvIf(?:NoCase)?)\s+Host\s+"([^"]*)"\s+IS_PROD=1/gim)];
+  if (prodEnvLines.length === 0) {
+    out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
+  } else if (prodEnvLines.length > 1) {
+    out.push(`${prodEnvLines.length} SetEnvIf lines arm IS_PROD — Apache evaluates every one, so any extra matcher silently widens HSTS to hosts this repo holds no certificate for. Keep exactly one (#79)`);
+  } else {
+    const productionEnv = prodEnvLines[0];
     if (productionEnv[1].toLowerCase() !== "setenvifnocase") {
       out.push("IS_PROD must use SetEnvIfNoCase — HTTP host names are case-insensitive");
     }
@@ -894,11 +936,14 @@ export function htaccessGaps(text, productionSite) {
       out.push(`could not derive the HSTS host from configured site "${productionSite}"`);
     }
     if (configuredHost) {
-      const bareHost = configuredHost.startsWith("www.") ? configuredHost.slice(4) : configuredHost;
+      /* `(www\.)?` unconditionally, whichever spelling `site` carries. Both
+         hosts serve: the apex 301s to www and `Header always set` rides that
+         301, so deriving an apex-only matcher from an apex `site` would drop
+         HSTS from the canonical host and drive the very regression #79 exists
+         to prevent — on a green build. */
+      const bareHost = configuredHost.replace(/^www\./, "");
       const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const expectedHost = configuredHost.startsWith("www.")
-        ? `^(www\\.)?${escapedHost}(?::[0-9]+)?$`
-        : `^${escapedHost}(?::[0-9]+)?$`;
+      const expectedHost = `^(www\\.)?${escapedHost}(?::[0-9]+)?$`;
       if (productionEnv[2] !== expectedHost) {
         out.push(`IS_PROD host matcher is "${productionEnv[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
       }
