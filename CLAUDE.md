@@ -150,12 +150,33 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 
 ### Node and npm
 
-- The build needs **Node >=22.12.0** — Astro 7's own floor, and the strictest
-  in the whole dependency tree. `package.json` → `engines.node` is the one
-  place that number is written. `tools/check-node.mjs` reads it and runs as the
-  first stage of `npm run build`, so the wrong Node fails in milliseconds with
-  a recipe instead of part-way through `astro build` with
+- The build needs **Node >=22.19.0**, and the package that sets that floor is
+  **undici**, reached through `astro` → `unifont`. Astro's own floor is lower
+  (`>=22.12.0`) — do not read it and assume it governs. `npm ci` enforces
+  `engines.node` for every package it installs, so what governs is the
+  strictest floor **anywhere in the tree**.
+- This is written from a failure, not from theory. `engines.node` said
+  `>=22.12.0` and this file called it "the strictest in the whole dependency
+  tree"; undici had since moved to `>=22.19.0`. hPanel's floating `22.x` track
+  resolved to **v22.18.0** — clearing the declared floor and missing the real
+  one by a single patch — and the 2026-08-29 deploy died in `npm ci` with
+  `EBADENGINE` before Astro ever ran. Nothing local noticed, because this
+  machine builds on 24.16.0, where both floors are satisfied.
+- `tools/verify-deployment.mjs` § 4d now compares `engines.node` against every
+  floor in `package-lock.json` and fails on drift, so the next dependency bump
+  that raises the real floor goes red here instead of on the deploy host.
+- `package.json` → `engines.node` is the number npm actually enforces for this
+  package, and `tools/check-node.mjs` reads it and runs as the first stage of
+  `npm run build`, so the wrong Node fails in milliseconds with a recipe
+  instead of part-way through `astro build` with
   `Node.js v20.19.0 is not supported by Astro!`.
+- `package-lock.json`'s root entry carries a **second copy** of `engines.node`,
+  and npm does not update it when you edit `package.json` — the 2026-08-28
+  correction changed `package.json` alone and left `22.x` in the lockfile for a
+  further day. Verified on npm 11.13.0: `npm ci` enforces the `package.json`
+  copy and ignores this one, so a stale value here is cosmetic rather than
+  load-bearing. Change both anyway — the next person to read the lockfile for
+  the floor should not find a different answer than the one being enforced.
 - `.npmrc` sets `engine-strict=true`, so `npm ci` / `npm install` on the wrong
   Node is a hard `EBADENGINE` error. Without it npm prints a warning and
   installs anyway, leaving a `node_modules` that resolves and then cannot

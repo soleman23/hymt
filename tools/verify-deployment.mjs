@@ -30,6 +30,7 @@ import {
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
   lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, crDefect, isBinaryDistFile,
+  engineFloorDrift,
 } from "./repo-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
    drift from the convention in tools/git-lastmod.mjs. */
@@ -1204,7 +1205,71 @@ notes.push(
   }
 }
 
-/* ── 4d. Built output stays LF ──
+/* ── 4d. engines.node is the strictest Node floor in the tree ──
+   The deploy host installs with `npm ci`, and .npmrc sets engine-strict=true,
+   so npm refuses the whole install on the first package whose engines.node the
+   host's Node is below. The floor that governs is therefore the highest one
+   ANYWHERE in the tree, while package.json declares only what someone last
+   wrote down.
+
+   Those two drifted apart and the 2026-08-29 deploy is what found it.
+   engines.node said `>=22.12.0` — Astro 7's floor, and recorded in CLAUDE.md
+   as "the strictest in the whole dependency tree" — while
+   astro -> unifont -> undici@8 had moved to `>=22.19.0`. hPanel's `22.x`
+   resolved to v22.18.0, which cleared the declared floor and missed the real
+   one by a single patch release, so `npm ci` died with EBADENGINE on undici
+   and no page was ever built.
+
+   None of it was visible here: this machine builds on 24.16.0, which satisfies
+   both. That is the same shape as the lockfile check above — a defect that is
+   inert on this platform and fatal on the deploy host — which is why it is
+   checked here rather than left to be discovered by a red deployment. */
+{
+  let declared = null;
+  let lockfile = null;
+  let readError = "";
+  try {
+    const pkg = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8"));
+    declared = pkg.engines?.node ?? null;
+    lockfile = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
+  } catch (e) { readError = String(e.message).split("\n")[0]; }
+
+  const drift = engineFloorDrift(declared, lockfile);
+  if (drift.state === "unreadable-lockfile") {
+    fail("engines-floor",
+      `package.json or package-lock.json could not be read for the engines comparison (${readError || "no packages map"})`);
+  } else if (drift.state === "undeclared") {
+    fail("engines-floor",
+      "package.json declares no engines.node — nothing states the floor `npm ci` will enforce on the deploy host");
+  } else if (drift.state === "unreadable-declared") {
+    /* Not a pass. check-node.mjs already treats an unreadable range as "cannot
+       judge" and waves the build through, so if this did the same the repo
+       would have no check at all left standing on the value. */
+    fail("engines-floor",
+      `package.json engines.node is "${drift.declared}", which is not a \`>=X.Y.Z\` floor — ` +
+      "check-node.mjs cannot evaluate it either, so nothing is enforcing a Node version");
+  } else if (drift.state === "no-floors") {
+    notes.push(`engines.node "${drift.declared}" not compared — no dependency declares a \`>=X.Y.Z\` floor (${drift.unreadable} unreadable ranges)`);
+  } else if (drift.state === "drift") {
+    fail("engines-floor",
+      `package.json engines.node is "${drift.declared}" but ${drift.strictest.pkg} requires "${drift.strictest.range}"`);
+    hints.push(
+      `engines.node promises less than the dependency tree demands. .npmrc sets engine-strict=true,\n` +
+      `     so every Node between "${drift.declared}" and "${drift.strictest.range}" passes the declared floor and then\n` +
+      `     fails \`npm ci\` outright with EBADENGINE — which is what a floating host track like hPanel's\n` +
+      `     \`22.x\` will eventually land on. Raise engines.node to "${drift.strictest.range}" (package.json AND the\n` +
+      `     root entry of package-lock.json), then raise the Node version on the deploy host to match.`);
+  } else {
+    /* Reports the comparison rather than the file: a floor that was never read
+       is not a floor that was cleared. */
+    notes.push(
+      `engines.node "${drift.declared}" is at or above every floor in the tree — ` +
+      `strictest is ${drift.strictest.pkg} at "${drift.strictest.range}", ` +
+      `${drift.considered} compared, ${drift.unreadable} ranges unreadable`);
+  }
+}
+
+/* ── 4e. Built output stays LF ──
    dist/ is stored `-text`: what the build writes is what Git keeps and what
    the deploy uploads byte-for-byte. That is only safe while the build's inputs
    are stable, which `* text=auto eol=lf` in .gitattributes now makes them.

@@ -43,14 +43,27 @@ export function parseNodeVersion(version) {
  * @returns {boolean|null} true = satisfied, false = too old, null = unreadable
  */
 export function satisfiesNodeRange(range, version) {
-  const m = /^>=\s*v?(\d+)\.(\d+)\.(\d+)\s*$/.exec(String(range ?? "").trim());
+  const floor = rangeFloor(range);
   const current = parseNodeVersion(version);
-  if (!m || !current) return null;
-  const floor = [Number(m[1]), Number(m[2]), Number(m[3])];
+  if (!floor || !current) return null;
+  return compareFloors(current, floor) >= 0;
+}
+
+/* The one place the `>=X.Y.Z` grammar is written. satisfiesNodeRange and
+   engineFloorDrift both need to read a floor out of a range, and two copies of
+   this regex would be free to drift apart about what a range means. */
+function rangeFloor(range) {
+  const m = /^>=\s*v?(\d+)\.(\d+)\.(\d+)\s*$/.exec(String(range ?? "").trim());
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
+
+/* Numeric order on [major, minor, patch] — negative, zero, positive, like any
+   comparator. */
+function compareFloors(a, b) {
   for (let i = 0; i < 3; i++) {
-    if (current[i] !== floor[i]) return current[i] > floor[i];
+    if (a[i] !== b[i]) return a[i] - b[i];
   }
-  return true;
+  return 0;
 }
 
 /* Fields npm records so an install on one platform knows which optional
@@ -246,4 +259,72 @@ export function crDefect(content) {
   let firstLine = 1;
   for (let i = 0; i < first; i++) if (s.charCodeAt(i) === 10) firstLine++;
   return { count, firstLine };
+}
+
+/**
+ * Has package.json's engines.node fallen below the strictest floor in the tree?
+ *
+ * `npm ci` reads engines.node off EVERY package it installs, and .npmrc sets
+ * engine-strict=true, so the install dies on the first package whose floor the
+ * host's Node is below. The real requirement for this repo is therefore the
+ * MAXIMUM floor anywhere in the tree — not the root's, and not Astro's.
+ *
+ * That distinction is not theoretical. engines.node said `>=22.12.0`, which is
+ * Astro 7's floor and was written down as "the strictest in the whole
+ * dependency tree". Meanwhile astro -> unifont -> undici@8 required
+ * `>=22.19.0`. Hostinger's `22.x` track resolved to v22.18.0 — one patch below
+ * — and the 2026-08-29 deploy failed in `npm ci` with EBADENGINE on undici
+ * before Astro ever ran. Nothing local noticed, because this machine builds on
+ * 24.16.0, where both floors are satisfied and the gap is invisible.
+ *
+ * Reads the lockfile, not node_modules: package-lock.json is what `npm ci`
+ * actually installs, it is committed, and it is present in a clean checkout
+ * that has never installed anything.
+ *
+ * Only bare `>=X.Y.Z` ranges are compared. Real trees also carry shapes like
+ * `^20.19.0 || >=22.12.0` (@astrojs/compiler-binding does), and rather than
+ * grow a semver parser to adjudicate them this counts them as `unreadable` and
+ * reports the number. The check is therefore conservative in one direction
+ * only: it can miss a floor, never invent one. For a tripwire that gates
+ * `npm run build`, a false red is far more expensive than a missed catch —
+ * and the floor that actually bit here was a bare `>=`.
+ *
+ * @returns {{state: string, declared?: string, strictest?: object,
+ *            considered?: number, unreadable?: number}}
+ *   drift = a dependency demands more than engines.node promises
+ */
+export function engineFloorDrift(declared, lockfile) {
+  const packages = lockfile?.packages;
+  if (!packages || typeof packages !== "object") return { state: "unreadable-lockfile" };
+
+  let strictest = null;
+  let considered = 0;
+  let unreadable = 0;
+  for (const [pkg, entry] of Object.entries(packages)) {
+    /* The root entry mirrors the very field under test, so counting it would
+       let engines.node vouch for itself and the check could never go red. */
+    if (pkg === "") continue;
+    const range = entry?.engines?.node;
+    if (range == null) continue;
+    const floor = rangeFloor(range);
+    if (!floor) { unreadable++; continue; }
+    considered++;
+    if (!strictest || compareFloors(floor, strictest.floor) > 0) {
+      strictest = { pkg, range, floor };
+    }
+  }
+
+  const counts = { considered, unreadable };
+  if (declared == null) return { state: "undeclared", strictest, ...counts };
+
+  const declaredFloor = rangeFloor(declared);
+  if (!declaredFloor) return { state: "unreadable-declared", declared, strictest, ...counts };
+  if (!strictest) return { state: "no-floors", declared, ...counts };
+
+  return {
+    state: compareFloors(strictest.floor, declaredFloor) > 0 ? "drift" : "ok",
+    declared,
+    strictest,
+    ...counts,
+  };
 }
