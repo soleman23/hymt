@@ -4,8 +4,20 @@ Written 2026-08-12, after the six regional hubs shipped (PR #102).
 
 > # ✅ ALL THREE WORKSTREAMS COMPLETE — closed out 2026-08-28.
 >
-> **There is no photography backlog.** A, B and C all derive to zero, and the
-> only two unfilled slots on the site are deliberate (§ "The last fifteen").
+> **No new photography is needed.** Workstreams A, B and C all derive to zero:
+> nothing on the site is waiting on a frame that does not exist, and nothing is
+> waiting on Mark.
+>
+> **That is not the same as "no unfilled plates."** 65 remain — `/contact/`
+> plus 64 across the journal posts — and every one of them wants a photograph
+> **already in the repo**. That is wiring, not commissioning, and it is
+> agent-doable today: see § "If you are here to do photography work".
+>
+> An earlier draft of this banner said "no photography backlog" full stop, and
+> it was wrong in the way this whole file keeps being wrong — the sweep behind
+> it found one plate family and not the other two. Codex bugbot caught it in
+> review.
+>
 > Everything below — the sequencing argument, the waves, the budget, the open
 > decisions — is a **record of how it was planned and paid for**, not work to
 > pick up. Read § "How it actually finished" first; the rest is history.
@@ -23,7 +35,7 @@ six in one direction and then, once corrected, wrong by 66 in the other.
 
 | Workstream | Scope | Images still needed | Verified |
 |---|---|---|---|
-| **A — Destination heroes** (M7, #40–#65) | 25 new pages | **0** | #40–#65 all closed; 68 destination pages ship |
+| **A — Destination heroes** (M7, #40–#65) | 25 new pages | **0** | #40–#65 all closed; 68 detail pages ship (≠ the 66 grid cards — see `photography-needed.md`) |
 | **B — Place cards on existing sub-pages** | 11 pages, 66 cards | **0** | 11/11 pages at 6 cards, 6 images, grid on `--photo` |
 | **C — "Trips We Plan Often" tiles** | 75 pages, 280 tiles | **0** | 0 `itin-image`, 0 `event-image` plates |
 
@@ -38,15 +50,57 @@ grep -rho 'class="itin-image"\|class="event-image"' dist --include='*.html' | wc
 family it already knew about, and that is precisely how 280 tiles hid behind a
 finished-looking plan (§ Workstream C). The sitewide sweep is by shape:
 
+**Do not use a `grep` for this.** Every regex tried here has been wrong, in
+sequence, each one looking more general than the last:
+
+| Attempt | Missed |
+|---|---|
+| `place-card__ph` / `exp-card__ph` | the 280 "Trips We Plan Often" tiles |
+| `__ph\b` | `author-card__photo-ph` — `ph` is not at a boundary after `__` |
+| `[a-z-]*(__\|--)?ph\b` | nothing, but matches `paragraph`, `photograph`, `Joseph` |
+
+**Parse the class attributes and keep tokens whose final `-`/`_` segment is
+`ph`.** That is the question actually being asked, and unlike a regex over raw
+HTML it cannot confuse a CSS selector with rendered markup:
+
 ```bash
-grep -rho '[a-z-]*__ph\b'           dist --include='*.html' | sort | uniq -c
+node -e '
+const fs=require("fs"),path=require("path");
+const walk=(d,o=[])=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){
+  const p=path.join(d,e.name); e.isDirectory()?walk(p,o):e.name.endsWith(".html")&&o.push(p)}return o};
+const c=new Map();
+for(const f of walk("dist")) for(const m of fs.readFileSync(f,"utf8").matchAll(/class="([^"]*)"/g))
+  for(const t of m[1].split(/\s+/)) if(/(^|[-_])ph$/.test(t)) c.set(t,(c.get(t)||0)+1);
+console.log([...c].sort((a,b)=>b[1]-a[1]));'
+```
+
+**Today that returns 64 rendered plates in TWO families, both on the journal
+posts** — `author-card__photo-ph` ×32 and `post-byline__avatar-ph` ×32, two per
+post. All 64 want the same `sp-mark-sole-portrait.jpg` as `/contact/`; see
+§ "The last fifteen".
+
+Four more `…-ph` tokens exist only as **CSS selectors**, styling nothing:
+`.dest-card__ph` ×2 (`/destinations/`), `.journal-featured__image-ph`
+(`/travel-journal/`), and `.story__photo-ph` (`/about/`, orphaned when the real
+portrait landed in `17b3c4a`). Dead rules, not plates — delete them the next
+time each page's `pageCss` is touched. A raw grep reports all four as hits and
+gives no way to tell them from the 64 real ones.
+
+The caption grep is still worth running beside it, and still misses both live
+families — their visible text is `Mark Sole`, not `<Noun> Photography`:
+
+```bash
 grep -rho '[A-Z][a-z]* Photography' dist --include='*.html' | sort | uniq -c
 ```
 
-Today: `dest-card__ph` ×2, **both CSS rule definitions in an inline `<style>`
-for a class nothing renders any more** — dead CSS, not a plate, and worth
-deleting the next time `destinations.html`'s `pageCss` is touched. Plus the two
-intentional captions, `Portrait Photography` and `Iceberg Photography`.
+It returns only the two intentional captions, `Portrait Photography` and
+`Iceberg Photography`.
+
+**The sequence above is the actual finding of this section.** Three sweeps in a
+row were written by someone who had just been burned by the previous one, and
+each was still keyed on the shape they happened to have seen. The `__ph\b`
+version shipped *in the same commit that warned against exactly this mistake*,
+and was caught in review by Codex bugbot rather than by its author.
 
 Workstream B's completed pages, for the record — 4 destination (`india`,
 `jordan`, `new-zealand`, `oman`) and 7 experience (`adventure-active-travel`,
@@ -180,8 +234,9 @@ time.**
   and `off-site-profiles.md` already names it as the canonical crop for
   third-party profiles. `/contact/` still ships the plate at
   `src/content-pages/contact.html:19`. **This is agent-doable and needs nothing
-  from Mark.** 32 journal `author-card__photo-ph` slots are the same story and
-  the same asset.
+  from Mark.** The journal posts are the same story and the same asset:
+  **64 further plates, two per post** — `author-card__photo-ph` ×32 and
+  `post-byline__avatar-ph` ×32. So 65 slots in total, one photograph.
 
   Worth naming the failure mode, because "needs a human" is the most expensive
   thing a doc can say falsely: a correct-sounding *rule* ("a generated likeness
@@ -274,7 +329,16 @@ time.**
    16:9 source loses ~12% top and bottom; portrait sources are unusable
    (`e-09-jungle-yoga-pavilion.jpg` had to be swapped out of the Bali card).
 4. Intake: 1600px q85 progressive JPEG → `public/assets/img/` → single-line
-   base64 twin → MANIFEST entry (indent=1, CRLF, trailing newline).
+   base64 twin → MANIFEST entry (indent=1, ~~CRLF~~ **LF**, trailing newline).
+
+   **The CRLF here was wrong and this section is the live procedure, so it
+   would have been followed.** `.gitattributes` stores and checks out all
+   source as LF, and `images-b64/MANIFEST.json` today contains **zero** CR
+   bytes (`grep -c $'\r' images-b64/MANIFEST.json` → 0). Writing it back as
+   CRLF would fight the renormalisation on the next checkout and reintroduce
+   the mixed-line-ending churn that policy exists to stop — a Python edit doing
+   exactly that once turned a 9-line content change into a 310-line diff.
+   Caught in review by Codex bugbot.
 5. Markup: swap `__ph` + `__overlay` for `<img class="place-card__img">` with
    **true** intrinsic width/height, add `places-grid--photo`.
 6. `npm run build`, then measure at 1440px and 768px: panels exactly 3:2, card
@@ -325,10 +389,13 @@ does not exist, and nothing is waiting on Mark.
 There is, however, **wiring** work — an existing asset that is not on the pages
 that want it:
 
-- `/contact/`'s portrait plate (`src/content-pages/contact.html:19`) and the
-  **32 journal `author-card__photo-ph` slots** both want
-  `sp-mark-sole-portrait.jpg`, which has shipped on `/about/` since 2026-08-10.
-  See § "The last fifteen" for why this sat mislabelled as human-blocked.
+- **65 slots, one photograph.** `/contact/`'s portrait plate
+  (`src/content-pages/contact.html:19`), plus **64 on the journal posts** —
+  `author-card__photo-ph` ×32 and `post-byline__avatar-ph` ×32, two per post.
+  All of them want `sp-mark-sole-portrait.jpg`, which has shipped on `/about/`
+  since 2026-08-10. See § "The last fifteen" for why this sat mislabelled as
+  human-blocked, and § "How it actually finished" for why a grep found only
+  half of it.
 
 The only genuinely permanent exception is the Greenland "Iceberg Photography"
 tag, which is correct copy and must never be "fixed".

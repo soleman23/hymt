@@ -14,10 +14,21 @@
 > `888817d` deliberately pulled the Aspen and Banff cards until those pages
 > existed.
 >
-> Re-derived 2026-08-28: **those pages exist.** `/destinations/aspen/` ships,
-> M7 issues #40–#65 are all closed, and the grid is 68 destination pages. The
-> "when an image lands" procedure at the foot of this file has no pending
-> subject to apply to.
+> Re-derived 2026-08-28: **those pages exist.** `/destinations/aspen/` ships and
+> M7 issues #40–#65 are all closed. The "when an image lands" procedure at the
+> foot of this file has no pending subject to apply to.
+>
+> **Two inventories, and they are not the same number** — conflating them is how
+> this file got into trouble the first time:
+>
+> ```bash
+> ls -d dist/destinations/*/ | wc -l                                   # 68 detail pages
+> grep -c 'class="dest-card"' src/content-pages/destinations.html      # 66 grid cards
+> ```
+>
+> They differ legitimately. The nine regional hubs are pages with no grid card
+> of their own, and several cards point at a shared detail page. Neither figure
+> is "the number of destinations" — say which one you mean.
 >
 > The specs table is wrong in two ways — see the strikethroughs. Those
 > corrections still matter, because they describe the house format for any
