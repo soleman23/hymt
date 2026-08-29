@@ -70,12 +70,40 @@ ErrorDocument 404 /404.html
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
 </IfModule>
 
+# ── Production: arm the host-scoped headers ──
+# The mirror of IS_STAGING above. HSTS must be sent ONLY by the canonical
+# host: pinning a preview domain to HTTPS relies on a certificate this repo
+# does not control, and an expiry there would be unrecoverable from the
+# browser side for the length of max-age.
+<IfModule mod_setenvif.c>
+  SetEnvIf Host "^(www\.)?hymtravel\.com$" IS_PROD=1
+</IfModule>
+
 # ── Security headers ──
 <IfModule mod_headers.c>
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # ── SEC-4 (#79): HSTS, production host only ──
+  # #79 reads as "add this after cutover", but the reason it exists is a
+  # REGRESSION: www.hymtravel.com sends `strict-transport-security:
+  # max-age=31556952` from the Wix edge today, and that header disappears the
+  # moment DNS points here. Shipping it env=IS_PROD resolves the ordering —
+  # inert on *.hostingersite.com, live the instant the canonical host
+  # resolves to this box, so there is no window where HSTS is missing.
+  #
+  # A browser ignores HSTS received over a bad certificate, so this cannot
+  # lock anyone out of a host whose SSL is not ready yet; what it can do is
+  # commit them for max-age once SSL IS good. Hence the issue's 1-day ramp
+  # value, not the 1-year target. Raising it is a deliberate two-place edit:
+  # here, and the `expected` string in content-checks.mjs → htaccessGaps.
+  # Confirm valid certs on BOTH apex and www (#32/#33) before raising.
+  #
+  # No `preload`. That is a one-way submission to a browser-shipped list and
+  # #79 explicitly does not ask for it.
+  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
 
   # ── SEC-9 (#82): Content-Security-Policy, REPORT-ONLY ──
   # Report-only on purpose. It is a latent-XSS mitigation for author-controlled

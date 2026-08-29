@@ -860,6 +860,29 @@ export function htaccessGaps(text) {
     out.push("SetEnvIf that arms IS_STAGING is missing — the X-Robots-Tag header is inert without it");
   }
 
+  /* SEC-4 (#79): HSTS. Like the staging noindex, two lines that only work
+     together — and for the same reason it is the SetEnvIf, not the Header,
+     that goes missing silently. A header carrying env=IS_PROD with nothing
+     arming IS_PROD is sent to nobody, which looks identical to "shipped" in
+     any grep of the file.
+
+     Scoped to production on purpose (see public/.htaccess): the point is to
+     be already live at cutover, because the header this replaces is one the
+     Wix edge sends today and stops sending the moment DNS moves. */
+  const HSTS_MAX_AGE = "max-age=86400";
+  const hsts = /^\s*Header\s+always\s+set\s+Strict-Transport-Security\s+"([^"]*)"\s+env=IS_PROD/mi.exec(live);
+  if (!hsts) {
+    out.push("Strict-Transport-Security header (env=IS_PROD) is missing — HSTS regresses at cutover, because the Wix edge sends it today and Hostinger will not (#79)");
+  } else if (hsts[1] !== HSTS_MAX_AGE) {
+    /* Exact-match on purpose. The ramp is the whole safety argument, so a
+       raise has to be a deliberate edit here rather than a silent widening
+       in the .htaccess. `preload` is caught by the same equality. */
+    out.push(`HSTS is "${hsts[1]}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
+  }
+  if (!/^\s*SetEnvIf\s+Host\s+"[^"]*hymtravel[^"]*"\s+IS_PROD=1/mi.test(live)) {
+    out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
+  }
+
   const csp = /^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/mi.exec(live);
   if (!csp) {
     out.push("no Content-Security-Policy header at all");

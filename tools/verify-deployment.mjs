@@ -589,7 +589,11 @@ const inlineHandlerSeen = new Map();
       fail("htaccess-headers", "dist/.htaccess differs from public/.htaccess — the build did not copy the current file, so the deployed headers are not the ones in the repo");
     }
     if (!failures.some((f) => f.check === "htaccess-headers")) {
-      notes.push(`.htaccess shipped with ${HTACCESS_SECURITY_HEADERS.length} security headers, the staging noindex, ${CSP_DIRECTIVES.length} CSP directives, and no immutable cache rule`);
+      /* HSTS is counted separately from HTACCESS_SECURITY_HEADERS because it
+         is host-scoped rather than unconditional, and saying so is the point:
+         a reader checking whether #79 shipped should not have to infer it
+         from a bare count of the unconditional ones. */
+      notes.push(`.htaccess shipped with ${HTACCESS_SECURITY_HEADERS.length} security headers + host-scoped HSTS (#79), the staging noindex, ${CSP_DIRECTIVES.length} CSP directives, and no immutable cache rule`);
     }
   }
 }
