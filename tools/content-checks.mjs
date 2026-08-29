@@ -58,11 +58,18 @@ export const PLACEHOLDER_PATTERNS = [
      beside "Icefjord" and "Dog Sledding". That is a real activity, correct
      copy, and the general pattern would fail that page forever.
 
-     One noun is deliberately absent. /contact/ still plates "Portrait
+     Portrait was deliberately absent while /contact/ still plated "Portrait
      Photography / Mark Sole" — a real, named person, whose headshot has to be
-     a photograph OF HIM. Add Portrait here the day that image lands. */
+     a photograph OF HIM. THAT IMAGE HAS LANDED, so Portrait is in the list.
+
+     It had in fact landed on 2026-08-10, sixteen days before the note above
+     was written: sp-mark-sole-portrait.jpg was already shipping on /about/
+     while three separate documents recorded the plate as blocked on Mark. The
+     rule ("a generated likeness is not a photograph of them") was sound and
+     nobody re-checked it against the library. Adding the noun here is what
+     makes that class of mistake fail a build instead of ageing in a doc. */
   ["Unfilled photo plate",
-   /\b(?:Destination|Experience|Itinerary|Journey|Event|Article|Atoll) Photography\b/],
+   /\b(?:Destination|Experience|Itinerary|Journey|Event|Article|Atoll|Portrait) Photography\b/],
 ];
 
 /**
