@@ -51,7 +51,7 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   placeCardAlt,
-  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
+  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps as rawHtaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled,
@@ -903,6 +903,69 @@ t("csp: an absent header is null, not an empty string",
 t("csp: an absent directive is null",
   cspDirective(HT, "Content-Security-Policy-Report-Only", "worker-src"), null);
 
+/* ── cspHeaders: surviving the #100 flip, in both directions ──
+   csp-script-src and serve-csp-enforcing.mjs both pinned the -Report-Only
+   spelling. #100 renames the header to enforcing and its own rollback renames
+   it back, so each direction silently disabled the one check standing between
+   an edited inline script and a dead page. The first two fixtures are that
+   flip; before this change the enforcing one returned nothing. */
+const HT_ENFORCING = HT.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy");
+
+t("cspHeaders: the report-only header is found",
+  cspHeaders(HT).map((h) => h.name).join(), "Content-Security-Policy-Report-Only");
+
+t("cspHeaders: the ENFORCING header is found — #100's flip",
+  cspHeaders(HT_ENFORCING).map((h) => h.name).join(), "Content-Security-Policy");
+
+/* The prefix trap, and why the trailing \s+" in the pattern is load-bearing:
+   "Content-Security-Policy" is a strict prefix of the report-only spelling, so
+   a looser match reports the enforcing header on a report-only file — the
+   check would then pass while claiming the wrong mode. */
+t("cspHeaders: report-only is not also reported as enforcing",
+  cspHeaders(HT).length, 1);
+
+t("cspHeaders: a file with neither header yields nothing",
+  cspHeaders(`  Header set X-Frame-Options "SAMEORIGIN"`).length, 0);
+
+/* Both at once is a half-finished flip. A browser enforces one and reports on
+   the other, so two policies that can disagree ship together. */
+t("cspHeaders: both headers at once are both reported",
+  cspHeaders(HT + HT_ENFORCING).map((h) => h.name).join(),
+  "Content-Security-Policy,Content-Security-Policy-Report-Only");
+
+/* Enforcing first, so a caller taking [0] prefers the header that blocks. */
+t("cspHeaders: enforcing sorts before report-only",
+  cspHeaders(HT + HT_ENFORCING)[0].name, "Content-Security-Policy");
+
+/* ── the SAME name twice, which one .exec per name could not see ──
+   Apache documents `Header set` as replacing any previous header of that
+   name, so the LAST line ships. Reporting one meant the verifier diffed
+   dist's hashes against a policy the browser throws away — and a policy
+   missing those hashes could deploy green. Both consumers already refuse a
+   count above 1; they just never got one. */
+const HT_DUP_ENFORCING = HT_ENFORCING +
+  `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'"\n`;
+
+t("cspHeaders: two ENFORCING headers are both reported, not collapsed to one",
+  cspHeaders(HT_DUP_ENFORCING).length, 2);
+
+t("cspHeaders: two REPORT-ONLY headers are both reported too",
+  cspHeaders(HT + `\n  Header always set Content-Security-Policy-Report-Only "default-src 'self'"\n`).length, 2);
+
+/* The one that matters: the policy Apache keeps is the last, and it is not
+   the one [0] returns — so a caller reading only [0] would validate the
+   wrong policy. The count is what stops it. */
+t("cspHeaders: the duplicate's differing policy is visible, not hidden",
+  cspHeaders(HT_DUP_ENFORCING).at(-1).policy, "default-src 'self'; script-src 'self'");
+
+t("cspHeaders: the policy value comes back with the name",
+  cspHeaders(HT_ENFORCING)[0].policy.startsWith("default-src 'self'"), true);
+
+/* The whole point: the directive lookup keeps working after the rename. */
+t("csp: script-src is still readable once the header is enforcing",
+  cspDirective(HT_ENFORCING, cspHeaders(HT_ENFORCING)[0].name, "script-src"),
+  "'self' 'sha256-AAA=' https://www.googletagmanager.com");
+
 t("csp: drift - a needed hash the header lacks is missing",
   cspScriptSrcDrift("'self' 'sha256-AAA='", ["sha256-AAA=", "sha256-BBB="]).missing.join(","), "sha256-BBB=");
 
@@ -1271,6 +1334,19 @@ t("htaccess: preload is refused even at the correct max-age",
 t("htaccess: raising max-age in the .htaccess alone is caught",
   htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=31536000; includeSubDomains"`)).length, 1);
 
+/* Same first-match-only hole as cspHeaders had: the second line is the one
+   Apache keeps, so a duplicate must fail rather than have the directives
+   checked against the dead policy above it. */
+t("htaccess: the same CSP header set twice is caught",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always set Content-Security-Policy-Report-Only "default-src 'self'"\n`).length, 1);
+
+/* One of each name still passes htaccessGaps — csp-script-src is the check
+   that refuses that, and it does. This pins the division of labour. */
+t("htaccess: one of each CSP name is not this check's failure to report",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"\n`).length, 0);
+
 /* An empty file — the "someone renamed public/.htaccess" case. Exactly 12:
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the CSP once, and the cache once. */
@@ -1596,12 +1672,22 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     htaccessGaps(htaccess).join(" | "), "");
   t("real dist/.htaccess does contain `immutable` in comments (so the guard is live)",
     /immutable/.test(htaccess), true);
-  t("real dist/.htaccess exists and carries the report-only CSP",
-    cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src") !== null, true);
+  /* Whichever spelling the real file ships, exactly as the verifier resolves
+     it. These three pinned "-Report-Only" and so would have gone red the day
+     #100 flips the header — with messages about missing script-src hashes,
+     which reads as CSP drift and sends the reader after the wrong bug. That
+     is the failure this whole commit exists to remove, in the file that is
+     supposed to catch it. */
+  const realCsp = cspHeaders(htaccess);
+  t("real dist/.htaccess carries exactly one CSP header, either spelling",
+    realCsp.length, 1);
+  const realCspName = realCsp[0]?.name;
+  t("real dist/.htaccess exists and carries a CSP with a script-src",
+    cspDirective(htaccess, realCspName, "script-src") !== null, true);
   t("real dist/.htaccess script-src covers every inline script on /",
-    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(home)).missing.length, 0);
+    cspScriptSrcDrift(cspDirective(htaccess, realCspName, "script-src"), inlineScriptHashes(home)).missing.length, 0);
   t("real dist/.htaccess script-src covers every inline script on /plan-your-trip/",
-    cspScriptSrcDrift(cspDirective(htaccess, "Content-Security-Policy-Report-Only", "script-src"), inlineScriptHashes(plan)).missing.length, 0);
+    cspScriptSrcDrift(cspDirective(htaccess, realCspName, "script-src"), inlineScriptHashes(plan)).missing.length, 0);
 } else {
   console.log("  (dist/ absent — skipped the real-output tests; run `npm run build` first)");
 }

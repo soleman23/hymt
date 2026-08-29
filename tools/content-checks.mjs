@@ -649,6 +649,55 @@ export function imgRatioMismatches(html, dimsOf) {
  * cspDirective pulls one directive's value out of an .htaccess Header line.
  * cspScriptSrcDrift diffs a script-src value against the hashes dist/ needs.
  */
+/**
+ * Which CSP header dist/.htaccess actually ships, report-only or enforcing.
+ *
+ * #100 flips the site from `Content-Security-Policy-Report-Only` to
+ * `Content-Security-Policy` by renaming the header, and its own Rollback line
+ * is "revert the header name to -Report-Only" — so the tooling has to survive
+ * that rename in BOTH directions. It did not: the csp-script-src check and
+ * tools/serve-csp-enforcing.mjs each hardcoded the report-only spelling, and
+ * the flip would have turned the one gate standing between an edited inline
+ * script and a dead page into "dist/.htaccess has no
+ * Content-Security-Policy-Report-Only header", which reads like the CSP
+ * vanished and invites loosening the check on the day it matters most.
+ *
+ * Returns every CSP header present, as { name, policy } — EVERY line, not one
+ * per name. The caller decides what to do with the count, and all of these
+ * are meaningful:
+ *   0 — no policy at all
+ *   1 — the normal case, either spelling
+ *   2 — one of each name: a browser enforces the enforcing one AND reports on
+ *       the other, so a half-finished flip ships two policies that can
+ *       disagree. Nothing would have noticed.
+ *   2 — or the SAME name twice, which is worse and used to be invisible. One
+ *       `.exec` per name returned the FIRST policy, while Apache documents
+ *       `Header set` as replacing any previous header of that name — so the
+ *       LAST one ships. The verifier then diffed dist's inline-script hashes
+ *       against a policy the browser throws away, and a policy without those
+ *       hashes could deploy on a green build.
+ *
+ * Order is enforcing-first so a caller taking [0] prefers the header that
+ * actually blocks. Note the trailing `\s+"` is load-bearing: without it
+ * "Content-Security-Policy" also matches the -Report-Only line, since it is a
+ * strict prefix of it.
+ */
+export const CSP_HEADER_NAMES = [
+  "Content-Security-Policy",
+  "Content-Security-Policy-Report-Only",
+];
+
+export function cspHeaders(htaccess) {
+  const out = [];
+  for (const name of CSP_HEADER_NAMES) {
+    const all = htaccess.matchAll(new RegExp(
+      `^\\s*Header\\s+(?:always\\s+)?set\\s+${name}\\s+"([^"]*)"`, "gmi",
+    ));
+    for (const m of all) out.push({ name, policy: m[1] });
+  }
+  return out;
+}
+
 export function cspScriptHash(body) {
   return "sha256-" + createHash("sha256").update(body.replace(/\r\n?/g, "\n"), "utf8").digest("base64");
 }
@@ -905,10 +954,16 @@ export function htaccessGaps(text, productionSite) {
     }
   }
 
-  const csp = /^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/mi.exec(live);
-  if (!csp) {
+  /* matchAll for the same reason as cspHeaders(): `Header set` keeps only the
+     last line of a given name, so reading the first would check the directives
+     of a policy Apache discards. */
+  const csps = [...live.matchAll(/^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/gim)];
+  if (!csps.length) {
     out.push("no Content-Security-Policy header at all");
+  } else if (csps.filter((c) => !c[1]).length > 1 || csps.filter((c) => c[1]).length > 1) {
+    out.push("the same Content-Security-Policy header is set more than once — `Header set` keeps only the last, so the earlier policy is dead and these directives would be checked against the wrong one");
   } else {
+    const csp = csps[0];
     const policy = csp[2];
     for (const [directive, needle] of CSP_DIRECTIVES) {
       const d = new RegExp(`(?:^|;)\\s*${directive}\\s+([^;]*)`).exec(policy);
