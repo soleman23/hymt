@@ -984,14 +984,24 @@ export function itemListDefects(html) {
   const collect = (node) => {
     if (!node || typeof node !== "object") return;
     if (Array.isArray(node)) { node.forEach(collect); return; }
-    if (node["@type"] === "ItemList" && Array.isArray(node.itemListElement)) lists.push(node);
+    /* BreadcrumbList as well as ItemList. It is the same shape — an
+       itemListElement array of positioned entries — and it had the same defect:
+       every journal post listed /travel-journal/ at both position 2 and
+       position 3, on 32 pages, while this function watched only ItemList and
+       reported nothing. A duplicate URL is arguably worse in a breadcrumb,
+       because the trail is also what the visible nav renders from. */
+    if ((node["@type"] === "ItemList" || node["@type"] === "BreadcrumbList")
+        && Array.isArray(node.itemListElement)) lists.push(node);
     for (const k of ["mainEntity", "@graph"]) if (node[k]) collect(node[k]);
   };
   for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)) {
     try { collect(JSON.parse(m[1])); } catch { /* schema-valid reports it */ }
   }
   for (const list of lists) {
-    const label = list.name ? `ItemList "${list.name}"` : "ItemList";
+    /* The noun comes from the node, not a literal. Hardcoding "ItemList" here
+       would have reported every breadcrumb defect under the wrong type name. */
+    const type = list["@type"];
+    const label = list.name ? `${type} "${list.name}"` : type;
     const positions = new Map();
     list.itemListElement.forEach((it, i) => {
       const u = it.url ?? it.item?.["@id"] ?? it.item;

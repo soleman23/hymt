@@ -1358,11 +1358,51 @@ t("itemlist: a clean list does not hide a broken neighbour",
   itemListDefects(collectionPage([li(1, "a"), li(2, "b")]) +
     collectionPage([li(1, "c"), li(2, "c")])).length, 1);
 
-t("itemlist: BreadcrumbList is not an ItemList",
+/* ── BreadcrumbList (was excluded, and that is what hid the bug) ──
+   This fixture used to assert the opposite — that a BreadcrumbList with two
+   identical items reported 0 — and it passed for exactly as long as 32 journal
+   posts shipped that defect. The old expectation is the bug, pinned. */
+t("breadcrumb: a duplicated item url is caught",
   itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
     { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
     { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/" },
+  ] })).length, 1);
+
+/* The exact shape that shipped on all 32 posts: Home, Travel Journal, then a
+   category crumb resolving to the same /travel-journal/ URL. */
+t("breadcrumb: the shipped journal trail is caught",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/travel-journal/" },
+    { "@type": "ListItem", position: 3, item: "https://www.hymtravel.com/travel-journal/" },
+    { "@type": "ListItem", position: 4, name: "A post" },
+  ] })).length, 1);
+
+/* And the corrected trail this commit ships — the final crumb legitimately
+   carries no `item`, which is the one position where that is valid. */
+t("breadcrumb: the corrected three-crumb trail is clean",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/travel-journal/" },
+    { "@type": "ListItem", position: 3, name: "A post" },
   ] })).length, 0);
+
+/* A destination trail repeats no URL and must stay green. */
+t("breadcrumb: a four-crumb destination trail is clean",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/destinations/" },
+    { "@type": "ListItem", position: 3, item: "https://www.hymtravel.com/destinations/africa/" },
+    { "@type": "ListItem", position: 4, name: "Kenya" },
+  ] })).length, 0);
+
+/* The label takes its noun from the node. Hardcoding "ItemList" would have
+   reported every breadcrumb defect under the wrong type. */
+t("breadcrumb: the defect is reported as a BreadcrumbList, not an ItemList",
+  itemListDefects(ld({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, item: "https://www.hymtravel.com/x/" },
+    { "@type": "ListItem", position: 2, item: "https://www.hymtravel.com/x/" },
+  ] }))[0].startsWith("BreadcrumbList"), true);
 
 t("itemlist: a block that does not parse is skipped, not reported here",
   itemListDefects(`<script type="application/ld+json">{not json</script>`).length, 0);

@@ -55,7 +55,6 @@ interface Props {
 
 const { title, description, ogImage, canonicalPath, publishDate, modifiedDate, name, category, hero } = Astro.props;
 const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
-const catHref = category.href ?? "/travel-journal/";
 
 /* en-US long form; parsed at UTC noon so the displayed day never shifts
    across timezones. */
@@ -73,10 +72,24 @@ const showUpdated = publishDate && effectiveModified && effectiveModified !== pu
    renders from this same trail array. */
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
 const path = canonicalPath || Astro.url.pathname;
+/* No category crumb. Every post's category resolved to `/travel-journal/` —
+   the same URL as the crumb before it — so positions 2 and 3 of the
+   BreadcrumbList carried an identical `item`, and the visible nav rendered two
+   adjacent links to one page. All 32 posts on all 11 category labels shipped
+   that way.
+
+   There is no category URL to point at instead: #105 shipped the journal
+   filters as JS `<button data-filter>` controls, not routes. A path-less
+   middle crumb is not the fix either — `item` is optional only for the LAST
+   element of a BreadcrumbList, so an omitted one mid-trail risks the whole
+   rich result rather than one entry.
+
+   Nothing is lost by dropping it. The category still renders visibly as
+   `.post-hero__cat`, and it is still emitted to schema as the Article's
+   `articleSection`. */
 const trail = [
   { name: "Home", path: "/" },
   { name: "Travel Journal", path: "/travel-journal/" },
-  { name: category.label, path: catHref },
   { name },
 ];
 const bodyHtml = await Astro.slots.render("default");
