@@ -158,8 +158,9 @@ Then a second pass on the image and header work:
   in the repo, zero credits.
 - **Willamette filenames** (`4610eaf`) — two names claimed a Tuscan photo
   was Oregon.
-- **70 per-page og:image crops** (`aa7a271`, `c8605ce`) — 83 of 98 pages now
-  have a unique share card, was 0.
+- **70 per-page og:image crops** (`aa7a271`, `c8605ce`) — 83 of 98 pages had a
+  unique share card at the time, was 0. (2026-08-28: 100 distinct values across
+  123 pages — the ratio held as the site grew.)
 
 Every new check was driven red against real output before being trusted,
 and three of them caught a bug in *themselves* on the first fixture run
@@ -408,13 +409,45 @@ and `frame-src 'none'` must be *replaced*, not extended.
   invalidates that gate** — staging submissions would be rejected and it would
   look like a broken form.
 
-Also genuinely missing: **the Newsletter has zero length caps.** No `maxlength`,
-no JS-side cap. Contact and Plan Your Trip both cap and mirror the cap in JS.
-`docs/hostinger-deployment.md` claims "all three forms now carry the honeypot
-and length caps" — half right.
+~~Also genuinely missing: **the Newsletter has zero length caps.** No
+`maxlength`, no JS-side cap.~~ — **shipped.** `Newsletter.astro:42` carries
+`maxlength="254"` and line 79 mirrors it in JS, the same shape Contact and Plan
+Your Trip use. `docs/hostinger-deployment.md`'s "all three forms now carry the
+honeypot and length caps" is now true rather than half right.
 
-No verifier check asserts anything about the key, the honeypot, `maxlength` or
-the CSP. None of this can go red in a build.
+~~No verifier check asserts anything about the key, the honeypot, `maxlength`
+or the CSP. None of this can go red in a build.~~ — **stale as of 2026-08-28,
+and inverted rather than merely out of date. All four now gate the build:**
+
+| Claimed unchecked | Actually enforced by |
+|---|---|
+| the key | `web3formsKeys` → `web3forms`, fails on a partial rotation |
+| the honeypot | `hasHoneypot` → same check, every form on every page |
+| `maxlength` | `uncappedFields` → `field-maxlength`, shipped in `b8ddcd1` |
+| the CSP | `htaccessGaps` + the `csp-script-src` hash diff |
+
+```
+ok  Web3Forms key on 120 pages, one key, honeypot on every one
+ok  10 inline script hashes in the CSP, all current, no 'unsafe-inline' in script-src
+ok  .htaccess shipped with 4 security headers + host-scoped HSTS (#79), … 11 CSP directives
+```
+
+`field-maxlength` prints nothing when clean, which is why it is the easy one
+to miss: it fails per-page rather than emitting a summary note like the other
+three. It is wired at `verify-deployment.mjs:716` and fails on any `<input>`
+or `<textarea>` a visitor can type into that carries no `maxlength`, skipping
+`readonly`/`disabled` and the non-text input types. Fixtures are under
+`/* ── field-maxlength (#74) ── */`, including the exact uncapped Newsletter
+input as it shipped on 94 pages.
+
+**A check that emits no note on success is invisible to a grep of build
+output.** Confirm enforcement by finding the `fail(` call, not by reading the
+`ok` lines — this file asserted the opposite for both of the last two sessions
+that touched it, and a first pass at correcting it on 2026-08-28 still got
+`maxlength` wrong by checking the summary rather than the wiring.
+
+**What is left of #74 is therefore entirely non-code**: the recipient address,
+and the dashboard settings below. Do not re-open it looking for markup to fix.
 
 ---
 
@@ -433,7 +466,19 @@ Follow the runbook § 1.2 wording.
 **#31's pinned gate-run comment is substantially out of date** — its go/no-go
 list still shows the stat-rail worksheet at "1 of 42 rows" (done, #94), the
 About page NEEDS MARK items (closed), and #72 homepage weight (closed). The
-NEEDS MARK census is **55 files / 57 occurrences**, not 59.
+NEEDS MARK census is ~~**55 files / 57 occurrences**, not 59~~ **81 files / 108
+occurrences** as of 2026-08-28 — this number tracks page count and has now
+rotted twice, so re-derive it rather than quoting any figure written here:
+
+```bash
+grep -rl "NEEDS MARK" src/ | wc -l          # files
+grep -rno "NEEDS MARK" src/ | wc -l         # occurrences
+grep -rho "NEEDS MARK: [a-z ]*" src/ | sort | uniq -c | sort -rn
+```
+
+The third command is the one worth running: the census splits **79 testimonial
+slots (#67) + 26 first-person Mark notes + 3 other**, and only the first group
+is what #67 tracks. A single total conflates three different asks of Mark.
 
 **M7 is 25 pages, not 26.** #54 (India) is stale — `/destinations/india/`
 already ships and passes `hero-stat-rail`. Worth closing.
@@ -452,7 +497,7 @@ under a deliberately *enforcing* local copy. Its only remaining checkbox is
 - **Inline handlers: 0.** Was 141, then 46; all 46 are now gone and the
   `inline-handler` check fails the build if one returns. See the section above.
   Nothing is left to do here.
-- **Inline `<script>`: DONE (2026-08-18).** The 425 blocks across all 98
+- **Inline `<script>`: DONE (2026-08-18).** The 525 blocks across all 123
   pages are only **10 distinct bodies**, so `script-src` now names each by
   sha256 and carries **no `'unsafe-inline'`**. It was not the nonce-or-
   externalise job this section previously said it was. The list is not
@@ -479,9 +524,16 @@ under a deliberately *enforcing* local copy. Its only remaining checkbox is
   which is what proves the header was live. Re-derive before trusting:
 
   ```bash
-  grep -rho '<script[^>]*>' dist --include='*.html' | grep -vc 'ld+json'   # 425
+  grep -rho '<script[^>]*>' dist --include='*.html' | grep -vc 'ld+json'   # 525
   node tools/verify-deployment.mjs | grep 'inline script hashes'          # 10, all current
   ```
+
+  The block count tracks page count and will keep moving — it was 425 across
+  98 pages when this was written and is 525 across 123. **Only the second
+  number is load-bearing.** 10 distinct bodies has held across 25 new pages,
+  because new pages reuse the same templates; if that one moves, `script-src`
+  needs the hash the check prints. Treat a changed block count as normal and a
+  changed body count as work.
 
 - The 305 `application/ld+json` data blocks are **not hashed and did not
   need to be** — now observed, not reasoned: every template above rendered
@@ -565,18 +617,24 @@ apex and www.
       submitted nowhere
 - [ ] #99's record snapshot exists, MX included, TTL lowered
 - [ ] #32, then #33 using the § 4.3 title discriminator, not a bare 200
-- [ ] #79 lands so HSTS does not regress
+- [x] #79 lands so HSTS does not regress — **done 2026-08-28** (`bdeb29b`),
+      scoped `env=IS_PROD` so it is inert on the preview host and already live
+      at cutover. Ships at the issue's 1-day ramp value; raising it to a year
+      is a deliberate edit in both `public/.htaccess` and `htaccessGaps`, and
+      wants valid certs on apex and www first
 - [ ] #100 only after a production browse with report-only still on
 
 ---
 
 ## Open items this handoff did not resolve
 
-- **`docs/seo/HANDOFF-photo-rollout.md` is stale at the top** — it states
-  `HEAD = 8449977`, which is many commits behind (derive:
-  `git rev-list --count 8449977..HEAD`; the number written here rotted from
-  12 to 28 in one session). Its photo counts are still
-  accurate; only the commit reference rotted.
+- ~~**`docs/seo/HANDOFF-photo-rollout.md` is stale at the top** — it states
+  `HEAD = 8449977`~~ — **already resolved.** The pin is gone from that file
+  entirely; a later session removed it rather than updating it, which is the
+  right answer for a number that rotted from 12 to 28 to 145 commits behind.
+  Do not re-add one. This entry outlived the problem it described — the
+  general lesson being that **this list needs auditing before it is trusted,
+  exactly like the issue bodies it describes.**
 - ~~`docs/hostinger-deployment.md` and `README.md` carry stale counts~~ —
   fixed in `4dba331`. "Three places" for the key was correct and stays.
 - **`docs/seo/photography-needed.md` and `photography-plan.md` are stale

@@ -32,6 +32,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const CONFIGURED_SITE = (await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"))
+  .match(/site:\s*'([^']+)'/)?.[1]?.replace(/\/$/, "") ?? "";
 
 let pass = 0;
 const failures = [];
@@ -51,9 +53,11 @@ import {
   placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  htaccessGaps as rawHtaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
+const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
+  rawHtaccessGaps(text, productionSite);
 const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
@@ -1148,6 +1152,8 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 <IfModule mod_headers.c>
   SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
+  SetEnvIfNoCase Host "^(www\\.)?hymtravel\\.com(?::[0-9]+)?$" IS_PROD=1
+  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
@@ -1158,6 +1164,9 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
+
+t("htaccess: the verifier cannot skip the configured production site",
+  rawHtaccessGaps(HT_GOOD).length, 1);
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
@@ -1221,11 +1230,52 @@ t("htaccess: no CSP header at all is one offender, not eleven",
 t("htaccess: an ENFORCING CSP satisfies the check as well as report-only",
   htaccessGaps(HT_GOOD.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy")).length, 0);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 10:
-   both migration redirects, the 4 security headers, both staging lines, the
-   CSP once, and the cache once. */
-t("htaccess: an empty file reports all 10 gaps and does not throw",
-  htaccessGaps("").length, 10);
+/* ── HSTS (#79) ──
+   Driven red against each shape it can actually ship in. The first is the
+   state of the file before this check existed, so it is the one that proves
+   the check can go red at all rather than merely staying green. */
+t("htaccess: the pre-#79 file, with no HSTS at all, is caught twice",
+  htaccessGaps(HT_GOOD
+    .replace(/^\s*Header always set Strict-Transport-Security.*$/m, "")
+    .replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 2);
+
+t("htaccess: deleting only the HSTS header is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*Header always set Strict-Transport-Security.*$/m, "")).length, 1);
+
+/* The silent one: env=IS_PROD with nothing arming IS_PROD sends the header
+   to nobody, and greps for "Strict-Transport-Security" still find it. */
+t("htaccess: an HSTS header whose SetEnvIf is gone is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 1);
+
+/* The deployment matcher is validated against Astro's configured site, not
+   against another hymtravel.com literal hidden in the verifier. */
+t("htaccess: a matcher that drifts from the configured production site is caught",
+  htaccessGaps(HT_GOOD, "https://www.example.com").length, 1);
+
+t("htaccess: a case-sensitive production matcher is caught",
+  htaccessGaps(HT_GOOD.replace("SetEnvIfNoCase Host", "SetEnvIf Host")).length, 1);
+
+t("htaccess: a production matcher that rejects an explicit port is caught",
+  htaccessGaps(HT_GOOD.replace("(?::[0-9]+)?", "")).length, 1);
+
+/* Unscoping it is a regression, not a simplification: it would pin the
+   Hostinger preview host to HTTPS on a certificate this repo does not own. */
+t("htaccess: dropping env=IS_PROD so HSTS goes to every host is caught",
+  htaccessGaps(HT_GOOD.replace(` "max-age=86400" env=IS_PROD`, ` "max-age=86400"`)).length, 1);
+
+t("htaccess: preload is refused even at the correct max-age",
+  htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=86400; preload"`)).length, 1);
+
+/* The ramp is the safety argument, so widening it in the .htaccess alone
+   must fail rather than quietly commit every visitor for a year. */
+t("htaccess: raising max-age in the .htaccess alone is caught",
+  htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=31536000; includeSubDomains"`)).length, 1);
+
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 12:
+   both migration redirects, the 4 security headers, both staging lines, both
+   HSTS lines (#79), the CSP once, and the cache once. */
+t("htaccess: an empty file reports all 12 gaps and does not throw",
+  htaccessGaps("").length, 12);
 
 /* ── photo-grid (#93) ── */
 

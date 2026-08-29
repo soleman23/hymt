@@ -816,7 +816,7 @@ export const CSP_DIRECTIVES = [
   ["object-src", "'none'"],
 ];
 
-export function htaccessGaps(text) {
+export function htaccessGaps(text, productionSite) {
   const live = text
     .split(/\r?\n/)
     .filter((l) => !/^\s*#/.test(l))
@@ -858,6 +858,51 @@ export function htaccessGaps(text) {
   else if (!/noindex/.test(robots[1])) out.push(`staging X-Robots-Tag is "${robots[1]}", which does not contain noindex`);
   if (!/^\s*SetEnvIf\s+Host\s+"[^"]*hostingersite[^"]*"\s+IS_STAGING=1/mi.test(live)) {
     out.push("SetEnvIf that arms IS_STAGING is missing — the X-Robots-Tag header is inert without it");
+  }
+
+  /* SEC-4 (#79): HSTS. Like the staging noindex, two lines that only work
+     together — and for the same reason it is the SetEnvIf, not the Header,
+     that goes missing silently. A header carrying env=IS_PROD with nothing
+     arming IS_PROD is sent to nobody, which looks identical to "shipped" in
+     any grep of the file.
+
+     Scoped to production on purpose (see public/.htaccess): the point is to
+     be already live at cutover, because the header this replaces is one the
+     Wix edge sends today and stops sending the moment DNS moves. */
+  const HSTS_MAX_AGE = "max-age=86400";
+  const hsts = /^\s*Header\s+always\s+set\s+Strict-Transport-Security\s+"([^"]*)"\s+env=IS_PROD/mi.exec(live);
+  if (!hsts) {
+    out.push("Strict-Transport-Security header (env=IS_PROD) is missing — HSTS regresses at cutover, because the Wix edge sends it today and Hostinger will not (#79)");
+  } else if (hsts[1] !== HSTS_MAX_AGE) {
+    /* Exact-match on purpose. The ramp is the whole safety argument, so a
+       raise has to be a deliberate edit here rather than a silent widening
+       in the .htaccess. `preload` is caught by the same equality. */
+    out.push(`HSTS is "${hsts[1]}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
+  }
+  const productionEnv = /^\s*(SetEnvIf(?:NoCase)?)\s+Host\s+"([^"]*)"\s+IS_PROD=1/mi.exec(live);
+  if (!productionEnv) {
+    out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
+  } else {
+    if (productionEnv[1].toLowerCase() !== "setenvifnocase") {
+      out.push("IS_PROD must use SetEnvIfNoCase — HTTP host names are case-insensitive");
+    }
+
+    let configuredHost = "";
+    try {
+      configuredHost = new URL(productionSite).hostname.toLowerCase();
+    } catch {
+      out.push(`could not derive the HSTS host from configured site "${productionSite}"`);
+    }
+    if (configuredHost) {
+      const bareHost = configuredHost.startsWith("www.") ? configuredHost.slice(4) : configuredHost;
+      const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const expectedHost = configuredHost.startsWith("www.")
+        ? `^(www\\.)?${escapedHost}(?::[0-9]+)?$`
+        : `^${escapedHost}(?::[0-9]+)?$`;
+      if (productionEnv[2] !== expectedHost) {
+        out.push(`IS_PROD host matcher is "${productionEnv[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
+      }
+    }
   }
 
   const csp = /^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/mi.exec(live);
