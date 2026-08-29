@@ -584,7 +584,7 @@ const inlineHandlerSeen = new Map();
   if (distHt === null) {
     fail("htaccess-headers", "dist/.htaccess is missing — the site would ship with no CSP, no security headers, no staging noindex and no cache rules");
   } else {
-    for (const gap of htaccessGaps(distHt)) fail("htaccess-headers", `dist/.htaccess: ${gap}`);
+    for (const gap of htaccessGaps(distHt, SITE)) fail("htaccess-headers", `dist/.htaccess: ${gap}`);
     if (publicHt !== null && publicHt !== distHt) {
       fail("htaccess-headers", "dist/.htaccess differs from public/.htaccess — the build did not copy the current file, so the deployed headers are not the ones in the repo");
     }

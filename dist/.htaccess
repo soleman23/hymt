@@ -71,12 +71,14 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 # ── Production: arm the host-scoped headers ──
-# The mirror of IS_STAGING above. HSTS must be sent ONLY by the canonical
-# host: pinning a preview domain to HTTPS relies on a certificate this repo
+# The mirror of IS_STAGING above. HSTS must be sent ONLY by the production
+# hosts: pinning a preview domain to HTTPS relies on a certificate this repo
 # does not control, and an expiry there would be unrecoverable from the
-# browser side for the length of max-age.
+# browser side for the length of max-age. Host names are case-insensitive and
+# may carry an explicit port; the build also validates this matcher against
+# astro.config.mjs so the production domain still has one source of truth.
 <IfModule mod_setenvif.c>
-  SetEnvIf Host "^(www\.)?hymtravel\.com$" IS_PROD=1
+  SetEnvIfNoCase Host "^(www\.)?hymtravel\.com(?::[0-9]+)?$" IS_PROD=1
 </IfModule>
 
 # ── Security headers ──

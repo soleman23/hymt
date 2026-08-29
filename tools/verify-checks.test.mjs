@@ -32,6 +32,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const CONFIGURED_SITE = (await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"))
+  .match(/site:\s*'([^']+)'/)?.[1]?.replace(/\/$/, "") ?? "";
 
 let pass = 0;
 const failures = [];
@@ -51,9 +53,11 @@ import {
   placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  htaccessGaps as rawHtaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled,
 } from "./content-checks.mjs";
+const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
+  rawHtaccessGaps(text, productionSite);
 const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
@@ -1148,7 +1152,7 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 <IfModule mod_headers.c>
   SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
-  SetEnvIf Host "^(www\\.)?hymtravel\\.com$" IS_PROD=1
+  SetEnvIfNoCase Host "^(www\\.)?hymtravel\\.com(?::[0-9]+)?$" IS_PROD=1
   Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
@@ -1160,6 +1164,9 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
+
+t("htaccess: the verifier cannot skip the configured production site",
+  rawHtaccessGaps(HT_GOOD).length, 1);
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
@@ -1230,7 +1237,7 @@ t("htaccess: an ENFORCING CSP satisfies the check as well as report-only",
 t("htaccess: the pre-#79 file, with no HSTS at all, is caught twice",
   htaccessGaps(HT_GOOD
     .replace(/^\s*Header always set Strict-Transport-Security.*$/m, "")
-    .replace(/^\s*SetEnvIf Host "\^\(www.*IS_PROD=1$/m, "")).length, 2);
+    .replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 2);
 
 t("htaccess: deleting only the HSTS header is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*Header always set Strict-Transport-Security.*$/m, "")).length, 1);
@@ -1238,7 +1245,18 @@ t("htaccess: deleting only the HSTS header is caught",
 /* The silent one: env=IS_PROD with nothing arming IS_PROD sends the header
    to nobody, and greps for "Strict-Transport-Security" still find it. */
 t("htaccess: an HSTS header whose SetEnvIf is gone is caught",
-  htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIf Host "\^\(www.*IS_PROD=1$/m, "")).length, 1);
+  htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m, "")).length, 1);
+
+/* The deployment matcher is validated against Astro's configured site, not
+   against another hymtravel.com literal hidden in the verifier. */
+t("htaccess: a matcher that drifts from the configured production site is caught",
+  htaccessGaps(HT_GOOD, "https://www.example.com").length, 1);
+
+t("htaccess: a case-sensitive production matcher is caught",
+  htaccessGaps(HT_GOOD.replace("SetEnvIfNoCase Host", "SetEnvIf Host")).length, 1);
+
+t("htaccess: a production matcher that rejects an explicit port is caught",
+  htaccessGaps(HT_GOOD.replace("(?::[0-9]+)?", "")).length, 1);
 
 /* Unscoping it is a regression, not a simplification: it would pin the
    Hostinger preview host to HTTPS on a certificate this repo does not own. */

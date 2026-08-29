@@ -816,7 +816,7 @@ export const CSP_DIRECTIVES = [
   ["object-src", "'none'"],
 ];
 
-export function htaccessGaps(text) {
+export function htaccessGaps(text, productionSite) {
   const live = text
     .split(/\r?\n/)
     .filter((l) => !/^\s*#/.test(l))
@@ -879,8 +879,30 @@ export function htaccessGaps(text) {
        in the .htaccess. `preload` is caught by the same equality. */
     out.push(`HSTS is "${hsts[1]}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
   }
-  if (!/^\s*SetEnvIf\s+Host\s+"[^"]*hymtravel[^"]*"\s+IS_PROD=1/mi.test(live)) {
+  const productionEnv = /^\s*(SetEnvIf(?:NoCase)?)\s+Host\s+"([^"]*)"\s+IS_PROD=1/mi.exec(live);
+  if (!productionEnv) {
     out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
+  } else {
+    if (productionEnv[1].toLowerCase() !== "setenvifnocase") {
+      out.push("IS_PROD must use SetEnvIfNoCase — HTTP host names are case-insensitive");
+    }
+
+    let configuredHost = "";
+    try {
+      configuredHost = new URL(productionSite).hostname.toLowerCase();
+    } catch {
+      out.push(`could not derive the HSTS host from configured site "${productionSite}"`);
+    }
+    if (configuredHost) {
+      const bareHost = configuredHost.startsWith("www.") ? configuredHost.slice(4) : configuredHost;
+      const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const expectedHost = configuredHost.startsWith("www.")
+        ? `^(www\\.)?${escapedHost}(?::[0-9]+)?$`
+        : `^${escapedHost}(?::[0-9]+)?$`;
+      if (productionEnv[2] !== expectedHost) {
+        out.push(`IS_PROD host matcher is "${productionEnv[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
+      }
+    }
   }
 
   const csp = /^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/mi.exec(live);
