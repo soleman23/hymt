@@ -649,6 +649,48 @@ export function imgRatioMismatches(html, dimsOf) {
  * cspDirective pulls one directive's value out of an .htaccess Header line.
  * cspScriptSrcDrift diffs a script-src value against the hashes dist/ needs.
  */
+/**
+ * Which CSP header dist/.htaccess actually ships, report-only or enforcing.
+ *
+ * #100 flips the site from `Content-Security-Policy-Report-Only` to
+ * `Content-Security-Policy` by renaming the header, and its own Rollback line
+ * is "revert the header name to -Report-Only" — so the tooling has to survive
+ * that rename in BOTH directions. It did not: the csp-script-src check and
+ * tools/serve-csp-enforcing.mjs each hardcoded the report-only spelling, and
+ * the flip would have turned the one gate standing between an edited inline
+ * script and a dead page into "dist/.htaccess has no
+ * Content-Security-Policy-Report-Only header", which reads like the CSP
+ * vanished and invites loosening the check on the day it matters most.
+ *
+ * Returns every CSP header present, as { name, policy }. The caller decides
+ * what to do with each count, and all three are meaningful:
+ *   0 — no policy at all
+ *   1 — the normal case, either spelling
+ *   2 — both at once. Not a merge: a browser enforces the enforcing one AND
+ *       reports on the other, so a half-finished flip ships two policies that
+ *       can disagree. Nothing would have noticed.
+ *
+ * Order is enforcing-first so a caller taking [0] prefers the header that
+ * actually blocks. Note the trailing `\s+"` is load-bearing: without it
+ * "Content-Security-Policy" also matches the -Report-Only line, since it is a
+ * strict prefix of it.
+ */
+export const CSP_HEADER_NAMES = [
+  "Content-Security-Policy",
+  "Content-Security-Policy-Report-Only",
+];
+
+export function cspHeaders(htaccess) {
+  const out = [];
+  for (const name of CSP_HEADER_NAMES) {
+    const m = new RegExp(
+      `^\\s*Header\\s+(?:always\\s+)?set\\s+${name}\\s+"([^"]*)"`, "mi",
+    ).exec(htaccess);
+    if (m) out.push({ name, policy: m[1] });
+  }
+  return out;
+}
+
 export function cspScriptHash(body) {
   return "sha256-" + createHash("sha256").update(body.replace(/\r\n?/g, "\n"), "utf8").digest("base64");
 }

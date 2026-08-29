@@ -22,6 +22,7 @@
  * meant to resemble Hostinger in any other way; the point is the header.
  */
 import http from "node:http";
+import { cspHeaders } from "./content-checks.mjs";
 import { readFile } from "node:fs/promises";
 import { existsSync, statSync } from "node:fs";
 import path from "node:path";
@@ -32,12 +33,24 @@ const DIST = path.join(ROOT, "dist");
 const PORT = Number(process.argv[2] ?? 4399);
 
 const htaccess = await readFile(path.join(DIST, ".htaccess"), "utf8");
-const m = /Header\s+always\s+set\s+Content-Security-Policy-Report-Only\s+"([^"]*)"/.exec(htaccess);
-if (!m) {
-  console.error("dist/.htaccess has no Content-Security-Policy-Report-Only header - run `npm run build` first");
+/* Either spelling. This tool existed to rehearse #100, and pinning
+   -Report-Only meant it stopped working the moment #100 landed — exactly when
+   you would reach for it to check the rollback, or to re-rehearse after a
+   change. cspHeaders() returns enforcing first, so after the flip this serves
+   the real policy and the rehearsal becomes a faithful replay. */
+const present = cspHeaders(htaccess);
+if (present.length === 0) {
+  console.error("dist/.htaccess has no Content-Security-Policy header in either spelling - run `npm run build` first");
   process.exit(1);
 }
-const CSP = m[1];
+if (present.length > 1) {
+  console.error(`dist/.htaccess ships BOTH ${present.map((p) => p.name).join(" and ")} - a browser applies both. Delete whichever is not intended before rehearsing.`);
+  process.exit(1);
+}
+const CSP = present[0].policy;
+if (present[0].name === "Content-Security-Policy") {
+  console.log("note: dist/ already ships an ENFORCING policy, so this server is now a faithful replay of production rather than a stricter rehearsal of it.");
+}
 
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".mjs": "text/javascript",

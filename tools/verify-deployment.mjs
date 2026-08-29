@@ -21,7 +21,7 @@ import {
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
-  imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
+  imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
   nestedCardAnchors,
@@ -541,10 +541,20 @@ const inlineHandlerSeen = new Map();
   if (htaccess === null) {
     fail("csp-script-src", "dist/.htaccess is missing — public/.htaccess did not ship, so no header on the site is what the repo says it is");
   } else {
-    const HEADER = "Content-Security-Policy-Report-Only";
-    const scriptSrc = cspDirective(htaccess, HEADER, "script-src");
-    if (scriptSrc === null) {
-      fail("csp-script-src", `dist/.htaccess has no ${HEADER} header with a script-src directive`);
+    /* Whichever spelling ships. #100 renames this header to enforcing and its
+       rollback renames it back, so pinning either one turns this check off on
+       exactly the day it is load-bearing. See cspHeaders(). */
+    const present = cspHeaders(htaccess);
+    const HEADER = present[0]?.name;
+    const scriptSrc = HEADER ? cspDirective(htaccess, HEADER, "script-src") : null;
+    if (present.length === 0) {
+      fail("csp-script-src", "dist/.htaccess has no Content-Security-Policy header in either spelling — report-only or enforcing");
+    } else if (present.length > 1) {
+      /* A browser honours both: it enforces one and reports on the other. Two
+         policies that can disagree is a half-finished #100 flip, not a merge. */
+      fail("csp-script-src", `dist/.htaccess ships BOTH ${present.map((p) => p.name).join(" and ")} — a browser applies both, so the flip is half-done; delete whichever one is not intended`);
+    } else if (scriptSrc === null) {
+      fail("csp-script-src", `dist/.htaccess has a ${HEADER} header but no script-src directive in it`);
     } else {
       const needed = new Set();
       const firstPage = new Map();
@@ -563,7 +573,11 @@ const inlineHandlerSeen = new Map();
         const want = [...hosts.filter((t) => t.startsWith("'")), ...[...needed].sort().map((h) => `'${h}'`), ...hosts.filter((t) => !t.startsWith("'"))].join(" ");
         hints.push(`csp-script-src: replace the script-src value in public/.htaccess with:\n    ${want}`);
       } else {
-        notes.push(`${needed.size} inline script hashes in the CSP, all current, no 'unsafe-inline' in script-src`);
+        /* Name the mode. Once the check stopped pinning a spelling, the build
+           output became the only place the live mode is visible, and "is #100
+           actually flipped" is exactly the question a reader has here. */
+        const mode = HEADER === "Content-Security-Policy" ? "ENFORCING" : "report-only";
+        notes.push(`${needed.size} inline script hashes in the CSP (${mode}), all current, no 'unsafe-inline' in script-src`);
       }
     }
   }

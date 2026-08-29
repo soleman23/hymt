@@ -49,7 +49,7 @@ import {
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   placeCardAlt,
-  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift,
+  imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled,
@@ -898,6 +898,48 @@ t("csp: an absent header is null, not an empty string",
 
 t("csp: an absent directive is null",
   cspDirective(HT, "Content-Security-Policy-Report-Only", "worker-src"), null);
+
+/* ── cspHeaders: surviving the #100 flip, in both directions ──
+   csp-script-src and serve-csp-enforcing.mjs both pinned the -Report-Only
+   spelling. #100 renames the header to enforcing and its own rollback renames
+   it back, so each direction silently disabled the one check standing between
+   an edited inline script and a dead page. The first two fixtures are that
+   flip; before this change the enforcing one returned nothing. */
+const HT_ENFORCING = HT.replace("Content-Security-Policy-Report-Only", "Content-Security-Policy");
+
+t("cspHeaders: the report-only header is found",
+  cspHeaders(HT).map((h) => h.name).join(), "Content-Security-Policy-Report-Only");
+
+t("cspHeaders: the ENFORCING header is found — #100's flip",
+  cspHeaders(HT_ENFORCING).map((h) => h.name).join(), "Content-Security-Policy");
+
+/* The prefix trap, and why the trailing \s+" in the pattern is load-bearing:
+   "Content-Security-Policy" is a strict prefix of the report-only spelling, so
+   a looser match reports the enforcing header on a report-only file — the
+   check would then pass while claiming the wrong mode. */
+t("cspHeaders: report-only is not also reported as enforcing",
+  cspHeaders(HT).length, 1);
+
+t("cspHeaders: a file with neither header yields nothing",
+  cspHeaders(`  Header set X-Frame-Options "SAMEORIGIN"`).length, 0);
+
+/* Both at once is a half-finished flip. A browser enforces one and reports on
+   the other, so two policies that can disagree ship together. */
+t("cspHeaders: both headers at once are both reported",
+  cspHeaders(HT + HT_ENFORCING).map((h) => h.name).join(),
+  "Content-Security-Policy,Content-Security-Policy-Report-Only");
+
+/* Enforcing first, so a caller taking [0] prefers the header that blocks. */
+t("cspHeaders: enforcing sorts before report-only",
+  cspHeaders(HT + HT_ENFORCING)[0].name, "Content-Security-Policy");
+
+t("cspHeaders: the policy value comes back with the name",
+  cspHeaders(HT_ENFORCING)[0].policy.startsWith("default-src 'self'"), true);
+
+/* The whole point: the directive lookup keeps working after the rename. */
+t("csp: script-src is still readable once the header is enforcing",
+  cspDirective(HT_ENFORCING, cspHeaders(HT_ENFORCING)[0].name, "script-src"),
+  "'self' 'sha256-AAA=' https://www.googletagmanager.com");
 
 t("csp: drift - a needed hash the header lacks is missing",
   cspScriptSrcDrift("'self' 'sha256-AAA='", ["sha256-AAA=", "sha256-BBB="]).missing.join(","), "sha256-BBB=");
