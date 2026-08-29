@@ -550,9 +550,15 @@ const inlineHandlerSeen = new Map();
     if (present.length === 0) {
       fail("csp-script-src", "dist/.htaccess has no Content-Security-Policy header in either spelling — report-only or enforcing");
     } else if (present.length > 1) {
-      /* A browser honours both: it enforces one and reports on the other. Two
-         policies that can disagree is a half-finished #100 flip, not a merge. */
-      fail("csp-script-src", `dist/.htaccess ships BOTH ${present.map((p) => p.name).join(" and ")} — a browser applies both, so the flip is half-done; delete whichever one is not intended`);
+      /* Two different names: a browser honours both, enforcing one and
+         reporting on the other — a half-finished #100 flip, not a merge.
+         Two of the SAME name is a different fault and needs saying so:
+         Apache keeps only the last, so the check would have been reading a
+         policy the browser discards. */
+      const dupName = present.find((p, i) => present.findIndex((q) => q.name === p.name) !== i);
+      fail("csp-script-src", dupName
+        ? `dist/.htaccess sets ${dupName.name} ${present.filter((p) => p.name === dupName.name).length}× — \`Header set\` keeps only the last, so the earlier policy is dead and this check would be reading the wrong one; keep exactly one`
+        : `dist/.htaccess ships BOTH ${present.map((p) => p.name).join(" and ")} — a browser applies both, so the flip is half-done; delete whichever one is not intended`);
     } else if (scriptSrc === null) {
       fail("csp-script-src", `dist/.htaccess has a ${HEADER} header but no script-src directive in it`);
     } else {
