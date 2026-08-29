@@ -18,6 +18,17 @@ Written 2026-08-12, after the six regional hubs shipped (PR #102).
 > it found one plate family and not the other two. Codex bugbot caught it in
 > review.
 >
+> **⚠️ The 65 are being filled in a separate PR (`fill-portrait-slots`).** Only
+> one of these two changes can be the last one merged, and whichever it is
+> owns a re-derive pass — this file and `photography-needed.md` both count the
+> plates, and that count goes to zero when the other lands. Do not merge the
+> second one on the assumption its prose is still true. Re-run the sweeps in
+> `photography-needed.md` § "A zero from those three greps" and correct
+> whatever they contradict, here, in that file, and in
+> `HANDOFF-photo-rollout.md` § "Open items". If the count is zero, say so and
+> strike this block; do not leave a doc telling the next session to wire an
+> image that is already wired.
+>
 > Everything below — the sequencing argument, the waves, the budget, the open
 > decisions — is a **record of how it was planned and paid for**, not work to
 > pick up. Read § "How it actually finished" first; the rest is history.

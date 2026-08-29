@@ -18,10 +18,20 @@ READ FIRST, in this order — do not start work until you have:
   3. CLAUDE.md § "SEO & AIO rules"       (non-negotiable page rules)
   (docs/seo/photography-plan.md and photography-needed.md were both STALE;
    corrected 2026-08-28. Both now open with a completion banner and derive
-   their figures. There is no photography backlog.)
+   their figures. Nothing is waiting on a frame that does not exist, and
+   nothing is waiting on Mark — but 65 unfilled portrait plates remain, and
+   that is not the same thing. See photography-plan.md § "If you are here to
+   do photography work".)
 
 STATE, re-derived on 2026-08-26 (third session that day):
-  THE ROLLOUT IS COMPLETE. There is no backlog left to pick up.
+  THE CARD ROLLOUT IS COMPLETE — experiences, destinations and itineraries.
+  What is NOT complete is the 65 portrait plates: `/contact/` plus 64 across
+  the journal, every one wanting a photograph already in the repo. That is
+  wiring, not commissioning. An earlier version of this block said "there is
+  no backlog left to pick up" full stop, which is the same sentence
+  photography-plan.md retracts two files away — the correction landed there
+  and never reached here, and this file is item 1 of the list above, so
+  anyone reading in order stopped at the wrong answer.
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
   DESTINATIONS — DONE. 67 of 67 pages that carry a places-grid are on
@@ -1416,6 +1426,20 @@ Two things worth carrying into every later wave:
 
 ## Open items
 
+- **65 unfilled portrait plates.** `/contact/` (`contact-photo`) plus 64
+  across the journal — `author-card__photo-ph` ×32 and
+  `post-byline__avatar-ph` ×32. All 65 want the same photograph, which has
+  been in the repo since 2026-08-10 as `sp-mark-sole-portrait.jpg` and
+  already ships on `/about/`. Wiring, not commissioning; agent-doable
+  without Mark. Derive the count, never quote it:
+
+  ```bash
+  grep -rho 'author-card__photo-ph\|post-byline__avatar-ph' dist --include='*.html' | sort | uniq -c
+  grep -rl 'Portrait Photography' dist --include='*.html'
+  ```
+
+  Note the class names end `-ph`, not `__ph` — the `[a-z-]*__ph\b` sweep
+  that this doc set once pointed at cannot see any of the 64.
 - ~~**5 borrowed-hero swaps** left in `drive-image-skips.md` § A.~~ **Closed
   2026-08-13**, and it was 6 — St. Barth's was missing from the list because
   its slug is `caribbean-mexico-st-barth-s` (the apostrophe in `St. Barth's`
