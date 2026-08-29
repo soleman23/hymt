@@ -8,26 +8,29 @@ Written 2026-08-12, after the six regional hubs shipped (PR #102).
 > nothing on the site is waiting on a frame that does not exist, and nothing is
 > waiting on Mark.
 >
-> **That is not the same as "no unfilled plates."** 65 remain — `/contact/`
-> plus 64 across the journal posts — and every one of them wants a photograph
-> **already in the repo**. That is wiring, not commissioning, and it is
-> agent-doable today: see § "If you are here to do photography work".
+> **And no unfilled plates either, as of 2026-08-29.** The 65 that were
+> outstanding — `/contact/` plus 64 across the journal posts — were filled by
+> `fill-portrait-slots`, all with `sp-mark-sole-portrait.jpg`, which had been
+> in the repo since 2026-08-10. Re-derived on the merge commit:
 >
-> An earlier draft of this banner said "no photography backlog" full stop, and
-> it was wrong in the way this whole file keeps being wrong — the sweep behind
-> it found one plate family and not the other two. Codex bugbot caught it in
-> review.
+> ```
+> class="…-ph" rendered anywhere in dist   0
+> <img> in the three portrait slots        1 + 32 + 32 = 65
+> "<Noun> Photography" captions            1  (Iceberg, a real Greenland tag)
+> ```
 >
-> **⚠️ The 65 are being filled in a separate PR (`fill-portrait-slots`).** Only
-> one of these two changes can be the last one merged, and whichever it is
-> owns a re-derive pass — this file and `photography-needed.md` both count the
-> plates, and that count goes to zero when the other lands. Do not merge the
-> second one on the assumption its prose is still true. Re-run the sweeps in
-> `photography-needed.md` § "A zero from those three greps" and correct
-> whatever they contradict, here, in that file, and in
-> `HANDOFF-photo-rollout.md` § "Open items". If the count is zero, say so and
-> strike this block; do not leave a doc telling the next session to wire an
-> image that is already wired.
+> The four `-ph` tokens the first sweep still returns — `dest-card__ph` ×2,
+> `journal-featured__image-ph`, `story__photo-ph` — are CSS rules for classes
+> nothing renders. A rule is not a plate.
+>
+> An earlier draft of this banner said "no photography backlog" full stop while
+> those 65 were still live, and it was wrong in the way this whole file keeps
+> being wrong — the sweep behind it found one plate family and not the other
+> two. Codex bugbot caught it. The sentence is true now, and it is true because
+> the greps above say so, not because the last banner said it.
+>
+> `Portrait` is in `PLACEHOLDER_PATTERNS` as of the same change, so a plate
+> reappearing on `/contact/` fails the build rather than ageing in this file.
 >
 > Everything below — the sequencing argument, the waves, the budget, the open
 > decisions — is a **record of how it was planned and paid for**, not work to
@@ -243,11 +246,13 @@ time.**
   been in the repo since `17b3c4a`, 2026-08-10** — sixteen days before this
   bullet was written. It ships on `/about/` at 900×1086 as `.story__photo-img`,
   and `off-site-profiles.md` already names it as the canonical crop for
-  third-party profiles. `/contact/` still ships the plate at
-  `src/content-pages/contact.html:19`. **This is agent-doable and needs nothing
-  from Mark.** The journal posts are the same story and the same asset:
-  **64 further plates, two per post** — `author-card__photo-ph` ×32 and
-  `post-byline__avatar-ph` ×32. So 65 slots in total, one photograph.
+  third-party profiles. `/contact/` ~~still ships the plate at
+  `src/content-pages/contact.html:19`~~ **carries the photograph as of
+  2026-08-29**. **This was agent-doable and needed nothing from Mark.** The
+  journal posts were the same story and the same asset: **64 further plates,
+  two per post** — `author-card__photo-ph` ×32 and `post-byline__avatar-ph`
+  ×32. 65 slots in total, one photograph, all closed together by
+  `fill-portrait-slots`.
 
   Worth naming the failure mode, because "needs a human" is the most expensive
   thing a doc can say falsely: a correct-sounding *rule* ("a generated likeness
@@ -394,19 +399,26 @@ will otherwise try to answer them again.
 
 ## If you are here to do photography work
 
-**No new photography is needed.** Nothing on the site requires a frame that
-does not exist, and nothing is waiting on Mark.
+**No new photography is needed, and there is no wiring left either.** Nothing
+on the site requires a frame that does not exist, nothing is waiting on Mark,
+and no page renders a placeholder plate.
 
-There is, however, **wiring** work — an existing asset that is not on the pages
-that want it:
-
-- **65 slots, one photograph.** `/contact/`'s portrait plate
+- ~~**65 slots, one photograph.** `/contact/`'s portrait plate
   (`src/content-pages/contact.html:19`), plus **64 on the journal posts** —
-  `author-card__photo-ph` ×32 and `post-byline__avatar-ph` ×32, two per post.
-  All of them want `sp-mark-sole-portrait.jpg`, which has shipped on `/about/`
-  since 2026-08-10. See § "The last fifteen" for why this sat mislabelled as
+  `author-card__photo-ph` ×32 and `post-byline__avatar-ph` ×32, two per post.~~
+  **Closed 2026-08-29** by `fill-portrait-slots`. All 65 now carry
+  `sp-mark-sole-portrait.jpg`, which had shipped on `/about/` since
+  2026-08-10 — see § "The last fifteen" for why this sat mislabelled as
   human-blocked, and § "How it actually finished" for why a grep found only
-  half of it.
+  half of it. The `-ph` rules went with the plates; `Portrait` went into
+  `PLACEHOLDER_PATTERNS`, so the `/contact/` plate cannot come back unnoticed.
+
+Do not take that on faith. Derive it:
+
+```bash
+grep -rho 'class="[a-z_ -]*[_-]ph"' dist --include='*.html' | sort | uniq -c   # nothing
+grep -rho '[A-Z][a-z]* Photography'  dist --include='*.html' | sort | uniq -c   # 1 Iceberg
+```
 
 The only genuinely permanent exception is the Greenland "Iceberg Photography"
 tag, which is correct copy and must never be "fixed".

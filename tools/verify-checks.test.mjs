@@ -302,6 +302,32 @@ t("placeholder: the Greenland card's Iceberg Photography activity tag passes",
          `<span class="dest-tag">Dog Sledding</span>` +
          `<span class="dest-tag">Iceberg Photography</span></div>`), 0);
 
+/* Portrait joined the token list the day sp-mark-sole-portrait.jpg was wired
+   into /contact/. This is the plate that shipped there, verbatim. */
+t("placeholder: the /contact/ portrait plate now fails",
+  phHits(`<div class="contact-photo">Portrait Photography<br>Mark Sole</div>`), 1);
+
+/* And the photograph that replaced it must not re-trip it. The alt describes
+   the person, not a plate; visibleText() strips tags, so neither the alt nor
+   the filename can reach the matcher — this pins that. */
+t("placeholder: the real portrait <img> that replaced it passes",
+  phHits(`<div class="contact-photo"><img class="contact-photo__img" ` +
+         `src="/assets/img/sp-mark-sole-portrait.jpg" ` +
+         `alt="Mark Sole, founder of Hit Your Mark Travel, hands clasped at a caf&eacute; table" ` +
+         `width="900" height="1086" decoding="async"></div>`), 0);
+
+/* Both journal slots, in the three fills that shipped. Decorative alt=""
+   beside the name, so nothing reaches visible text either. */
+t("placeholder: the filled journal byline avatar passes",
+  phHits(`<div class="post-byline__avatar"><img class="post-byline__avatar-img" ` +
+         `src="/assets/img/sp-mark-sole-portrait.jpg" alt="" aria-hidden="true" ` +
+         `width="900" height="1086" loading="lazy" decoding="async"></div>`), 0);
+
+/* Portrait is a noun in the fixed alternation, not the general form. Ordinary
+   copy about portraiture must still pass. */
+t("placeholder: prose mentioning portrait photography passes",
+  phHits(`<p>He recommends a portrait photography session in Kyoto.</p>`), 0);
+
 /* ── blank-link-rel (SEC-5) ── */
 
 t("blank-rel: target=_blank with no rel at all fails",
