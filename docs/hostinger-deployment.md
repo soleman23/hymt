@@ -21,9 +21,16 @@ passes. In hPanel, the web app settings must be:
 | Repository | `soleman23/hymt` |
 | Branch | `main`, after the intended release PRs are merged |
 | Framework | Astro |
-| Node.js | 22.x (also pinned in `package.json`) |
+| Node.js | 22.x or 24.x — must resolve to **22.12.0 or newer** |
 | Build command | `npm run build` |
 | Output directory | `dist` |
+
+The Node floor is Astro 7's, and `package.json` `engines.node` is the one place
+it is written: `>=22.12.0`. hPanel's `22.x` satisfies it only while that track
+resolves to 22.12 or later, which it does today — but read the value rather
+than assuming, because `.npmrc` sets `engine-strict=true` and a lower Node
+fails `npm ci` outright rather than warning. `tools/check-node.mjs` runs first
+in `npm run build` and prints the same requirement.
 
 Use the website dashboard's **Change repository** flow if hPanel names any
 other repository. Review the overwrite warning, then start a new deployment.
@@ -45,7 +52,11 @@ Use this only if Hostinger's GitHub deployment is unavailable and record why in
 the launch issue. Do not alternate between GitHub deployments and manual files;
 that makes the deployed commit and stale-file behavior unknowable.
 
-1. Build locally with Node 22: `npm ci && npm run build`.
+1. Build locally on Node 22.12 or newer: `npm ci && npm run build`. The build
+   machine's default is 20.19.0, which `tools/check-node.mjs` rejects in
+   milliseconds — put a supported Node first on PATH for the command rather
+   than running `nvm use`, which moves a machine-wide symlink (CLAUDE.md § Node
+   and npm).
 2. Hostinger hPanel → **Files → File Manager** → open `public_html`.
 3. Upload a zip containing the **contents** of `dist/`.
 4. Extract it directly into `public_html`; do not leave an extra `dist` folder.
