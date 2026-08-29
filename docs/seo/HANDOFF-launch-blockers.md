@@ -416,8 +416,15 @@ Your Trip use. `docs/hostinger-deployment.md`'s "all three forms now carry the
 honeypot and length caps" is now true rather than half right.
 
 ~~No verifier check asserts anything about the key, the honeypot, `maxlength`
-or the CSP. None of this can go red in a build.~~ — **stale as of 2026-08-28.**
-Three of the four now gate the build:
+or the CSP. None of this can go red in a build.~~ — **stale as of 2026-08-28,
+and inverted rather than merely out of date. All four now gate the build:**
+
+| Claimed unchecked | Actually enforced by |
+|---|---|
+| the key | `web3formsKeys` → `web3forms`, fails on a partial rotation |
+| the honeypot | `hasHoneypot` → same check, every form on every page |
+| `maxlength` | `uncappedFields` → `field-maxlength`, shipped in `b8ddcd1` |
+| the CSP | `htaccessGaps` + the `csp-script-src` hash diff |
 
 ```
 ok  Web3Forms key on 120 pages, one key, honeypot on every one
@@ -425,11 +432,19 @@ ok  10 inline script hashes in the CSP, all current, no 'unsafe-inline' in scrip
 ok  .htaccess shipped with 4 security headers + host-scoped HSTS (#79), … 11 CSP directives
 ```
 
-The key and honeypot are `web3formsKeys` / `hasHoneypot` in
-`content-checks.mjs`, with fixtures under `/* ── web3forms (#74) ── */` in
-`verify-checks.test.mjs`; the CSP is `htaccessGaps` plus the `csp-script-src`
-hash diff. **`maxlength` is still the one with no check** — the cap ships, but
-nothing would notice if it were deleted.
+`field-maxlength` prints nothing when clean, which is why it is the easy one
+to miss: it fails per-page rather than emitting a summary note like the other
+three. It is wired at `verify-deployment.mjs:716` and fails on any `<input>`
+or `<textarea>` a visitor can type into that carries no `maxlength`, skipping
+`readonly`/`disabled` and the non-text input types. Fixtures are under
+`/* ── field-maxlength (#74) ── */`, including the exact uncapped Newsletter
+input as it shipped on 94 pages.
+
+**A check that emits no note on success is invisible to a grep of build
+output.** Confirm enforcement by finding the `fail(` call, not by reading the
+`ok` lines — this file asserted the opposite for both of the last two sessions
+that touched it, and a first pass at correcting it on 2026-08-28 still got
+`maxlength` wrong by checking the summary rather than the wiring.
 
 **What is left of #74 is therefore entirely non-code**: the recipient address,
 and the dashboard settings below. Do not re-open it looking for markup to fix.
