@@ -1612,6 +1612,42 @@ t("coverage: definite misses are answers, not coverage gaps",
 t("coverage: an empty sweep answers nothing and has nothing unverified",
   `${remoteCoverage([]).answered}/${remoteCoverage([]).total}`, "0/0");
 
+/* ── the WIRING, which is the only thing that was ever broken ──
+   Everything above pins arithmetic on a pure counter that was never wrong.
+   The bug was that the throttled branch called notes.push(), which report()
+   prints with an `ok` prefix and exits 0 on — so "NOT verified" shipped as a
+   pass. Reverting that one call leaves every fixture above green, which is
+   exactly how the predecessor got through: main's "throttled routes are
+   reported separately, so they are not silently a pass" was green for the
+   whole life of the bug it names.
+
+   So assert the call itself. This reads the verifier's source rather than
+   running it, because the alternative — spawning verify-deployment.mjs
+   against a stub host — would drag in all 103 other checks and fail for
+   reasons that have nothing to do with coverage. Narrow and literal on
+   purpose: it goes red on the precise edit that regressed, and on nothing
+   else. */
+const verifierSrc = await readFile(path.join(ROOT, "tools", "verify-deployment.mjs"), "utf8");
+/* Comments stripped: the branch's own comment says the words "notes.push()"
+   while explaining why it must not call it, and an unstripped match on that
+   is a fixture that fails on the correct code. */
+const throttledBranch = (/if \(throttled\.length\) \{([\s\S]*?)\n  \}/.exec(verifierSrc)?.[1] ?? "")
+  .replace(/\/\*[\s\S]*?\*\//g, "");
+
+t("coverage: the throttled branch exists and was found",
+  throttledBranch.includes("throttled.slice"), true);
+
+t("coverage: an unverified sweep FAILS — it does not merely note",
+  /\bfail\(\s*"remote-coverage"/.test(throttledBranch), true);
+
+t("coverage: and it never routes back through notes.push, which exits 0",
+  /\bnotes\.push\(/.test(throttledBranch), false);
+
+/* report() must actually exit non-zero on a failure, or the fail() above is
+   decoration. The early return on the clean path is what makes this real. */
+t("coverage: report() exits non-zero when anything failed",
+  /if \(!failures\.length\) \{[\s\S]*?\n  process\.exit\(1\);/.test(verifierSrc), true);
+
 /* ── sitemap-future-lastmod ──
    The shape that shipped: `/` and `/about/` dated 2026-08-25 in a sitemap
    built on 2026-08-24. An instant-compare against Date.now() passes on this
