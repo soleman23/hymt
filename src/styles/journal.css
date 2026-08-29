@@ -35,7 +35,14 @@
 .post-layout > * { grid-column:2 }
 .post-byline { display:flex;align-items:center;gap:18px; padding-bottom:36px;margin-bottom:40px; border-bottom:1px solid var(--border-subtle);grid-column:2; }
 .post-byline__avatar { width:48px;height:48px;border-radius:50%;background:var(--bg-card); border:1px solid var(--border-gold);flex-shrink:0; display:flex;align-items:center;justify-content:center;overflow:hidden; }
-.post-byline__avatar-ph { font-family:var(--font-d);font-size:9px;font-weight:700; letter-spacing:.1em;text-transform:uppercase;color:var(--gold-700); }
+/* The container above is kept: it is round with overflow:hidden, which only
+   ever made sense for clipping an image, and this is what it clips. Both round
+   slots share one source at 900x1086, cropped square by object-fit rather than
+   by a new asset — a new file would have to reach the host over FTP, which the
+   build cannot do.
+   The -ph rule that used to sit here is gone. It styled the initials plate's
+   text, and no page renders that element any more. */
+.post-byline__avatar-img { width:100%;height:100%;object-fit:cover;display:block; }
 .post-byline__info { display:flex;flex-direction:column;gap:3px }
 .post-byline__name { font-family:var(--font-d);font-size:12px;font-weight:700; letter-spacing:.1em;text-transform:uppercase;color:var(--text-primary); }
 .post-byline__role { font-family:var(--font-b);font-size:12px;color:var(--text-muted) }
@@ -92,7 +99,8 @@
 .author-card { background:var(--bg-surface);border-top:1px solid var(--border-subtle); border-bottom:1px solid var(--border-subtle);padding:64px 52px; }
 .author-card__inner { max-width:720px;margin:0 auto; display:grid;grid-template-columns:80px 1fr;gap:32px;align-items:start; }
 .author-card__photo { width:80px;height:80px;border-radius:50%;background:var(--bg-card); border:1px solid var(--border-gold); display:flex;align-items:center;justify-content:center;overflow:hidden; }
-.author-card__photo-ph { font-family:var(--font-d);font-size:9px;font-weight:700; letter-spacing:.1em;text-transform:uppercase;color:var(--gold-700); text-align:center;padding:8px; }
+/* -ph removed with the plate it styled, as on .post-byline__avatar above. */
+.author-card__photo-img { width:100%;height:100%;object-fit:cover;display:block; }
 .author-card__name { font-family:var(--font-d);font-size:22px;font-weight:700; letter-spacing:-.01em;color:var(--text-primary);margin-bottom:4px; }
 .author-card__title { font-family:var(--font-d);font-size:10px;font-weight:700; letter-spacing:.18em;text-transform:uppercase;color:var(--gold-500);margin-bottom:16px; }
 .author-card__bio { font-family:var(--font-b);font-size:14px;color:var(--text-secondary); line-height:1.75;margin-bottom:20px;max-width:52ch; }

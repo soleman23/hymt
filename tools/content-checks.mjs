@@ -58,11 +58,18 @@ export const PLACEHOLDER_PATTERNS = [
      beside "Icefjord" and "Dog Sledding". That is a real activity, correct
      copy, and the general pattern would fail that page forever.
 
-     One noun is deliberately absent. /contact/ still plates "Portrait
+     Portrait was deliberately absent while /contact/ still plated "Portrait
      Photography / Mark Sole" — a real, named person, whose headshot has to be
-     a photograph OF HIM. Add Portrait here the day that image lands. */
+     a photograph OF HIM. THAT IMAGE HAS LANDED, so Portrait is in the list.
+
+     It had in fact landed on 2026-08-10, sixteen days before the note above
+     was written: sp-mark-sole-portrait.jpg was already shipping on /about/
+     while three separate documents recorded the plate as blocked on Mark. The
+     rule ("a generated likeness is not a photograph of them") was sound and
+     nobody re-checked it against the library. Adding the noun here is what
+     makes that class of mistake fail a build instead of ageing in a doc. */
   ["Unfilled photo plate",
-   /\b(?:Destination|Experience|Itinerary|Journey|Event|Article|Atoll) Photography\b/],
+   /\b(?:Destination|Experience|Itinerary|Journey|Event|Article|Atoll|Portrait) Photography\b/],
 ];
 
 /**
@@ -649,6 +656,55 @@ export function imgRatioMismatches(html, dimsOf) {
  * cspDirective pulls one directive's value out of an .htaccess Header line.
  * cspScriptSrcDrift diffs a script-src value against the hashes dist/ needs.
  */
+/**
+ * Which CSP header dist/.htaccess actually ships, report-only or enforcing.
+ *
+ * #100 flips the site from `Content-Security-Policy-Report-Only` to
+ * `Content-Security-Policy` by renaming the header, and its own Rollback line
+ * is "revert the header name to -Report-Only" — so the tooling has to survive
+ * that rename in BOTH directions. It did not: the csp-script-src check and
+ * tools/serve-csp-enforcing.mjs each hardcoded the report-only spelling, and
+ * the flip would have turned the one gate standing between an edited inline
+ * script and a dead page into "dist/.htaccess has no
+ * Content-Security-Policy-Report-Only header", which reads like the CSP
+ * vanished and invites loosening the check on the day it matters most.
+ *
+ * Returns every CSP header present, as { name, policy } — EVERY line, not one
+ * per name. The caller decides what to do with the count, and all of these
+ * are meaningful:
+ *   0 — no policy at all
+ *   1 — the normal case, either spelling
+ *   2 — one of each name: a browser enforces the enforcing one AND reports on
+ *       the other, so a half-finished flip ships two policies that can
+ *       disagree. Nothing would have noticed.
+ *   2 — or the SAME name twice, which is worse and used to be invisible. One
+ *       `.exec` per name returned the FIRST policy, while Apache documents
+ *       `Header set` as replacing any previous header of that name — so the
+ *       LAST one ships. The verifier then diffed dist's inline-script hashes
+ *       against a policy the browser throws away, and a policy without those
+ *       hashes could deploy on a green build.
+ *
+ * Order is enforcing-first so a caller taking [0] prefers the header that
+ * actually blocks. Note the trailing `\s+"` is load-bearing: without it
+ * "Content-Security-Policy" also matches the -Report-Only line, since it is a
+ * strict prefix of it.
+ */
+export const CSP_HEADER_NAMES = [
+  "Content-Security-Policy",
+  "Content-Security-Policy-Report-Only",
+];
+
+export function cspHeaders(htaccess) {
+  const out = [];
+  for (const name of CSP_HEADER_NAMES) {
+    const all = htaccess.matchAll(new RegExp(
+      `^\\s*Header\\s+(?:always\\s+)?set\\s+${name}\\s+"([^"]*)"`, "gmi",
+    ));
+    for (const m of all) out.push({ name, policy: m[1] });
+  }
+  return out;
+}
+
 export function cspScriptHash(body) {
   return "sha256-" + createHash("sha256").update(body.replace(/\r\n?/g, "\n"), "utf8").digest("base64");
 }
@@ -816,7 +872,7 @@ export const CSP_DIRECTIVES = [
   ["object-src", "'none'"],
 ];
 
-export function htaccessGaps(text) {
+export function htaccessGaps(text, productionSite) {
   const live = text
     .split(/\r?\n/)
     .filter((l) => !/^\s*#/.test(l))
@@ -860,10 +916,61 @@ export function htaccessGaps(text) {
     out.push("SetEnvIf that arms IS_STAGING is missing — the X-Robots-Tag header is inert without it");
   }
 
-  const csp = /^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/mi.exec(live);
-  if (!csp) {
-    out.push("no Content-Security-Policy header at all");
+  /* SEC-4 (#79): HSTS. Like the staging noindex, two lines that only work
+     together — and for the same reason it is the SetEnvIf, not the Header,
+     that goes missing silently. A header carrying env=IS_PROD with nothing
+     arming IS_PROD is sent to nobody, which looks identical to "shipped" in
+     any grep of the file.
+
+     Scoped to production on purpose (see public/.htaccess): the point is to
+     be already live at cutover, because the header this replaces is one the
+     Wix edge sends today and stops sending the moment DNS moves. */
+  const HSTS_MAX_AGE = "max-age=86400";
+  const hsts = /^\s*Header\s+always\s+set\s+Strict-Transport-Security\s+"([^"]*)"\s+env=IS_PROD/mi.exec(live);
+  if (!hsts) {
+    out.push("Strict-Transport-Security header (env=IS_PROD) is missing — HSTS regresses at cutover, because the Wix edge sends it today and Hostinger will not (#79)");
+  } else if (hsts[1] !== HSTS_MAX_AGE) {
+    /* Exact-match on purpose. The ramp is the whole safety argument, so a
+       raise has to be a deliberate edit here rather than a silent widening
+       in the .htaccess. `preload` is caught by the same equality. */
+    out.push(`HSTS is "${hsts[1]}", expected "${HSTS_MAX_AGE}" — raise the ramp in content-checks.mjs and public/.htaccess together, and never add preload (#79)`);
+  }
+  const productionEnv = /^\s*(SetEnvIf(?:NoCase)?)\s+Host\s+"([^"]*)"\s+IS_PROD=1/mi.exec(live);
+  if (!productionEnv) {
+    out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
   } else {
+    if (productionEnv[1].toLowerCase() !== "setenvifnocase") {
+      out.push("IS_PROD must use SetEnvIfNoCase — HTTP host names are case-insensitive");
+    }
+
+    let configuredHost = "";
+    try {
+      configuredHost = new URL(productionSite).hostname.toLowerCase();
+    } catch {
+      out.push(`could not derive the HSTS host from configured site "${productionSite}"`);
+    }
+    if (configuredHost) {
+      const bareHost = configuredHost.startsWith("www.") ? configuredHost.slice(4) : configuredHost;
+      const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const expectedHost = configuredHost.startsWith("www.")
+        ? `^(www\\.)?${escapedHost}(?::[0-9]+)?$`
+        : `^${escapedHost}(?::[0-9]+)?$`;
+      if (productionEnv[2] !== expectedHost) {
+        out.push(`IS_PROD host matcher is "${productionEnv[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
+      }
+    }
+  }
+
+  /* matchAll for the same reason as cspHeaders(): `Header set` keeps only the
+     last line of a given name, so reading the first would check the directives
+     of a policy Apache discards. */
+  const csps = [...live.matchAll(/^\s*Header\s+always\s+set\s+Content-Security-Policy(-Report-Only)?\s+"([^"]*)"/gim)];
+  if (!csps.length) {
+    out.push("no Content-Security-Policy header at all");
+  } else if (csps.filter((c) => !c[1]).length > 1 || csps.filter((c) => c[1]).length > 1) {
+    out.push("the same Content-Security-Policy header is set more than once — `Header set` keeps only the last, so the earlier policy is dead and these directives would be checked against the wrong one");
+  } else {
+    const csp = csps[0];
     const policy = csp[2];
     for (const [directive, needle] of CSP_DIRECTIVES) {
       const d = new RegExp(`(?:^|;)\\s*${directive}\\s+([^;]*)`).exec(policy);
@@ -984,14 +1091,24 @@ export function itemListDefects(html) {
   const collect = (node) => {
     if (!node || typeof node !== "object") return;
     if (Array.isArray(node)) { node.forEach(collect); return; }
-    if (node["@type"] === "ItemList" && Array.isArray(node.itemListElement)) lists.push(node);
+    /* BreadcrumbList as well as ItemList. It is the same shape — an
+       itemListElement array of positioned entries — and it had the same defect:
+       every journal post listed /travel-journal/ at both position 2 and
+       position 3, on 32 pages, while this function watched only ItemList and
+       reported nothing. A duplicate URL is arguably worse in a breadcrumb,
+       because the trail is also what the visible nav renders from. */
+    if ((node["@type"] === "ItemList" || node["@type"] === "BreadcrumbList")
+        && Array.isArray(node.itemListElement)) lists.push(node);
     for (const k of ["mainEntity", "@graph"]) if (node[k]) collect(node[k]);
   };
   for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)) {
     try { collect(JSON.parse(m[1])); } catch { /* schema-valid reports it */ }
   }
   for (const list of lists) {
-    const label = list.name ? `ItemList "${list.name}"` : "ItemList";
+    /* The noun comes from the node, not a literal. Hardcoding "ItemList" here
+       would have reported every breadcrumb defect under the wrong type name. */
+    const type = list["@type"];
+    const label = list.name ? `${type} "${list.name}"` : type;
     const positions = new Map();
     list.itemListElement.forEach((it, i) => {
       const u = it.url ?? it.item?.["@id"] ?? it.item;
@@ -1042,6 +1159,38 @@ export function remoteMisses(results) {
 /* The routes we could not get an answer for either way. Not a pass. */
 export function remoteThrottled(results) {
   return results.filter((r) => !r.ok && isThrottled(r.status)).map((r) => r.route);
+}
+
+/**
+ * How much of a --remote sweep actually got an answer.
+ *
+ * "Not a pass" above was true as a description and false as behaviour. The
+ * throttled routes were pushed to `notes`, and report() prints every note with
+ * an `ok` prefix and exits 0 — so a partially rate-limited sweep printed
+ *
+ *     ok  60 of 122 routes still rate-limited after 3 tries — NOT verified
+ *
+ * and returned success. The prefix contradicted the sentence, and the exit code
+ * agreed with the prefix. `verify:prod` exists to answer "is the deploy good?",
+ * and the honest answer there was "I could not tell for half of it".
+ *
+ * A route that is throttled after three tries with backoff is not transient
+ * noise; it is a route this run has no information about. Both are non-answers
+ * and neither may count toward a pass:
+ *
+ *   answered    ok, or a definite miss (remoteMisses reports those separately)
+ *   unverified  still throttled after the retries
+ *
+ * NO TOLERANCE THRESHOLD, deliberately. Any percentage floor would be a number
+ * invented here to excuse some unverified routes, and this is not on the
+ * `npm run build` path — it is only `verify:remote` / `verify:prod`, run on
+ * purpose against a deploy. Re-running is cheap; a green tick over routes
+ * nobody checked is not. Compare lockfileCoverage in repo-checks.mjs, which
+ * refuses the same way when its comparison covered nothing.
+ */
+export function remoteCoverage(results) {
+  const unverified = remoteThrottled(results);
+  return { total: results.length, answered: results.length - unverified.length, unverified };
 }
 
 /**

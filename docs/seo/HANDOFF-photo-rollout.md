@@ -16,11 +16,25 @@ READ FIRST, in this order — do not start work until you have:
                                           failure mode found so far)
   2. docs/seo/drive-image-skips.md       (§ A closed; § B still open)
   3. CLAUDE.md § "SEO & AIO rules"       (non-negotiable page rules)
-  (docs/seo/photography-plan.md and photography-needed.md are both STALE —
-   see Open items. Read them only for the A-before-B sequencing argument.)
+  (docs/seo/photography-plan.md and photography-needed.md were both STALE;
+   corrected 2026-08-28. Both now open with a completion banner and derive
+   their figures.)
 
-STATE, re-derived on 2026-08-26 (third session that day):
-  THE ROLLOUT IS COMPLETE. There is no backlog left to pick up.
+STATE, re-derived on 2026-08-29:
+  THE ROLLOUT IS COMPLETE — cards and portraits both. Nothing is waiting on a
+  frame that does not exist, nothing is waiting on Mark, and no page renders a
+  placeholder plate. The 65 portrait plates outstanding on 08-28 — /contact/
+  plus 64 across the journal — were filled on 08-29 with
+  sp-mark-sole-portrait.jpg, which had been in the repo since 08-10.
+
+  Two earlier versions of this block said "no backlog left to pick up" while
+  those 65 were live. It is true now, and the difference is that it derives:
+
+    grep -rho 'class="[a-z_ -]*[_-]ph"' dist --include='*.html'   # nothing
+    grep -rho '[A-Z][a-z]* Photography'  dist --include='*.html'   # 1 Iceberg
+
+  Run those before believing this paragraph. The plate class name has changed
+  twice, and each time a sweep written against the old one reported zero.
   EXPERIENCES — DONE. 12 of 12 pages on .exp-cards--photo, 72 of 72 cards
     photographed, zero placeholders. Closed 2026-08-24; do not re-plan it.
   DESTINATIONS — DONE. 67 of 67 pages that carry a places-grid are on
@@ -1415,6 +1429,23 @@ Two things worth carrying into every later wave:
 
 ## Open items
 
+- ~~**65 unfilled portrait plates.** `/contact/` (`contact-photo`) plus 64
+  across the journal — `author-card__photo-ph` ×32 and
+  `post-byline__avatar-ph` ×32.~~ **Closed 2026-08-29.** All 65 carry
+  `sp-mark-sole-portrait.jpg`, which had been in the repo since 2026-08-10
+  and already shipped on `/about/` — wiring, not commissioning, and it needed
+  nothing from Mark. The `-ph` rules were deleted with the plates and
+  `Portrait` joined `PLACEHOLDER_PATTERNS`, so a plate coming back fails the
+  build. Derive it, never quote it:
+
+  ```bash
+  grep -rho 'class="[a-z_ -]*[_-]ph"' dist --include='*.html' | sort | uniq -c
+  grep -rl  'Portrait Photography'    dist --include='*.html'
+  ```
+
+  Note the class names ended `-ph`, not `__ph` — the `[a-z-]*__ph\b` sweep
+  this doc set once pointed at could not see any of the 64, which is how they
+  stayed invisible through three "complete" declarations.
 - ~~**5 borrowed-hero swaps** left in `drive-image-skips.md` § A.~~ **Closed
   2026-08-13**, and it was 6 — St. Barth's was missing from the list because
   its slug is `caribbean-mexico-st-barth-s` (the apostrophe in `St. Barth's`
@@ -1442,15 +1473,22 @@ Two things worth carrying into every later wave:
   `src/lib/og-crops.ts`; `DestinationLayout`, `ExperienceLayout` and
   `JournalLayout` look `hero.image` up in that table, so no page file passes an
   `ogImage` prop and none needs to.
-- **`docs/seo/photography-needed.md` is stale** — it lists 25 missing heroes;
+- ~~**`docs/seo/photography-needed.md` is stale** — it lists 25 missing heroes;
   22 of those subjects now exist. It would send someone hunting for images
-  that ship.
-- **`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
-  lists 30 pages / 162 images; the real remainder is **zero** — Workstream B
-  is finished. Its "1 of 163 slots comes free" line never held either: 99 came
-  free from Drive and 1 more from the repo. Only its sequencing argument
-  (A before B) still stands. **Now safe to rewrite or delete**, which the last
-  page shipping was the stated condition for.
+  that ship.~~ — **corrected 2026-08-28.** All 25 ship, `/destinations/aspen/`
+  (the last unwired one) now exists, and the file is retitled: it was called
+  "the 25 missing hero images" for ten days after the last one landed, so the
+  title alone was the misleading part.
+- ~~**`docs/seo/photography-plan.md` is now stale too.** Its Workstream B table
+  lists 30 pages / 162 images; the real remainder is **zero**~~ — **corrected
+  2026-08-28.** Its "1 of 163 slots comes free" line never held either: 99 came
+  free from Drive and 1 more from the repo. Rather than deleted, it now opens
+  with a completion banner covering all three workstreams and derives every
+  figure; the sequencing argument, the wave plan and the budget are kept as the
+  record of how the work was planned and paid for. Its four "open decisions"
+  are marked resolved — three were settled by shipping rather than by anyone
+  answering them, which is exactly how a stale heading recruits someone into
+  re-deciding a closed question.
 - ~~**No per-page `og:image` on any of the pages shipped 2026-08-26.**~~ **Was
   already false when written** — it restated the bullet above from memory
   instead of reading `dist/`, and the crops had shipped in `aa7a271` eight days
