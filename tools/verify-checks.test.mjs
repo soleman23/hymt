@@ -56,7 +56,8 @@ import {
 } from "./content-checks.mjs";
 const attribution = testimonialAttribution;
 import {
-  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, crDefect, isBinaryDistFile,
+  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
+  crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 
@@ -1793,6 +1794,184 @@ t("lockfile: stripping libc from the real lockfile is caught on every entry",
     for (const p of Object.values(stripped.packages)) delete p.libc;
     return stripped;
   })()).length, REAL_LIBC);
+
+/* Codex review on #118, P2. Comparing by package key alone made a legitimate
+   upgrade unfixable: a package that genuinely drops musl in its next major
+   would fail this check, `npm run build` must pass before every commit, and
+   there was no override. The gate is now the artifact — same key, same
+   version, same resolved tarball — which keeps the real signal, because the
+   install this exists to catch deleted 102 libc blocks without touching a
+   single version. */
+
+t("lockfile: the same version losing a field is still caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 1);
+
+t("lockfile: an upgrade that narrows platform support is not metadata loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } })).length, 0);
+
+t("lockfile: an upgrade that drops a field entirely is not metadata loss",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "2.0.0" } })).length, 0);
+
+t("lockfile: a downgrade is a different artifact too",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "2.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 0);
+
+/* Codex review on #119, P2. Artifact identity was `resolved` — the download
+   URL. An install pointed at a mirror or an alternate registry rewrites that
+   while fetching identical bytes, so the tripwire skipped every entry such an
+   install touched: the hole reopened for precisely the unusual install most
+   likely to mangle a lockfile. Identity is the content hash. */
+
+t("lockfile: the same bytes fetched from a mirror are still compared",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://r/a-1.0.0.tgz", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", resolved: "https://mirror/a-1.0.0.tgz", integrity: "sha512-AAA" } })).length, 1);
+
+t("lockfile: a different integrity at the same version is a different artifact",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-BBB" } })).length, 0);
+
+t("lockfile: the same version and integrity losing a field is caught",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } })).length, 1);
+
+/* Entries carrying no integrity — the root entry is one of them — are compared
+   rather than skipped, on both sides and on either side alone. The safe
+   direction when identity cannot be established is to look. */
+t("lockfile: an entry with no integrity on either side is still compared",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0" } })).length, 1);
+
+t("lockfile: integrity appearing on only one side does not skip the entry",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": { version: "1.0.0", libc: ["glibc"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } })).length, 1);
+
+/* Codex review on #118, P2. When either lockfile could not be read the check
+   pushed a note — and notes print with an `ok` prefix and exit 0, so the
+   tripwire was bypassed exactly when something was already wrong, while the
+   comment above it claimed "not a pass". Both states now fail, and the branch
+   that decides is a function so a fixture can hold it there. */
+
+t("lockfile-state: two readable lockfiles are comparable",
+  lockfileCheckState({ packages: {} }, { packages: {} }), "comparable");
+
+t("lockfile-state: an unreadable working lockfile is reported, not skipped",
+  lockfileCheckState({ packages: {} }, null), "unreadable-working");
+
+t("lockfile-state: an unreadable baseline is reported, not skipped",
+  lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
+
+t("lockfile-state: a corrupt working copy outranks a missing baseline",
+  lockfileCheckState(null, null), "unreadable-working");
+
+t("lockfile-state: a non-object working lockfile is unreadable",
+  lockfileCheckState({ packages: {} }, "not json"), "unreadable-working");
+
+/* Codex review on #119, P2. `typeof [] === "object"`, so an array and an
+   object with no packages map both passed as comparable. The comparison then
+   found no losses in a map with no entries and announced that metadata was
+   retained "on 0 entries" — a corrupt working copy passing as verified, which
+   is the case the state check exists to fail. */
+
+t("lockfile-state: an array is not a lockfile",
+  lockfileCheckState({ packages: {} }, []), "unreadable-working");
+
+t("lockfile-state: an object with no packages map is not a lockfile",
+  lockfileCheckState({ packages: {} }, {}), "unreadable-working");
+
+t("lockfile-state: a packages array is not a packages map",
+  lockfileCheckState({ packages: {} }, { packages: [] }), "unreadable-working");
+
+t("lockfile-state: a null packages map is not a packages map",
+  lockfileCheckState({ packages: {} }, { packages: null }), "unreadable-working");
+
+t("lockfile-state: the same shape rules apply to the baseline",
+  lockfileCheckState({ packages: [] }, { packages: {} }), "unreadable-baseline");
+
+/* Codex review on #119, P2. Failing when git is absent broke builds from a
+   `git archive` export, which this repo supports: tools/git-lastmod.mjs
+   catches unavailable git and resolves every sitemap date to undefined rather
+   than failing. A missing baseline for that reason is a skip, not a defect —
+   but a corrupt working copy is still a defect, git or no git. */
+
+t("lockfile-state: no git means no baseline to compare against, not a failure",
+  lockfileCheckState(null, { packages: {} }, false), "no-git");
+
+t("lockfile-state: git present but no committed lockfile is still a failure",
+  lockfileCheckState(null, { packages: {} }, true), "unreadable-baseline");
+
+t("lockfile-state: a corrupt working copy outranks having no git",
+  lockfileCheckState(null, {}, false), "unreadable-working");
+
+t("lockfile-state: git availability defaults to present",
+  lockfileCheckState(null, { packages: {} }), "unreadable-baseline");
+
+/* ── lockfile-coverage ── */
+
+/* A loss scan reports what it FOUND, which says nothing about what it COVERED.
+   A working lockfile emptied to {"packages":{}} produces no losses at all --
+   every baseline entry is absent and skipped -- so the check announced success
+   and printed "keeps its platform metadata on 0 entries", counting the working
+   file instead of the comparison. Measured before this was added: an emptied
+   lockfile and one truncated to a single unrelated entry both exited 0.
+
+   The gate is `shared`, not `compared`. A real dependency upgrade drives
+   `compared` towards zero while `shared` stays high, and must not be mistaken
+   for a truncated file. */
+
+const COV = (pkgs) => ({ packages: pkgs });
+const A1 = { version: "1.0.0", integrity: "sha512-AAA", libc: ["glibc"] };
+
+t("coverage: an identical lockfile is fully covered",
+  JSON.stringify(lockfileCoverage(COV({ "node_modules/a": A1, "node_modules/b": A1 }),
+                                  COV({ "node_modules/a": A1, "node_modules/b": A1 }))),
+  JSON.stringify({ baselineEntries: 2, shared: 2, compared: 2 }));
+
+t("coverage: an emptied working lockfile shares nothing",
+  JSON.stringify(lockfileCoverage(COV({ "node_modules/a": A1 }), COV({}))),
+  JSON.stringify({ baselineEntries: 1, shared: 0, compared: 0 }));
+
+t("coverage: a lockfile truncated to unrelated entries shares nothing",
+  lockfileCoverage(COV({ "node_modules/a": A1 }), COV({ "node_modules/zzz": A1 })).shared, 0);
+
+/* The case the gate must NOT catch: everything upgraded. Keys still line up,
+   so `shared` stays at full, while `compared` drops to zero. */
+t("coverage: a wholesale upgrade still shares every key",
+  JSON.stringify(lockfileCoverage(
+    COV({ "node_modules/a": { version: "1.0.0" }, "node_modules/b": { version: "1.0.0" } }),
+    COV({ "node_modules/a": { version: "2.0.0" }, "node_modules/b": { version: "2.0.0" } }))),
+  JSON.stringify({ baselineEntries: 2, shared: 2, compared: 0 }));
+
+t("coverage: a changed integrity counts as shared but not compared",
+  JSON.stringify(lockfileCoverage(
+    COV({ "node_modules/a": { version: "1.0.0", integrity: "sha512-AAA" } }),
+    COV({ "node_modules/a": { version: "1.0.0", integrity: "sha512-BBB" } }))),
+  JSON.stringify({ baselineEntries: 1, shared: 1, compared: 0 }));
+
+t("coverage: an empty baseline is vacuously covered",
+  JSON.stringify(lockfileCoverage(COV({}), COV({ "node_modules/a": A1 }))),
+  JSON.stringify({ baselineEntries: 0, shared: 0, compared: 0 }));
+
+/* Against the real file: the committed lockfile compared with itself covers
+   every entry, so the note the build prints is the whole file, not a subset. */
+t("coverage: the real lockfile against itself is fully covered",
+  JSON.stringify(lockfileCoverage(REAL_LOCK, REAL_LOCK)),
+  JSON.stringify({
+    baselineEntries: Object.keys(REAL_LOCK.packages).length,
+    shared: Object.keys(REAL_LOCK.packages).length,
+    compared: Object.keys(REAL_LOCK.packages).length,
+  }));
 
 /* ── dist-line-endings ── */
 

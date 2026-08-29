@@ -28,7 +28,9 @@ import {
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
-import { lockfileMetadataLoss, crDefect, isBinaryDistFile } from "./repo-checks.mjs";
+import {
+  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, crDefect, isBinaryDistFile,
+} from "./repo-checks.mjs";
 /* Same helper the sitemap dates are generated with, so "today" here cannot
    drift from the convention in tools/git-lastmod.mjs. */
 import { localDay } from "./git-lastmod.mjs";
@@ -1130,32 +1132,74 @@ notes.push(
 {
   let head = null;
   let working = null;
+  let headError = "";
+  let workingError = "";
+  /* Read separately so the two failure modes stay distinguishable. Folded into
+     one try, a malformed lockfile on disk was indistinguishable from a missing
+     baseline, and both ended up as a note — which report() prints with an `ok`
+     prefix before exiting 0. */
   try {
     head = JSON.parse(execFileSync("git", ["show", "HEAD:package-lock.json"],
       { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 }));
+  } catch (e) { headError = String(e.message).split("\n")[0]; }
+  try {
     working = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
-  } catch {
-    /* No git, no committed lockfile, or no lockfile on disk. */
-  }
-  if (!head || !working) {
-    /* Not a pass: saying the check did not run beats printing an ok line for
-       something nothing looked at. */
-    notes.push("package-lock.json platform metadata NOT checked — no HEAD copy to compare against");
+  } catch (e) { workingError = String(e.message).split("\n")[0]; }
+
+  /* Probed apart from the `git show` above so "there is no git here at all"
+     stays distinguishable from "git works and HEAD has no lockfile". The first
+     is a supported way to build this repo — tools/git-lastmod.mjs catches the
+     same condition and resolves every sitemap lastmod to undefined rather than
+     failing — so a `git archive` export must not be broken by this check. The
+     second means the lockfile stopped being committed, which is a defect. */
+  let gitAvailable = false;
+  try {
+    execFileSync("git", ["rev-parse", "--git-dir"], { cwd: ROOT, stdio: "ignore" });
+    gitAvailable = true;
+  } catch { /* no git binary, or not a repository */ }
+
+  const state = lockfileCheckState(head, working, gitAvailable);
+  if (state === "unreadable-working") {
+    fail("lockfile-metadata",
+      `package-lock.json could not be read or parsed (${workingError || "no packages map"}) — a corrupt lockfile must not pass as checked`);
+  } else if (state === "no-git") {
+    notes.push("package-lock.json platform metadata not compared — no git here, so there is no committed baseline (git-lastmod skips sitemap dates for the same reason)");
+  } else if (state === "unreadable-baseline") {
+    fail("lockfile-metadata",
+      `HEAD has no usable package-lock.json to compare against (${headError || "no packages map"}) — git works here, so the lockfile has stopped being committed`);
   } else {
-    const losses = lockfileMetadataLoss(head, working);
-    for (const { pkg, field, missing } of losses) {
+    /* A loss scan reports what it FOUND, not what it looked at. Emptied to
+       {"packages":{}} or truncated to a few unrelated entries, the working
+       lockfile produces no losses — every baseline entry is simply absent and
+       skipped — and this used to print "keeps its platform metadata on 0
+       entries" and exit 0, counting the working file instead of the
+       comparison. Gate on shared keys, not on `compared`: a real dependency
+       upgrade legitimately drives `compared` towards zero while `shared`
+       stays high. */
+    const coverage = lockfileCoverage(head, working);
+    if (coverage.baselineEntries > 0 && coverage.shared === 0) {
       fail("lockfile-metadata",
-        `${pkg} lost ${field} ${JSON.stringify(missing)} from package-lock.json`);
-    }
-    if (losses.length) {
-      hints.push(
-        "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
-        "     dependencies on the deploy host. Restore it with `git checkout HEAD -- package-lock.json`\n" +
-        "     and install with `npm ci`, which never rewrites the lockfile. If a removal is genuine —\n" +
-        "     the package really did drop the field upstream — confirm it against the registry and say\n" +
-        "     so in the commit message.");
+        `package-lock.json shares no entries with HEAD's copy — ${coverage.baselineEntries} there, ` +
+        `${Object.keys(working.packages).length} here — so the comparison covered nothing and cannot be reported as a pass`);
     } else {
-      notes.push(`package-lock.json keeps its platform metadata on ${Object.keys(working.packages ?? {}).length} entries`);
+      const losses = lockfileMetadataLoss(head, working);
+      for (const { pkg, field, missing } of losses) {
+        fail("lockfile-metadata",
+          `${pkg} lost ${field} ${JSON.stringify(missing)} from package-lock.json`);
+      }
+      if (losses.length) {
+        hints.push(
+          "package-lock.json lost the platform metadata npm needs to install Linux-only optional\n" +
+          "     dependencies on the deploy host. Every entry above is the SAME package at the SAME\n" +
+          "     version with the SAME integrity hash as HEAD, so this is not an upgrade dropping\n" +
+          "     support upstream — it is metadata going missing from an artifact that did not change.\n" +
+          "     Restore it with `git checkout HEAD -- package-lock.json` and install with `npm ci`,\n" +
+          "     which never rewrites the lockfile.");
+      } else {
+        /* Reports the comparison, not the file: `compared` of `baselineEntries`
+           is what was actually looked at. */
+        notes.push(`package-lock.json keeps its platform metadata — ${coverage.compared} of ${coverage.baselineEntries} HEAD entries compared`);
+      }
     }
   }
 }

@@ -69,14 +69,40 @@ const PLATFORM_FIELDS = ["libc", "os", "cpu"];
  * host and for anything Linux that later reads it, and it is invisible in a
  * diff that also carries a legitimate dependency change.
  *
- * Compares only packages present in BOTH lockfiles, so removing a dependency
- * outright is a dependency change rather than metadata loss, and reports a
- * value that was there and no longer is. A genuine upstream change — a package
- * that really did drop `libc` in a new version — reads the same way and has to
- * be confirmed by hand against the registry; that is rare and worth the stop.
+ * Compares only entries that are still the SAME ARTIFACT on both sides: same
+ * key, same `version`, same `integrity`. Two cases are therefore not losses,
+ * because in each the metadata belongs to something else:
+ *
+ *   - the package was removed  -> a dependency change, and the diff shows it;
+ *   - the package was upgraded -> the new version's platform support is
+ *     whatever upstream published, and narrowing it is upstream's business.
+ *
+ * Identity is the content hash, NOT `resolved`. An install pointed at a mirror
+ * or an alternate registry rewrites the download URL while fetching identical
+ * bytes, so gating on the URL would skip every entry such an install touched —
+ * reopening the exact hole this check exists to close, for precisely the kind
+ * of unusual install that is most likely to mangle the lockfile. `integrity`
+ * is compared only when both sides carry one; 292 of the 293 entries here do,
+ * the exception being the root entry, which has no platform fields to lose.
+ * When either side lacks it the entry is compared rather than skipped, because
+ * the safe direction is to look.
+ *
+ * The first draft of this compared by key alone. That made a legitimate
+ * upgrade — a package that genuinely drops `musl` in its next major —
+ * unfixable: the check would fail, `npm run build` must pass before every
+ * commit, and there was no override. Gating on the artifact removes the false
+ * positive without weakening the real signal, because the install this exists
+ * to catch deleted 102 `libc` blocks while touching no version at all.
  *
  * @returns {{pkg: string, field: string, missing: string[]}[]} empty when clean
  */
+/* Same artifact on both sides: same version, and — when both carry one — the
+   same content hash. Shared by the loss scan and the coverage count so the two
+   cannot drift apart and disagree about what was compared. */
+const isSameArtifact = (was, now) =>
+  was.version === now.version &&
+  !(was.integrity && now.integrity && was.integrity !== now.integrity);
+
 export function lockfileMetadataLoss(before, after) {
   const losses = [];
   const a = before?.packages ?? {};
@@ -84,6 +110,7 @@ export function lockfileMetadataLoss(before, after) {
   for (const [pkg, was] of Object.entries(a)) {
     const now = b[pkg];
     if (!now) continue;
+    if (!isSameArtifact(was, now)) continue;
     for (const field of PLATFORM_FIELDS) {
       if (!Array.isArray(was[field])) continue;
       const kept = Array.isArray(now[field]) ? now[field] : [];
@@ -92,6 +119,86 @@ export function lockfileMetadataLoss(before, after) {
     }
   }
   return losses;
+}
+
+/**
+ * How much of the baseline the loss scan actually looked at.
+ *
+ * lockfileMetadataLoss reports what it FOUND, which says nothing about what it
+ * COVERED. A working lockfile emptied to `{"packages":{}}`, or truncated to a
+ * handful of unrelated entries, produces no losses at all — every baseline
+ * entry is simply absent and skipped — and the check announced success. The
+ * message it printed, "keeps its platform metadata on 0 entries", counted the
+ * working file rather than the comparison, so a lockfile with nothing left in
+ * it read as verified.
+ *
+ * `shared` is the honest denominator: baseline entries that still exist by key.
+ * `compared` is those that also survived the artifact gate, and is expected to
+ * fall during a real dependency upgrade — that is a wholesale version change,
+ * not a truncated file, which is why the caller gates on `shared` and merely
+ * reports `compared`.
+ *
+ * @returns {{baselineEntries: number, shared: number, compared: number}}
+ */
+export function lockfileCoverage(baseline, working) {
+  const a = baseline?.packages ?? {};
+  const b = working?.packages ?? {};
+  let shared = 0;
+  let compared = 0;
+  for (const [pkg, was] of Object.entries(a)) {
+    const now = b[pkg];
+    if (!now) continue;
+    shared++;
+    if (isSameArtifact(was, now)) compared++;
+  }
+  return { baselineEntries: Object.keys(a).length, shared, compared };
+}
+
+/**
+ * A lockfile npm would recognise: an object carrying a `packages` map.
+ *
+ * Guards against JSON that parses but is structurally wrong. `[]`, `{}` and
+ * `{"packages": []}` all satisfy `typeof x === "object"`, and an earlier
+ * version of the state check let all three through as comparable. The
+ * comparison then found no losses in a map with no entries and reported that
+ * metadata was retained "on 0 entries" — a corrupt working copy passing as
+ * verified, which is the exact case the state check was added to fail.
+ */
+const isLockfileShape = (value) =>
+  !!value && typeof value === "object" && !Array.isArray(value) &&
+  !!value.packages && typeof value.packages === "object" && !Array.isArray(value.packages);
+
+/**
+ * What the tripwire can actually do with the two lockfiles it was handed.
+ *
+ * Split out so every branch is covered by a fixture rather than only by I/O.
+ * The first version pushed a *note* whenever either side was unavailable — and
+ * notes print with an `ok` prefix and exit 0, so a malformed lockfile read as
+ * a pass while the comment directly above it claimed the opposite.
+ *
+ * Three states, and they are deliberately not treated alike:
+ *
+ *   - `unreadable-working`  -> FAIL. The lockfile in the tree being built is
+ *     missing or corrupt. That is a defect wherever the build is running.
+ *   - `no-git`              -> SKIP. There is genuinely no baseline to compare
+ *     against, and this is a supported way to build.
+ *   - `unreadable-baseline` -> FAIL. Git works but HEAD has no usable
+ *     package-lock.json, which for this repo means it stopped being committed.
+ *
+ * The `no-git` case exists because the previous revision of this file claimed
+ * there was no such case — that astro.config.mjs needs `git log` for sitemap
+ * lastmod, so a git-less build dies earlier anyway. That was wrong.
+ * tools/git-lastmod.mjs catches unavailable git and resolves every date to
+ * undefined by design, so builds from `git archive` exports do work, and
+ * failing here broke one that had otherwise passed every check.
+ *
+ * @returns {"comparable"|"unreadable-working"|"no-git"|"unreadable-baseline"}
+ */
+export function lockfileCheckState(baseline, working, gitAvailable = true) {
+  if (!isLockfileShape(working)) return "unreadable-working";
+  if (!gitAvailable) return "no-git";
+  if (!isLockfileShape(baseline)) return "unreadable-baseline";
+  return "comparable";
 }
 
 /* Built output that is not text. Everything else under dist/ gets read as
