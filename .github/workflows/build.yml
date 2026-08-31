@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # NOT the default (depth 1). tools/git-lastmod.mjs gives each page a
           # sitemap lastmod by walking `git log` for the commit that last
@@ -38,7 +38,7 @@ jobs:
           # trivially satisfy. Silent wrong output, so: full history.
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           # Pinned, not a floating `24.x`. A floating track is what broke the
           # 2026-08-29 deploy: hPanel's `22.x` moved to v22.18.0 and missed
