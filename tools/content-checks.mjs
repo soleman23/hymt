@@ -945,8 +945,14 @@ export function htaccessGaps(text, productionSite) {
      two <IfModule mod_headers.c> blocks, so merely asserting one exists would
      miss a typo in the other. */
   const wrongModule = (d, expected) => {
-    const mod = d.scope.map((c) => /^IfModule\s+(\S+)/i.exec(c)?.[1]).filter(Boolean).pop();
-    return mod && mod.toLowerCase() !== expected ? mod : null;
+    const mod = d.scope.map((c) => /^IfModule\s+!?(\S+)/i.exec(c)?.[1]).filter(Boolean).pop();
+    if (!mod) return null;
+    /* Apache accepts either spelling — the source file or the module
+       identifier — so `<IfModule headers_module>` guards the same module as
+       `<IfModule mod_headers.c>`. Comparing against the filename alone failed
+       a valid config with six gaps at once. */
+    const base = expected.replace(/^mod_/, "").replace(/\.c$/, "");
+    return [`mod_${base}.c`, `${base}_module`].includes(mod.toLowerCase()) ? null : mod;
   };
 
   /* One reader for "every live line matching this directive", carrying the
@@ -964,11 +970,33 @@ export function htaccessGaps(text, productionSite) {
   /* Every way Apache can arm OR disarm an env var, not just SetEnv*:
      mod_rewrite's [E=] flag and BrowserMatch* also set one, and UnsetEnv
      clears it — which makes the header inert while looking identical to
-     shipped in any grep of the file. */
+     shipped in any grep of the file.
+
+     The OPERANDS are parsed rather than the name matched anywhere on the
+     line, because the same name in another position does not arm anything:
+     `SetEnvIf IS_STAGING "^1$" CACHE_BYPASS=1` reads it as the input
+     attribute and assigns something else, and a name inside a match pattern
+     is just text. Matching loosely reported those as a second arming
+     directive and failed the build on a correct file. */
+  const argv = (line) => line.match(/"[^"]*"|\S+/g) ?? [];
+  const assigns = (line, name) => {
+    const t = argv(line);
+    const head = (t[0] ?? "").toLowerCase();
+    const isName = (arg) => arg.replace(/^!/, "").split("=")[0] === name;
+    if (head.startsWith("setenvif")) return t.slice(3).some(isName);
+    if (head.startsWith("browsermatch")) return t.slice(2).some(isName);
+    if (head === "setenv") return isName(t[1] ?? "");
+    if (head === "unsetenv") return t.slice(1).some(isName);
+    if (head === "rewriterule") {
+      const flags = /\[([^\]]*)\]\s*$/.exec(line)?.[1] ?? "";
+      return flags.split(",").some((f) => /^E=/i.test(f.trim()) && /^E=!?([^:]+)/i.exec(f.trim())?.[1].replace(/^!/, "") === name);
+    }
+    return false;
+  };
   const envLines = (name) =>
-    directiveLines(new RegExp(
-      `^[ \\t]*(?:(?:SetEnv\\w*|UnsetEnv|BrowserMatch\\w*)\\b[^\\n]*\\b${name}\\b` +
-      `|RewriteRule\\b[^\\n]*\\[[^\\]]*\\bE=!?${name}\\b)`, "i"));
+    liveLines
+      .map((textLine, i) => ({ text: textLine, scope: scopes[i] }))
+      .filter((d) => assigns(d.text, name));
 
   /* Same-domain Wix migration paths. These are deliberately absolute and
      precede the structural host/protocol rules in public/.htaccess so an old
@@ -1024,7 +1052,18 @@ export function htaccessGaps(text, productionSite) {
   } else if (robotsLines.length > 1) {
     out.push(`${robotsLines.length} X-Robots-Tag directives — \`Header set\` keeps only the last, so an appended one silently replaces the staging noindex. Keep exactly one`);
   } else {
-    const [, , , rest] = robotsLines[0].m;
+    const [, condition, action, rest] = robotsLines[0].m;
+    /* `always set` in full. The pre-rewrite regex required both and this
+       block dropped them: `Header always edit X-Robots-Tag "…"` takes a match
+       pattern and a replacement rather than creating a header, so the noindex
+       is never sent and the preview host stays indexable — and without
+       `always` the header rides only the onsuccess table. */
+    if (condition?.toLowerCase() !== "always") {
+      out.push("the staging X-Robots-Tag is set without `always` — it then rides only the onsuccess table and is dropped on the redirects the preview host serves");
+    }
+    if (action.toLowerCase() !== "set") {
+      out.push(`the staging X-Robots-Tag uses \`${action}\`, not \`set\` — edit/add/append/merge do not create the noindex header, so the preview host stays indexable`);
+    }
     const narrowed = narrowedBy(robotsLines[0]);
     if (narrowed) out.push(`the staging X-Robots-Tag is set inside <${narrowed}> — the rest of the preview host stays indexable`);
     const badModule = wrongModule(robotsLines[0], "mod_headers.c");
@@ -1156,15 +1195,33 @@ export function htaccessGaps(text, productionSite) {
       if (!matcher) {
         out.push(`IS_PROD host matcher "${canonical[2]}" is not a valid regular expression, so Apache arms IS_PROD for nothing`);
       } else {
-        const mustArm = [bareHost, `www.${bareHost}`, `${bareHost}:443`];
-        const mustNotArm = [`${bareHost}.evil.example`, `not${bareHost}`, `${bareHost}.hostingersite.com`, "hymt.hostingersite.com"];
-        const missed = mustArm.filter((h) => !matcher.test(h));
-        const admitted = mustNotArm.filter((h) => matcher.test(h));
-        if (missed.length) {
-          out.push(`IS_PROD host matcher "${canonical[2]}" does not arm on ${missed.join(", ")} — HSTS would be missing from the canonical host (#79)`);
-        }
-        if (admitted.length) {
-          out.push(`IS_PROD host matcher "${canonical[2]}" also arms on ${admitted.join(", ")} — HSTS would pin hosts this repo holds no certificate for (#79)`);
+        const escaped = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const expected = new RegExp(`^(www\\.)?${escaped}(?::[0-9]+)?$`, "i");
+        /* Fixed probes alone cannot establish the accepted set — appending
+           `|^preview\.example$` widens the matcher to a host no blacklist
+           would have guessed. So the candidate's OWN text is harvested for
+           hostname-shaped literals and tested too: a matcher can only admit a
+           host it names, and every name it carries is compared against the
+           host set `site` implies. */
+        const harvested = canonical[2]
+          .split(/[|()[\]?*+{}^$]/)
+          .map((piece) => piece.replace(/\\(.)/g, "$1").trim())
+          .filter((piece) => /^[a-z0-9.-]{3,}$/i.test(piece));
+        const sample = [...new Set([
+          bareHost, `www.${bareHost}`, `${bareHost}:443`,
+          `${bareHost}.evil.example`, `not${bareHost}`, `${bareHost}.hostingersite.com`,
+          "hymt.hostingersite.com", ...harvested,
+        ])];
+        const missed = sample.filter((h) => expected.test(h) && !matcher.test(h));
+        const admitted = sample.filter((h) => !expected.test(h) && matcher.test(h));
+        /* One matcher, one gap: a matcher aimed at the wrong domain both
+           misses the right hosts and admits a wrong one, and reporting that
+           twice makes one defect look like two. */
+        if (missed.length || admitted.length) {
+          const parts = [];
+          if (missed.length) parts.push(`does not arm on ${missed.join(", ")}, so HSTS would be missing from the canonical host`);
+          if (admitted.length) parts.push(`arms on ${admitted.join(", ")}, which this repo holds no certificate for`);
+          out.push(`IS_PROD host matcher "${canonical[2]}" ${parts.join("; and it ")} — it must arm exactly the apex and www of astro.config.mjs site "${productionSite}" (#79)`);
         }
       }
     }
@@ -1213,19 +1270,37 @@ export function htaccessGaps(text, productionSite) {
       if (!/(?:^|,)R=301(?:,|$)/i.test(canonicalPair.flags) || !/(?:^|,)L(?:,|$)/i.test(canonicalPair.flags)) {
         out.push(`the canonical-host rewrite must be a terminating 301 (found [${canonicalPair.flags}]) — a 302 leaks link equity on the one rule carrying the site's whole canonical-host decision`);
       }
-      /* The condition decides whether the redirect fires at all, so checking
-         only the destination validated half the rule: point the cond at a
-         host nobody uses and the rewrite silently never runs, which is the
-         exact "apex and www would both serve" this check reports on. */
+      /* EVERY condition decides whether the rule fires, not just the host
+         one, so the whole block is evaluated against representative requests.
+         Reading only the host cond validated half the rule twice over: point
+         it at a host nobody uses and the rewrite never runs, or AND a second
+         cond narrowing it to one path and it stops running for everything
+         else. Evaluating rather than banning extra conds is what keeps a
+         legitimate exclusion like `!^/health$` green. */
       const otherHost = configuredHost.startsWith("www.") ? configuredHost.slice(4) : `www.${configuredHost}`;
-      const hostCond = canonicalPair.conds.find((c) => /%\{HTTP_HOST\}/i.test(c[1]));
-      const negated = hostCond[2].startsWith("!");
-      let condRe = null;
-      try { condRe = new RegExp(hostCond[2].replace(/^!/, ""), "i"); } catch { /* reported below */ }
-      if (!condRe) {
-        out.push(`the canonical-host rewrite's condition (${hostCond[2]}) is not a valid regular expression`);
-      } else if (negated ? condRe.test(otherHost) : !condRe.test(otherHost)) {
-        out.push(`the canonical-host rewrite's condition (${hostCond[2]}) does not match "${otherHost}", so that host is never redirected — apex and www would both serve, splitting every URL in two`);
+      const PROBES = ["/", "/destinations/", "/travel-journal/a-post/"];
+      /* true = holds, false = blocks the redirect, null = unparseable.
+         A variable this cannot evaluate is assumed to hold, so an unknown
+         condition never invents a failure. */
+      const holds = (cond, uri) => {
+        const negated = cond[2].startsWith("!");
+        let re;
+        try { re = new RegExp(cond[2].replace(/^!/, ""), "i"); } catch { return null; }
+        let subject;
+        if (/%\{HTTP_HOST\}/i.test(cond[1])) subject = otherHost;
+        else if (/%\{REQUEST_URI\}/i.test(cond[1])) subject = uri;
+        else return true;
+        return negated ? !re.test(subject) : re.test(subject);
+      };
+      const broken = canonicalPair.conds.find((c) => holds(c, PROBES[0]) === null);
+      const never = canonicalPair.conds.find((c) => PROBES.every((uri) => holds(c, uri) === false));
+      const narrows = canonicalPair.conds.find((c) => c !== never && PROBES.some((uri) => holds(c, uri) === false));
+      if (broken) {
+        out.push(`the canonical-host rewrite's condition (${broken[1]} ${broken[2]}) is not a valid regular expression`);
+      } else if (never) {
+        out.push(`the canonical-host rewrite's condition (${never[1]} ${never[2]}) never matches "${otherHost}" on a normal request, so that host is never redirected — apex and www would both serve, splitting every URL in two`);
+      } else if (narrows) {
+        out.push(`the canonical-host rewrite is narrowed by \`RewriteCond ${narrows[1]} ${narrows[2]}\`, so "${otherHost}" keeps serving the URLs it excludes — those would be split across both hosts`);
       }
     }
   }

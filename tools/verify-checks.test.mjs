@@ -1616,6 +1616,58 @@ t("htaccess: and that failure names the arming line, not just the missing site",
                                `SetEnvIfNoCase Host . IS_PROD=1`), "")
     .some((g) => g.includes("is armed by a line that is not")), true);
 
+/* ── Codex review on #130: five shapes the first pass still let through ──
+   Two of these were regressions introduced by rewriting the staging block:
+   the pre-rewrite regex required `always set` in full and the rewrite kept
+   neither, so a directive that never creates the header read as shipped. */
+t("htaccess: `Header always edit X-Robots-Tag` does not create the noindex",
+  htaccessGaps(HT_GOOD.replace("Header always set X-Robots-Tag",
+                               "Header always edit X-Robots-Tag")).length, 1);
+
+t("htaccess: a staging X-Robots-Tag without `always` is caught",
+  htaccessGaps(HT_GOOD.replace("Header always set X-Robots-Tag",
+                               "Header set X-Robots-Tag")).length, 1);
+
+/* Allowing a second RewriteCond fixed a false failure and opened this: a cond
+   that narrows the canonical rule to one path leaves apex and www both
+   serving everything else. The whole block is evaluated now, so a
+   CONSTRAINING cond fails while an EXCLUDING one stays green. */
+t("htaccess: a second RewriteCond narrowing the canonical rule to one path is caught",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$ [NC]\n`,
+                               `^hymtravel\\.com$ [NC]\n  RewriteCond %{REQUEST_URI} ^/never$\n`)).length, 1);
+
+t("htaccess: a cond excluding one path from the canonical rule stays green",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$ [NC]\n`,
+                               `^hymtravel\\.com$ [NC]\n  RewriteCond %{REQUEST_URI} !^/health$\n`)).length, 0);
+
+/* Apache accepts the module identifier as well as the source filename, so
+   this is a valid guard for the same module and must not fail the build. */
+t("htaccess: `<IfModule headers_module>` is a valid spelling and stays green",
+  htaccessGaps(HT_GOOD.replace(/<IfModule mod_headers\.c>/g, "<IfModule headers_module>")).length, 0);
+
+t("htaccess: `<IfModule setenvif_module>` is likewise accepted",
+  htaccessGaps(HT_GOOD.replace("<IfModule mod_setenvif.c>", "<IfModule setenvif_module>")).length, 0);
+
+/* A fixed list of probe hosts cannot establish the accepted set — an
+   alternation names a host no blacklist would have guessed. The matcher's own
+   literals are harvested and tested, so widening it is caught by its own text. */
+t("htaccess: an IS_PROD matcher widened by alternation is caught",
+  htaccessGaps(HT_GOOD.replace(`(?::[0-9]+)?$"`, `(?::[0-9]+)?$|^preview\\.example$"`)).length, 1);
+
+t("htaccess: and that failure names the host the alternation added",
+  htaccessGaps(HT_GOOD.replace(`(?::[0-9]+)?$"`, `(?::[0-9]+)?$|^preview\\.example$"`))[0]
+    .includes("preview.example"), true);
+
+/* The variable name in an input attribute or a match pattern arms nothing;
+   only an assignment operand does. Matching the name anywhere on the line
+   reported this correct directive as a second arming line. */
+t("htaccess: `SetEnvIf IS_STAGING …` reading the var as input stays green",
+  htaccessGaps(HT_GOOD.replace(`SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1`,
+    `SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1\n  SetEnvIf IS_STAGING "^1$" CACHE_BYPASS=1`)).length, 0);
+
+t("htaccess: a var named only inside a match pattern arms nothing",
+  htaccessGaps(HT_GOOD + `\n  SetEnvIf Request_URI "IS_PROD" DEBUG=1\n`).length, 0);
+
 /* An empty file — the "someone renamed public/.htaccess" case. Exactly 13:
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the canonical-host rewrite, the CSP once, and the cache
