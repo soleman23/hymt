@@ -24,7 +24,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
-  nestedCardAnchors,
+  configuredSite, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
@@ -350,8 +350,7 @@ if (UPDATE) {
    so it enforces itself on every future page instead of depending on anyone
    remembering. The canonical host is read from astro.config.mjs `site` —
    the single place the production domain is written. */
-const SITE = (await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"))
-  .match(/site:\s*'([^']+)'/)?.[1]?.replace(/\/$/, "") ?? "";
+const SITE = configuredSite(await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"));
 if (!SITE) fail("canonical-host", "could not read `site` from astro.config.mjs");
 
 /* sitemap-parity: the generated sitemap must exist, cover every indexable
