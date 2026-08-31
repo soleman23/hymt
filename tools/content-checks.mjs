@@ -889,15 +889,86 @@ export const CSP_DIRECTIVES = [
  * "" and failed canonical-host on every build.
  */
 export function configuredSite(astroConfigSource) {
-  return astroConfigSource.match(/(?:^|[{,])\s*site\s*:\s*['"]([^'"]+)['"]/m)?.[1]?.replace(/\/$/, "") ?? "";
+  /* Comments come out first. The property-boundary anchor is right, but it
+     reads "boundary then WHITESPACE then site:", so a block comment between
+     the two — `defineConfig({ /* prod *\/ site: '…' })` — made the real key
+     invisible and yielded "", which turns four .htaccess guards below into
+     no-ops as well as failing canonical-host. Stripping also stops a
+     commented-out previous value from winning over the live one. Line
+     comments are only stripped when they START the line, so the `//` inside
+     an https:// value is left alone.
+
+     String(… ?? "") because both readers treat "" as the failure signal and
+     one of them may hand us a readFile that resolved to something else; the
+     old shape threw a TypeError instead. */
+  const src = String(astroConfigSource ?? "")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/^[ \t]*\/\/.*$/gm, "");
+  return src.match(/(?:^|[{,])\s*site\s*:\s*['"]([^'"]+)['"]/m)?.[1]?.replace(/\/$/, "") ?? "";
 }
 
 export function htaccessGaps(text, productionSite) {
-  const live = text
-    .split(/\r?\n/)
-    .filter((l) => !/^\s*#/.test(l))
-    .join("\n");
+  /* Apache joins a backslash-continued line with the next BEFORE it parses
+     anything, so this has to happen first: otherwise `Header always set \\`
+     with the header name on the following line carries neither `Header` nor
+     the name on any single line, and every line-anchored check below — the
+     duplicate counts included — simply does not see the directive. */
+  const joined = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const prev = joined.length - 1;
+    if (prev >= 0 && /\\$/.test(joined[prev])) joined[prev] = joined[prev].replace(/\\$/, " ") + raw.trim();
+    else joined.push(raw);
+  }
+  const liveLines = joined.filter((l) => !/^\s*#/.test(l));
+  const live = liveLines.join("\n");
   const out = [];
+
+  /* Which Apache container each live line sits in. Two failure modes need
+     this and neither shows up in a grep: a directive moved into a <FilesMatch>
+     runs for that subset only, and a MISSPELLED <IfModule> silently disables
+     everything inside it. Both leave the directive looking shipped. */
+  const scopes = [];
+  {
+    const stack = [];
+    for (const l of liveLines) {
+      if (/^\s*<\//.test(l)) stack.pop();
+      scopes.push(stack.slice());
+      const open = /^\s*<(\w+)([^>]*)>/.exec(l);
+      if (open) stack.push(`${open[1]}${open[2].trim() ? " " + open[2].trim() : ""}`);
+    }
+  }
+  const NARROWING = /^(?:Files|Location|Directory)(?:Match)?\b/i;
+  const narrowedBy = (d) => d.scope.find((c) => NARROWING.test(c));
+  /* The INNERMOST <IfModule> a directive sits in, when it is not the module
+     that provides the directive. A misspelled module name is not an error to
+     Apache — it just makes everything inside unreachable — and the file has
+     two <IfModule mod_headers.c> blocks, so merely asserting one exists would
+     miss a typo in the other. */
+  const wrongModule = (d, expected) => {
+    const mod = d.scope.map((c) => /^IfModule\s+(\S+)/i.exec(c)?.[1]).filter(Boolean).pop();
+    return mod && mod.toLowerCase() !== expected ? mod : null;
+  };
+
+  /* One reader for "every live line matching this directive", carrying the
+     scope of each. Counting is not optional: `Header set` is last-wins and
+     Apache evaluates every env directive, so an APPENDED line is the one that
+     decides what ships — reading the first with .exec checks a directive the
+     server discards. Every check below goes through here so that reading
+     cannot creep back in. */
+  const directiveLines = (re) =>
+    liveLines
+      .map((textLine, i) => ({ text: textLine, scope: scopes[i], m: re.exec(textLine) }))
+      .filter((d) => d.m);
+  const headerLines = (name) =>
+    directiveLines(new RegExp(`^[ \\t]*Header\\s+(?:(always|onsuccess)\\s+)?(\\w+)\\s+${name}(?![-\\w])([^\\n]*)`, "i"));
+  /* Every way Apache can arm OR disarm an env var, not just SetEnv*:
+     mod_rewrite's [E=] flag and BrowserMatch* also set one, and UnsetEnv
+     clears it — which makes the header inert while looking identical to
+     shipped in any grep of the file. */
+  const envLines = (name) =>
+    directiveLines(new RegExp(
+      `^[ \\t]*(?:(?:SetEnv\\w*|UnsetEnv|BrowserMatch\\w*)\\b[^\\n]*\\b${name}\\b` +
+      `|RewriteRule\\b[^\\n]*\\[[^\\]]*\\bE=!?${name}\\b)`, "i"));
 
   /* Same-domain Wix migration paths. These are deliberately absolute and
      precede the structural host/protocol rules in public/.htaccess so an old
@@ -921,19 +992,56 @@ export function htaccessGaps(text, productionSite) {
     }
   }
 
+  /* Counted, not read first-match: `Header set` is last-wins, so an appended
+     `Header set X-Frame-Options "ALLOWALL"` is the one that ships while a
+     .exec of the first line still reports SAMEORIGIN. */
   for (const [name, value] of HTACCESS_SECURITY_HEADERS) {
-    const re = new RegExp(`^\\s*Header\\s+(?:always\\s+)?set\\s+${name}\\s+"([^"]*)"`, "mi");
-    const m = re.exec(live);
-    if (!m) out.push(`${name} header is missing`);
-    else if (m[1] !== value) out.push(`${name} is "${m[1]}", expected "${value}"`);
+    const lines = headerLines(name);
+    if (lines.length === 0) out.push(`${name} header is missing`);
+    else if (lines.length > 1) {
+      out.push(`${lines.length} ${name} directives — \`Header set\` keeps only the last, so the value checked above is not the one that ships. Keep exactly one`);
+    } else {
+      const [, , action, rest] = lines[0].m;
+      const narrowed = narrowedBy(lines[0]);
+      if (narrowed) out.push(`${name} is set inside <${narrowed}> — it then ships for that subset of responses only`);
+      const badModule = wrongModule(lines[0], "mod_headers.c");
+      if (badModule) out.push(`${name} is inside <IfModule ${badModule}>, which does not provide Header — the directive never runs`);
+      if (action.toLowerCase() !== "set") out.push(`${name} uses \`${action}\`, not \`set\` — add/append/merge/setifempty stack a second value instead of replacing one`);
+      const value_ = /^\s+"([^"]*)"/.exec(rest);
+      if (!value_) out.push(`${name} has no quoted value (found "${rest.trim() || "nothing"}")`);
+      else if (value_[1] !== value) out.push(`${name} is "${value_[1]}", expected "${value}"`);
+    }
   }
 
-  /* The staging noindex is two lines that only work together. */
-  const robots = /^\s*Header\s+always\s+set\s+X-Robots-Tag\s+"([^"]*)"\s+env=IS_STAGING/mi.exec(live);
-  if (!robots) out.push("staging X-Robots-Tag header (env=IS_STAGING) is missing — the preview host would be indexable");
-  else if (!/noindex/.test(robots[1])) out.push(`staging X-Robots-Tag is "${robots[1]}", which does not contain noindex`);
-  if (!/^\s*SetEnvIf\s+Host\s+"[^"]*hostingersite[^"]*"\s+IS_STAGING=1/mi.test(live)) {
+  /* The staging noindex is two lines that only work together, and BOTH are
+     counted. An appended X-Robots-Tag replaces the noindex and the preview
+     host becomes indexable; an appended line arming IS_STAGING puts
+     `noindex, nofollow` on PRODUCTION and deindexes the whole site. Neither
+     was visible to a first-match .exec or to a bare .test. */
+  const robotsLines = headerLines("X-Robots-Tag");
+  if (robotsLines.length === 0) {
+    out.push("staging X-Robots-Tag header (env=IS_STAGING) is missing — the preview host would be indexable");
+  } else if (robotsLines.length > 1) {
+    out.push(`${robotsLines.length} X-Robots-Tag directives — \`Header set\` keeps only the last, so an appended one silently replaces the staging noindex. Keep exactly one`);
+  } else {
+    const [, , , rest] = robotsLines[0].m;
+    const narrowed = narrowedBy(robotsLines[0]);
+    if (narrowed) out.push(`the staging X-Robots-Tag is set inside <${narrowed}> — the rest of the preview host stays indexable`);
+    const badModule = wrongModule(robotsLines[0], "mod_headers.c");
+    if (badModule) out.push(`the staging X-Robots-Tag is inside <IfModule ${badModule}>, which does not provide Header — the preview host stays indexable`);
+    const shape = /^\s+"([^"]*)"\s+env=IS_STAGING\s*$/.exec(rest);
+    if (!shape) out.push(`staging X-Robots-Tag is not exactly \`"<value>" env=IS_STAGING\` (found "${rest.trim() || "nothing"}") — unscoped it would noindex production`);
+    else if (!/noindex/.test(shape[1])) out.push(`staging X-Robots-Tag is "${shape[1]}", which does not contain noindex`);
+  }
+  const stagingEnvLines = envLines("IS_STAGING");
+  if (stagingEnvLines.length === 0) {
     out.push("SetEnvIf that arms IS_STAGING is missing — the X-Robots-Tag header is inert without it");
+  } else if (stagingEnvLines.length > 1) {
+    out.push(`${stagingEnvLines.length} directives arm IS_STAGING — Apache evaluates every one, so an extra matcher would put \`noindex, nofollow\` on production and deindex the site. Keep exactly one`);
+  } else if (wrongModule(stagingEnvLines[0], "mod_setenvif.c")) {
+    out.push(`IS_STAGING is armed inside <IfModule ${wrongModule(stagingEnvLines[0], "mod_setenvif.c")}>, which does not provide SetEnvIf — nothing arms it and the preview host stays indexable`);
+  } else if (!/^\s*SetEnvIf\s+Host\s+"[^"]*hostingersite[^"]*"\s+IS_STAGING=1\s*$/i.test(stagingEnvLines[0].text)) {
+    out.push(`IS_STAGING is armed by a line that is not \`SetEnvIf Host "<hostingersite pattern>" IS_STAGING=1\` — an unquoted or wider pattern arms the noindex on production. Found: ${stagingEnvLines[0].text.trim()}`);
   }
 
   /* SEC-4 (#79): HSTS. Like the staging noindex, two lines that only work
@@ -967,14 +1075,27 @@ export function htaccessGaps(text, productionSite) {
      evaluates every SetEnv* directive, so an APPENDED line is the one that
      decides what ships. Anything matching loosely is counted; only the single
      survivor is then required to be exactly the canonical shape. */
-  const hstsLines = [...live.matchAll(/^[ \t]*Header\s+(?:(always|onsuccess)\s+)?(\w+)\s+Strict-Transport-Security\b([^\n]*)/gim)];
+  const hstsLines = headerLines("Strict-Transport-Security");
   if (hstsLines.length === 0) {
     out.push("Strict-Transport-Security header (env=IS_PROD) is missing — HSTS regresses at cutover, because the Wix edge sends it today and Hostinger will not (#79)");
   } else if (hstsLines.length > 1) {
     out.push(`${hstsLines.length} Strict-Transport-Security directives — mod_headers applies every one, so the effective policy is not the scoped line above. Keep exactly one (#79)`);
   } else {
-    const [, condition, action, rest] = hstsLines[0];
-    if (condition !== "always") {
+    const [, condition, action, rest] = hstsLines[0].m;
+    const badModule = wrongModule(hstsLines[0], "mod_headers.c");
+    if (badModule) {
+      out.push(`Strict-Transport-Security is inside <IfModule ${badModule}>, which does not provide Header — the directive never runs (#79)`);
+    }
+    const narrowed = narrowedBy(hstsLines[0]);
+    if (narrowed) {
+      out.push(`Strict-Transport-Security is set inside <${narrowed}> — it then ships for that subset of responses only, so most of the site carries no HSTS at all (#79)`);
+    }
+    /* Lowercased: the regex that captured this carries `i` and mod_headers
+       compares the condition keyword case-insensitively, so `Header ALWAYS
+       set` is correct Apache. Reporting it as missing `always` sends the
+       reader to grep for a keyword that is right there — the same
+       misdirection this branch exists to remove. */
+    if (condition?.toLowerCase() !== "always") {
       /* Present but not `always`: it rides only the onsuccess table, so it is
          dropped on the apex→www and http→https 301s. Saying "missing" here
          sent the reader to grep for a line that is right there. */
@@ -997,28 +1118,55 @@ export function htaccessGaps(text, productionSite) {
     }
   }
 
-  /* Any SetEnv* directive mentioning IS_PROD at all, however it is spelled. */
-  const prodEnvLines = [...live.matchAll(/^[ \t]*SetEnv\w*\b[^\n]*\bIS_PROD\b[^\n]*/gim)];
+  const prodEnvLines = envLines("IS_PROD");
   if (prodEnvLines.length === 0) {
     out.push("SetEnvIf that arms IS_PROD is missing — the Strict-Transport-Security header is inert without it");
   } else if (prodEnvLines.length > 1) {
-    out.push(`${prodEnvLines.length} directives arm IS_PROD — Apache evaluates every one, so any extra matcher silently widens HSTS to hosts this repo holds no certificate for. Keep exactly one (#79)`);
-  } else if (configuredHost) {
-    /* `(www\.)?` unconditionally, whichever spelling `site` carries. Both
-       hosts serve: the apex 301s to www and `Header always set` rides that
-       301, so deriving an apex-only matcher from an apex `site` would drop
-       HSTS from the canonical host. Whether an apex `site` is itself correct
-       is a separate question, answered by the canonical-host check below. */
-    const bareHost = configuredHost.replace(/^www\./, "");
-    const escapedHost = bareHost.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const expectedHost = `^(www\\.)?${escapedHost}(?::[0-9]+)?$`;
-    const canonical = /^[ \t]*(SetEnv\w*)\s+Host\s+"([^"]*)"\s+IS_PROD=1\s*$/.exec(prodEnvLines[0][0]);
+    out.push(`${prodEnvLines.length} directives arm or clear IS_PROD — Apache evaluates every one, so an extra matcher silently widens HSTS to hosts this repo holds no certificate for and an UnsetEnv silently sends it to nobody. Keep exactly one (#79)`);
+  } else {
+    /* Shape and spelling are facts about Apache, not about `site`, so they
+       run whether or not the configured site parsed. Gating them behind
+       configuredHost took four .htaccess guards dark at once on the very
+       input — an unreadable astro.config.mjs — where the file is least
+       likely to have been reviewed. Only the host comparison needs it. */
+    const badModule = /^\s*SetEnvIf/i.test(prodEnvLines[0].text) && wrongModule(prodEnvLines[0], "mod_setenvif.c");
+    if (badModule) {
+      out.push(`IS_PROD is armed inside <IfModule ${badModule}>, which does not provide SetEnvIf — nothing arms it and the Strict-Transport-Security header is sent to nobody (#79)`);
+    }
+    const canonical = /^[ \t]*(SetEnv\w*)\s+Host\s+"([^"]*)"\s+IS_PROD=1\s*$/i.exec(prodEnvLines[0].text);
     if (!canonical) {
-      out.push(`IS_PROD is armed by a line that is not \`SetEnvIfNoCase Host "<pattern>" IS_PROD=1\` — an unquoted pattern or a second assignment on the line changes what it matches. Found: ${prodEnvLines[0][0].trim()}`);
-    } else if (canonical[1] !== "SetEnvIfNoCase") {
+      out.push(`IS_PROD is armed by a line that is not \`SetEnvIfNoCase Host "<pattern>" IS_PROD=1\` — an unquoted pattern, a second assignment on the line, or a non-SetEnv directive changes what it matches. Found: ${prodEnvLines[0].text.trim()}`);
+    } else if (canonical[1].toLowerCase() !== "setenvifnocase") {
+      /* Case-folded: Apache directive names are case-insensitive, so
+         `setenvifnocase` is the correct directive and only the missing
+         NoCase is a defect. */
       out.push(`IS_PROD must use SetEnvIfNoCase, not ${canonical[1]} — HTTP host names are case-insensitive`);
-    } else if (canonical[2] !== expectedHost) {
-      out.push(`IS_PROD host matcher is "${canonical[2]}", expected "${expectedHost}" from astro.config.mjs site "${productionSite}"`);
+    } else if (configuredHost) {
+      /* Test what the matcher ACCEPTS, not how it is spelled. `(:\d+)?` and
+         `(?::[0-9]+)?` describe the same host set, so string equality failed
+         a correct file; and equality never proved the thing that matters,
+         which is that a lookalike host is refused. `(www\.)?` on both sides
+         because both hosts serve — the apex 301s to www and `Header always
+         set` rides that 301, so an apex-only matcher would drop HSTS from
+         the canonical host. Whether an apex `site` is itself right is the
+         canonical-host check's question, below. */
+      const bareHost = configuredHost.replace(/^www\./, "");
+      let matcher = null;
+      try { matcher = new RegExp(canonical[2], "i"); } catch { /* reported below */ }
+      if (!matcher) {
+        out.push(`IS_PROD host matcher "${canonical[2]}" is not a valid regular expression, so Apache arms IS_PROD for nothing`);
+      } else {
+        const mustArm = [bareHost, `www.${bareHost}`, `${bareHost}:443`];
+        const mustNotArm = [`${bareHost}.evil.example`, `not${bareHost}`, `${bareHost}.hostingersite.com`, "hymt.hostingersite.com"];
+        const missed = mustArm.filter((h) => !matcher.test(h));
+        const admitted = mustNotArm.filter((h) => matcher.test(h));
+        if (missed.length) {
+          out.push(`IS_PROD host matcher "${canonical[2]}" does not arm on ${missed.join(", ")} — HSTS would be missing from the canonical host (#79)`);
+        }
+        if (admitted.length) {
+          out.push(`IS_PROD host matcher "${canonical[2]}" also arms on ${admitted.join(", ")} — HSTS would pin hosts this repo holds no certificate for (#79)`);
+        }
+      }
     }
   }
 
@@ -1028,11 +1176,57 @@ export function htaccessGaps(text, productionSite) {
      canonical, og:url and sitemap URL on the site points at a host the server
      immediately redirects away from — on a green build. */
   if (configuredHost) {
-    const hostRedirect = /^[ \t]*RewriteCond\s+%\{HTTP_HOST\}[^\n]*\n[ \t]*RewriteRule\s+\S+\s+https?:\/\/([^\/\s%]+)/mi.exec(live);
-    if (!hostRedirect) {
-      out.push("no canonical-host RewriteCond/RewriteRule pair — apex and www would both serve, splitting every URL in two");
-    } else if (hostRedirect[1].toLowerCase() !== configuredHost) {
-      out.push(`the canonical-host rewrite sends traffic to "${hostRedirect[1]}", but astro.config.mjs site is "${configuredHost}" — every canonical, og:url and sitemap URL would point at a host the server 301s away from`);
+    /* Pair every RewriteRule with the RewriteCond block above it, the way
+       mod_rewrite does: ALL immediately-preceding conds belong to the rule,
+       and blank lines between them are not a separator. Reading one cond and
+       demanding the rule on the physically next line failed a correct file
+       that had a second AND-ed condition or a blank line for readability. */
+    const pairs = [];
+    let conds = [];
+    for (const l of liveLines) {
+      if (/^\s*$/.test(l)) continue;
+      const cond = /^[ \t]*RewriteCond\s+(\S+)\s+(\S+)/i.exec(l);
+      if (cond) { conds.push(cond); continue; }
+      const rule = /^[ \t]*RewriteRule\s+\S+\s+(\S+)(?:\s+\[([^\]]*)\])?/i.exec(l);
+      if (rule) { pairs.push({ conds, target: rule[1], flags: rule[2] ?? "" }); conds = []; continue; }
+      conds = [];
+    }
+    /* Every host-conditional rewrite, then the one that actually targets the
+       configured host — not simply the first %{HTTP_HOST} cond in the file.
+       Hotlink protection and alternate-domain rules are host-conditional too
+       and legitimately sit above this one; judging the first meant naming the
+       wrong rule in the error, and hid the real rule's deletion entirely. */
+    const hostPairs = pairs.filter((p) => p.conds.some((c) => /%\{HTTP_HOST\}/i.test(c[1])));
+    const canonicalPair = hostPairs.find((p) => {
+      const t = /^https?:\/\/([^\/\s%]+)/i.exec(p.target);
+      return t && t[1].toLowerCase() === configuredHost;
+    });
+    if (!canonicalPair) {
+      const named = hostPairs
+        .map((p) => /^https?:\/\/([^\/\s%]+)/i.exec(p.target)?.[1])
+        .filter(Boolean);
+      out.push(`no canonical-host rewrite sending the other host to "${configuredHost}"${named.length ? ` (the host-conditional rules present target ${named.join(", ")})` : ""} — apex and www would both serve, splitting every URL in two`);
+    } else {
+      if (!/^https:\/\//i.test(canonicalPair.target)) {
+        out.push(`the canonical-host rewrite targets ${canonicalPair.target} over plain HTTP — every visitor to the other host pays an extra cleartext hop before the HTTPS rule upgrades them, which is the redirect chain this file's rule ordering exists to avoid`);
+      }
+      if (!/(?:^|,)R=301(?:,|$)/i.test(canonicalPair.flags) || !/(?:^|,)L(?:,|$)/i.test(canonicalPair.flags)) {
+        out.push(`the canonical-host rewrite must be a terminating 301 (found [${canonicalPair.flags}]) — a 302 leaks link equity on the one rule carrying the site's whole canonical-host decision`);
+      }
+      /* The condition decides whether the redirect fires at all, so checking
+         only the destination validated half the rule: point the cond at a
+         host nobody uses and the rewrite silently never runs, which is the
+         exact "apex and www would both serve" this check reports on. */
+      const otherHost = configuredHost.startsWith("www.") ? configuredHost.slice(4) : `www.${configuredHost}`;
+      const hostCond = canonicalPair.conds.find((c) => /%\{HTTP_HOST\}/i.test(c[1]));
+      const negated = hostCond[2].startsWith("!");
+      let condRe = null;
+      try { condRe = new RegExp(hostCond[2].replace(/^!/, ""), "i"); } catch { /* reported below */ }
+      if (!condRe) {
+        out.push(`the canonical-host rewrite's condition (${hostCond[2]}) is not a valid regular expression`);
+      } else if (negated ? condRe.test(otherHost) : !condRe.test(otherHost)) {
+        out.push(`the canonical-host rewrite's condition (${hostCond[2]}) does not match "${otherHost}", so that host is never redirected — apex and www would both serve, splitting every URL in two`);
+      }
     }
   }
 
