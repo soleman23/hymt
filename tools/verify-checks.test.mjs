@@ -1236,13 +1236,15 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
-  RewriteCond %{HTTP_HOST} ^hymtravel\.com$ [NC]
+  RewriteCond %{HTTP_HOST} ^hymtravel\\.com$ [NC]
   RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
 </IfModule>
-<IfModule mod_headers.c>
+<IfModule mod_setenvif.c>
   SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1
-  Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
   SetEnvIfNoCase Host "^(www\\.)?hymtravel\\.com(?::[0-9]+)?$" IS_PROD=1
+</IfModule>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
   Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
@@ -1370,9 +1372,11 @@ t("htaccess: raising max-age in the .htaccess alone is caught",
   htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=31536000; includeSubDomains"`)).length, 1);
 
 /* ── The APPENDED shapes, which first-match-only reading let through ──
-   Every one of these returned zero gaps before matchAll: `Header set` is
-   last-wins and Apache evaluates every SetEnvIf, so a second line is the one
-   that decides what ships. Deleting a line was covered; adding one was not. */
+   These two are the genuine zero-gap holes: `Header set` is last-wins and
+   Apache evaluates every SetEnvIf, so a second line is the one that decides
+   what ships. Deleting a line was covered; adding one was not. Both reach
+   the duplicate-COUNT branch, which is the mechanism being pinned here —
+   the shape of the appended line is deliberately irrelevant to them. */
 t("htaccess: a second, unscoped HSTS header is caught",
   htaccessGaps(HT_GOOD +
     `\n  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"\n`).length, 1);
@@ -1399,12 +1403,14 @@ t("htaccess: and that failure names `always` instead of saying it is missing",
                                "Header set Strict-Transport-Security"))[0].includes("without `always`"), true);
 
 /* ── Directive forms that a `set`-only, quoted-only reading missed ──
-   Every one of these returned ZERO gaps before. mod_headers has
-   add/append/merge/setifempty besides set, Apache accepts an unquoted
-   SetEnvIf pattern and several assignments per line, and `env=` takes the
-   whole token — so each is a live way to ship the thing being guarded
-   against while the build stays green. */
-t("htaccess: an appended `Header always add` HSTS is caught",
+   mod_headers has add/append/merge/setifempty besides set, Apache accepts an
+   unquoted SetEnvIf pattern and several assignments per line, and `env=`
+   takes the whole token. Not all of these were zero-gap before: the
+   single-line ones (`add`, `setifempty`, the unquoted or double-assigned
+   arming line) already failed, and what changed is that the message now
+   names the real defect instead of claiming the directive is missing. The
+   env=IS_PROD tail anchor is the one that was genuinely unguarded. */
+t("htaccess: a second HSTS line is caught by COUNT whatever action it uses",
   htaccessGaps(HT_GOOD +
     `\n  Header always add Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"\n`).length, 1);
 
@@ -1416,8 +1422,14 @@ t("htaccess: `setifempty` is refused the same way",
   htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
                                "Header always setifempty Strict-Transport-Security")).length, 1);
 
-t("htaccess: an appended UNQUOTED SetEnvIf arming IS_PROD is caught",
+t("htaccess: a second arming line is caught by COUNT whatever its shape",
   htaccessGaps(HT_GOOD + `\n  SetEnvIfNoCase Host . IS_PROD=1\n`).length, 1);
+
+/* …and it is the count that catches it, not the quoting — this is the
+   distinction the three "appended" fixtures above pin. The shape check is
+   proven separately by its single-line siblings below. */
+t("htaccess: and a second arming line reports the count, not the shape",
+  htaccessGaps(HT_GOOD + `\n  SetEnvIfNoCase Host . IS_PROD=1\n`)[0].includes("directives arm or clear IS_PROD"), true);
 
 t("htaccess: the only arming line, unquoted, is caught",
   htaccessGaps(HT_GOOD.replace(/SetEnvIfNoCase Host "[^"]*" IS_PROD=1/,
@@ -1426,8 +1438,13 @@ t("htaccess: the only arming line, unquoted, is caught",
 t("htaccess: a second assignment on the arming line is caught",
   htaccessGaps(HT_GOOD.replace("IS_PROD=1", "FOO=1 IS_PROD=1")).length, 1);
 
-t("htaccess: a plain `SetEnv IS_PROD 1`, which arms every host, is caught",
+t("htaccess: a bare `SetEnv IS_PROD 1` counts as an arming directive",
   htaccessGaps(HT_GOOD + `\n  SetEnv IS_PROD 1\n`).length, 1);
+
+/* The lone-line form, which DOES reach the shape check rather than the count. */
+t("htaccess: a lone bare `SetEnv IS_PROD 1` is refused on shape",
+  htaccessGaps(HT_GOOD.replace(/^\s*SetEnvIfNoCase Host "\^\(www.*IS_PROD=1$/m,
+                               "  SetEnv IS_PROD 1"))[0].includes("is armed by a line that is not"), true);
 
 /* `env=` takes the whole token, so IS_PROD.EXTRA is a DIFFERENT variable that
    nothing arms — production silently receives no HSTS. */
@@ -1472,6 +1489,185 @@ t("htaccess: one of each CSP name is not this check's failure to report",
     `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"\n`).length, 0);
 
 
+/* ── The staging pair, counted the same way as the production one ──
+   These two are strictly worse than the IS_PROD widening: an extra arming
+   line puts `noindex, nofollow` on www.hymtravel.com and deindexes the whole
+   site, and an appended X-Robots-Tag makes the preview host indexable, which
+   is the one thing this block exists to prevent. A bare .test could not see
+   either. */
+t("htaccess: an appended SetEnvIf arming IS_STAGING on production is caught",
+  htaccessGaps(HT_GOOD + `\n  SetEnvIf Host "." IS_STAGING=1\n`).length, 1);
+
+t("htaccess: an appended X-Robots-Tag replacing the staging noindex is caught",
+  htaccessGaps(HT_GOOD + `\n  Header always set X-Robots-Tag "index, follow" env=IS_STAGING\n`).length, 1);
+
+t("htaccess: a lone IS_STAGING matcher widened off the preview host is caught",
+  htaccessGaps(HT_GOOD.replace(`SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1`,
+                               `SetEnvIf Host "." IS_STAGING=1`)).length, 1);
+
+/* ── The four security headers, counted for the same last-wins reason ── */
+t("htaccess: an appended security header with a dangerous value is caught",
+  htaccessGaps(HT_GOOD + `\n  Header set X-Frame-Options "ALLOWALL"\n`).length, 1);
+
+t("htaccess: a security header using `add` instead of `set` is caught",
+  htaccessGaps(HT_GOOD.replace(`Header set X-Frame-Options`, `Header add X-Frame-Options`)).length, 1);
+
+/* ── Env arming beyond SetEnv*: mod_rewrite's [E=], BrowserMatch*, UnsetEnv ──
+   The first two arm IS_PROD on every host, so HSTS ships on the preview
+   domain. UnsetEnv is the mirror: it DISARMS it, so the header is sent to
+   nobody while every grep for it still succeeds. */
+t("htaccess: `UnsetEnv IS_PROD`, which makes HSTS inert, is caught",
+  htaccessGaps(HT_GOOD + `\n  UnsetEnv IS_PROD\n`).length, 1);
+
+t("htaccess: mod_rewrite's [E=IS_PROD:1] arming every host is caught",
+  htaccessGaps(HT_GOOD + `\n  RewriteRule ^ - [E=IS_PROD:1]\n`).length, 1);
+
+t("htaccess: BrowserMatchNoCase arming IS_PROD is caught",
+  htaccessGaps(HT_GOOD + `\n  BrowserMatchNoCase . IS_PROD=1\n`).length, 1);
+
+/* ── The canonical-host rule, read as a whole rather than half of it ──
+   The condition decides whether the redirect fires at all, and the flags
+   decide whether it is permanent. Checking only the destination host left
+   both open on the one rule carrying the site's canonical-host decision. */
+t("htaccess: a canonical-host condition matching no real host is caught",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$`, `^retired\\.example$`)).length, 1);
+
+t("htaccess: a canonical-host rewrite downgraded to 302 is caught",
+  htaccessGaps(HT_GOOD.replace(`%{REQUEST_URI} [R=301,L]`, `%{REQUEST_URI} [R=302,L]`)).length, 1);
+
+t("htaccess: a canonical-host rewrite targeting plain HTTP is caught",
+  htaccessGaps(HT_GOOD.replace(`^ https://www.hymtravel.com%{REQUEST_URI}`,
+                               `^ http://www.hymtravel.com%{REQUEST_URI}`)).length, 1);
+
+/* Deleting the real pair is invisible to a first-match read as soon as ANY
+   other host-conditional rule remains — and a real file has them. */
+t("htaccess: losing the canonical pair while another host rule remains is caught",
+  htaccessGaps(HT_GOOD.replace(
+    `  RewriteCond %{HTTP_HOST} ^hymtravel\\.com$ [NC]\n  RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]\n`,
+    `  RewriteCond %{HTTP_HOST} ^old\\.example$ [NC]\n  RewriteRule ^ https://legacy.example%{REQUEST_URI} [R=301,L]\n`)).length, 1);
+
+/* ── Apache block scope: a directive can be present and still not ship ── */
+t("htaccess: HSTS moved inside a <FilesMatch> is caught",
+  htaccessGaps(HT_GOOD.replace(
+    `  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD\n`,
+    `  <FilesMatch "\\.html$">\n    Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD\n  </FilesMatch>\n`)).length, 1);
+
+t("htaccess: a misspelled <IfModule> container is caught per directive",
+  htaccessGaps(HT_GOOD.replace("<IfModule mod_headers.c>", "<IfModule mod_header.c>"))
+    .some((g) => g.includes("does not provide Header")), true);
+
+/* The real file has TWO <IfModule mod_headers.c> blocks, so asserting one
+   exists would miss a typo in the other — the container is checked per
+   directive for exactly that reason. */
+t("htaccess: a misspelled container is caught even when a correct one remains",
+  htaccessGaps(HT_GOOD.replace("<IfModule mod_setenvif.c>", "<IfModule mod_setenvifs.c>"))
+    .some((g) => g.includes("does not provide SetEnvIf")), true);
+
+/* Apache joins a backslash-continued line before parsing, so a line-anchored
+   read saw neither `Header` nor the header name and counted nothing. */
+t("htaccess: a backslash-continued second HSTS directive is caught",
+  htaccessGaps(HT_GOOD +
+    `\n  Header always set \\\n    Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"\n`).length, 1);
+
+/* ── False-positive guards: correct Apache that must NOT fail the build ──
+   Each of these turned the build red on a file that ships exactly the header
+   it is supposed to. That is worse than a missed shape: it teaches the reader
+   the verifier is wrong, and the next real failure gets waved through. */
+t("htaccess: `Header ALWAYS set` is correct Apache and stays green",
+  htaccessGaps(HT_GOOD.replace("Header always set Strict-Transport-Security",
+                               "Header ALWAYS set Strict-Transport-Security")).length, 0);
+
+t("htaccess: a lowercase `setenvifnocase` is correct Apache and stays green",
+  htaccessGaps(HT_GOOD.replace("SetEnvIfNoCase Host", "setenvifnocase Host")).length, 0);
+
+/* …and the genuinely broken lowercase spelling still names the real defect
+   rather than blaming the quoting. */
+t("htaccess: a lowercase `setenvif` is still reported as the missing NoCase",
+  htaccessGaps(HT_GOOD.replace("SetEnvIfNoCase Host", "setenvif Host"))[0]
+    .includes("must use SetEnvIfNoCase"), true);
+
+t("htaccess: a blank line between RewriteCond and RewriteRule stays green",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$ [NC]\n`, `^hymtravel\\.com$ [NC]\n\n`)).length, 0);
+
+t("htaccess: a second AND-ed RewriteCond on the canonical rule stays green",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$ [NC]\n`,
+                               `^hymtravel\\.com$ [NC]\n  RewriteCond %{REQUEST_URI} !^/health$\n`)).length, 0);
+
+t("htaccess: an unrelated host rule above the canonical one stays green",
+  htaccessGaps(HT_GOOD.replace(`  RewriteCond %{HTTP_HOST} ^hymtravel`,
+    `  RewriteCond %{HTTP_HOST} !^(www\\.)?hymtravel\\.com$ [NC]\n  RewriteRule \\.(jpg|png)$ https://cdn.example.net/x.png [R=302,L]\n  RewriteCond %{HTTP_HOST} ^hymtravel`)).length, 0);
+
+/* The matcher is judged by the host set it accepts, not by its spelling:
+   `(:\d+)?` and `(?::[0-9]+)?` are the same pattern written two ways. */
+t("htaccess: an equivalently-spelled IS_PROD matcher stays green",
+  htaccessGaps(HT_GOOD.replace(`(?::[0-9]+)?`, `(:\\d+)?`)).length, 0);
+
+t("htaccess: an IS_PROD matcher that admits a lookalike host is caught",
+  htaccessGaps(HT_GOOD.replace(/SetEnvIfNoCase Host "[^"]*"/, `SetEnvIfNoCase Host "."`)).length, 1);
+
+/* Shape and spelling are facts about Apache, so an unreadable `site` must not
+   switch them off — that is the input where the file is least reviewed. */
+t("htaccess: a broken arming line is still caught when `site` is unreadable",
+  htaccessGaps(HT_GOOD.replace(/SetEnvIfNoCase Host "[^"]*" IS_PROD=1/,
+                               `SetEnvIfNoCase Host . IS_PROD=1`), "").length, 2);
+
+t("htaccess: and that failure names the arming line, not just the missing site",
+  htaccessGaps(HT_GOOD.replace(/SetEnvIfNoCase Host "[^"]*" IS_PROD=1/,
+                               `SetEnvIfNoCase Host . IS_PROD=1`), "")
+    .some((g) => g.includes("is armed by a line that is not")), true);
+
+/* ── Codex review on #130: five shapes the first pass still let through ──
+   Two of these were regressions introduced by rewriting the staging block:
+   the pre-rewrite regex required `always set` in full and the rewrite kept
+   neither, so a directive that never creates the header read as shipped. */
+t("htaccess: `Header always edit X-Robots-Tag` does not create the noindex",
+  htaccessGaps(HT_GOOD.replace("Header always set X-Robots-Tag",
+                               "Header always edit X-Robots-Tag")).length, 1);
+
+t("htaccess: a staging X-Robots-Tag without `always` is caught",
+  htaccessGaps(HT_GOOD.replace("Header always set X-Robots-Tag",
+                               "Header set X-Robots-Tag")).length, 1);
+
+/* Allowing a second RewriteCond fixed a false failure and opened this: a cond
+   that narrows the canonical rule to one path leaves apex and www both
+   serving everything else. The whole block is evaluated now, so a
+   CONSTRAINING cond fails while an EXCLUDING one stays green. */
+t("htaccess: a second RewriteCond narrowing the canonical rule to one path is caught",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$ [NC]\n`,
+                               `^hymtravel\\.com$ [NC]\n  RewriteCond %{REQUEST_URI} ^/never$\n`)).length, 1);
+
+t("htaccess: a cond excluding one path from the canonical rule stays green",
+  htaccessGaps(HT_GOOD.replace(`^hymtravel\\.com$ [NC]\n`,
+                               `^hymtravel\\.com$ [NC]\n  RewriteCond %{REQUEST_URI} !^/health$\n`)).length, 0);
+
+/* Apache accepts the module identifier as well as the source filename, so
+   this is a valid guard for the same module and must not fail the build. */
+t("htaccess: `<IfModule headers_module>` is a valid spelling and stays green",
+  htaccessGaps(HT_GOOD.replace(/<IfModule mod_headers\.c>/g, "<IfModule headers_module>")).length, 0);
+
+t("htaccess: `<IfModule setenvif_module>` is likewise accepted",
+  htaccessGaps(HT_GOOD.replace("<IfModule mod_setenvif.c>", "<IfModule setenvif_module>")).length, 0);
+
+/* A fixed list of probe hosts cannot establish the accepted set — an
+   alternation names a host no blacklist would have guessed. The matcher's own
+   literals are harvested and tested, so widening it is caught by its own text. */
+t("htaccess: an IS_PROD matcher widened by alternation is caught",
+  htaccessGaps(HT_GOOD.replace(`(?::[0-9]+)?$"`, `(?::[0-9]+)?$|^preview\\.example$"`)).length, 1);
+
+t("htaccess: and that failure names the host the alternation added",
+  htaccessGaps(HT_GOOD.replace(`(?::[0-9]+)?$"`, `(?::[0-9]+)?$|^preview\\.example$"`))[0]
+    .includes("preview.example"), true);
+
+/* The variable name in an input attribute or a match pattern arms nothing;
+   only an assignment operand does. Matching the name anywhere on the line
+   reported this correct directive as a second arming line. */
+t("htaccess: `SetEnvIf IS_STAGING …` reading the var as input stays green",
+  htaccessGaps(HT_GOOD.replace(`SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1`,
+    `SetEnvIf Host "hostingersite\\.com$" IS_STAGING=1\n  SetEnvIf IS_STAGING "^1$" CACHE_BYPASS=1`)).length, 0);
+
+t("htaccess: a var named only inside a match pattern arms nothing",
+  htaccessGaps(HT_GOOD + `\n  SetEnvIf Request_URI "IS_PROD" DEBUG=1\n`).length, 0);
+
 /* An empty file — the "someone renamed public/.htaccess" case. Exactly 13:
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the canonical-host rewrite, the CSP once, and the cache
@@ -1508,6 +1704,23 @@ t("site: a trailing slash is stripped",
 
 t("site: a config with no site at all is empty, not a throw",
   configuredSite(`export default {}`), "");
+
+/* The property boundary is "boundary then whitespace then site:", so a block
+   comment between the two hid the real key and yielded "" — which fails
+   canonical-host loudly AND turns four .htaccess guards into no-ops quietly.
+   Comments come out before the match now. */
+t("site: a block comment before the key does not hide it",
+  configuredSite(`export default defineConfig({ /* prod */ site: 'https://www.hymtravel.com' });`),
+  "https://www.hymtravel.com");
+
+t("site: a commented-out previous value does not win over the live one",
+  configuredSite(`// Until cutover, site: 'https://hymt.hostingersite.com' was the origin.\nexport default defineConfig({\n  site: 'https://www.hymtravel.com',\n});`),
+  "https://www.hymtravel.com");
+
+/* Both readers treat "" as the failure signal, so the parser has to produce
+   it rather than throw a TypeError from inside the check that consumes it. */
+t("site: a non-string config is empty, not a throw",
+  configuredSite(undefined), "");
 
 /* ── photo-grid (#93) ── */
 
