@@ -61,7 +61,8 @@ const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
 const attribution = testimonialAttribution;
 import {
-  satisfiesNodeRange, parseNodeVersion, lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
+  satisfiesNodeRange, parseNodeVersion, engineFloorDrift,
+  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
@@ -2279,7 +2280,11 @@ t("localDay defaults to the host offset rather than to zero",
    The floor is written out here rather than read from package.json on purpose.
    Reading it would make the fixtures agree with whatever engines happens to
    say — including the "22.x" that was there before, which was wrong in both
-   directions at once. */
+   directions at once.
+
+   So read 22.12.0 below as a fixed comparison value, not as this repo's floor:
+   it is Astro's, and the tree's real floor is higher. What engines.node has to
+   clear is checked by the engines-floor fixtures further down. */
 
 t("node-floor: the build machine's default Node is rejected",
   satisfiesNodeRange(">=22.12.0", "v20.19.0"), false);
@@ -2325,6 +2330,105 @@ t("node-floor: a version parses to its three numbers",
 
 t("node-floor: a prerelease suffix is dropped by the parser",
   parseNodeVersion("v23.0.0-nightly20260101abc")?.join("."), "23.0.0");
+
+/* ── engines-floor ── */
+
+/* `npm ci` enforces engines.node for EVERY package it installs, so the floor
+   that governs the deploy host is the highest one in the tree — not the one
+   package.json happens to declare.
+
+   These fixtures exist because that gap shipped. engines.node read
+   `>=22.12.0`, Astro 7's floor, while astro -> unifont -> undici@8 had moved
+   to `>=22.19.0`; hPanel's `22.x` resolved to v22.18.0, between the two, and
+   the 2026-08-29 deploy failed in `npm ci` before Astro ran. The first fixture
+   below is that exact shape, and it must come back `drift`.
+
+   Floors are written out rather than read from package.json, for the same
+   reason the node-floor fixtures above are: fixtures that read the value under
+   test agree with it even when it is wrong. */
+
+/* Local rather than the LOCK helper further down — that one is declared below
+   this point and would be in its temporal dead zone here. */
+const ENGLOCK = (packages) => ({ lockfileVersion: 3, packages });
+const NEEDS = (range) => ({ engines: { node: range } });
+
+t("engines-floor: the shape that broke the 2026-08-29 deploy is caught",
+  engineFloorDrift(">=22.12.0", ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).state,
+  "drift");
+
+t("engines-floor: the drift names the package that demands more",
+  engineFloorDrift(">=22.12.0", ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).strictest.pkg,
+  "node_modules/undici");
+
+t("engines-floor: raising engines.node to the real floor clears it",
+  engineFloorDrift(">=22.19.0", ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).state,
+  "ok");
+
+t("engines-floor: declaring more than the tree needs is fine",
+  engineFloorDrift(">=24.0.0", ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).state,
+  "ok");
+
+/* One patch release apart is the whole margin this check defends: v22.18.0
+   cleared 22.12.0 and missed 22.19.0, and that is where the deploy died. */
+t("engines-floor: a single patch release of drift is still drift",
+  engineFloorDrift(">=22.18.0", ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).state,
+  "drift");
+
+t("engines-floor: the strictest floor wins, not the first or the last",
+  engineFloorDrift(">=22.12.0", ENGLOCK({
+    "node_modules/a": NEEDS(">=18.0.0"),
+    "node_modules/b": NEEDS(">=22.19.0"),
+    "node_modules/c": NEEDS(">=20.9.0"),
+  })).strictest.pkg, "node_modules/b");
+
+/* The root entry mirrors engines.node itself. Counting it would let the
+   declared value satisfy the check by being its own strictest dependency, and
+   the check could never go red. */
+t("engines-floor: the root entry cannot vouch for itself",
+  engineFloorDrift(">=22.19.0", ENGLOCK({ "": NEEDS(">=99.0.0") })).state,
+  "no-floors");
+
+/* Real trees carry ranges this deliberately does not parse — the tree here has
+   107 of them, @astrojs/compiler-binding's `^20.19.0 || >=22.12.0` among them.
+   They are counted and reported, never guessed at, so the check can miss a
+   floor but can never invent one and block a good build. */
+t("engines-floor: an or-range dependency is counted unreadable, not guessed",
+  engineFloorDrift(">=22.12.0", ENGLOCK({ "node_modules/a": NEEDS("^20.19.0 || >=22.12.0") })).unreadable,
+  1);
+
+t("engines-floor: an unreadable dependency range contributes no floor",
+  engineFloorDrift(">=22.12.0", ENGLOCK({ "node_modules/a": NEEDS("^20.19.0 || >=22.12.0") })).state,
+  "no-floors");
+
+t("engines-floor: dependencies with no engines block are skipped, not failed",
+  engineFloorDrift(">=22.19.0", ENGLOCK({ "node_modules/a": {}, "node_modules/b": NEEDS(">=22.19.0") })).considered,
+  1);
+
+/* An engines.node nobody can evaluate is a failure, not a pass: check-node.mjs
+   waves the build through on one, so nothing else is left enforcing it. */
+t("engines-floor: the old \"22.x\" engines value fails rather than passing",
+  engineFloorDrift("22.x", ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).state,
+  "unreadable-declared");
+
+t("engines-floor: a missing engines.node is a failure",
+  engineFloorDrift(undefined, ENGLOCK({ "node_modules/undici": NEEDS(">=22.19.0") })).state,
+  "undeclared");
+
+t("engines-floor: an unreadable lockfile is not reported as a pass",
+  engineFloorDrift(">=22.19.0", null).state, "unreadable-lockfile");
+
+t("engines-floor: a lockfile with no packages map is not reported as a pass",
+  engineFloorDrift(">=22.19.0", { lockfileVersion: 3 }).state, "unreadable-lockfile");
+
+/* The live tree, as a canary: if a future dependency bump raises the real
+   floor past engines.node, this goes red here rather than on the deploy host.
+   It reads both files on purpose — the fixtures above already pin the logic,
+   so this one is free to assert on the repo as it actually stands. */
+t("engines-floor: this repo's engines.node covers its own dependency tree",
+  engineFloorDrift(
+    JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).engines?.node,
+    JSON.parse(readFileSync(new URL("../package-lock.json", import.meta.url), "utf8")),
+  ).state, "ok");
 
 /* ── lockfile-metadata ── */
 
