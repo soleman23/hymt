@@ -53,3 +53,23 @@ jobs:
       - run: npm ci
 
       - run: npm run build
+
+      # dist/ is committed and deployed byte-for-byte, so source committed
+      # without a rebuild ships a stale site silently — nothing else in the
+      # build compares the two. The step above just regenerated dist/, so any
+      # diff here means the rebuild was skipped.
+      #
+      # This is only sound because of `fetch-depth: 0` above: page lastmod
+      # comes from git history, so on a shallow checkout every date would be
+      # the build date and this check would fail on every PR.
+      - name: dist/ matches a fresh build
+        run: |
+          if git diff --quiet -- dist; then
+            echo "dist/ is byte-identical to a fresh build"
+            exit 0
+          fi
+          echo "::error::dist/ differs from a fresh build. Run 'npm run build' and commit dist/."
+          git diff --stat -- dist
+          echo '--- first 200 lines of the diff ---'
+          git diff -- dist | head -200
+          exit 1
