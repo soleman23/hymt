@@ -5,8 +5,8 @@
  *
  * Runs as the first stage of `npm run build`, before astro touches dist/.
  *
- * Why this exists: after the Astro 7 upgrade the build needs Node >=22.12.0,
- * and the default Node on the build machine is 20.19.0. A bare `npm run build`
+ * Why this exists: after the Astro 7 upgrade the build needs a Node the
+ * default on the build machine (20.19.0) is well below. A bare `npm run build`
  * died several seconds in with "Node.js v20.19.0 is not supported by Astro!",
  * which says what is wrong but not what to do about it — and on this machine
  * what to do about it is specifically NOT `nvm use`. This stage fails in
@@ -14,7 +14,11 @@
  *
  * package.json engines is the single source of the floor; nothing here repeats
  * the number. Bumping the dependency tree therefore moves this check with it,
- * as long as engines is kept honest.
+ * as long as engines is kept honest — which is its own check now, because it
+ * was not. engines.node sat at Astro's `>=22.12.0` while undici, pulled in via
+ * unifont, had raised the tree's real floor to `>=22.19.0`; the gap is
+ * invisible on a machine building with 24.16.0 and fatal on a deploy host
+ * running 22.18.0. tools/verify-deployment.mjs § 4d now compares the two.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

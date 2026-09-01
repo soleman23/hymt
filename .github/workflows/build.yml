@@ -1,0 +1,75 @@
+# Runs the same `npm run build` a contributor runs locally: the Node preflight,
+# astro build, the image restore, the check fixtures, then verify-deployment.
+# Every guard this repo has lives in that one command, so CI needs nothing else.
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only: this workflow never needs to write to the repo.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Superseded PR runs are worth cancelling; a run on main is not — that one
+  # is the record of what shipped.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # NOT the default (depth 1). tools/git-lastmod.mjs gives each page a
+          # sitemap lastmod by walking `git log` for the commit that last
+          # touched its sources; the first time a file appears is its date.
+          # With one commit of history no source file is found, every route
+          # falls back to filesystem mtime — the checkout time — and all 123
+          # dates become the build date. Measured on this repo: 7 of 7 sampled
+          # routes wrong under depth 1, including `/` (2026-08-24 -> the build
+          # date). That is exactly the "lastmod is pure noise" state #70 exists
+          # to prevent, and it would NOT fail the build: verify-deployment only
+          # asserts the dates are on or before today, which build-date stamps
+          # trivially satisfy. Silent wrong output, so: full history.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          # Pinned, not a floating `24.x`. A floating track is what broke the
+          # 2026-08-29 deploy: hPanel's `22.x` moved to v22.18.0 and missed
+          # undici's >=22.19.0 floor by one patch. 24.16.0 is the version the
+          # site is built and verified on locally. Bumping it should be a
+          # deliberate edit here, the same way the HSTS ramp is.
+          node-version: 24.16.0
+          cache: npm
+
+      # .npmrc sets engine-strict=true, so the wrong Node is a hard EBADENGINE
+      # here rather than a warning followed by a node_modules that cannot build.
+      - run: npm ci
+
+      - run: npm run build
+
+      # dist/ is committed and deployed byte-for-byte, so source committed
+      # without a rebuild ships a stale site silently — nothing else in the
+      # build compares the two. The step above just regenerated dist/, so any
+      # diff here means the rebuild was skipped.
+      #
+      # This is only sound because of `fetch-depth: 0` above: page lastmod
+      # comes from git history, so on a shallow checkout every date would be
+      # the build date and this check would fail on every PR.
+      - name: dist/ matches a fresh build
+        run: |
+          if git diff --quiet -- dist; then
+            echo "dist/ is byte-identical to a fresh build"
+            exit 0
+          fi
+          echo "::error::dist/ differs from a fresh build. Run 'npm run build' and commit dist/."
+          git diff --stat -- dist
+          echo '--- first 200 lines of the diff ---'
+          git diff -- dist | head -200
+          exit 1

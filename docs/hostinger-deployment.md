@@ -21,16 +21,32 @@ passes. In hPanel, the web app settings must be:
 | Repository | `soleman23/hymt` |
 | Branch | `main`, after the intended release PRs are merged |
 | Framework | Astro |
-| Node.js | 22.x or 24.x — must resolve to **22.12.0 or newer** |
+| Node.js | **24.x**. Not `22.x` — see below |
 | Build command | `npm run build` |
 | Output directory | `dist` |
 
-The Node floor is Astro 7's, and `package.json` `engines.node` is the one place
-it is written: `>=22.12.0`. hPanel's `22.x` satisfies it only while that track
-resolves to 22.12 or later, which it does today — but read the value rather
-than assuming, because `.npmrc` sets `engine-strict=true` and a lower Node
-fails `npm ci` outright rather than warning. `tools/check-node.mjs` runs first
-in `npm run build` and prints the same requirement.
+The floor is **Node 22.19.0**, and it is not Astro's. `npm ci` enforces
+`engines.node` for every package it installs, so the version that governs is
+the strictest floor anywhere in the tree — today that is `undici`, reached
+through `astro` → `unifont`. Astro's own floor is the lower `>=22.12.0`, and
+reading that one is what produced the wrong setting here.
+
+**Do not select `22.x`.** It is a floating track: on 2026-08-29 it resolved to
+**v22.18.0**, one patch below the real floor, and the deployment failed in
+`npm ci` with `EBADENGINE` on undici before Astro ever ran — 17 lines of build
+log and no page built. hPanel's analysis of that failure recommends "22.19.0 or
+higher", which is true but leaves you on the same floating track that moved
+underneath the site once already. **Select `24.x`**: it is comfortably above
+the floor and it matches the Node the site is actually built and verified on
+locally (24.16.0), so the deploy host and the build machine stop being two
+different environments.
+
+`package.json` `engines.node` and the root entry of `package-lock.json` both
+carry the floor, `tools/check-node.mjs` runs first in `npm run build` and
+prints it, and `tools/verify-deployment.mjs` § 4d fails the build if a
+dependency ever raises the real floor above what those declare. That check is
+what turns the next occurrence of this into a red local build instead of a red
+deployment.
 
 Use the website dashboard's **Change repository** flow if hPanel names any
 other repository. Review the overwrite warning, then start a new deployment.
@@ -52,7 +68,7 @@ Use this only if Hostinger's GitHub deployment is unavailable and record why in
 the launch issue. Do not alternate between GitHub deployments and manual files;
 that makes the deployed commit and stale-file behavior unknowable.
 
-1. Build locally on Node 22.12 or newer: `npm ci && npm run build`. The build
+1. Build locally on Node 22.19 or newer: `npm ci && npm run build`. The build
    machine's default is 20.19.0, which `tools/check-node.mjs` rejects in
    milliseconds — put a supported Node first on PATH for the command rather
    than running `nvm use`, which moves a machine-wide symlink (CLAUDE.md § Node
