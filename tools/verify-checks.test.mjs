@@ -100,6 +100,7 @@ const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, engineFloorDrift,
   lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, lockfileDriftSubject,
+  lockfileRestoreAction,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
@@ -2609,6 +2610,51 @@ t("lockfile-subject: a committed lockfile with nothing left is still judged, not
    this suite from crashing on it or seconding it. */
 t("lockfile-subject: an unreadable working copy falls back to HEAD",
   lockfileDriftSubject(LOCK({ "node_modules/a": V1 }), null, true).source, "committed");
+
+/* ── lockfile-restore ──
+
+   What `npm run build:host` does before installing. This one is destructive —
+   it runs `git checkout` over the working lockfile — so every answer is
+   fixtured, and the refusal most of all: an interrupted dependency bump is
+   uncommitted work, and a script that discarded it would be worse than the
+   deploy problem it exists to fix. */
+
+t("lockfile-restore: the installer signature is restored",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), true),
+  "restore");
+
+t("lockfile-restore: an intact working copy is left alone",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1 }), true),
+  "keep");
+
+/* The guard. A moved version is someone's uncommitted upgrade, never an
+   installer stripping fields, and `git checkout` would throw it away. */
+t("lockfile-restore: a dependency bump in progress is refused, not discarded",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE }), true),
+  "refuse");
+
+t("lockfile-restore: a bump that only moved integrity is refused too",
+  lockfileRestoreAction(
+    LOCK({ "node_modules/a": V1 }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-ccc" } }), true),
+  "refuse");
+
+t("lockfile-restore: an unparseable working copy is replaced by HEAD's",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), null, true), "restore");
+
+t("lockfile-restore: no git means there is nothing to restore from",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), false),
+  "no-baseline");
+
+t("lockfile-restore: a HEAD with no usable lockfile is not restored from",
+  lockfileRestoreAction(null, LOCK({ "node_modules/a": V1_BARE }), true), "no-baseline");
+
+/* The real file: on a clean checkout there is nothing to repair, so a machine
+   that runs build:host by mistake changes nothing. */
+if (WORKING_LOCK && headJson("package-lock.json")) {
+  t("lockfile-restore: this checkout needs no repair",
+    lockfileRestoreAction(headJson("package-lock.json"), WORKING_LOCK, GIT_AVAILABLE), "keep");
+}
 
 /* Against the real file rather than a fixture, the way the dist/ block at the
    end of this file works — so a predicate that stops matching the shape npm

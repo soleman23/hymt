@@ -274,6 +274,41 @@ export function lockfileDriftSubject(baseline, working, gitAvailable = true) {
   return { lock: baseline, source: "committed" };
 }
 
+/**
+ * Whether tools/restore-lockfile.mjs should put HEAD's lockfile back.
+ *
+ * `npm run build:host` exists for a deploy host whose own install rewrites
+ * package-lock.json before the build command runs — Hostinger's does. Restoring
+ * is a DESTRUCTIVE act on any other machine: `git checkout` discards
+ * uncommitted work, and a dependency bump in progress is exactly the kind of
+ * uncommitted work someone would be most upset to lose. So the decision is made
+ * here, in a pure function with fixtures, rather than inside the script.
+ *
+ * The discriminator is the one lockfileDriftSubject already draws, so a file
+ * this refuses to restore is the same file the drift guard judges as a
+ * candidate — the two cannot disagree about whose lockfile it is:
+ *
+ *   - `refuse`       -> a version or integrity moved. Someone is preparing a
+ *     dependency change; an installer stripping fields never does this. Never
+ *     silently discard it.
+ *   - `restore`      -> platform metadata is missing from artifacts that did not
+ *     change, which is the installer signature and the whole reason for the
+ *     script. An unreadable working copy restores too: HEAD's is strictly
+ *     better than one that will not parse.
+ *   - `keep`         -> nothing was lost. Doing nothing is the common case on a
+ *     healthy host and on every developer machine.
+ *   - `no-baseline`  -> no git, or HEAD carries no usable lockfile. Nothing to
+ *     restore from, and this is a supported way to build (git archive).
+ *
+ * @returns {"restore"|"keep"|"refuse"|"no-baseline"}
+ */
+export function lockfileRestoreAction(baseline, working, gitAvailable = true) {
+  if (!gitAvailable || !isLockfileShape(baseline)) return "no-baseline";
+  if (!isLockfileShape(working)) return "restore";
+  if (lockfileDriftSubject(baseline, working, true).source === "candidate") return "refuse";
+  return lockfileMetadataLoss(baseline, working).length > 0 ? "restore" : "keep";
+}
+
 /* Built output that is not text. Everything else under dist/ gets read as
    text and checked for CR bytes, so a file type that appears later and is not
    listed here fails loudly rather than going unchecked — the wrong way round
