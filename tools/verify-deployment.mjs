@@ -24,7 +24,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
-  configuredSite, internalHrefs, deadInternalHrefs, linkTargets, nestedCardAnchors,
+  configuredSite, internalHrefs, deadInternalHrefs, linkTargets, decodeEntities, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
@@ -307,13 +307,10 @@ const pick = (html, re) => (html.match(re)?.[1] ?? "").trim();
    /destinations/spain/ and /destinations/uk-ireland/ flagged this way).
    Baseline comparison deliberately still uses the RAW string — it is a
    change-detector, and decoding there would hide a real encoding change. */
-const decodeEntities = (s) => s
-  .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(+d))
-  .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
-  .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'")
-  .replace(/&mdash;/g, "—").replace(/&ndash;/g, "–")
-  .replace(/&rsquo;/g, "’").replace(/&lsquo;/g, "‘")
-  .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+/* decodeEntities is imported from content-checks.mjs. It used to be defined
+   here and a SECOND time in check-external-links.mjs; the shared version is
+   the union of both named-entity sets, so what desc-length measures is
+   unchanged. */
 const heads = {};
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
@@ -352,6 +349,22 @@ if (UPDATE) {
    the single place the production domain is written. */
 const SITE = configuredSite(await readFile(path.join(ROOT, "astro.config.mjs"), "utf8"));
 if (!SITE) fail("canonical-host", "could not read `site` from astro.config.mjs");
+
+/* Hosts whose paths resolve against THIS dist/: production, plus the staging
+   host from the verify:remote script. An anchor to the preview host in shipped
+   HTML is a leak, and while the external audit skipped it as first-party and
+   this one recognised only production, it was checked by nothing at all —
+   resolving it here at least catches a missing path. Both are derived; neither
+   is written down (CLAUDE.md § Domain). */
+const SAME_SITE_HOSTS = new Set();
+try {
+  SAME_SITE_HOSTS.add(new URL(SITE).hostname.toLowerCase().replace(/^www\./, ""));
+} catch { /* canonical-host already failed above */ }
+try {
+  const scripts = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"))?.scripts ?? {};
+  const staging = String(scripts["verify:remote"] ?? "").match(/--remote\s+(\S+)/)?.[1];
+  if (staging) SAME_SITE_HOSTS.add(new URL(staging).hostname.toLowerCase().replace(/^www\./, ""));
+} catch { /* no parseable staging script; production alone still stands */ }
 
 /* sitemap-parity: the generated sitemap must exist, cover every indexable
    page (HTML minus the 404), and robots.txt must point at a file that is
@@ -912,7 +925,7 @@ for (const file of htmlFiles) {
   /* internal-links: every same-site href must resolve to something in dist.
      Absolute same-site hrefs count too — see internalHrefs() for the gap that
      scanning only `/…` left open between this check and check-external-links. */
-  for (const href of await deadInternalHrefs(html, SITE, linkResolves)) deadLinks.add(href);
+  for (const href of await deadInternalHrefs(html, SAME_SITE_HOSTS, linkResolves)) deadLinks.add(href);
 
   /* internal-link-floor (P3-6, finding F17) and testimonial-attribution
      (P3-7, folded into #67). Both predicates live in ./content-checks.mjs and

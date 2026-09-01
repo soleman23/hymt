@@ -54,7 +54,7 @@ import {
   placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
@@ -67,7 +67,7 @@ import {
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
 import {
-  decodeEntities, externalHrefs, firstPartyHosts, isFirstParty,
+  externalHrefs, firstPartyHosts, isFirstParty,
   isHardFailure, confirmationIsStale, isNxdomain,
 } from "./check-external-links.mjs";
 
@@ -2844,6 +2844,33 @@ t("ext-links: a single-quoted href is extracted too",
   [...externalHrefs(`<a href='https://example.com/x'>y</a>`, OUR_HOSTS)].join("|"),
   "https://example.com/x");
 
+/* ── anchorHrefs: every valid attribute form ──
+   Both the build gate and the network audit read hrefs through this one
+   function, so a form it misses is missed by two checks at once. */
+t("anchor-hrefs: whitespace around the = is valid HTML",
+  anchorHrefs(`<a href = "/missing/">x</a>`).join("|"), "/missing/");
+t("anchor-hrefs: an unquoted value is valid HTML",
+  anchorHrefs(`<a href=/missing/>x</a>`).join("|"), "/missing/");
+t("anchor-hrefs: an unquoted absolute URL terminates at whitespace",
+  anchorHrefs(`<a href=https://example.com/x class="c">y</a>`).join("|"),
+  "https://example.com/x");
+t("anchor-hrefs: all three quoting forms on one page",
+  anchorHrefs(`<a href="/a/">1</a><a href='/b/'>2</a><a href=/c/>3</a>`).join("|"),
+  "/a/|/b/|/c/");
+t("anchor-hrefs: a non-anchor href is not collected",
+  anchorHrefs(`<link rel="canonical" href="/nope/">`).length, 0);
+
+/* A non-default port is a different origin. Treating it as ours dropped it
+   from the network audit while internalHrefs resolved its pathname against
+   the local dist/, so an unrelated service passed both checks. */
+t("ext-links: a non-default port on our host is NOT first-party",
+  isFirstParty(`https://${OUR_APEX}:8443/faq/`, OUR_HOSTS), false);
+t("ext-links: and it therefore reaches the external audit",
+  [...externalHrefs(`<a href="https://${OUR_APEX}:8443/faq/">x</a>`, OUR_HOSTS)].join("|"),
+  `https://${OUR_APEX}:8443/faq/`);
+t("ext-links: an explicit default port is still ours",
+  isFirstParty(`https://${OUR_APEX}:443/faq/`, OUR_HOSTS), true);
+
 /* The shipped shape: two real links carry `&amp;` between query parameters.
    Probing the raw attribute would request `amp;name=…`, a URL no visitor ever
    asks for, so the answer would be about the wrong resource either way. */
@@ -2928,8 +2955,18 @@ t("ext-links: a TLS error is not hard on its own",
   isHardFailure({ status: 0, error: "certificate not trusted" }), false);
 t("ext-links: EAI_AGAIN is a retryable resolver failure, not a dead domain",
   isHardFailure({ status: 0, error: "EAI_AGAIN" }), false);
-t("ext-links: ENOTFOUND IS a dead domain",
-  isHardFailure({ status: 0, error: "ENOTFOUND" }), true);
+/* ENOTFOUND from fetch now needs the same independent reconfirmation curl's
+   exit 6 does — undici asks the system resolver, so a captive or split-horizon
+   one produces it for a name that is publicly fine. This fixture asserted it
+   was ALWAYS hard, which left that false positive live on the fallback path. */
+t("ext-links: fetch ENOTFOUND alone is NOT hard — it needs confirming",
+  isHardFailure({ status: 0, error: "ENOTFOUND" }), false);
+t("ext-links: fetch ENOTFOUND confirmed by a public resolver IS hard",
+  isHardFailure({ status: 0, error: "ENOTFOUND", nxdomain: true }), true);
+t("ext-links: fetch ENOTFOUND the public resolver disagrees with is NOT hard",
+  isHardFailure({ status: 0, error: "ENOTFOUND", nxdomain: false }), false);
+t("ext-links: ECONNREFUSED is still hard on its own",
+  isHardFailure({ status: 0, error: "ECONNREFUSED" }), true);
 
 t("ext-links: a fresh browser confirmation is not stale",
   confirmationIsStale({ on: "2026-08-31" }, new Date("2026-09-15T00:00:00Z")), false);
@@ -2978,6 +3015,41 @@ t("internal-links: protocol-relative to OUR host is collected as its path",
 
 t("internal-links: the apex protocol-relative form too",
   [...internalHrefs(`<a href="//${OUR_APEX}/faq/">x</a>`, CONFIGURED_SITE)].join("|"), "/faq/");
+
+/* An entity-encoded same-site href is followed by a browser. externalHrefs
+   decoded it and dropped it as first-party; this check saw a string not
+   starting with `http` and skipped it, so the encoded form reached neither. */
+t("internal-links: an entity-encoded same-site href is decoded and collected",
+  [...internalHrefs(`<a href="https&#58;//${OUR_APEX}/missing/">x</a>`, CONFIGURED_SITE)].join("|"),
+  "/missing/");
+
+t("internal-links: an &amp; in a same-site path decodes before classification",
+  [...internalHrefs(`<a href="${CONFIGURED_SITE}/a&amp;b/">x</a>`, CONFIGURED_SITE)].join("|"),
+  "/a&b/");
+
+/* A non-default port is a different origin and must NOT be resolved against
+   this dist/ — otherwise a service on :8443 "passes" because /faq/ exists
+   locally, while the real service is never probed. */
+t("internal-links: a non-default port is not resolved against this dist/",
+  internalHrefs(`<a href="https://${OUR_APEX}:8443/faq/">x</a>`, CONFIGURED_SITE).size, 0);
+
+/* The staging host resolves against the same dist/. An anchor to the preview
+   host in shipped HTML was excluded from the external audit as first-party and
+   unrecognised here, so it was checked by nothing. */
+{
+  const staging = [...OUR_HOSTS].find((h) => h.endsWith("hostingersite.com"));
+  t("internal-links: a staging-host anchor resolves against dist when passed both hosts",
+    [...internalHrefs(`<a href="https://${staging}/missing/">x</a>`, OUR_HOSTS)].join("|"),
+    "/missing/");
+  t("internal-links: and is still ignored when only production is passed",
+    internalHrefs(`<a href="https://${staging}/missing/">x</a>`, CONFIGURED_SITE).size, 0);
+}
+
+/* All three attribute forms reach the internal gate too, since both
+   extractors now share anchorHrefs. */
+t("internal-links: whitespace and unquoted href forms are collected",
+  [...internalHrefs(`<a href = "/a/">1</a><a href=/b/>2</a>`, CONFIGURED_SITE)].sort().join("|"),
+  "/a/|/b/");
 
 t("internal-links: query and hash are trimmed, as before",
   [...internalHrefs(`<a href="/faq/#q1">a</a><a href="/s/?q=1">b</a>`, CONFIGURED_SITE)].sort().join("|"),

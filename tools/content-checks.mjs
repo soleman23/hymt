@@ -923,47 +923,90 @@ export function configuredSite(astroConfigSource) {
  * Host comparison ignores a leading `www.`, so apex and www are both ours.
  * Protocol-relative `//host/path` is somebody else's host and is left alone.
  */
-export function internalHrefs(html, site) {
+export function internalHrefs(html, siteOrHosts) {
   const out = new Set();
-  let siteHost = "";
-  try {
-    siteHost = new URL(String(site)).hostname.toLowerCase().replace(/^www\./, "");
-  } catch {
-    /* no configured site: fall back to path-relative hrefs only */
-  }
+  const hosts = toHostSet(siteOrHosts);
+
   for (const raw of anchorHrefs(html)) {
-    const href = raw.split("#")[0].split("?")[0];
+    /* Decode BEFORE classifying. `https&#58;//<site>/missing/` is followed by
+       a browser and was decoded by externalHrefs and then dropped as
+       first-party, while this check saw a string not starting with `http` and
+       skipped it — so the encoded form of a same-site link reached neither. */
+    const href = decodeEntities(raw).split("#")[0].split("?")[0];
     if (!href) continue;
-    /* Protocol-relative. Skipping every `//…` sent the SAME-SITE form
-       (`//<site>/missing/`) to neither audit: this one declined it for the
-       leading slashes, and the external checker normalised it and then dropped
-       it for being first-party. Resolve the host and let it fall through to
-       the same comparison as an absolute href; a third-party one still exits
-       here and is picked up over the network. */
-    if (href.startsWith("//")) {
-      if (!siteHost) continue;
-      try {
-        const u = new URL(`https:${href}`);
-        if (u.hostname.toLowerCase().replace(/^www\./, "") === siteHost) out.add(u.pathname);
-      } catch { /* unparseable; the external checker reports it */ }
-      continue;
-    }
-    if (href.startsWith("/")) { out.add(href); continue; }
-    if (!siteHost || !/^https?:\/\//i.test(href)) continue;
+
+    if (href.startsWith("/") && !href.startsWith("//")) { out.add(href); continue; }
+    if (!hosts.size) continue;
+
+    /* Protocol-relative same-site (`//<site>/x`) reached neither audit while
+       this skipped every `//…`: the external checker normalised it and then
+       dropped it as first-party. Absolute and protocol-relative now take the
+       same path. */
+    const absolute = href.startsWith("//") ? `https:${href}` : href;
+    if (!/^https?:\/\//i.test(absolute)) continue;
     try {
-      const u = new URL(href);
-      /* Exact host (ignoring www), NOT a suffix match. A subdomain is a
-         different site that is not built from this dist/, so resolving its
-         path here would be meaningless — it belongs to the external audit,
-         and check-external-links.mjs treats only apex and www as ours so that
-         the two agree. When they disagreed, `https://en.<site>/missing/` fell
-         between them and was checked by neither. */
-      if (u.hostname.toLowerCase().replace(/^www\./, "") === siteHost) out.add(u.pathname);
+      const u = new URL(absolute);
+      /* A non-default port is a different origin: a service on :8443 is not
+         this dist/, so resolving its pathname here would "prove" a link works
+         by checking an unrelated file. Those belong to the network audit. */
+      if (u.port) continue;
+      /* Exact host (ignoring www), NOT a suffix match — a subdomain is a
+         different site with a different document root. isFirstParty() in
+         check-external-links.mjs uses the same rule so the two agree; when
+         they disagreed, `https://en.<site>/missing/` fell between them. */
+      if (hosts.has(u.hostname.toLowerCase().replace(/^www\./, ""))) out.add(u.pathname);
     } catch {
       /* unparseable absolute href; the external checker reports it */
     }
   }
   return out;
+}
+
+/**
+ * Accept either a single configured site URL or a ready-made host set.
+ *
+ * verify-deployment.mjs passes the staging host alongside production: an
+ * anchor to the preview host in shipped HTML is a leak, and while the external
+ * audit skipped it as first-party and this one recognised only production, it
+ * was checked by nothing at all. Resolving it against the shared dist/ at
+ * least catches a missing path.
+ */
+function toHostSet(siteOrHosts) {
+  if (siteOrHosts instanceof Set) return siteOrHosts;
+  if (Array.isArray(siteOrHosts)) return new Set(siteOrHosts);
+  try {
+    return new Set([new URL(String(siteOrHosts)).hostname.toLowerCase().replace(/^www\./, "")]);
+  } catch {
+    return new Set();
+  }
+}
+
+const NAMED_ENTITIES = new Map([
+  ["amp", "&"], ["lt", "<"], ["gt", ">"], ["quot", '"'], ["apos", "'"],
+  ["nbsp", " "], ["mdash", "—"], ["ndash", "–"], ["rsquo", "’"], ["lsquo", "‘"],
+]);
+
+/**
+ * Decode the character references an HTML serializer emits.
+ *
+ * One copy, because there were two: verify-deployment.mjs measured title and
+ * description length against its own local version (so `&#38;` scores 1 rather
+ * than 5), and check-external-links.mjs grew a second for URLs. The named set
+ * here is the union of both — dropping the typographic four would change what
+ * `desc-length` measures on real pages.
+ */
+export function decodeEntities(s) {
+  return String(s ?? "").replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body) => {
+    if (body[0] === "#") {
+      const cp = body[1] === "x" || body[1] === "X"
+        ? parseInt(body.slice(2), 16)
+        : parseInt(body.slice(1), 10);
+      return Number.isFinite(cp) && cp > 0 && cp <= 0x10ffff
+        ? String.fromCodePoint(cp)
+        : whole;
+    }
+    return NAMED_ENTITIES.get(body.toLowerCase()) ?? whole;
+  });
 }
 
 /**
@@ -977,8 +1020,18 @@ export function internalHrefs(html, site) {
  */
 export function anchorHrefs(html) {
   const out = [];
-  for (const m of String(html ?? "").matchAll(/<a\b[^>]*?\shref=(?:"([^"]*)"|'([^']*)')/gi)) {
-    out.push(m[1] ?? m[2] ?? "");
+  /* All three valid attribute forms, and whitespace around the `=`.
+     `<a href = "/x/">` and unquoted `<a href=/x/>` are valid HTML that a
+     quoted-and-adjacent-only pattern silently drops — and since both the
+     internal build gate and the external audit read hrefs through here, a miss
+     is a miss in two checks at once: a broken internal link passes the build
+     and an external one disappears from the sweep.
+
+     The unquoted class excludes whitespace, quotes, `=`, `<`, `>` and the
+     backtick, which is exactly what terminates an unquoted attribute value. */
+  const RE = /<a\b[^>]*?\shref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi;
+  for (const m of String(html ?? "").matchAll(RE)) {
+    out.push(m[1] ?? m[2] ?? m[3] ?? "");
   }
   return out;
 }
