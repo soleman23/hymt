@@ -72,13 +72,17 @@ it, rather than building on whatever the host's install left:
 git checkout -- package-lock.json && npm ci && npm run build
 ```
 
-`npm run build` alone still works, and `verify-deployment.mjs` § 4c will name
-every entry that lost a field and print the same recovery. But the deploy is
-only reproducible when the tree it ships was installed from the committed
-lockfile, so prefer the command above. Without it the host installs roughly 100
-binaries for platforms it will never run — every musl and arm64 variant of
-sharp, lightningcss and rolldown — which is the visible symptom of the same
-cause.
+This is required, not preferred. Leaving the build command at `npm run build`
+moves the failure rather than removing it: `verify-deployment.mjs` § 4c compares
+the working lockfile against `HEAD`, calls `fail()` for every entry that lost a
+field, and exits 1. The build then dies at the verifier instead of at the
+fixtures — with a message that names each loss and prints this same recovery,
+but red either way.
+
+Restoring the lockfile also stops the host installing roughly 100 binaries for
+platforms it will never run — every musl and arm64 variant of sharp,
+lightningcss and rolldown — and makes the deploy reproducible, because the tree
+it ships is then the one this repo pins.
 
 Use the website dashboard's **Change repository** flow if hPanel names any
 other repository. Review the overwrite warning, then start a new deployment.

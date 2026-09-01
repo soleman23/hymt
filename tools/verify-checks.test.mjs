@@ -71,6 +71,15 @@ const headJson = (file) => {
   } catch { return null; }
 };
 
+/* The lockfile on disk. Null rather than a throw when it is missing or
+   malformed: verify-deployment.mjs § 4c fails on that shape with a message
+   about it, and a TypeError here would pre-empt that with a stack trace. */
+const WORKING_LOCK = (() => {
+  try {
+    return JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
+  } catch { return null; }
+})();
+
 /* Imported, not re-implemented. An earlier draft of this file copied the
    predicates, which would have let the tests stay green while the verifier
    drifted — the exact failure mode these tests exist to prevent. */
@@ -90,7 +99,7 @@ const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
 const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, engineFloorDrift,
-  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, committedLockfile,
+  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, lockfileDriftSubject,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
@@ -2541,47 +2550,92 @@ t("lockfile: a lockfile with no packages key does not throw",
    field stripped, so the suite failed there on a repo condition that was
    never true. Both directions matter, and the second matters more: a stripped
    file reaching HEAD must still be able to fail the guard. */
-t("lockfile-subject: no git means no committed baseline to judge",
-  committedLockfile(LOCK({ "node_modules/a": GNU }), false), null);
+const V1 = { version: "1.0.0", integrity: "sha512-aaa", ...GNU };
+const V1_BARE = { version: "1.0.0", integrity: "sha512-aaa" };
+const V2_BARE = { version: "2.0.0", integrity: "sha512-bbb" };
 
-t("lockfile-subject: with git, the committed lockfile is what gets judged",
-  committedLockfile(LOCK({ "node_modules/a": GNU }), true)?.packages["node_modules/a"].libc[0],
-  "glibc");
-
-/* The guard can still go red. If a lockfile that lost its platform metadata is
-   ever committed, this returns it rather than null, REAL_LIBC reads 0 and the
-   assertion below fails — which is the whole point of it. Skipping on `null`
-   would be a hole if this ever answered null for a readable HEAD. */
-t("lockfile-subject: a committed lockfile with nothing left is still judged, not skipped",
-  committedLockfile(LOCK({ "node_modules/a": {} }), true) === null, false);
+t("lockfile-subject: no git means no baseline to judge against",
+  lockfileDriftSubject(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1 }), false).lock, null);
 
 t("lockfile-subject: a HEAD with no usable lockfile is not judged here",
-  committedLockfile(null, true), null);
+  lockfileDriftSubject(null, LOCK({ "node_modules/a": V1 }), true).lock, null);
 
 t("lockfile-subject: JSON that parses but is not a lockfile is not judged here",
-  committedLockfile({ packages: [] }, true), null);
+  lockfileDriftSubject({ packages: [] }, LOCK({ "node_modules/a": V1 }), true).lock, null);
+
+/* The installer's signature: same artifact, platform fields gone. § 4c fails on
+   exactly this, so the subject here stays the committed file — which is what
+   stops a deploy host's rewritten copy from failing a guard about the repo. */
+t("lockfile-subject: fields stripped off an unchanged artifact leaves HEAD the subject",
+  lockfileDriftSubject(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), true).source,
+  "committed");
+
+t("lockfile-subject: and the lockfile handed back is HEAD's, with its metadata intact",
+  lockfileDriftSubject(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), true)
+    .lock.packages["node_modules/a"].libc[0],
+  "glibc");
+
+/* Codex review on #139, P2. A version that moved is a dependency bump being
+   prepared, and § 4c's artifact gate goes quiet for it — so the working file is
+   the one that has to be judged, before it is committed rather than after. */
+t("lockfile-subject: a changed version makes the working lockfile the subject",
+  lockfileDriftSubject(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE }), true).source,
+  "candidate");
+
+t("lockfile-subject: a changed integrity on the same version is a candidate too",
+  lockfileDriftSubject(
+    LOCK({ "node_modules/a": V1 }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-ccc" } }), true).source,
+  "candidate");
+
+/* The whole point of the branch above: an upgrade that strips every platform
+   field must be catchable BEFORE it is committed. The subject is the working
+   file, so the guard below reads 0 and fails. */
+t("lockfile-subject: an upgrade that lost all platform metadata is judged on the new file",
+  Object.values(lockfileDriftSubject(
+    LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE }), true)
+    .lock.packages).filter((p) => Array.isArray(p.libc)).length,
+  0);
+
+/* The guard can still go red on what is committed, too. A stripped lockfile
+   that reached HEAD comes back as the subject rather than as `null`, so
+   REAL_LIBC reads 0 and the assertion below fails. Skipping instead would be
+   the hole. */
+t("lockfile-subject: a committed lockfile with nothing left is still judged, not skipped",
+  lockfileDriftSubject(LOCK({ "node_modules/a": V1_BARE }), LOCK({ "node_modules/a": V1_BARE }), true).lock === null,
+  false);
+
+/* An unreadable working copy is § 4c's failure to report. Judging HEAD keeps
+   this suite from crashing on it or seconding it. */
+t("lockfile-subject: an unreadable working copy falls back to HEAD",
+  lockfileDriftSubject(LOCK({ "node_modules/a": V1 }), null, true).source, "committed");
 
 /* Against the real file rather than a fixture, the way the dist/ block at the
    end of this file works — so a predicate that stops matching the shape npm
    actually writes fails here too. The expected value is derived from the
    lockfile, not typed in, so a dependency change moves both sides together.
 
-   Read from HEAD, not from the working tree. These three judge what is
-   COMMITTED — see committedLockfile() in repo-checks.mjs for why, and for the
-   deploy that spent a build proving the distinction matters. The working copy
-   stays covered by verify-deployment.mjs § 4c, which is the check that owns
-   it. */
-const REAL_LOCK = committedLockfile(headJson("package-lock.json"), GIT_AVAILABLE);
+   Not read from the working tree unconditionally, and not from HEAD
+   unconditionally either — see lockfileDriftSubject() in repo-checks.mjs. HEAD
+   while the working copy carries only the kind of change an installer makes,
+   which is what stops a deploy host's rewritten lockfile from failing a guard
+   about this repo; the working copy once it carries a real dependency bump,
+   which is the window § 4c is blind to. */
+const { lock: REAL_LOCK, source: REAL_SOURCE } =
+  lockfileDriftSubject(headJson("package-lock.json"), WORKING_LOCK, GIT_AVAILABLE);
 const REAL_LIBC = REAL_LOCK
   ? Object.values(REAL_LOCK.packages).filter((p) => Array.isArray(p.libc)).length
   : 0;
 
 if (!REAL_LOCK) {
-  /* Not silence: a guard that stopped running has to say so, or "3 fewer
-     fixtures ran" is indistinguishable from "3 fixtures passed". */
-  skips.push("lockfile: real-file drift guards — no committed lockfile to read here (no git, or HEAD carries none; § 4c fails on the second)");
+  /* Not silence: a guard that stopped running has to say so, or "fewer
+     fixtures ran" is indistinguishable from "more fixtures passed". */
+  skips.push("lockfile: real-file drift guards — no lockfile baseline to read here (no git, or HEAD carries none; § 4c fails on the second)");
 } else {
-  t("lockfile: the committed lockfile carries platform metadata to lose",
+  /* Named after the file actually judged. "committed" said the wrong thing on
+     a deploy host and cost a build; a name that cannot say which file it read
+     is what made that failure unreadable. */
+  t(`lockfile: the ${REAL_SOURCE} lockfile carries platform metadata to lose`,
     REAL_LIBC > 0, true);
 
   t("lockfile: the real lockfile against itself loses nothing",
@@ -2765,15 +2819,26 @@ t("coverage: an empty baseline is vacuously covered",
   JSON.stringify(lockfileCoverage(COV({}), COV({ "node_modules/a": A1 }))),
   JSON.stringify({ baselineEntries: 0, shared: 0, compared: 0 }));
 
-/* Against the real file: the committed lockfile compared with itself covers
-   every entry, so the note the build prints is the whole file, not a subset. */
-t("coverage: the real lockfile against itself is fully covered",
-  JSON.stringify(lockfileCoverage(REAL_LOCK, REAL_LOCK)),
-  JSON.stringify({
-    baselineEntries: Object.keys(REAL_LOCK.packages).length,
-    shared: Object.keys(REAL_LOCK.packages).length,
-    compared: Object.keys(REAL_LOCK.packages).length,
-  }));
+/* Against the real file: the lockfile compared with itself covers every entry,
+   so the note the build prints is the whole file, not a subset.
+
+   Guarded on REAL_LOCK like the block above it. Codex review on #139, P2: this
+   one was left reading REAL_LOCK unconditionally, so a build with no git — a
+   `git archive` export, which this repo supports and which git-lastmod.mjs
+   already handles by design — died on `Cannot read properties of null` before
+   the suite could report the skip it had just decided on. Reproduced by running
+   the suite with git off PATH. */
+if (!REAL_LOCK) {
+  skips.push("coverage: the real lockfile against itself — same missing baseline as above");
+} else {
+  t("coverage: the real lockfile against itself is fully covered",
+    JSON.stringify(lockfileCoverage(REAL_LOCK, REAL_LOCK)),
+    JSON.stringify({
+      baselineEntries: Object.keys(REAL_LOCK.packages).length,
+      shared: Object.keys(REAL_LOCK.packages).length,
+      compared: Object.keys(REAL_LOCK.packages).length,
+    }));
+}
 
 /* ── dist-line-endings ── */
 

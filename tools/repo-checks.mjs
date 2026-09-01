@@ -242,11 +242,36 @@ export function lockfileCheckState(baseline, working, gitAvailable = true) {
  * repo and § 4c skips for it too; the second § 4c fails on, so returning
  * `null` rather than duplicating that failure keeps one owner per condition.
  *
- * @returns {object|null} the committed lockfile, or null when there is none
+ * HEAD is not the subject unconditionally, though, and the first draft of this
+ * made it so. Codex review on #139, P2: during the build that must pass before
+ * a dependency bump is committed, HEAD is still the OLD lockfile. § 4c is
+ * deliberately blind to that window — its artifact gate skips every entry
+ * whose version moved, so an upgrade that replaces the platform-specific
+ * packages and drops their metadata reports zero losses — and judging HEAD
+ * there tests a clean blob that nobody is about to commit. The guard would
+ * only go red on the build AFTER the bad lockfile landed, which is one commit
+ * too late and is the exact shape of the incident that started all of this.
+ *
+ * So: when the working lockfile carries a real dependency change, it is a
+ * CANDIDATE and it is what gets judged. When it does not, the only differences
+ * are the kind an installer makes, § 4c owns those, and the subject is what is
+ * committed. `isSameArtifact` draws the line, the same helper § 4c gates on,
+ * so the two cannot disagree about which window this is.
+ *
+ * @returns {{lock: object|null, source: "committed"|"candidate"|null}}
  */
-export function committedLockfile(baseline, gitAvailable = true) {
-  if (!gitAvailable) return null;
-  return isLockfileShape(baseline) ? baseline : null;
+export function lockfileDriftSubject(baseline, working, gitAvailable = true) {
+  if (!gitAvailable) return { lock: null, source: null };
+  if (!isLockfileShape(baseline)) return { lock: null, source: null };
+  /* § 4c fails on an unreadable working copy. Judge what is committed rather
+     than crashing on it or duplicating that failure. */
+  if (!isLockfileShape(working)) return { lock: baseline, source: "committed" };
+
+  for (const [pkg, was] of Object.entries(baseline.packages)) {
+    const now = working.packages[pkg];
+    if (now && !isSameArtifact(was, now)) return { lock: working, source: "candidate" };
+  }
+  return { lock: baseline, source: "committed" };
 }
 
 /* Built output that is not text. Everything else under dist/ gets read as
