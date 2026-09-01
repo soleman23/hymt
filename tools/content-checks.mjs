@@ -933,7 +933,21 @@ export function internalHrefs(html, site) {
   }
   for (const raw of anchorHrefs(html)) {
     const href = raw.split("#")[0].split("?")[0];
-    if (!href || href.startsWith("//")) continue;
+    if (!href) continue;
+    /* Protocol-relative. Skipping every `//…` sent the SAME-SITE form
+       (`//<site>/missing/`) to neither audit: this one declined it for the
+       leading slashes, and the external checker normalised it and then dropped
+       it for being first-party. Resolve the host and let it fall through to
+       the same comparison as an absolute href; a third-party one still exits
+       here and is picked up over the network. */
+    if (href.startsWith("//")) {
+      if (!siteHost) continue;
+      try {
+        const u = new URL(`https:${href}`);
+        if (u.hostname.toLowerCase().replace(/^www\./, "") === siteHost) out.add(u.pathname);
+      } catch { /* unparseable; the external checker reports it */ }
+      continue;
+    }
     if (href.startsWith("/")) { out.add(href); continue; }
     if (!siteHost || !/^https?:\/\//i.test(href)) continue;
     try {

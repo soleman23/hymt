@@ -2966,8 +2966,18 @@ t("internal-links: a third-party absolute href is NOT collected",
 t("internal-links: a lookalike domain is NOT collected",
   internalHrefs(`<a href="https://not${OUR_APEX}/x/">x</a>`, CONFIGURED_SITE).size, 0);
 
-t("internal-links: protocol-relative is somebody else's host",
+t("internal-links: protocol-relative to another host is not ours",
   internalHrefs(`<a href="//cdn.example.com/x">x</a>`, CONFIGURED_SITE).size, 0);
+
+/* The same-site protocol-relative form reached NEITHER audit: this check
+   declined every `//…`, and the external checker normalised it and then
+   dropped it for being first-party. */
+t("internal-links: protocol-relative to OUR host is collected as its path",
+  [...internalHrefs(`<a href="//${new URL(CONFIGURED_SITE).hostname}/missing/">x</a>`, CONFIGURED_SITE)].join("|"),
+  "/missing/");
+
+t("internal-links: the apex protocol-relative form too",
+  [...internalHrefs(`<a href="//${OUR_APEX}/faq/">x</a>`, CONFIGURED_SITE)].join("|"), "/faq/");
 
 t("internal-links: query and hash are trimmed, as before",
   [...internalHrefs(`<a href="/faq/#q1">a</a><a href="/s/?q=1">b</a>`, CONFIGURED_SITE)].sort().join("|"),
@@ -3019,6 +3029,12 @@ t("internal-links: a missing absolute same-site path IS reported dead",
 t("internal-links: a missing path-relative href IS reported dead",
   (await deadInternalHrefs(
     `<a href="/definitely-not-a-real-page/">x</a>`,
+    CONFIGURED_SITE, realResolves)).join("|"),
+  "/definitely-not-a-real-page/");
+
+t("internal-links: a missing protocol-relative same-site path IS reported dead",
+  (await deadInternalHrefs(
+    `<a href="//${new URL(CONFIGURED_SITE).hostname}/definitely-not-a-real-page/">x</a>`,
     CONFIGURED_SITE, realResolves)).join("|"),
   "/definitely-not-a-real-page/");
 
