@@ -323,7 +323,7 @@
           <span class="step-count">4 / 4</span>
           <button type="button" class="btn-next" id="planSubmitBtn" style="background:var(--gold-500)">Submit My Inquiry →</button>
         </div>
-        <p id="planError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:16px;text-align:right"></p>
+        <p id="planError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:16px;text-align:right" role="alert"></p>
       </div>
 
       <div class="success-state" id="successState">
@@ -412,15 +412,31 @@ async function submitForm() {
   errorEl.textContent = '';
   fnameEl.style.borderColor = 'var(--border-subtle)';
   emailEl.style.borderColor = 'var(--border-subtle)';
+  fnameEl.removeAttribute('aria-invalid');
+  emailEl.removeAttribute('aria-invalid');
 
-  var valid = true;
-  if (!fname) { fnameEl.style.borderColor = 'var(--gold-500)'; valid = false; }
-  if (!email || !emailOk(email)) { emailEl.style.borderColor = 'var(--gold-500)'; valid = false; }
-  if (!valid) {
-    if (email && !emailOk(email)) {
-      errorEl.textContent = 'Please enter a valid email address.';
-      errorEl.style.display = 'block';
-    }
+  /* Every invalid path must say something. The old code only wrote a message
+     when the email was PRESENT and malformed, so an empty submit — the most
+     likely mistake on a four-step form — produced a gold border and nothing
+     else: no text, no aria-invalid, no focus move. Gold is the brand accent
+     rather than an error colour, so that was an ambiguous cue for sighted
+     users and no cue at all for a screen reader, on the primary lead-capture
+     form. #planError carries role="alert" to match contact.html. */
+  var problems = [];
+  if (!fname) {
+    fnameEl.style.borderColor = 'var(--gold-500)';
+    fnameEl.setAttribute('aria-invalid', 'true');
+    problems.push('your first name');
+  }
+  if (!email || !emailOk(email)) {
+    emailEl.style.borderColor = 'var(--gold-500)';
+    emailEl.setAttribute('aria-invalid', 'true');
+    problems.push(email ? 'a valid email address' : 'your email address');
+  }
+  if (problems.length) {
+    errorEl.textContent = 'Please enter ' + problems.join(' and ') + '.';
+    errorEl.style.display = 'block';
+    (fname ? emailEl : fnameEl).focus();
     return;
   }
 

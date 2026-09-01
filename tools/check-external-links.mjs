@@ -94,7 +94,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { Resolver } from "node:dns/promises";
 import { promisify } from "node:util";
-import { anchorHrefs, configuredSite } from "./content-checks.mjs";
+import { anchorHrefs, configuredSite, decodeEntities } from "./content-checks.mjs";
 
 const run = promisify(execFile);
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -140,32 +140,9 @@ export const CONFIRMED_IN_BROWSER = new Map([
 
 /* ── pure helpers, exported so verify-checks.test.mjs can drive them red ── */
 
-const ENTITIES = new Map([
-  ["amp", "&"], ["lt", "<"], ["gt", ">"], ["quot", '"'], ["apos", "'"], ["nbsp", " "],
-]);
-
-/**
- * Decode the character references an HTML serializer emits inside an attribute.
- *
- * `&` in a URL is written `&amp;` in the source. Probing the raw attribute sends
- * `amp;name=…` as a literal parameter, so the checker asks for a URL no visitor
- * ever requests and its answer — pass or fail — is about the wrong resource.
- * Two links in this site are affected (the Barbados levy PDF and the Georgian
- * museum), both with more than one query parameter.
- */
-export function decodeEntities(s) {
-  return String(s ?? "").replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body) => {
-    if (body[0] === "#") {
-      const cp = body[1] === "x" || body[1] === "X"
-        ? parseInt(body.slice(2), 16)
-        : parseInt(body.slice(1), 10);
-      return Number.isFinite(cp) && cp > 0 && cp <= 0x10ffff
-        ? String.fromCodePoint(cp)
-        : whole;
-    }
-    return ENTITIES.get(body.toLowerCase()) ?? whole;
-  });
-}
+/* decodeEntities lives in content-checks.mjs and is imported, not copied.
+   There were two implementations before this: one here for URLs and one in
+   verify-deployment.mjs for title/description length. */
 
 /**
  * The registrable hosts that are OURS, derived rather than typed.
@@ -216,13 +193,19 @@ export function firstPartyHosts({ astroConfig = "", packageJson = "" } = {}) {
  * audited over the network like any other host.
  */
 export function isFirstParty(url, hosts) {
-  let hostname;
+  let u;
   try {
-    hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+    u = new URL(url);
   } catch {
     return false;
   }
-  return hosts.has(hostname);
+  /* A non-default port is a different origin. `https://<site>:8443/faq/` is
+     not this site: treating it as ours dropped it from the network audit while
+     internalHrefs happily resolved `/faq/` against the local dist/, so a
+     refused or unrelated service passed both checks whenever its pathname
+     happened to exist locally. */
+  if (u.port) return false;
+  return hosts.has(u.hostname.toLowerCase().replace(/^www\./, ""));
 }
 
 /**
@@ -273,7 +256,14 @@ export function isHardFailure(r) {
      on the default path, so the caller re-resolves and records which it was. */
   if (r.curlExit === 6) return r.nxdomain === true;
   const e = String(r.error ?? "").toUpperCase();
-  return e.includes("ENOTFOUND") || e.includes("ECONNREFUSED");
+  /* ENOTFOUND from fetch gets the SAME treatment as curl exit 6, and for the
+     same reason: undici asks the system resolver, so split-horizon DNS, a
+     captive portal or a corporate filter returns it for a name that is
+     publicly fine. Guarding only the curl path left this bug live on the
+     documented fallback — the second time in this PR a fix landed on one path
+     and not its twin. The caller reconfirms and sets `nxdomain`. */
+  if (e.includes("ENOTFOUND")) return r.nxdomain === true;
+  return e.includes("ECONNREFUSED");
 }
 
 export function confirmationIsStale(entry, today = new Date()) {
@@ -507,7 +497,22 @@ async function main() {
   );
   const verdicts = [];
   for (const url of flagged) {
-    verdicts.push(curl ? await curlCheck(url) : await fetchProbe(url));
+    let v;
+    if (curl) {
+      v = await curlCheck(url);
+    } else {
+      v = await fetchProbe(url);
+      /* Same independent reconfirmation curlCheck does. Without it the
+         fallback path still turns a local resolver's ENOTFOUND into a
+         confident "broken". */
+      if (String(v.error ?? "").toUpperCase().includes("ENOTFOUND")) {
+        v.nxdomain = await isNxdomain(url);
+        v.error = v.nxdomain
+          ? "no such host (NXDOMAIN)"
+          : "name resolution failed, temporarily";
+      }
+    }
+    verdicts.push(v);
     await new Promise((r) => setTimeout(r, SERIAL_PAUSE_MS));
   }
 

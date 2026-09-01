@@ -93,8 +93,14 @@ const res = await fetch(ENDPOINT, {
   }),
 });
 
+/* Read the body ONCE. `res.json()` consumes it even when it throws, so the
+   old `catch { raw: await res.text() }` could never run — it died with
+   "Body is unusable" and took the verdict with it. A non-JSON response is
+   exactly what a rejection can look like, so that was the case most worth
+   seeing. */
+const raw = await res.text();
 let body;
-try { body = await res.json(); } catch { body = { raw: await res.text() }; }
+try { body = JSON.parse(raw); } catch { body = { raw }; }
 
 console.log(`HTTP ${res.status}`);
 console.log(JSON.stringify(body, null, 2));
