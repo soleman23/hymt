@@ -28,6 +28,7 @@
  */
 import { readFile, access } from "node:fs/promises";
 import { constants, readFileSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,9 +39,36 @@ const CONFIGURED_SITE = configuredSite(await readFile(path.join(ROOT, "astro.con
 
 let pass = 0;
 const failures = [];
+/* Guards that could not run here, reported rather than dropped. Only the
+   real-file lockfile block uses this, and only when there is no committed
+   lockfile to read — see the comment there. */
+const skips = [];
 const t = (name, actual, expected) => {
   if (actual === expected) { pass++; return; }
   failures.push(`${name}\n      expected ${expected}, got ${actual}`);
+};
+
+/* Is this a git checkout at all? Probed the same way verify-deployment.mjs
+   § 4c probes it, and for the same reason: `git archive` exports are a
+   supported way to build this repo, so "no git here" must stay
+   distinguishable from "git works and HEAD is wrong". */
+const GIT_AVAILABLE = (() => {
+  try {
+    execFileSync("git", ["rev-parse", "--git-dir"], { cwd: ROOT, stdio: "ignore" });
+    return true;
+  } catch { return false; }
+})();
+
+/* A committed file as JSON, or null if it cannot be read or parsed. Null is
+   handled by the caller rather than thrown, because an unreadable HEAD
+   lockfile is verify-deployment.mjs § 4c's failure to report, not this one's
+   to duplicate. */
+const headJson = (file) => {
+  if (!GIT_AVAILABLE) return null;
+  try {
+    return JSON.parse(execFileSync("git", ["show", `HEAD:${file}`],
+      { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 }));
+  } catch { return null; }
 };
 
 /* Imported, not re-implemented. An earlier draft of this file copied the
@@ -62,7 +90,7 @@ const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
 const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, engineFloorDrift,
-  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage,
+  lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, committedLockfile,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
@@ -2507,27 +2535,67 @@ t("lockfile: an entry with no platform fields either side is clean",
 t("lockfile: a lockfile with no packages key does not throw",
   lockfileMetadataLoss({}, {}).length, 0);
 
+/* Which lockfile the real-file guards below judge. The bug these cover: they
+   read the working tree, which on a deploy host is whatever that host's own
+   install left behind — and Hostinger's install leaves one with every platform
+   field stripped, so the suite failed there on a repo condition that was
+   never true. Both directions matter, and the second matters more: a stripped
+   file reaching HEAD must still be able to fail the guard. */
+t("lockfile-subject: no git means no committed baseline to judge",
+  committedLockfile(LOCK({ "node_modules/a": GNU }), false), null);
+
+t("lockfile-subject: with git, the committed lockfile is what gets judged",
+  committedLockfile(LOCK({ "node_modules/a": GNU }), true)?.packages["node_modules/a"].libc[0],
+  "glibc");
+
+/* The guard can still go red. If a lockfile that lost its platform metadata is
+   ever committed, this returns it rather than null, REAL_LIBC reads 0 and the
+   assertion below fails — which is the whole point of it. Skipping on `null`
+   would be a hole if this ever answered null for a readable HEAD. */
+t("lockfile-subject: a committed lockfile with nothing left is still judged, not skipped",
+  committedLockfile(LOCK({ "node_modules/a": {} }), true) === null, false);
+
+t("lockfile-subject: a HEAD with no usable lockfile is not judged here",
+  committedLockfile(null, true), null);
+
+t("lockfile-subject: JSON that parses but is not a lockfile is not judged here",
+  committedLockfile({ packages: [] }, true), null);
+
 /* Against the real file rather than a fixture, the way the dist/ block at the
    end of this file works — so a predicate that stops matching the shape npm
    actually writes fails here too. The expected value is derived from the
-   lockfile, not typed in, so a dependency change moves both sides together. */
-const REAL_LOCK = JSON.parse(readFileSync(path.join(ROOT, "package-lock.json"), "utf8"));
-const REAL_LIBC = Object.values(REAL_LOCK.packages).filter((p) => Array.isArray(p.libc)).length;
+   lockfile, not typed in, so a dependency change moves both sides together.
 
-t("lockfile: the committed lockfile carries platform metadata to lose",
-  REAL_LIBC > 0, true);
+   Read from HEAD, not from the working tree. These three judge what is
+   COMMITTED — see committedLockfile() in repo-checks.mjs for why, and for the
+   deploy that spent a build proving the distinction matters. The working copy
+   stays covered by verify-deployment.mjs § 4c, which is the check that owns
+   it. */
+const REAL_LOCK = committedLockfile(headJson("package-lock.json"), GIT_AVAILABLE);
+const REAL_LIBC = REAL_LOCK
+  ? Object.values(REAL_LOCK.packages).filter((p) => Array.isArray(p.libc)).length
+  : 0;
 
-t("lockfile: the real lockfile against itself loses nothing",
-  lockfileMetadataLoss(REAL_LOCK, REAL_LOCK).length, 0);
+if (!REAL_LOCK) {
+  /* Not silence: a guard that stopped running has to say so, or "3 fewer
+     fixtures ran" is indistinguishable from "3 fixtures passed". */
+  skips.push("lockfile: real-file drift guards — no committed lockfile to read here (no git, or HEAD carries none; § 4c fails on the second)");
+} else {
+  t("lockfile: the committed lockfile carries platform metadata to lose",
+    REAL_LIBC > 0, true);
 
-/* The reported incident, replayed on the real file: strip every libc block the
-   way that install did, and every one of them must come back named. */
-t("lockfile: stripping libc from the real lockfile is caught on every entry",
-  lockfileMetadataLoss(REAL_LOCK, (() => {
-    const stripped = JSON.parse(JSON.stringify(REAL_LOCK));
-    for (const p of Object.values(stripped.packages)) delete p.libc;
-    return stripped;
-  })()).length, REAL_LIBC);
+  t("lockfile: the real lockfile against itself loses nothing",
+    lockfileMetadataLoss(REAL_LOCK, REAL_LOCK).length, 0);
+
+  /* The reported incident, replayed on the real file: strip every libc block
+     the way that install did, and every one of them must come back named. */
+  t("lockfile: stripping libc from the real lockfile is caught on every entry",
+    lockfileMetadataLoss(REAL_LOCK, (() => {
+      const stripped = JSON.parse(JSON.stringify(REAL_LOCK));
+      for (const p of Object.values(stripped.packages)) delete p.libc;
+      return stripped;
+    })()).length, REAL_LIBC);
+}
 
 /* Codex review on #118, P2. Comparing by package key alone made a legitimate
    upgrade unfixable: a package that genuinely drops musl in its next major
@@ -3132,6 +3200,7 @@ t("internal-links: the real home page yields its absolute footer link",
 }
 
 /* ── report ── */
+for (const s of skips) console.log(`  --  skipped ${s}`);
 if (failures.length) {
   console.error(`\n${failures.length} failing:\n`);
   for (const f of failures) console.error(`  ✗ ${f}`);

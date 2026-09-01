@@ -214,6 +214,41 @@ export function lockfileCheckState(baseline, working, gitAvailable = true) {
   return "comparable";
 }
 
+/**
+ * The lockfile the real-file drift guards in verify-checks.test.mjs judge.
+ *
+ * Those guards assert that this repo's lockfile still carries platform
+ * metadata for the loss scan to bite on, so a predicate that stopped matching
+ * the shape npm actually writes fails against the real file too. Their subject
+ * is the COMMITTED lockfile — the first one's name says so.
+ *
+ * They read the working tree instead, and that is wrong anywhere a build runs
+ * an install of its own before `npm run build`. Hostinger's deploy does. On
+ * 2026-09-01 its install left a package-lock.json with every platform field
+ * stripped — it installed 290 packages and skipped none, where the committed
+ * lockfile installs 192 on this machine and would install about as few on the
+ * host — and this suite failed there with "expected true, got false". 123
+ * pages had already built. The same commit was green in GitHub Actions, which
+ * installs with `npm ci` and so never rewrites the file, and that difference
+ * is how the cause was found.
+ *
+ * The working copy is not left unwatched by this: verify-deployment.mjs § 4c
+ * compares it against HEAD and fails on any entry that lost a field. That is
+ * the check with jurisdiction over the working tree. This one covers what is
+ * committed, which is the only lockfile a deploy host cannot have rewritten.
+ *
+ * `null` means there is no committed baseline here to judge — no git, or a
+ * HEAD with no usable lockfile. The first is a supported way to build this
+ * repo and § 4c skips for it too; the second § 4c fails on, so returning
+ * `null` rather than duplicating that failure keeps one owner per condition.
+ *
+ * @returns {object|null} the committed lockfile, or null when there is none
+ */
+export function committedLockfile(baseline, gitAvailable = true) {
+  if (!gitAvailable) return null;
+  return isLockfileShape(baseline) ? baseline : null;
+}
+
 /* Built output that is not text. Everything else under dist/ gets read as
    text and checked for CR bytes, so a file type that appears later and is not
    listed here fails loudly rather than going unchecked — the wrong way round
