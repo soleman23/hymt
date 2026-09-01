@@ -167,8 +167,33 @@ to it.
       values as there are pages, with zero duplicates reported
 - [ ] 0 pages with a missing or duplicate `<h1>`
 - [ ] 0 images without `alt`, `width`, `height`
-- [ ] 0 broken internal links, 0 broken external links
-- [ ] Every page reachable within 3 clicks of the homepage
+- [ ] 0 broken internal links, 0 broken external links. Internal links are
+      enforced on every build by `internal-links`, which fails on any same-site
+      anchor resolving to nothing in `dist/` — **path-relative and absolute
+      both**, and protocol-relative too, since 2026-08-31. Until then it
+      scanned `href="/…"` only, and an absolute same-site link — `<site>/missing/`,
+      where `<site>` is whatever `astro.config.mjs` configures, never a literal
+      typed here — fell between the two checks: not path-relative, so this one
+      skipped it, and first-party, so the external checker skipped it too. Only
+      the footer's site link is written that way today and it resolves, so
+      nothing was broken — but the gap was real and this line used to claim
+      otherwise.
+      **External links are not enforced anywhere, by design** — run them:
+
+      ```bash
+      npm run check:links
+      ```
+
+      It sweeps wide, then re-tests only the flagged URLs one at a time, and
+      that second pass is the verdict. Do not act on a single concurrent sweep:
+      on 2026-08-31 a 12-way pass reported 46 failures of which 32 were its own
+      rate limiting, and that noise hid three of the eight links that really
+      were dead. `BROKEN` (404, no such domain, refused) is actionable;
+      `SUSPECT` (403, TLS, timeouts) needs a browser before you edit anything —
+      three such flags that audit were false, and one was real.
+- [ ] Every page reachable within 3 clicks of the homepage. Verified 2026-08-31
+      by a breadth-first walk of `dist/`: all 122 pages sit within **2** clicks
+      of `/`, with no orphans.
 
 ### 2.3 Rendering and function
 - [ ] 10 representative pages at 375 px and 768 px, Chrome + Safari

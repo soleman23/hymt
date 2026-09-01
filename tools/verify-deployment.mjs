@@ -24,7 +24,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
-  configuredSite, nestedCardAnchors,
+  configuredSite, internalHrefs, deadInternalHrefs, linkTargets, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
@@ -425,11 +425,13 @@ if (!SITE) fail("canonical-host", "could not read `site` from astro.config.mjs")
   if (!futures) notes.push(`${seen} sitemap lastmod dates across ${files.length} files, all on or before ${today}`);
 }
 
+/* The candidate paths come from linkTargets() in content-checks.mjs so the
+   resolution logic is fixture-covered; only the filesystem touch lives here. */
 const linkResolves = async (p) => {
-  const noSlash = p.replace(/\/$/, "");
-  if (!noSlash) return exists(path.join(DIST, "index.html"));
-  return (await exists(path.join(DIST, noSlash, "index.html"))) ||
-         (await exists(path.join(DIST, noSlash)));
+  for (const target of linkTargets(p)) {
+    if (await exists(path.join(DIST, target))) return true;
+  }
+  return false;
 };
 
 /* dead-inline-handler: an inline handler that calls a function nothing defines
@@ -907,10 +909,10 @@ for (const file of htmlFiles) {
     fail("desc-length", `${url} description is ${desc.length} chars (need 110-165)`);
   }
 
-  /* internal-links: every same-site href must resolve to something in dist */
-  for (const m of html.matchAll(/<a\b[^>]+href="(\/[^"#?]*)/gi)) {
-    if (!m[1].startsWith("//") && !(await linkResolves(m[1]))) deadLinks.add(m[1]);
-  }
+  /* internal-links: every same-site href must resolve to something in dist.
+     Absolute same-site hrefs count too — see internalHrefs() for the gap that
+     scanning only `/…` left open between this check and check-external-links. */
+  for (const href of await deadInternalHrefs(html, SITE, linkResolves)) deadLinks.add(href);
 
   /* internal-link-floor (P3-6, finding F17) and testimonial-attribution
      (P3-7, folded into #67). Both predicates live in ./content-checks.mjs and
