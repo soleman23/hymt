@@ -205,10 +205,10 @@ There is no LCP debt here to accept, and nothing to re-test in month 2 beyond
 confirming the numbers still hold. See #95.
 
 ### 2.5 Content
-- [ ] `grep -rli "lorem\|TBD\|coming soon\|TODO\|placeholder:" dist/ --include="*.html"`
+- [ ] `grep -rli "lorem\|\bTBD\b\|coming soon\|\bTODO\b\|placeholder:" dist/ --include="*.html"`
       returns nothing — "placeholder:" is in the list because `/about/` shipped
       six of them past the shorter grep.
-      **Two corrections to how this was written.** Scope it to `--include="*.html"`
+      **Three corrections to how this was written.** Scope it to `--include="*.html"`
       and use `-l`: unscoped it matches 127 binary assets on byte sequences and
       reports 225 files, which reads as catastrophic and means nothing.
       And `XXX` is dropped from the pattern deliberately — every page carries the
@@ -216,6 +216,17 @@ confirming the numbers still hold. See #95.
       item can never go green and tells you nothing. It starts passing the moment
       the real ID lands, which is tracked separately; do not treat the change as
       evidence of anything else.
+      **The third: `TBD` and `TODO` need `\b` word boundaries**, added
+      2026-08-31. Without them `-i` matches `TODO` inside **Todo**s Santos and
+      the gate reads red on `/destinations/riviera-maya-los-cabos/` forever, on
+      correct copy. That is not a hypothetical — it was the only hit this grep
+      produced on the day it was checked, and a verifier arriving at the gate has
+      to decide live whether it is a defect. The bounded form still goes red on a
+      real `TODO`; both halves were driven on fixtures before this line changed.
+      **The build already gets this right** — `placeholder-copy` in
+      `tools/verify-deployment.mjs` tests `/\bTODO\b/` against visible text only,
+      which is why it stayed green while this grep did not. That check is the
+      gate; this command is the quick echo of it, and the two should agree.
 - [ ] The About page contains real copy from Mark, not scaffolding (F20/P0-3c)
 - [ ] `grep -rn "NEEDS MARK" src/` — every one resolved or consciously deferred
 - [x] Hero stat rail — **done 2026-08-17 (#94).** All 43 destination pages
