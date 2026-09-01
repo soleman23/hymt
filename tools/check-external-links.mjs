@@ -92,9 +92,9 @@ import { readFile, readdir } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { lookup } from "node:dns/promises";
+import { Resolver } from "node:dns/promises";
 import { promisify } from "node:util";
-import { configuredSite } from "./content-checks.mjs";
+import { anchorHrefs, configuredSite } from "./content-checks.mjs";
 
 const run = promisify(execFile);
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -204,30 +204,42 @@ export function firstPartyHosts({ astroConfig = "", packageJson = "" } = {}) {
   return hosts;
 }
 
+/**
+ * Ours means THIS site: the configured host, apex or www. Not its subdomains.
+ *
+ * A suffix match looked right and left a hole. `internalHrefs()` compares the
+ * host exactly, because a subdomain is a different site with a different
+ * document root and resolving its paths against this `dist/` is meaningless.
+ * So a suffix match here dropped `https://en.<site>/missing/` from the external
+ * audit while the internal audit had already declined it — checked by neither.
+ * Narrowing this keeps the two definitions agreeing, and a subdomain gets
+ * audited over the network like any other host.
+ */
 export function isFirstParty(url, hosts) {
   let hostname;
   try {
-    hostname = new URL(url).hostname.toLowerCase();
+    hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
   } catch {
     return false;
   }
-  for (const h of hosts) {
-    if (hostname === h || hostname.endsWith(`.${h}`)) return true;
-  }
-  return false;
+  return hosts.has(hostname);
 }
 
 /**
  * Every distinct third-party href in one document, decoded.
  */
-export function externalHrefs(html, hosts) {
+export function externalHrefs(html, hosts, scheme = "https:") {
   const out = new Set();
-  /* Both quote styles. Astro normalises to double quotes today, so nothing in
-     dist/ is single-quoted — but content pages are rendered verbatim through
-     `set:html`, so a single-quoted href in a source page would reach the output
-     unnormalised and a double-quote-only scan would silently skip it. */
-  for (const m of String(html ?? "").matchAll(/href=(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)')/g)) {
-    const url = decodeEntities(m[1] ?? m[2]);
+  /* anchorHrefs handles both quote styles and is shared with internalHrefs, so
+     the two extractors cannot disagree about what an href is — when they did,
+     each assumed the other covered what it dropped. */
+  for (const raw of anchorHrefs(html)) {
+    let url = decodeEntities(raw);
+    /* Protocol-relative: a real third-party destination the browser fetches
+       over the page's own scheme. internalHrefs declines these for being
+       another host, so without this they reached neither audit. */
+    if (url.startsWith("//")) url = `${scheme}${url}`;
+    else if (!/^https?:\/\//i.test(url)) continue;
     if (!isFirstParty(url, hosts)) out.add(url);
   }
   return out;
@@ -356,26 +368,53 @@ const CURL_EXIT = new Map([
   [60, "certificate not trusted"],
 ]);
 
+/* Public resolvers, queried directly, to answer the NXDOMAIN question
+   independently of whatever curl just used. */
+const INDEPENDENT_NAMESERVERS = ["1.1.1.1", "8.8.8.8"];
+
 /**
- * Did this name genuinely not exist, or did the resolver just fail?
+ * Did this name genuinely not exist, or did the local resolver just decline it?
  *
- * `dns.lookup` reports ENOTFOUND for NXDOMAIN and EAI_AGAIN for a temporary
- * failure. curl collapses both into exit 6, so this is the only way to tell a
- * retired government domain from a resolver hiccup — and calling the second one
- * "broken" is exactly the confident-and-wrong report this tool must not make.
+ * curl collapses NXDOMAIN and a resolver having a bad minute into the same
+ * exit 6, so something has to separate them. The obvious move — re-ask through
+ * `dns.lookup` — is NOT independent: it goes through the same system resolver
+ * curl used, so split-horizon DNS, a captive portal, or a corporate filter
+ * returns ENOTFOUND for a name that is publicly fine and the tool reports a
+ * live link as a dead domain.
+ *
+ * So the confirmation is asked of a public resolver instead. Three outcomes:
+ *
+ *   NXDOMAIN from a public resolver  -> genuinely gone, hard failure
+ *   answers, or any other error      -> not proven gone, stays suspect
+ *   the query itself cannot run      -> not proven gone, stays suspect
+ *
+ * The last case matters: on a network that blocks outbound DNS this returns
+ * "unknown", and unknown must never mean broken. `resolver` is injectable so
+ * the fixtures can drive all three without touching the network.
  */
-async function isNxdomain(url) {
+export async function isNxdomain(url, resolver = null) {
   let hostname;
   try {
     hostname = new URL(url).hostname;
   } catch {
     return false;
   }
+  let r = resolver;
+  if (!r) {
+    r = new Resolver({ timeout: 5000, tries: 2 });
+    try {
+      r.setServers(INDEPENDENT_NAMESERVERS);
+    } catch {
+      return false; // cannot ask independently; do not claim it is gone
+    }
+  }
   try {
-    await lookup(hostname);
-    return false; // resolves now; curl's failure was transient
+    await r.resolve4(hostname);
+    return false; // it resolves publicly; curl's failure was local
   } catch (err) {
-    return err?.code === "ENOTFOUND";
+    /* ENOTFOUND / NXDOMAIN is the only answer that proves absence. SERVFAIL,
+       REFUSED, ETIMEOUT and friends prove nothing. */
+    return err?.code === "ENOTFOUND" || err?.code === "NXDOMAIN";
   }
 }
 

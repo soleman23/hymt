@@ -27,7 +27,7 @@
  * Runs as part of `npm run build`, before the verifier itself.
  */
 import { readFile, access } from "node:fs/promises";
-import { constants, readFileSync } from "node:fs";
+import { constants, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -54,7 +54,7 @@ import {
   placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
@@ -68,7 +68,7 @@ import {
 import { localDay } from "./git-lastmod.mjs";
 import {
   decodeEntities, externalHrefs, firstPartyHosts, isFirstParty,
-  isHardFailure, confirmationIsStale,
+  isHardFailure, confirmationIsStale, isNxdomain,
 } from "./check-external-links.mjs";
 
 /* ── internal-link-floor ── */
@@ -2789,9 +2789,26 @@ t("ext-links: the staging host is derived from the verify:remote script",
    very coupling the production fix removed, reintroduced in its own test. */
 const OUR_APEX = new URL(CONFIGURED_SITE).hostname.replace(/^www\./, "");
 
-t("ext-links: apex, www and a subdomain of ours are all first-party",
-  [`${CONFIGURED_SITE}/about/`, `https://${OUR_APEX}/`, `https://en.${OUR_APEX}/x`]
+t("ext-links: apex and www are ours",
+  [`${CONFIGURED_SITE}/about/`, `https://${OUR_APEX}/`]
     .every((u) => isFirstParty(u, OUR_HOSTS)), true);
+
+/* A subdomain is NOT ours, and this fixture used to assert the opposite. That
+   was the bug: internalHrefs compares the host exactly, so declaring a
+   subdomain first-party here dropped `https://en.<site>/missing/` from the
+   external audit while the internal audit had already declined it. */
+t("ext-links: a subdomain is NOT first-party — it is a different site",
+  isFirstParty(`https://en.${OUR_APEX}/missing/`, OUR_HOSTS), false);
+
+t("ext-links: and so it reaches the external audit",
+  [...externalHrefs(`<a href="https://en.${OUR_APEX}/missing/">x</a>`, OUR_HOSTS)].join("|"),
+  `https://en.${OUR_APEX}/missing/`);
+
+/* Protocol-relative: a third-party destination internalHrefs declines for
+   being another host. Without normalising it here, neither audit saw it. */
+t("ext-links: a protocol-relative href is normalised into the audit",
+  [...externalHrefs(`<a href="//docs.example.com/missing">x</a>`, OUR_HOSTS)].join("|"),
+  "https://docs.example.com/missing");
 
 t("ext-links: a third-party host is not first-party",
   isFirstParty("https://whc.unesco.org/en/list/148/", OUR_HOSTS), false);
@@ -2870,6 +2887,34 @@ t("ext-links: curl 6 that resolves on retry is NOT hard",
 t("ext-links: curl 6 with no resolution verdict is NOT hard",
   isHardFailure({ status: 0, curlExit: 6 }), false);
 
+/* The confirmation must come from a resolver INDEPENDENT of the one curl used.
+   Re-asking the system resolver is not independent: behind split-horizon DNS,
+   a captive portal or a corporate filter it returns ENOTFOUND for a name that
+   is publicly fine, and the audit would call a live link a dead domain.
+   Injectable so all three outcomes are covered without touching the network. */
+const stubResolver = (behaviour) => ({
+  resolve4: async () => {
+    if (behaviour === "resolves") return ["203.0.113.1"];
+    const e = new Error("stub"); e.code = behaviour; throw e;
+  },
+});
+
+t("ext-links: a public NXDOMAIN confirms the domain is gone",
+  await isNxdomain("https://gone.example/", stubResolver("ENOTFOUND")), true);
+
+t("ext-links: a name that resolves publicly is not gone",
+  await isNxdomain("https://fine.example/", stubResolver("resolves")), false);
+
+/* The cases that must NOT be read as proof of absence. */
+t("ext-links: SERVFAIL does not prove absence",
+  await isNxdomain("https://x.example/", stubResolver("SERVFAIL")), false);
+t("ext-links: REFUSED does not prove absence",
+  await isNxdomain("https://x.example/", stubResolver("REFUSED")), false);
+t("ext-links: a DNS timeout does not prove absence",
+  await isNxdomain("https://x.example/", stubResolver("ETIMEOUT")), false);
+t("ext-links: an unparseable URL is not a dead domain",
+  await isNxdomain("https://[", stubResolver("ENOTFOUND")), false);
+
 /* Each of these was a real flag in the 2026-08-31 audit and each was FALSE.
    A regression that promoted any of them to hard would make the command
    confidently wrong, which is the one thing it must never be. */
@@ -2930,6 +2975,58 @@ t("internal-links: query and hash are trimmed, as before",
 
 t("internal-links: mailto and tel are not internal paths",
   internalHrefs(`<a href="mailto:a@b.c">m</a><a href="tel:+1">t</a>`, CONFIGURED_SITE).size, 0);
+
+/* Single quotes, same as the external extractor. Both now share anchorHrefs,
+   so the two cannot disagree about what an href is — when they did, a
+   single-quoted absolute same-site href was removed as first-party by one and
+   never validated by the other. */
+t("internal-links: a single-quoted absolute same-site href is collected",
+  [...internalHrefs(`<a href='${CONFIGURED_SITE}/missing/'>x</a>`, CONFIGURED_SITE)].join("|"),
+  "/missing/");
+
+t("internal-links: a subdomain is not resolved against this dist/",
+  internalHrefs(`<a href="https://en.${OUR_APEX}/missing/">x</a>`, CONFIGURED_SITE).size, 0);
+
+/* ── the resolution logic itself, so a resolver that accepted everything
+      could not pass silently ── */
+
+t("internal-links: / resolves via the root index",
+  linkTargets("/").join("|"), "index.html");
+t("internal-links: a directory path tries index.html then the bare path",
+  linkTargets("/destinations/").join("|"), "destinations/index.html|destinations");
+t("internal-links: a file path tries both forms too",
+  linkTargets("/robots.txt").join("|"), "robots.txt/index.html|robots.txt");
+
+/* ── extraction THROUGH resolution, against the real dist/ ──
+
+   The earlier fixtures proved internalHrefs returns "/missing/" and stopped
+   there, so a broken resolver — or one that accepted every path — would have
+   left them all green. These run the composed predicate the verifier calls,
+   with resolution against real built output via the same linkTargets() the
+   verifier uses, so there is no second copy to drift.
+
+   What this still does NOT prove is that verify-deployment.mjs continues to
+   CALL it. No fixture in this file proves that of any check. */
+const realResolves = async (p) =>
+  linkTargets(p).some((t) => existsSync(path.join(ROOT, "dist", t)));
+
+t("internal-links: a missing absolute same-site path IS reported dead",
+  (await deadInternalHrefs(
+    `<a href="${CONFIGURED_SITE}/definitely-not-a-real-page/">x</a>`,
+    CONFIGURED_SITE, realResolves)).join("|"),
+  "/definitely-not-a-real-page/");
+
+t("internal-links: a missing path-relative href IS reported dead",
+  (await deadInternalHrefs(
+    `<a href="/definitely-not-a-real-page/">x</a>`,
+    CONFIGURED_SITE, realResolves)).join("|"),
+  "/definitely-not-a-real-page/");
+
+t("internal-links: real pages are not reported dead",
+  (await deadInternalHrefs(
+    `<a href="/destinations/">d</a><a href="${CONFIGURED_SITE}/faq/">f</a><a href="${CONFIGURED_SITE}">h</a>`,
+    CONFIGURED_SITE, realResolves)).length,
+  0);
 
 /* Against real output: the footer's absolute site link is on every page and
    must now be seen by the check that was blind to it. */

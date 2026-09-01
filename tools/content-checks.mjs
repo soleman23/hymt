@@ -931,19 +931,72 @@ export function internalHrefs(html, site) {
   } catch {
     /* no configured site: fall back to path-relative hrefs only */
   }
-  for (const m of String(html ?? "").matchAll(/<a\b[^>]+href="([^"#?]*)/gi)) {
-    const raw = m[1];
-    if (!raw || raw.startsWith("//")) continue;
-    if (raw.startsWith("/")) { out.add(raw); continue; }
-    if (!siteHost || !/^https?:\/\//i.test(raw)) continue;
+  for (const raw of anchorHrefs(html)) {
+    const href = raw.split("#")[0].split("?")[0];
+    if (!href || href.startsWith("//")) continue;
+    if (href.startsWith("/")) { out.add(href); continue; }
+    if (!siteHost || !/^https?:\/\//i.test(href)) continue;
     try {
-      const u = new URL(raw);
+      const u = new URL(href);
+      /* Exact host (ignoring www), NOT a suffix match. A subdomain is a
+         different site that is not built from this dist/, so resolving its
+         path here would be meaningless — it belongs to the external audit,
+         and check-external-links.mjs treats only apex and www as ours so that
+         the two agree. When they disagreed, `https://en.<site>/missing/` fell
+         between them and was checked by neither. */
       if (u.hostname.toLowerCase().replace(/^www\./, "") === siteHost) out.add(u.pathname);
     } catch {
       /* unparseable absolute href; the external checker reports it */
     }
   }
   return out;
+}
+
+/**
+ * Every `<a href>` value in a document, either quote style.
+ *
+ * Astro emits double quotes, so nothing in dist/ is single-quoted today. But
+ * content pages are rendered verbatim through `set:html`, so a single-quoted
+ * href in a source page reaches the output unnormalised — and the external and
+ * internal extractors disagreeing about quoting is itself a gap, since each
+ * assumes the other covers what it drops.
+ */
+export function anchorHrefs(html) {
+  const out = [];
+  for (const m of String(html ?? "").matchAll(/<a\b[^>]*?\shref=(?:"([^"]*)"|'([^']*)')/gi)) {
+    out.push(m[1] ?? m[2] ?? "");
+  }
+  return out;
+}
+
+/**
+ * The dist-relative files that would satisfy an internal href, in order.
+ *
+ * Pure so the resolution logic itself is fixture-covered: a regression that
+ * made every path "resolve" would otherwise be invisible, because the caller
+ * that touches the filesystem cannot be imported without running the verifier.
+ */
+export function linkTargets(href) {
+  const noSlash = String(href ?? "").replace(/\/$/, "");
+  if (!noSlash) return ["index.html"];
+  return [`${noSlash}/index.html`, noSlash].map((p) => p.replace(/^\/+/, ""));
+}
+
+/**
+ * The same-site hrefs in a page that resolve to nothing.
+ *
+ * `resolves` is injected so the extraction-to-resolution wiring is testable
+ * without the verifier's filesystem access; verify-deployment.mjs passes the
+ * real one. This does not prove the verifier still CALLS it — no fixture in
+ * this repo proves that of any check — but it does mean a regression in
+ * extraction, in target computation, or in the composition goes red.
+ */
+export async function deadInternalHrefs(html, site, resolves) {
+  const dead = [];
+  for (const href of internalHrefs(html, site)) {
+    if (!(await resolves(href))) dead.push(href);
+  }
+  return dead;
 }
 
 export function htaccessGaps(text, productionSite) {
