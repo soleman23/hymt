@@ -52,32 +52,51 @@ deployment.
 
 hPanel runs an install of its own before it runs the build command, and on
 2026-09-01 that install was **not** `npm ci`. Two numbers in its own log say so:
-it reported `added 290 packages, and audited 291 packages` and `105 packages
-are looking for funding`, where the committed lockfile installs **192** with
-**69** funding entries. 290 added and none skipped only happens when nothing in
-the lockfile says which platform a package is for — the install had stripped
-every `libc`, `os` and `cpu` field out of `package-lock.json` in the build
-directory. `npm ci` never rewrites that file, which is why the identical build
-on the identical commit was green in GitHub Actions the whole time.
 
-Nothing was wrong with the repository. The site built — all 123 pages — and was
-then thrown away by `tools/verify-checks.test.mjs`, whose lockfile guards were
-reading the host's rewritten working copy instead of what is committed. They now
-read `HEAD`, so a host that rewrites the file no longer fails them.
+| | hPanel, 2026-09-01 | this lockfile on Linux |
+|---|---|---|
+| install summary | `added 290 packages, and audited 291 packages` | `added 193 packages, and audited 194 packages` |
+| funding line | `105 packages are looking for funding` | `70 packages are looking for funding` |
 
-Set the hPanel **Build command** to restore the pinned lockfile and install from
-it, rather than building on whatever the host's install left:
+The right-hand column is not an estimate — it is what `npm ci` printed in GitHub
+Actions on `ubuntu-latest` for the same commit. 290 added with **none skipped**
+only happens when nothing in the lockfile says which platform a package is for:
+that install had stripped every `libc`, `os` and `cpu` field out of
+`package-lock.json` in the build directory. `npm ci` never rewrites that file,
+which is why CI was green on the identical commit the whole time.
 
-```
-git checkout -- package-lock.json && npm ci && npm run build
-```
+Nothing was wrong with the repository, and this had been true for as long as
+the site has deployed from GitHub. It only became fatal on **2026-08-28**, when
+two changes landed 2h27m apart:
 
-This is required, not preferred. Leaving the build command at `npm run build`
-moves the failure rather than removing it: `verify-deployment.mjs` § 4c compares
-the working lockfile against `HEAD`, calls `fail()` for every entry that lost a
-field, and exits 1. The build then dies at the verifier instead of at the
-fixtures — with a message that names each loss and prints this same recovery,
-but red either way.
+| time | commit | effect |
+|---|---|---|
+| 13:45 | `46b7211` upgrade Astro | the lockfile gains `libc` for the first time in this era — 34 entries where the astro 5 lockfile had **none** |
+| 16:12 | `165ff5f` fail the build on stripped metadata | adds both lockfile checks |
+
+Before 13:45 the host could strip a field that was not there. Before 16:12
+nothing looked. After both, every deploy carried a check that the host's own
+install was guaranteed to fail. The 2026-08-29 deploy died earlier still, on
+`EBADENGINE`, which masked it for another day; once the Node floor was fixed the
+build got far enough to reach the lockfile guard and stopped there.
+
+**No hPanel change is needed.** `tools/restore-lockfile.mjs` runs early in
+`npm run build` and puts the committed lockfile back before anything reads it.
+It repairs only when the repair is provably lossless — same package set, same
+versions and integrity, same root dependency ranges, only the platform fields
+missing — so HEAD holds everything the working copy holds and reverting discards
+nothing. Any other shape is **refused** with an explanation and a non-zero exit,
+because a working copy that lost metadata *and* carries real work (a package
+added, a version moved) is the 2026-08 incident itself and needs a person.
+
+A healthy deploy log shows the restore line, then the right-hand column above,
+then `ok  package-lock.json keeps its platform metadata — 293 of 293 HEAD
+entries compared`, and ends on `ok  123 pages verified`.
+
+The host installing ~100 binaries for platforms it will never run — every musl
+and arm64 variant of sharp, lightningcss and rolldown — is cosmetic waste, not a
+failure. If you ever *can* change the build command, `npm ci && npm run build`
+stops it and makes the deployed tree the one this repo pins.
 
 Restoring the lockfile also stops the host installing roughly 100 binaries for
 platforms it will never run — every musl and arm64 variant of sharp,

@@ -234,9 +234,20 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 
 ### Before every commit
 - `npm run build` must pass. It is self-contained: the Node preflight
-  (`tools/check-node.mjs`), astro build, then the image restore
-  (`node tools/restore-images.mjs`), then the check fixtures
-  (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
+  (`tools/check-node.mjs`), the lockfile restore (`tools/restore-lockfile.mjs`),
+  astro build, then the image restore (`node tools/restore-images.mjs`), then
+  the check fixtures (`tools/verify-checks.test.mjs`), then
+  `tools/verify-deployment.mjs`.
+- The lockfile restore is the one stage that WRITES to a source file, and it
+  exists because hPanel's build command cannot be changed on this account: the
+  host installs before it builds, its install strips every `libc`/`os`/`cpu`
+  field out of `package-lock.json`, and the guards below then fail a deploy over
+  a file the repo never produced. It puts the committed lockfile back only when
+  doing so is provably lossless — same package set, same versions and integrity,
+  same root ranges, only the platform fields gone. A working copy that lost
+  metadata AND carries real work is **refused**, loudly, with a non-zero exit;
+  that combination is the 2026-08 incident and a script must not resolve it.
+  It prints what it did either way, so a repair is never invisible.
 - A new verifier check must come with fixtures in `tools/verify-checks.test.mjs`
   proving it fails on the broken shape, not only that the build stays green — a
   check that cannot go red is worse than no check, and two shipped that way.
