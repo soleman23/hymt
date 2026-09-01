@@ -168,9 +168,15 @@ to it.
 - [ ] 0 pages with a missing or duplicate `<h1>`
 - [ ] 0 images without `alt`, `width`, `height`
 - [ ] 0 broken internal links, 0 broken external links. Internal links are
-      already enforced on every build by `internal-links`, which fails on any
-      internal href resolving to nothing in `dist/`. **External links are not
-      enforced anywhere, by design** — run them:
+      enforced on every build by `internal-links`, which fails on any same-site
+      anchor resolving to nothing in `dist/` — **path-relative and absolute
+      both**, since 2026-08-31. Until then it scanned `href="/…"` only, and an
+      absolute same-site link (`https://www.hymtravel.com/missing/`) fell
+      between the two checks: not path-relative, so this one skipped it, and
+      first-party, so the external checker skipped it too. Only the footer's
+      site link is written that way today and it resolves, so nothing was
+      broken — but the gap was real and this line used to claim otherwise.
+      **External links are not enforced anywhere, by design** — run them:
 
       ```bash
       npm run check:links

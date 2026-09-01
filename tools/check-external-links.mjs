@@ -92,6 +92,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { lookup } from "node:dns/promises";
 import { promisify } from "node:util";
 import { configuredSite } from "./content-checks.mjs";
 
@@ -186,8 +187,19 @@ export function firstPartyHosts({ astroConfig = "", packageJson = "" } = {}) {
     }
   };
   add(configuredSite(astroConfig));
-  for (const m of String(packageJson).matchAll(/--remote\s+(https?:\/\/[^\s"']+)/g)) {
-    add(m[1]);
+
+  /* ONLY verify:remote. Scanning every `--remote` target also swallowed
+     verify:prod, whose URL is a second literal copy of the production domain
+     in package.json — so the day astro.config.mjs moves to a new domain, the
+     stale one would still be treated as ours and outbound links to it would go
+     unaudited. Reading the one script by name keeps the staging host coming
+     from its own source and nothing else. */
+  try {
+    const staging = JSON.parse(String(packageJson))?.scripts?.["verify:remote"];
+    const m = String(staging ?? "").match(/--remote\s+(\S+)/);
+    if (m) add(m[1]);
+  } catch {
+    /* unparseable package.json — the configured site alone still stands */
   }
   return hosts;
 }
@@ -210,8 +222,12 @@ export function isFirstParty(url, hosts) {
  */
 export function externalHrefs(html, hosts) {
   const out = new Set();
-  for (const m of String(html ?? "").matchAll(/href="(https?:\/\/[^"]+)"/g)) {
-    const url = decodeEntities(m[1]);
+  /* Both quote styles. Astro normalises to double quotes today, so nothing in
+     dist/ is single-quoted — but content pages are rendered verbatim through
+     `set:html`, so a single-quoted href in a source page would reach the output
+     unnormalised and a double-quote-only scan would silently skip it. */
+  for (const m of String(html ?? "").matchAll(/href=(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)')/g)) {
+    const url = decodeEntities(m[1] ?? m[2]);
     if (!isFirstParty(url, hosts)) out.add(url);
   }
   return out;
@@ -232,7 +248,18 @@ export function externalHrefs(html, hosts) {
    visitors. */
 export function isHardFailure(r) {
   if (r.status === 404 || r.status === 410) return true;
-  if (r.curlExit === 6 || r.curlExit === 7) return true;
+  /* curl 3 is a syntactically unusable URL. No browser can open it, so there is
+     nothing ambiguous about it — unlike every other non-2xx result here. */
+  if (r.curlExit === 3) return true;
+  /* curl 7: nothing listening. Genuine in the 2026-08-31 audit
+     (seychellesferry.com). curl 28 (timeout) is deliberately absent — oncf.ma
+     times out from this machine while serving real visitors. */
+  if (r.curlExit === 7) return true;
+  /* curl 6 is "could not resolve host" and says nothing about WHY: NXDOMAIN
+     and a resolver having a bad minute are the same exit code. Demoting
+     fetch's EAI_AGAIN while leaving curl 6 hard would have kept the same bug
+     on the default path, so the caller re-resolves and records which it was. */
+  if (r.curlExit === 6) return r.nxdomain === true;
   const e = String(r.error ?? "").toUpperCase();
   return e.includes("ENOTFOUND") || e.includes("ECONNREFUSED");
 }
@@ -320,6 +347,7 @@ async function haveCurl() {
 }
 
 const CURL_EXIT = new Map([
+  [3, "malformed URL"],
   [6, "could not resolve host"],
   [7, "failed to connect"],
   [28, "timed out"],
@@ -327,6 +355,29 @@ const CURL_EXIT = new Map([
   [47, "redirect count exceeded"],
   [60, "certificate not trusted"],
 ]);
+
+/**
+ * Did this name genuinely not exist, or did the resolver just fail?
+ *
+ * `dns.lookup` reports ENOTFOUND for NXDOMAIN and EAI_AGAIN for a temporary
+ * failure. curl collapses both into exit 6, so this is the only way to tell a
+ * retired government domain from a resolver hiccup — and calling the second one
+ * "broken" is exactly the confident-and-wrong report this tool must not make.
+ */
+async function isNxdomain(url) {
+  let hostname;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return false;
+  }
+  try {
+    await lookup(hostname);
+    return false; // resolves now; curl's failure was transient
+  } catch (err) {
+    return err?.code === "ENOTFOUND";
+  }
+}
 
 async function curlCheck(url) {
   try {
@@ -346,12 +397,19 @@ async function curlCheck(url) {
     return { url, status: Number(String(stdout).trim()) || 0 };
   } catch (err) {
     const code = typeof err?.code === "number" ? err.code : null;
-    return {
+    const out = {
       url,
       status: 0,
       error: CURL_EXIT.get(code) ?? `curl exit ${code ?? "?"}`,
       curlExit: code,
     };
+    if (code === 6) {
+      out.nxdomain = await isNxdomain(url);
+      out.error = out.nxdomain
+        ? "no such host (NXDOMAIN)"
+        : "name resolution failed, temporarily";
+    }
+    return out;
   }
 }
 

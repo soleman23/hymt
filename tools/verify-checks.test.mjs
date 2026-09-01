@@ -54,7 +54,7 @@ import {
   placeCardAlt,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps as rawHtaccessGaps, configuredSite, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
+  htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
@@ -2784,8 +2784,13 @@ t("ext-links: the production host is derived from astro.config.mjs, not typed he
 t("ext-links: the staging host is derived from the verify:remote script",
   [...OUR_HOSTS].some((h) => h.endsWith("hostingersite.com")), true);
 
+/* Built from CONFIGURED_SITE, never typed. A literal `hymtravel.com` here
+   would fail this file the day astro.config.mjs moves to a new domain — the
+   very coupling the production fix removed, reintroduced in its own test. */
+const OUR_APEX = new URL(CONFIGURED_SITE).hostname.replace(/^www\./, "");
+
 t("ext-links: apex, www and a subdomain of ours are all first-party",
-  [`${CONFIGURED_SITE}/about/`, "https://hymtravel.com/", "https://en.hymtravel.com/x"]
+  [`${CONFIGURED_SITE}/about/`, `https://${OUR_APEX}/`, `https://en.${OUR_APEX}/x`]
     .every((u) => isFirstParty(u, OUR_HOSTS)), true);
 
 t("ext-links: a third-party host is not first-party",
@@ -2793,7 +2798,34 @@ t("ext-links: a third-party host is not first-party",
 
 /* The lookalike a bare `includes()` would wave through. */
 t("ext-links: a domain merely ENDING in ours is still third-party",
-  isFirstParty("https://nothymtravel.com/", OUR_HOSTS), false);
+  isFirstParty(`https://not${OUR_APEX}/`, OUR_HOSTS), false);
+
+/* Only verify:remote is a source of ownership. Scanning every `--remote` also
+   picked up verify:prod, so a stale production URL left in package.json would
+   keep being treated as ours after the real domain moved. */
+t("ext-links: a --remote URL in a script other than verify:remote is not ours",
+  firstPartyHosts({
+    astroConfig: `export default defineConfig({ site: 'https://www.example.org' })`,
+    packageJson: JSON.stringify({ scripts: {
+      "verify:remote": "node tools/verify-deployment.mjs --remote https://staging.example.org",
+      "verify:prod": "node tools/verify-deployment.mjs --remote https://old-domain.test",
+    } }),
+  }).has("old-domain.test"), false);
+
+t("ext-links: verify:remote's host IS ours",
+  firstPartyHosts({
+    astroConfig: `export default defineConfig({ site: 'https://www.example.org' })`,
+    packageJson: JSON.stringify({ scripts: {
+      "verify:remote": "node tools/verify-deployment.mjs --remote https://staging.example.org",
+    } }),
+  }).has("staging.example.org"), true);
+
+/* Astro emits double quotes, but content pages render verbatim through
+   `set:html`, so a single-quoted href in source would reach dist unnormalised
+   and a double-quote-only scan would never probe it. */
+t("ext-links: a single-quoted href is extracted too",
+  [...externalHrefs(`<a href='https://example.com/x'>y</a>`, OUR_HOSTS)].join("|"),
+  "https://example.com/x");
 
 /* The shipped shape: two real links carry `&amp;` between query parameters.
    Probing the raw attribute would request `amp;name=…`, a URL no visitor ever
@@ -2820,8 +2852,23 @@ t("ext-links: hrefs are extracted and decoded, first-party excluded",
 
 t("ext-links: 404 is a hard failure", isHardFailure({ status: 404 }), true);
 t("ext-links: 410 is a hard failure", isHardFailure({ status: 410 }), true);
-t("ext-links: curl 6 (no such host) is hard", isHardFailure({ status: 0, curlExit: 6 }), true);
 t("ext-links: curl 7 (refused) is hard", isHardFailure({ status: 0, curlExit: 7 }), true);
+
+/* curl 3 is a URL no browser can open. Nothing ambiguous about it, unlike
+   every other non-2xx result here. */
+t("ext-links: curl 3 (malformed URL) is hard",
+  isHardFailure({ status: 0, curlExit: 3, error: "malformed URL" }), true);
+
+/* curl collapses NXDOMAIN and a resolver hiccup into the same exit 6, so the
+   caller re-resolves and records which it was. Demoting fetch's EAI_AGAIN
+   while leaving curl 6 unconditionally hard would have left the same bug on
+   the path that actually runs. */
+t("ext-links: curl 6 with NXDOMAIN confirmed is hard",
+  isHardFailure({ status: 0, curlExit: 6, nxdomain: true }), true);
+t("ext-links: curl 6 that resolves on retry is NOT hard",
+  isHardFailure({ status: 0, curlExit: 6, nxdomain: false }), false);
+t("ext-links: curl 6 with no resolution verdict is NOT hard",
+  isHardFailure({ status: 0, curlExit: 6 }), false);
 
 /* Each of these was a real flag in the 2026-08-31 audit and each was FALSE.
    A regression that promoted any of them to hard would make the command
@@ -2845,6 +2892,50 @@ t("ext-links: a confirmation over 90 days old is stale",
   confirmationIsStale({ on: "2026-08-31" }, new Date("2026-12-31T00:00:00Z")), true);
 t("ext-links: an undated confirmation is stale",
   confirmationIsStale({ why: "no date" }, new Date("2026-09-01T00:00:00Z")), true);
+
+/* ── internal-links: absolute same-site hrefs (the gap between the two checks) ──
+
+   `internal-links` scanned `href="/…"` only, so an absolute same-site anchor
+   was skipped here for not being path-relative AND skipped by
+   check-external-links for being first-party. Neither looked at it, while the
+   runbook claims every internal href is build-enforced. */
+
+t("internal-links: a path-relative href is collected",
+  [...internalHrefs(`<a href="/destinations/">d</a>`, CONFIGURED_SITE)].join("|"), "/destinations/");
+
+/* The shape that reached neither check. */
+t("internal-links: an absolute same-site href is collected as its path",
+  [...internalHrefs(`<a href="${CONFIGURED_SITE}/missing/">x</a>`, CONFIGURED_SITE)].join("|"),
+  "/missing/");
+
+t("internal-links: the apex form is ours too",
+  [...internalHrefs(`<a href="https://${OUR_APEX}/faq/">x</a>`, CONFIGURED_SITE)].join("|"),
+  "/faq/");
+
+t("internal-links: the footer's bare site link resolves to /",
+  [...internalHrefs(`<a href="${CONFIGURED_SITE}">home</a>`, CONFIGURED_SITE)].join("|"), "/");
+
+t("internal-links: a third-party absolute href is NOT collected",
+  internalHrefs(`<a href="https://whc.unesco.org/en/list/148/">u</a>`, CONFIGURED_SITE).size, 0);
+
+t("internal-links: a lookalike domain is NOT collected",
+  internalHrefs(`<a href="https://not${OUR_APEX}/x/">x</a>`, CONFIGURED_SITE).size, 0);
+
+t("internal-links: protocol-relative is somebody else's host",
+  internalHrefs(`<a href="//cdn.example.com/x">x</a>`, CONFIGURED_SITE).size, 0);
+
+t("internal-links: query and hash are trimmed, as before",
+  [...internalHrefs(`<a href="/faq/#q1">a</a><a href="/s/?q=1">b</a>`, CONFIGURED_SITE)].sort().join("|"),
+  "/faq/|/s/");
+
+t("internal-links: mailto and tel are not internal paths",
+  internalHrefs(`<a href="mailto:a@b.c">m</a><a href="tel:+1">t</a>`, CONFIGURED_SITE).size, 0);
+
+/* Against real output: the footer's absolute site link is on every page and
+   must now be seen by the check that was blind to it. */
+t("internal-links: the real home page yields its absolute footer link",
+  internalHrefs(readFileSync(path.join(ROOT, "dist", "index.html"), "utf8"), CONFIGURED_SITE).has("/"),
+  true);
 
 /* Against the build's real output: every entity-bearing external href in dist/
    must survive decoding as a parseable URL with no stray `amp;` parameter. */

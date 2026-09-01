@@ -24,7 +24,7 @@ import {
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
-  configuredSite, nestedCardAnchors,
+  configuredSite, internalHrefs, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
@@ -907,9 +907,11 @@ for (const file of htmlFiles) {
     fail("desc-length", `${url} description is ${desc.length} chars (need 110-165)`);
   }
 
-  /* internal-links: every same-site href must resolve to something in dist */
-  for (const m of html.matchAll(/<a\b[^>]+href="(\/[^"#?]*)/gi)) {
-    if (!m[1].startsWith("//") && !(await linkResolves(m[1]))) deadLinks.add(m[1]);
+  /* internal-links: every same-site href must resolve to something in dist.
+     Absolute same-site hrefs count too — see internalHrefs() for the gap that
+     scanning only `/…` left open between this check and check-external-links. */
+  for (const href of internalHrefs(html, SITE)) {
+    if (!(await linkResolves(href))) deadLinks.add(href);
   }
 
   /* internal-link-floor (P3-6, finding F17) and testimonial-attribution

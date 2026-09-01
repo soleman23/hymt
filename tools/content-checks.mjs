@@ -907,6 +907,45 @@ export function configuredSite(astroConfigSource) {
   return src.match(/(?:^|[{,])\s*site\s*:\s*['"]([^'"]+)['"]/m)?.[1]?.replace(/\/$/, "") ?? "";
 }
 
+/**
+ * Every same-site anchor target in a page, as a path `internal-links` can
+ * resolve against dist/.
+ *
+ * The `internal-links` check used to scan `href="/…"` only, which left a hole
+ * between the two link checks: an absolute same-site anchor
+ * (`https://www.hymtravel.com/missing/`) was not `/`-relative so this check
+ * skipped it, and `check-external-links.mjs` skips it in the other direction
+ * for being first-party. Nothing looked at it. Only the footer's
+ * `https://www.hymtravel.com` is written that way today and it resolves, so
+ * this closes a gap rather than fixing a live break — but the runbook claims
+ * every internal href is build-enforced, and that claim should be true.
+ *
+ * Host comparison ignores a leading `www.`, so apex and www are both ours.
+ * Protocol-relative `//host/path` is somebody else's host and is left alone.
+ */
+export function internalHrefs(html, site) {
+  const out = new Set();
+  let siteHost = "";
+  try {
+    siteHost = new URL(String(site)).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    /* no configured site: fall back to path-relative hrefs only */
+  }
+  for (const m of String(html ?? "").matchAll(/<a\b[^>]+href="([^"#?]*)/gi)) {
+    const raw = m[1];
+    if (!raw || raw.startsWith("//")) continue;
+    if (raw.startsWith("/")) { out.add(raw); continue; }
+    if (!siteHost || !/^https?:\/\//i.test(raw)) continue;
+    try {
+      const u = new URL(raw);
+      if (u.hostname.toLowerCase().replace(/^www\./, "") === siteHost) out.add(u.pathname);
+    } catch {
+      /* unparseable absolute href; the external checker reports it */
+    }
+  }
+  return out;
+}
+
 export function htaccessGaps(text, productionSite) {
   /* Apache joins a backslash-continued line with the next BEFORE it parses
      anything, so this has to happen first: otherwise `Header always set \\`
