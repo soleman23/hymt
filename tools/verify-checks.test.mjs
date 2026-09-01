@@ -80,6 +80,11 @@ const WORKING_LOCK = (() => {
   } catch { return null; }
 })();
 
+/* The committed one, read once — `git show` twice for the same blob is two
+   process spawns for one answer, and two call sites free to drift about which
+   ref they meant. */
+const REAL_HEAD_LOCK = headJson("package-lock.json");
+
 /* Imported, not re-implemented. An earlier draft of this file copied the
    predicates, which would have let the tests stay green while the verifier
    drifted — the exact failure mode these tests exist to prevent. */
@@ -2613,11 +2618,11 @@ t("lockfile-subject: an unreadable working copy falls back to HEAD",
 
 /* ── lockfile-restore ──
 
-   What `npm run build:host` does before installing. This one is destructive —
-   it runs `git checkout` over the working lockfile — so every answer is
-   fixtured, and the refusal most of all: an interrupted dependency bump is
-   uncommitted work, and a script that discarded it would be worse than the
-   deploy problem it exists to fix. */
+   The first stage of `npm run build`. It runs `git checkout` over the working
+   lockfile, so every answer is fixtured and the refusals most of all: the file
+   it repairs and the file it must never touch differ only in ways that are easy
+   to conflate, and getting that wrong destroys someone's work rather than
+   merely failing a build. */
 
 t("lockfile-restore: the installer signature is restored",
   lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), true),
@@ -2627,16 +2632,58 @@ t("lockfile-restore: an intact working copy is left alone",
   lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1 }), true),
   "keep");
 
-/* The guard. A moved version is someone's uncommitted upgrade, never an
-   installer stripping fields, and `git checkout` would throw it away. */
-t("lockfile-restore: a dependency bump in progress is refused, not discarded",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE }), true),
-  "refuse");
+/* Nothing lost means nothing to do, whatever else the file carries. A bump in
+   progress whose metadata is intact must not be refused — that would fail a
+   build with no problem in it, and this now runs in every build. */
+t("lockfile-restore: a clean dependency bump is not this function's business",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": { ...V2_BARE, ...GNU } }), true),
+  "keep");
 
-t("lockfile-restore: a bump that only moved integrity is refused too",
+t("lockfile-restore: an added package with metadata intact is left alone",
+  lockfileRestoreAction(
+    LOCK({ "node_modules/a": V1 }),
+    LOCK({ "node_modules/a": V1, "node_modules/b": { version: "1.0.0" } }), true),
+  "keep");
+
+/* A changed artifact's platform support is upstream's business, which is why
+   lockfileMetadataLoss skips it — so there is no loss here to repair and the
+   answer is `keep`, not `refuse`. That is not a hole: a wholesale strip during
+   an upgrade is the drift guard's to catch, and it does, by judging the
+   candidate rather than HEAD. Two checks, one condition each. */
+t("lockfile-restore: a bumped package's own metadata is not ours to restore",
+  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE }), true),
+  "keep");
+
+t("lockfile-restore: nor is it when only integrity moved",
   lockfileRestoreAction(
     LOCK({ "node_modules/a": V1 }),
     LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-ccc" } }), true),
+  "keep");
+
+/* The refusals. Each is a working copy where an UNCHANGED artifact lost
+   platform metadata AND the file carries real work, so HEAD does not hold
+   everything it holds and a checkout would discard the difference. */
+
+/* Codex review on #140, P2. Comparing shared keys alone could not see an added
+   or removed package, so `npm install some-pkg` that also stripped libc read as
+   pure installer noise — and the restore would have reverted the new dependency
+   out of the lockfile. That is the 2026-08 incident's own shape. */
+t("lockfile-restore: a package ADDED alongside the strip is refused, not reverted",
+  lockfileRestoreAction(
+    LOCK({ "node_modules/a": V1 }),
+    LOCK({ "node_modules/a": V1_BARE, "node_modules/b": { version: "2.0.0" } }), true),
+  "refuse");
+
+t("lockfile-restore: a package REMOVED alongside the strip is refused too",
+  lockfileRestoreAction(
+    LOCK({ "node_modules/a": V1, "node_modules/b": { version: "2.0.0" } }),
+    LOCK({ "node_modules/a": V1_BARE }), true),
+  "refuse");
+
+t("lockfile-restore: a changed root dependency range alongside the strip is refused",
+  lockfileRestoreAction(
+    LOCK({ "": { version: "1.0.0", dependencies: { astro: "^7.2.9" } }, "node_modules/a": V1 }),
+    LOCK({ "": { version: "1.0.0", dependencies: { astro: "^8.0.0" } }, "node_modules/a": V1_BARE }), true),
   "refuse");
 
 t("lockfile-restore: an unparseable working copy is replaced by HEAD's",
@@ -2649,11 +2696,18 @@ t("lockfile-restore: no git means there is nothing to restore from",
 t("lockfile-restore: a HEAD with no usable lockfile is not restored from",
   lockfileRestoreAction(null, LOCK({ "node_modules/a": V1_BARE }), true), "no-baseline");
 
-/* The real file: on a clean checkout there is nothing to repair, so a machine
-   that runs build:host by mistake changes nothing. */
-if (WORKING_LOCK && headJson("package-lock.json")) {
-  t("lockfile-restore: this checkout needs no repair",
-    lockfileRestoreAction(headJson("package-lock.json"), WORKING_LOCK, GIT_AVAILABLE), "keep");
+/* Against the real file, and against HEAD on BOTH sides deliberately.
+
+   Codex review on #140, P1: this asserted `keep` for HEAD-vs-working, which is
+   only true while the working copy is clean. During a dependency upgrade the
+   honest answer can be `refuse`, and since `npm run build` must pass before
+   every commit, that assertion made the mandated workflow impossible to follow
+   at exactly the moment it matters. HEAD against itself is clean in every
+   state, so this still proves the predicate agrees with the shape of the real
+   lockfile without holding an upgrade hostage. */
+if (REAL_HEAD_LOCK) {
+  t("lockfile-restore: the real committed lockfile against itself needs no repair",
+    lockfileRestoreAction(REAL_HEAD_LOCK, REAL_HEAD_LOCK, GIT_AVAILABLE), "keep");
 }
 
 /* Against the real file rather than a fixture, the way the dist/ block at the
@@ -2668,7 +2722,7 @@ if (WORKING_LOCK && headJson("package-lock.json")) {
    about this repo; the working copy once it carries a real dependency bump,
    which is the window § 4c is blind to. */
 const { lock: REAL_LOCK, source: REAL_SOURCE } =
-  lockfileDriftSubject(headJson("package-lock.json"), WORKING_LOCK, GIT_AVAILABLE);
+  lockfileDriftSubject(REAL_HEAD_LOCK, WORKING_LOCK, GIT_AVAILABLE);
 const REAL_LIBC = REAL_LOCK
   ? Object.values(REAL_LOCK.packages).filter((p) => Array.isArray(p.libc)).length
   : 0;

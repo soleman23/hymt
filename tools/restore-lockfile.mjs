@@ -3,22 +3,27 @@
  *
  *   node tools/restore-lockfile.mjs
  *
- * The first stage of `npm run build:host`, which exists for one situation: a
- * deploy host that runs its own install BEFORE it runs the build command, and
- * whose install is not `npm ci`. Hostinger's is not. On 2026-09-01 it reported
- * `added 290 packages` with none skipped and 105 funding entries, where the
- * committed lockfile installs 193 with 70 — nothing is skipped only when
- * nothing says which platform a package is for, and that install had stripped
- * every libc/os/cpu field out of package-lock.json in the build directory.
- * Everything downstream then builds from a tree this repo never pinned.
+ * Runs early in `npm run build`, for one situation: a build host that runs its
+ * own install BEFORE the build command, and whose install is not `npm ci`.
+ * Hostinger's is not. On 2026-09-01 it reported `added 290 packages` with none
+ * skipped and 105 funding entries, where this lockfile installs 193 with 70 —
+ * nothing is skipped only when nothing says which platform a package is for,
+ * and that install had stripped every libc/os/cpu field out of
+ * package-lock.json in the build directory. Everything downstream then builds
+ * from a tree this repo never pinned, and the guards that notice fail the
+ * deploy.
  *
- * Restoring is destructive, so the decision is NOT made here. lockfileRestoreAction
- * in ./repo-checks.mjs makes it, has fixtures for all four answers, and refuses
- * on the one shape that matters: a lockfile carrying a real dependency change,
- * which is someone's uncommitted work rather than an installer's damage.
+ * It repairs rather than reports because hPanel's build command cannot be
+ * changed on this account — `npm run build` is what the host runs, so `npm run
+ * build` is what has to cope. That is only defensible because the repair is
+ * provably lossless: lockfileRestoreAction in ./repo-checks.mjs restores ONLY
+ * when the sole difference from HEAD is the missing platform fields — same
+ * package set, same versions and integrity, same root dependency ranges — so
+ * HEAD holds everything the working copy holds and reverting discards nothing.
+ * Every other shape is refused and left to a human, loudly.
  *
- * Nothing in `npm run build` calls this. A build must not repair its own
- * inputs — that is how a local mistake gets papered over instead of reported.
+ * What it does is printed either way. A repair nobody can see in the build log
+ * would be the thing that hides a local mistake.
  */
 import { readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -61,16 +66,22 @@ if (action === "keep") {
 }
 
 if (action === "refuse") {
-  /* The guard that makes this script safe to run anywhere. An installer strips
-     fields off packages it did not change; it does not move versions. A moved
-     version means a dependency bump someone has not committed yet, and
-     `git checkout` would throw it away. */
+  /* The guard that makes an automatic repair safe. The working copy has lost
+     platform metadata AND carries real changes — an added or removed package, a
+     moved version, a changed range — so HEAD does not hold everything it holds
+     and a checkout would destroy the difference. That combination is the
+     2026-08 incident itself: an install that carried real work and dropped 102
+     libc blocks with it. It needs a person, not a script. */
+  const losses = lockfileMetadataLoss(head, working);
   console.error(
-    `\nERROR: ${LOCKFILE} carries a dependency change — a version or integrity that moved.\n` +
-    `       That is uncommitted work, not the damage this script repairs, and restoring\n` +
-    `       HEAD over it would discard it. Refusing.\n\n` +
-    `       If the change is wanted, commit it and build with \`npm run build\`.\n` +
-    `       If it is not, discard it yourself: git checkout HEAD -- ${LOCKFILE}\n`);
+    `\nERROR: ${LOCKFILE} has lost ${losses.length} platform field(s) AND carries real changes\n` +
+    `       (a package added or removed, a version moved, or a changed dependency range).\n` +
+    `       HEAD does not hold those changes, so restoring it would destroy them. Refusing.\n\n` +
+    `       Repair the metadata without losing the change:\n` +
+    `         1. note what you meant to change in ${LOCKFILE}\n` +
+    `         2. git checkout HEAD -- ${LOCKFILE}\n` +
+    `         3. redo the dependency change with \`npm install\`, then check the diff\n` +
+    `            keeps every "libc" / "os" / "cpu" block it started with\n`);
   process.exit(1);
 }
 

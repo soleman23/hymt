@@ -274,29 +274,61 @@ export function lockfileDriftSubject(baseline, working, gitAvailable = true) {
   return { lock: baseline, source: "committed" };
 }
 
+/* Is the working lockfile the same set of dependencies as the baseline, pinned
+   the same way? Key set, artifact identity per key, and the root entry's
+   dependency maps — everything except the platform fields.
+
+   Deliberately strict, and deliberately not `isSameArtifact` alone. Codex
+   review on #140, P2: comparing only shared keys missed an added or removed
+   package entirely, so an `npm install some-pkg` that also stripped libc read
+   as pure installer noise and a restore would have reverted the new dependency
+   out of the lockfile. That is the 2026-08 incident's own shape — an install
+   that carried real work AND dropped 102 libc blocks — so the one repair built
+   for it must not be the thing that destroys it. */
+function sameDependencySet(baseline, working) {
+  const a = baseline.packages;
+  const b = working.packages;
+  const keys = Object.keys(a);
+  if (keys.length !== Object.keys(b).length) return false;
+  for (const key of keys) {
+    if (!b[key]) return false;
+    if (!isSameArtifact(a[key], b[key])) return false;
+  }
+  /* The root entry's version is "1.0.0" whatever its dependencies say, so
+     isSameArtifact above cannot see a changed dependency range. Compare the
+     maps themselves. */
+  for (const field of ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]) {
+    if (JSON.stringify(a[""]?.[field]) !== JSON.stringify(b[""]?.[field])) return false;
+  }
+  return true;
+}
+
 /**
  * Whether tools/restore-lockfile.mjs should put HEAD's lockfile back.
  *
- * `npm run build:host` exists for a deploy host whose own install rewrites
- * package-lock.json before the build command runs — Hostinger's does. Restoring
- * is a DESTRUCTIVE act on any other machine: `git checkout` discards
- * uncommitted work, and a dependency bump in progress is exactly the kind of
- * uncommitted work someone would be most upset to lose. So the decision is made
- * here, in a pure function with fixtures, rather than inside the script.
+ * A deploy host whose own install rewrites package-lock.json before the build
+ * runs — Hostinger's does — hands the rest of the build a lockfile this repo
+ * never pinned. Restoring is a DESTRUCTIVE act everywhere else, so the decision
+ * is made here, in a pure function with fixtures, rather than inside the script.
  *
- * The discriminator is the one lockfileDriftSubject already draws, so a file
- * this refuses to restore is the same file the drift guard judges as a
- * candidate — the two cannot disagree about whose lockfile it is:
+ * Gate one is that there is something to repair. Nothing lost means `keep`,
+ * whatever else the working copy carries — a dependency bump in progress with
+ * its metadata intact is not this function's business, and answering anything
+ * but `keep` for it would fail a build that has no problem.
  *
- *   - `refuse`       -> a version or integrity moved. Someone is preparing a
- *     dependency change; an installer stripping fields never does this. Never
- *     silently discard it.
- *   - `restore`      -> platform metadata is missing from artifacts that did not
- *     change, which is the installer signature and the whole reason for the
- *     script. An unreadable working copy restores too: HEAD's is strictly
- *     better than one that will not parse.
- *   - `keep`         -> nothing was lost. Doing nothing is the common case on a
- *     healthy host and on every developer machine.
+ * Gate two is that the repair is provably lossless. A restore is only safe when
+ * the ONLY difference is the missing platform fields: same package set, same
+ * versions and integrity, same root dependency maps. Then HEAD holds everything
+ * the working copy holds and reverting discards nothing. Anything else —
+ * an added or removed package, a moved version, a changed range — is real work
+ * that a `git checkout` would destroy, so it is refused and left to a human.
+ *
+ *   - `keep`         -> nothing lost. The common case everywhere.
+ *   - `restore`      -> installer signature: fields gone, nothing else changed.
+ *     An unparseable working copy restores too; HEAD's is strictly better than
+ *     one that will not parse.
+ *   - `refuse`       -> fields gone AND the file carries real changes. Cannot be
+ *     repaired safely; § 4c fails on it and names every loss.
  *   - `no-baseline`  -> no git, or HEAD carries no usable lockfile. Nothing to
  *     restore from, and this is a supported way to build (git archive).
  *
@@ -305,8 +337,8 @@ export function lockfileDriftSubject(baseline, working, gitAvailable = true) {
 export function lockfileRestoreAction(baseline, working, gitAvailable = true) {
   if (!gitAvailable || !isLockfileShape(baseline)) return "no-baseline";
   if (!isLockfileShape(working)) return "restore";
-  if (lockfileDriftSubject(baseline, working, true).source === "candidate") return "refuse";
-  return lockfileMetadataLoss(baseline, working).length > 0 ? "restore" : "keep";
+  if (lockfileMetadataLoss(baseline, working).length === 0) return "keep";
+  return sameDependencySet(baseline, working) ? "restore" : "refuse";
 }
 
 /* Built output that is not text. Everything else under dist/ gets read as

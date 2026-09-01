@@ -22,7 +22,7 @@ passes. In hPanel, the web app settings must be:
 | Branch | `main`, after the intended release PRs are merged |
 | Framework | Astro |
 | Node.js | **24.x**. Not `22.x` — see below |
-| Build command | `npm run build:host` — not `npm run build`, see below |
+| Build command | `npm run build` |
 | Output directory | `dist` |
 
 The floor is **Node 22.19.0**, and it is not Astro's. `npm ci` enforces
@@ -65,33 +65,38 @@ that install had stripped every `libc`, `os` and `cpu` field out of
 `package-lock.json` in the build directory. `npm ci` never rewrites that file,
 which is why CI was green on the identical commit the whole time.
 
-Nothing was wrong with the repository. The site built — all 123 pages — and was
-then thrown away by `tools/verify-checks.test.mjs`, whose lockfile guards were
-reading the host's rewritten working copy instead of what is committed.
+Nothing was wrong with the repository, and this had been true for as long as
+the site has deployed from GitHub. It only became fatal on **2026-08-28**, when
+two changes landed 2h27m apart:
 
-Set the hPanel **Build command** to:
+| time | commit | effect |
+|---|---|---|
+| 13:45 | `46b7211` upgrade Astro | the lockfile gains `libc` for the first time in this era — 34 entries where the astro 5 lockfile had **none** |
+| 16:12 | `165ff5f` fail the build on stripped metadata | adds both lockfile checks |
 
-```
-npm run build:host
-```
+Before 13:45 the host could strip a field that was not there. Before 16:12
+nothing looked. After both, every deploy carried a check that the host's own
+install was guaranteed to fail. The 2026-08-29 deploy died earlier still, on
+`EBADENGINE`, which masked it for another day; once the Node floor was fixed the
+build got far enough to reach the lockfile guard and stopped there.
 
-That restores the pinned lockfile, installs from it with `npm ci`, then runs the
-ordinary build. `tools/restore-lockfile.mjs` does the restore and **refuses**
-rather than discarding when the lockfile carries a real dependency change — a
-version or integrity that moved is uncommitted work, not installer damage — so
-the script is safe to run anywhere, including by mistake on a laptop.
+**No hPanel change is needed.** `tools/restore-lockfile.mjs` runs early in
+`npm run build` and puts the committed lockfile back before anything reads it.
+It repairs only when the repair is provably lossless — same package set, same
+versions and integrity, same root dependency ranges, only the platform fields
+missing — so HEAD holds everything the working copy holds and reverting discards
+nothing. Any other shape is **refused** with an explanation and a non-zero exit,
+because a working copy that lost metadata *and* carries real work (a package
+added, a version moved) is the 2026-08 incident itself and needs a person.
 
-This is required, not preferred. Leaving the build command at `npm run build`
-moves the failure rather than removing it: `verify-deployment.mjs` § 4c compares
-the working lockfile against `HEAD`, calls `fail()` for every entry that lost a
-field, and exits 1. The build then dies at the verifier instead of at the
-fixtures — with a message that names each loss and prints this same recovery,
-but red either way.
+A healthy deploy log shows the restore line, then the right-hand column above,
+then `ok  package-lock.json keeps its platform metadata — 293 of 293 HEAD
+entries compared`, and ends on `ok  123 pages verified`.
 
-A healthy deploy log shows the right-hand column above, then
-`ok  package-lock.json keeps its platform metadata — 293 of 293 HEAD entries
-compared`, and ends on `ok  123 pages verified`. If the install summary still
-says 290, the build command is not the one running.
+The host installing ~100 binaries for platforms it will never run — every musl
+and arm64 variant of sharp, lightningcss and rolldown — is cosmetic waste, not a
+failure. If you ever *can* change the build command, `npm ci && npm run build`
+stops it and makes the deployed tree the one this repo pins.
 
 Restoring the lockfile also stops the host installing roughly 100 binaries for
 platforms it will never run — every musl and arm64 variant of sharp,
