@@ -48,6 +48,42 @@ dependency ever raises the real floor above what those declare. That check is
 what turns the next occurrence of this into a red local build instead of a red
 deployment.
 
+#### The host's install rewrites `package-lock.json`
+
+hPanel runs an install of its own before it runs the build command, and on
+2026-09-01 that install was **not** `npm ci`. Two numbers in its own log say so:
+it reported `added 290 packages, and audited 291 packages` and `105 packages
+are looking for funding`, where the committed lockfile installs **192** with
+**69** funding entries. 290 added and none skipped only happens when nothing in
+the lockfile says which platform a package is for — the install had stripped
+every `libc`, `os` and `cpu` field out of `package-lock.json` in the build
+directory. `npm ci` never rewrites that file, which is why the identical build
+on the identical commit was green in GitHub Actions the whole time.
+
+Nothing was wrong with the repository. The site built — all 123 pages — and was
+then thrown away by `tools/verify-checks.test.mjs`, whose lockfile guards were
+reading the host's rewritten working copy instead of what is committed. They now
+read `HEAD`, so a host that rewrites the file no longer fails them.
+
+Set the hPanel **Build command** to restore the pinned lockfile and install from
+it, rather than building on whatever the host's install left:
+
+```
+git checkout -- package-lock.json && npm ci && npm run build
+```
+
+This is required, not preferred. Leaving the build command at `npm run build`
+moves the failure rather than removing it: `verify-deployment.mjs` § 4c compares
+the working lockfile against `HEAD`, calls `fail()` for every entry that lost a
+field, and exits 1. The build then dies at the verifier instead of at the
+fixtures — with a message that names each loss and prints this same recovery,
+but red either way.
+
+Restoring the lockfile also stops the host installing roughly 100 binaries for
+platforms it will never run — every musl and arm64 variant of sharp,
+lightningcss and rolldown — and makes the deploy reproducible, because the tree
+it ships is then the one this repo pins.
+
 Use the website dashboard's **Change repository** flow if hPanel names any
 other repository. Review the overwrite warning, then start a new deployment.
 Record the deployed commit SHA and retain the full successful build log.

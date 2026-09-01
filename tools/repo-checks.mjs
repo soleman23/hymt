@@ -214,6 +214,66 @@ export function lockfileCheckState(baseline, working, gitAvailable = true) {
   return "comparable";
 }
 
+/**
+ * The lockfile the real-file drift guards in verify-checks.test.mjs judge.
+ *
+ * Those guards assert that this repo's lockfile still carries platform
+ * metadata for the loss scan to bite on, so a predicate that stopped matching
+ * the shape npm actually writes fails against the real file too. Their subject
+ * is the COMMITTED lockfile — the first one's name says so.
+ *
+ * They read the working tree instead, and that is wrong anywhere a build runs
+ * an install of its own before `npm run build`. Hostinger's deploy does. On
+ * 2026-09-01 its install left a package-lock.json with every platform field
+ * stripped — it installed 290 packages and skipped none, where the committed
+ * lockfile installs 192 on this machine and would install about as few on the
+ * host — and this suite failed there with "expected true, got false". 123
+ * pages had already built. The same commit was green in GitHub Actions, which
+ * installs with `npm ci` and so never rewrites the file, and that difference
+ * is how the cause was found.
+ *
+ * The working copy is not left unwatched by this: verify-deployment.mjs § 4c
+ * compares it against HEAD and fails on any entry that lost a field. That is
+ * the check with jurisdiction over the working tree. This one covers what is
+ * committed, which is the only lockfile a deploy host cannot have rewritten.
+ *
+ * `null` means there is no committed baseline here to judge — no git, or a
+ * HEAD with no usable lockfile. The first is a supported way to build this
+ * repo and § 4c skips for it too; the second § 4c fails on, so returning
+ * `null` rather than duplicating that failure keeps one owner per condition.
+ *
+ * HEAD is not the subject unconditionally, though, and the first draft of this
+ * made it so. Codex review on #139, P2: during the build that must pass before
+ * a dependency bump is committed, HEAD is still the OLD lockfile. § 4c is
+ * deliberately blind to that window — its artifact gate skips every entry
+ * whose version moved, so an upgrade that replaces the platform-specific
+ * packages and drops their metadata reports zero losses — and judging HEAD
+ * there tests a clean blob that nobody is about to commit. The guard would
+ * only go red on the build AFTER the bad lockfile landed, which is one commit
+ * too late and is the exact shape of the incident that started all of this.
+ *
+ * So: when the working lockfile carries a real dependency change, it is a
+ * CANDIDATE and it is what gets judged. When it does not, the only differences
+ * are the kind an installer makes, § 4c owns those, and the subject is what is
+ * committed. `isSameArtifact` draws the line, the same helper § 4c gates on,
+ * so the two cannot disagree about which window this is.
+ *
+ * @returns {{lock: object|null, source: "committed"|"candidate"|null}}
+ */
+export function lockfileDriftSubject(baseline, working, gitAvailable = true) {
+  if (!gitAvailable) return { lock: null, source: null };
+  if (!isLockfileShape(baseline)) return { lock: null, source: null };
+  /* § 4c fails on an unreadable working copy. Judge what is committed rather
+     than crashing on it or duplicating that failure. */
+  if (!isLockfileShape(working)) return { lock: baseline, source: "committed" };
+
+  for (const [pkg, was] of Object.entries(baseline.packages)) {
+    const now = working.packages[pkg];
+    if (now && !isSameArtifact(was, now)) return { lock: working, source: "candidate" };
+  }
+  return { lock: baseline, source: "committed" };
+}
+
 /* Built output that is not text. Everything else under dist/ gets read as
    text and checked for CR bytes, so a file type that appears later and is not
    listed here fails loudly rather than going unchecked — the wrong way round
