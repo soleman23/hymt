@@ -1404,7 +1404,7 @@ export const COST_RANGES = {
       "Season — cool-season rates run well above the April and October shoulder, and collapse by June",
     ],
     verified: { datetime: "2026-08-24", label: "August 2026" },
-    source: { text: "UAE Government hotel fees", href: "https://u.ae/en/information-and-services/visiting-and-exploring-the-uae/where-to-stay-in-the-uae" },
+    source: { text: "UAE Government hotel fees", href: "https://u.ae/en/information-and-services/visiting-and-exploring-the-uae/Arrival-and-accommodation/where-to-stay-in-the-uae" },
   },
   "destinations__georgia-armenia.html": {
     unit: "Hotel nights and guesthouse nights, priced apart",
