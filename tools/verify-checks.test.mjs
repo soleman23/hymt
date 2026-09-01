@@ -66,6 +66,10 @@ import {
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
+import {
+  decodeEntities, externalHrefs, firstPartyHosts, isFirstParty,
+  isHardFailure, confirmationIsStale,
+} from "./check-external-links.mjs";
 
 /* ── internal-link-floor ── */
 
@@ -2761,6 +2765,95 @@ t("dist-eol: the built home page is LF",
 
 t("dist-eol: the built .htaccess is LF — the file that failed the build",
   crDefect(readFileSync(path.join(ROOT, "dist", ".htaccess"))), null);
+
+/* ── check-external-links (runbook § 2.2) ── */
+
+/* The checker itself is not a build gate — it asks the internet, and the build
+   must not. But everything it does BEFORE asking is pure: pulling hrefs out of
+   a page, decoding them, deciding what is ours, and classifying a result. Those
+   are what a later edit could silently break, turning the command green against
+   a dead link, and a manual run cannot catch that. So they are driven here. */
+
+const ASTRO_CONFIG = readFileSync(path.join(ROOT, "astro.config.mjs"), "utf8");
+const PKG_JSON = readFileSync(path.join(ROOT, "package.json"), "utf8");
+const OUR_HOSTS = firstPartyHosts({ astroConfig: ASTRO_CONFIG, packageJson: PKG_JSON });
+
+t("ext-links: the production host is derived from astro.config.mjs, not typed here",
+  OUR_HOSTS.has(new URL(CONFIGURED_SITE).hostname.replace(/^www\./, "")), true);
+
+t("ext-links: the staging host is derived from the verify:remote script",
+  [...OUR_HOSTS].some((h) => h.endsWith("hostingersite.com")), true);
+
+t("ext-links: apex, www and a subdomain of ours are all first-party",
+  [`${CONFIGURED_SITE}/about/`, "https://hymtravel.com/", "https://en.hymtravel.com/x"]
+    .every((u) => isFirstParty(u, OUR_HOSTS)), true);
+
+t("ext-links: a third-party host is not first-party",
+  isFirstParty("https://whc.unesco.org/en/list/148/", OUR_HOSTS), false);
+
+/* The lookalike a bare `includes()` would wave through. */
+t("ext-links: a domain merely ENDING in ours is still third-party",
+  isFirstParty("https://nothymtravel.com/", OUR_HOSTS), false);
+
+/* The shipped shape: two real links carry `&amp;` between query parameters.
+   Probing the raw attribute would request `amp;name=…`, a URL no visitor ever
+   asks for, so the answer would be about the wrong resource either way. */
+t("ext-links: &amp; in a query string decodes to &",
+  decodeEntities("https://bra.gov.bb/attachment?file=x&amp;name=y"),
+  "https://bra.gov.bb/attachment?file=x&name=y");
+
+t("ext-links: numeric and hex character references decode",
+  decodeEntities("a&#38;b&#x26;c"), "a&b&c");
+
+t("ext-links: an unknown entity is left alone rather than mangled",
+  decodeEntities("https://e.com/?a=1&nosuchentity;b"), "https://e.com/?a=1&nosuchentity;b");
+
+t("ext-links: hrefs are extracted and decoded, first-party excluded",
+  [...externalHrefs(
+    `<a href="https://museum.ge/index.php?lang_id=ENG&amp;sec_id=5">m</a>
+     <a href="${CONFIGURED_SITE}/about/">ours</a>
+     <a href="/destinations/">relative</a>
+     <a href="mailto:x@y.z">mail</a>`,
+    OUR_HOSTS
+  )].join("|"),
+  "https://museum.ge/index.php?lang_id=ENG&sec_id=5");
+
+t("ext-links: 404 is a hard failure", isHardFailure({ status: 404 }), true);
+t("ext-links: 410 is a hard failure", isHardFailure({ status: 410 }), true);
+t("ext-links: curl 6 (no such host) is hard", isHardFailure({ status: 0, curlExit: 6 }), true);
+t("ext-links: curl 7 (refused) is hard", isHardFailure({ status: 0, curlExit: 7 }), true);
+
+/* Each of these was a real flag in the 2026-08-31 audit and each was FALSE.
+   A regression that promoted any of them to hard would make the command
+   confidently wrong, which is the one thing it must never be. */
+t("ext-links: 403 is not hard — it is bot protection",
+  isHardFailure({ status: 403 }), false);
+t("ext-links: curl 28 (timeout) is not hard — oncf.ma serves real visitors",
+  isHardFailure({ status: 0, curlExit: 28, error: "timed out" }), false);
+t("ext-links: curl 47 (redirect loop) is not hard — evisa.gov.kh is a challenge",
+  isHardFailure({ status: 0, curlExit: 47, error: "redirect count exceeded" }), false);
+t("ext-links: a TLS error is not hard on its own",
+  isHardFailure({ status: 0, error: "certificate not trusted" }), false);
+t("ext-links: EAI_AGAIN is a retryable resolver failure, not a dead domain",
+  isHardFailure({ status: 0, error: "EAI_AGAIN" }), false);
+t("ext-links: ENOTFOUND IS a dead domain",
+  isHardFailure({ status: 0, error: "ENOTFOUND" }), true);
+
+t("ext-links: a fresh browser confirmation is not stale",
+  confirmationIsStale({ on: "2026-08-31" }, new Date("2026-09-15T00:00:00Z")), false);
+t("ext-links: a confirmation over 90 days old is stale",
+  confirmationIsStale({ on: "2026-08-31" }, new Date("2026-12-31T00:00:00Z")), true);
+t("ext-links: an undated confirmation is stale",
+  confirmationIsStale({ why: "no date" }, new Date("2026-09-01T00:00:00Z")), true);
+
+/* Against the build's real output: every entity-bearing external href in dist/
+   must survive decoding as a parseable URL with no stray `amp;` parameter. */
+{
+  const sample = readFileSync(path.join(ROOT, "dist", "destinations", "barbados-eastern-caribbean", "index.html"), "utf8");
+  const withEntities = [...externalHrefs(sample, OUR_HOSTS)].filter((u) => u.includes("?"));
+  t("ext-links: no decoded href in real output still carries an amp; parameter",
+    withEntities.some((u) => /[?&]amp;/.test(u)), false);
+}
 
 /* ── report ── */
 if (failures.length) {
