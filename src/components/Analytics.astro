@@ -2,15 +2,15 @@
 /**
  * Analytics — GA4 via gtag.js, direct, no Tag Manager (P0-5 / DECISION-1).
  *
- * PASTE THE REAL MEASUREMENT ID BELOW when the GA4 property exists. The
- * placeholder "G-XXXXXXXXXX" is safe to ship: the script only ever runs on
- * www.hymtravel.com, and gtag requests with a placeholder ID are no-ops.
+ * The measurement ID lives in the GA4_ID constant below and nowhere else on
+ * the site. It went live 2026-09-01, replacing the "G-XXXXXXXXXX" placeholder.
+ * docs/analytics-events.md quotes the same value; change both together.
  *
- * The disclosure gate (SEC-2, #75) is CLEARED: the privacy policy names GA4,
- * the four events below, and Google's policy as of August 2026. Swapping the
- * placeholder for a real ID no longer creates a disclosure mismatch. If the
- * event list here ever changes, the policy's Cookies & Analytics section has
- * to change with it — that is the whole point of the gate.
+ * The disclosure gate (SEC-2, #75) was CLEARED before the real ID landed: the
+ * privacy policy names GA4, the four events below, and Google's policy as of
+ * August 2026, so going live created no disclosure mismatch. If the event list
+ * here ever changes, the policy's Cookies & Analytics section has to change
+ * with it — that is the whole point of the gate.
  *
  * Deliberate constraints — do not "improve" them away:
  *  - Never fires on staging or localhost: hard hostname gate below.
@@ -24,7 +24,7 @@
  *      email_click           any mailto: link
  *    Add nothing else without updating that doc.
  */
-const GA4_ID = "G-XXXXXXXXXX";
+const GA4_ID = "G-J6VZEBPCBC";
 ---
 <script is:inline define:vars={{ GA4_ID }}>
 (function () {
