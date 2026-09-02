@@ -32,6 +32,82 @@ export const visibleText = (html) => html
   .replace(/<[^>]+>/g, " ");
 
 /**
+ * Notes written for whoever edits the source, which must not reach a reader.
+ *
+ * An HTML comment is not private. `NEEDS MARK` is sanctioned inside comments —
+ * see PLACEHOLDER_PATTERNS below, which tests visibleText() and therefore never
+ * looked in one — and that is right for source. It is not right for built
+ * output: on 2026-09-01 the staging site published 108 of these across 81 of
+ * 123 pages, 79 of them reading "a real client testimonial for this page",
+ * which anyone reading the page source of a luxury travel advisory would find.
+ *
+ * So the notes stay in `src/`, where they are the record of outstanding work
+ * (#67 counts the same 79 slots), and tools/strip-internal-comments.mjs removes
+ * them from `dist/` on every build.
+ *
+ * Markers are matched only INSIDE comments, which is what keeps them safe to
+ * list. `TODO` as visible copy is PLACEHOLDER_PATTERNS' business and is worded
+ * for that job; here it cannot collide with Todos Santos. `XXX` is deliberately
+ * absent: every page USED to carry the GA4 placeholder `G-XXXXXXXXXX`, and a
+ * marker that fires on correct output teaches people to ignore the check. The
+ * real ID landed 2026-09-01 and no page carries the placeholder now, so that
+ * reason has lapsed — `XXX` could be added back. Left out pending a deliberate
+ * call, not by oversight; check what a run reports before adding it.
+ */
+export const INTERNAL_COMMENT_MARKERS = [
+  /\bNEEDS (?:MARK|FIGURE)\b/,
+  /\bTODO\b/,
+  /\bFIXME\b/,
+  /\bHACK\b/,
+  /\bDO NOT SHIP\b/i,
+];
+
+const isInternalComment = (body) => INTERNAL_COMMENT_MARKERS.some((re) => re.test(body));
+
+/**
+ * Internal-note comments still present in built HTML.
+ *
+ * @returns {{marker: string, excerpt: string}[]} empty when the output is clean
+ */
+export function internalComments(html) {
+  const found = [];
+  for (const [, body] of html.matchAll(/<!--([\s\S]*?)-->/g)) {
+    const marker = INTERNAL_COMMENT_MARKERS.find((re) => re.test(body));
+    if (!marker) continue;
+    found.push({
+      marker: String(marker),
+      excerpt: body.trim().replace(/\s+/g, " ").slice(0, 80),
+    });
+  }
+  return found;
+}
+
+/**
+ * The same comments, removed.
+ *
+ * Two passes on purpose. A comment occupying whole lines takes its indentation
+ * and its trailing newline with it, so removing it leaves no blank gap where it
+ * stood; one sharing a line with markup loses only itself, because consuming
+ * that line's newline would pull the following line up and change the
+ * whitespace between two elements. The first pattern anchors to a line start,
+ * which is the only way to tell those apart.
+ *
+ * @returns {{html: string, removed: number}}
+ */
+export function stripInternalComments(html) {
+  let removed = 0;
+  const drop = (match, body, replacement) => {
+    if (!isInternalComment(body)) return match;
+    removed++;
+    return replacement;
+  };
+  const out = html
+    .replace(/^[ \t]*<!--([\s\S]*?)-->[ \t]*\r?\n/gm, (m, body) => drop(m, body, ""))
+    .replace(/<!--([\s\S]*?)-->/g, (m, body) => drop(m, body, ""));
+  return { html: out, removed };
+}
+
+/**
  * Placeholder tokens that must never ship as visible copy. NEEDS FIGURE and
  * NEEDS MARK joined the list with the P3-3 figure insertion: both are
  * sanctioned inside comments, and a cost section uncommented with one still

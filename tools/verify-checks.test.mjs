@@ -91,6 +91,7 @@ const REAL_HEAD_LOCK = headJson("package-lock.json");
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
+  internalComments, stripInternalComments,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   placeCardAlt,
@@ -302,6 +303,71 @@ const phHits = (html) => PLACEHOLDER_PATTERNS.filter(([, re]) => re.test(visible
 
 t("placeholder: NEEDS FIGURE inside a comment is sanctioned and passes",
   phHits(`<p>real copy</p><!-- NEEDS FIGURE: low end to high end -->`), 0);
+
+/* ── internal-comments ──
+
+   The other half of the same question, and the half that shipped. The check
+   above strips comments before it looks — correct for visible copy, and exactly
+   why nobody noticed that 81 of 123 built pages were publishing "NEEDS MARK: a
+   real client testimonial for this page" in their source, live on the staging
+   host. These fixtures assert both directions, and the second group asserts
+   what the stripper must NOT touch: the ~400 structural markers it shares the
+   file with. */
+
+t("internal-comments: a NEEDS MARK comment in built output is caught",
+  internalComments(`<p>copy</p>\n<!-- NEEDS MARK: a real client testimonial -->\n`).length, 1);
+
+t("internal-comments: the finding quotes the note so it can be found",
+  internalComments(`<!-- NEEDS MARK: a real client testimonial for this page -->`)[0].excerpt,
+  "NEEDS MARK: a real client testimonial for this page");
+
+t("internal-comments: TODO, FIXME, HACK and DO NOT SHIP are caught too",
+  internalComments(`<!-- TODO x --><!-- FIXME y --><!-- HACK z --><!-- do not ship w -->`).length, 4);
+
+t("internal-comments: a structural section marker is not an internal note",
+  internalComments(`<!-- ══ FOOTER ══ --><!-- AUTHOR BYLINE --><!-- CALLOUT BOX -->`).length, 0);
+
+/* G-XXXXXXXXXX is on every page while the GA4 id is unset. A marker that fires
+   on correct output teaches people to ignore the check, so XXX is not one. */
+t("internal-comments: the GA4 placeholder does not trip it",
+  internalComments(`<!-- analytics: G-XXXXXXXXXX is a no-op until the real id lands -->`).length, 0);
+
+t("internal-comments: clean output is clean",
+  internalComments(`<html><body><p>copy</p><!-- ══ FAQ ══ --></body></html>`).length, 0);
+
+/* The stripper, against the exact shape that shipped: a comment occupying whole
+   lines, indented, wrapping. It must leave no blank gap where it stood. */
+t("strip: a whole-line comment goes, and takes its line with it",
+  stripInternalComments(`<p>a</p>\n<!-- NEEDS MARK: a real client testimonial for this page — a named client,\n     the trip they took, and when. -->\n<p>b</p>\n`).html,
+  `<p>a</p>\n<p>b</p>\n`);
+
+t("strip: an indented one takes its indentation too",
+  stripInternalComments(`<div>\n    <!-- TODO: fix -->\n    <p>b</p>\n</div>`).html,
+  `<div>\n    <p>b</p>\n</div>`);
+
+/* Sharing a line with markup, the comment loses only itself — consuming that
+   newline would pull the next line up and change the whitespace between two
+   elements. */
+t("strip: one sharing a line with markup does not eat the newline",
+  stripInternalComments(`<p>a</p> <!-- NEEDS MARK: x -->\n<p>b</p>`).html,
+  `<p>a</p> \n<p>b</p>`);
+
+t("strip: structural markers survive untouched",
+  stripInternalComments(`<!-- ══ FOOTER ══ -->\n<p>a</p>\n`).html,
+  `<!-- ══ FOOTER ══ -->\n<p>a</p>\n`);
+
+t("strip: it reports how many it removed",
+  stripInternalComments(`<!-- TODO: a -->\n<!-- ══ FOOTER ══ -->\n<!-- FIXME: b -->\n`).removed, 2);
+
+t("strip: clean output is returned byte-identical",
+  stripInternalComments(`<html>\n<!-- ══ FOOTER ══ -->\n<p>copy</p>\n</html>\n`).html,
+  `<html>\n<!-- ══ FOOTER ══ -->\n<p>copy</p>\n</html>\n`);
+
+/* Strip then check: the two stages have to agree, or the build strips one set
+   and fails on another. */
+t("strip: what the stripper leaves behind passes the check",
+  internalComments(stripInternalComments(
+    `<p>a</p>\n<!-- NEEDS MARK: x -->\n<!-- TODO: y -->\n<!-- ══ FOOTER ══ -->\n`).html).length, 0);
 
 t("placeholder: NEEDS FIGURE in visible copy fails",
   phHits(`<div class="cost-range__figure">NEEDS FIGURE: low end to high end</div>`), 1);

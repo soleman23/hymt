@@ -19,6 +19,7 @@ import { execFileSync } from "node:child_process";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
+  internalComments,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
@@ -1046,6 +1047,18 @@ for (const file of htmlFiles) {
     for (const [name, re] of PLACEHOLDER_PATTERNS) {
       if (re.test(text)) fail("placeholder-copy", `${url} ships the placeholder text "${name}"`);
     }
+  }
+
+  /* internal-comments: the other half of the same question, and the half that
+     shipped. placeholder-copy strips comments before it looks, which is right
+     for visible copy and is exactly why nobody noticed that 81 of 123 pages
+     were publishing "NEEDS MARK: a real client testimonial for this page" in
+     their source. The notes belong in src/; tools/strip-internal-comments.mjs
+     takes them out of dist/ on every build, and this is what makes that stage
+     load-bearing rather than optional. */
+  for (const { excerpt } of internalComments(html)) {
+    fail("internal-comments",
+      `${url} publishes an internal note in an HTML comment: "${excerpt}" — it belongs in src/ only`);
   }
 
   /* unsafe-href / inert-cost-section (SEC-8, #81): content pages render via

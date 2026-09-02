@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node tools/check-node.mjs && node tools/restore-lockfile.mjs && astro build && node tools/restore-images.mjs && node tools/verify-checks.test.mjs && node tools/verify-deployment.mjs",
+    "build": "node tools/check-node.mjs && node tools/restore-lockfile.mjs && astro build && node tools/strip-internal-comments.mjs && node tools/restore-images.mjs && node tools/verify-checks.test.mjs && node tools/verify-deployment.mjs",
     "restore": "node tools/restore-images.mjs",
     "preview": "astro preview",
     "verify": "node tools/verify-deployment.mjs",
