@@ -94,19 +94,16 @@ act. The patch only ever adds platform values back onto entries that are the
 same artifact in both files, so there is no shape it has to refuse and nothing
 it can discard.
 
-A healthy deploy log shows the restore line, then the right-hand column above,
-then `ok  package-lock.json keeps its platform metadata — 293 of 293 HEAD
-entries compared`, and ends on `ok  123 pages verified`.
+A healthy deploy log shows the repair line, then
+`ok  package-lock.json keeps its platform metadata — 293 of 293 HEAD entries
+compared`, and ends on `ok  123 pages verified`.
 
 The host installing ~100 binaries for platforms it will never run — every musl
 and arm64 variant of sharp, lightningcss and rolldown — is cosmetic waste, not a
-failure. If you ever *can* change the build command, `npm ci && npm run build`
-stops it and makes the deployed tree the one this repo pins.
-
-Restoring the lockfile also stops the host installing roughly 100 binaries for
-platforms it will never run — every musl and arm64 variant of sharp,
-lightningcss and rolldown — and makes the deploy reproducible, because the tree
-it ships is then the one this repo pins.
+failure, and the patch does not change it: the repair fixes the lockfile the
+build reads, not the `node_modules` the host already installed. If you ever *can*
+edit the build command, `npm ci && npm run build` stops it and makes the deployed
+tree the one this repo pins.
 
 Use the website dashboard's **Change repository** flow if hPanel names any
 other repository. Review the overwrite warning, then start a new deployment.
