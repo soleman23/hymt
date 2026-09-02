@@ -274,71 +274,68 @@ export function lockfileDriftSubject(baseline, working, gitAvailable = true) {
   return { lock: baseline, source: "committed" };
 }
 
-/* Is the working lockfile the same set of dependencies as the baseline, pinned
-   the same way? Key set, artifact identity per key, and the root entry's
-   dependency maps — everything except the platform fields.
-
-   Deliberately strict, and deliberately not `isSameArtifact` alone. Codex
-   review on #140, P2: comparing only shared keys missed an added or removed
-   package entirely, so an `npm install some-pkg` that also stripped libc read
-   as pure installer noise and a restore would have reverted the new dependency
-   out of the lockfile. That is the 2026-08 incident's own shape — an install
-   that carried real work AND dropped 102 libc blocks — so the one repair built
-   for it must not be the thing that destroys it. */
-function sameDependencySet(baseline, working) {
-  const a = baseline.packages;
-  const b = working.packages;
-  const keys = Object.keys(a);
-  if (keys.length !== Object.keys(b).length) return false;
-  for (const key of keys) {
-    if (!b[key]) return false;
-    if (!isSameArtifact(a[key], b[key])) return false;
-  }
-  /* The root entry's version is "1.0.0" whatever its dependencies say, so
-     isSameArtifact above cannot see a changed dependency range. Compare the
-     maps themselves. */
-  for (const field of ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]) {
-    if (JSON.stringify(a[""]?.[field]) !== JSON.stringify(b[""]?.[field])) return false;
-  }
-  return true;
-}
-
 /**
- * Whether tools/restore-lockfile.mjs should put HEAD's lockfile back.
+ * Put back the platform fields an install dropped — and change nothing else.
  *
- * A deploy host whose own install rewrites package-lock.json before the build
- * runs — Hostinger's does — hands the rest of the build a lockfile this repo
- * never pinned. Restoring is a DESTRUCTIVE act everywhere else, so the decision
- * is made here, in a pure function with fixtures, rather than inside the script.
+ * A build host whose own install rewrites package-lock.json before the build
+ * runs hands the rest of the build a lockfile this repo never pinned.
+ * Hostinger's does exactly that, and its build command cannot be edited on this
+ * account, so `npm run build` has to cope with the file it is given.
  *
- * Gate one is that there is something to repair. Nothing lost means `keep`,
- * whatever else the working copy carries — a dependency bump in progress with
- * its metadata intact is not this function's business, and answering anything
- * but `keep` for it would fail a build that has no problem.
+ * The first two attempts at this reverted the whole file to HEAD, and both were
+ * wrong. Reverting is destructive, so each needed a rule for when it was safe,
+ * and the rules kept being narrower than reality:
  *
- * Gate two is that the repair is provably lossless. A restore is only safe when
- * the ONLY difference is the missing platform fields: same package set, same
- * versions and integrity, same root dependency maps. Then HEAD holds everything
- * the working copy holds and reverting discards nothing. Anything else —
- * an added or removed package, a moved version, a changed range — is real work
- * that a `git checkout` would destroy, so it is refused and left to a human.
+ *   1. "refuse if a version moved" — Codex review on #140, P2: blind to an added
+ *      or removed package, so `npm install some-pkg` that also stripped libc
+ *      would have had its new dependency reverted straight back out.
+ *   2. "refuse unless the dependency set is identical" — safe, and it refused
+ *      the deploy it was written for. Hostinger's install does not merely strip
+ *      fields; it re-resolves the tree, so the working lockfile differs from
+ *      HEAD by an added or removed package as well. The build log read
+ *      "lost 34 platform field(s) AND carries real changes ... Refusing" and
+ *      the deploy died on a repair that was declining to run.
  *
- *   - `keep`         -> nothing lost. The common case everywhere.
- *   - `restore`      -> installer signature: fields gone, nothing else changed.
- *     An unparseable working copy restores too; HEAD's is strictly better than
- *     one that will not parse.
- *   - `refuse`       -> fields gone AND the file carries real changes. Cannot be
- *     repaired safely; § 4c fails on it and names every loss.
- *   - `no-baseline`  -> no git, or HEAD carries no usable lockfile. Nothing to
- *     restore from, and this is a supported way to build (git archive).
+ * The mistake in both was reverting at all. This restores the missing fields
+ * onto the working lockfile in place, which is loss-free by construction rather
+ * than by rule: it only ever ADDS platform values back, only onto an entry that
+ * is the SAME ARTIFACT in both files — same key, same version, same integrity,
+ * so HEAD's record of which platforms that exact package supports is
+ * authoritative — and it unions rather than overwrites, so a value the working
+ * copy has and HEAD does not survives too. An added package, a bumped version,
+ * a changed range: all untouched, because none of them is an entry this writes.
  *
- * @returns {"restore"|"keep"|"refuse"|"no-baseline"}
+ * There is therefore no shape it has to refuse, and no way for it to discard
+ * work. What it cannot help with — a lockfile that will not parse, an upgrade
+ * that dropped metadata on versions HEAD never saw — it leaves alone for
+ * verify-deployment.mjs § 4c and the drift guard to report, each of which
+ * already owns that condition.
+ *
+ * @returns {{restored: {pkg: string, field: string, missing: string[]}[], lockfile: object|null}}
+ *   `lockfile` is null when there was nothing to restore.
  */
-export function lockfileRestoreAction(baseline, working, gitAvailable = true) {
-  if (!gitAvailable || !isLockfileShape(baseline)) return "no-baseline";
-  if (!isLockfileShape(working)) return "restore";
-  if (lockfileMetadataLoss(baseline, working).length === 0) return "keep";
-  return sameDependencySet(baseline, working) ? "restore" : "refuse";
+export function lockfilePlatformPatch(baseline, working) {
+  const restored = [];
+  if (!isLockfileShape(baseline) || !isLockfileShape(working)) return { restored, lockfile: null };
+
+  const patched = JSON.parse(JSON.stringify(working));
+  for (const [pkg, was] of Object.entries(baseline.packages)) {
+    const now = patched.packages[pkg];
+    if (!now || !isSameArtifact(was, now)) continue;
+    for (const field of PLATFORM_FIELDS) {
+      if (!Array.isArray(was[field])) continue;
+      const kept = Array.isArray(now[field]) ? now[field] : [];
+      const missing = was[field].filter((v) => !kept.includes(v));
+      if (!missing.length) continue;
+      /* Union, in HEAD's order, with anything the working copy had that HEAD
+         did not appended rather than dropped. Assigning HEAD's array outright
+         would be a narrowing — small, but this function's whole claim is that
+         it never removes a value. */
+      now[field] = [...was[field], ...kept.filter((v) => !was[field].includes(v))];
+      restored.push({ pkg, field, missing });
+    }
+  }
+  return { restored, lockfile: restored.length ? patched : null };
 }
 
 /* Built output that is not text. Everything else under dist/ gets read as

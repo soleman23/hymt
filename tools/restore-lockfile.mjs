@@ -1,47 +1,44 @@
 /**
- * Put HEAD's package-lock.json back when an install has degraded it.
+ * Put back the platform fields an install dropped from package-lock.json.
  *
  *   node tools/restore-lockfile.mjs
  *
  * Runs early in `npm run build`, for one situation: a build host that runs its
  * own install BEFORE the build command, and whose install is not `npm ci`.
- * Hostinger's is not. On 2026-09-01 it reported `added 290 packages` with none
- * skipped and 105 funding entries, where this lockfile installs 193 with 70 —
- * nothing is skipped only when nothing says which platform a package is for,
- * and that install had stripped every libc/os/cpu field out of
- * package-lock.json in the build directory. Everything downstream then builds
- * from a tree this repo never pinned, and the guards that notice fail the
- * deploy.
+ * Hostinger's is not. It reported `added 290 packages` with none skipped and
+ * 105 funding entries where this lockfile installs 193 with 70 — nothing is
+ * skipped only when nothing says which platform a package is for — and the
+ * lockfile it left behind had lost all 34 `libc` blocks. The guards that notice
+ * then failed the deploy over a file the repo never produced.
  *
  * It repairs rather than reports because hPanel's build command cannot be
- * changed on this account — `npm run build` is what the host runs, so `npm run
- * build` is what has to cope. That is only defensible because the repair is
- * provably lossless: lockfileRestoreAction in ./repo-checks.mjs restores ONLY
- * when the sole difference from HEAD is the missing platform fields — same
- * package set, same versions and integrity, same root dependency ranges — so
- * HEAD holds everything the working copy holds and reverting discards nothing.
- * Every other shape is refused and left to a human, loudly.
+ * edited on this account: `npm run build` is what the host runs, so
+ * `npm run build` is what has to cope.
  *
- * What it does is printed either way. A repair nobody can see in the build log
+ * It does NOT revert the file. Two earlier versions did, and both were wrong —
+ * see lockfilePlatformPatch in ./repo-checks.mjs, which carries the history and
+ * does the work. It only adds platform values back onto entries that are the
+ * same artifact in both files, so there is no shape it must refuse and no way
+ * for it to discard anyone's work.
+ *
+ * What it changed is always printed. A repair nobody can see in the build log
  * would be the thing that hides a local mistake.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { lockfileRestoreAction, lockfileMetadataLoss } from "./repo-checks.mjs";
+import { lockfilePlatformPatch, lockfileMetadataLoss } from "./repo-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const LOCKFILE = "package-lock.json";
-
-const git = (args, opts = {}) =>
-  execFileSync("git", args, { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28, ...opts });
+const LOCK_PATH = path.join(ROOT, LOCKFILE);
 
 /* Same probe as verify-deployment.mjs § 4c and verify-checks.test.mjs: "no git
    here" is a supported way to build this repo, not a failure. */
 const gitAvailable = (() => {
   try {
-    git(["rev-parse", "--git-dir"], { stdio: "ignore", encoding: undefined });
+    execFileSync("git", ["rev-parse", "--git-dir"], { cwd: ROOT, stdio: "ignore" });
     return true;
   } catch { return false; }
 })();
@@ -50,58 +47,47 @@ const parse = (read) => {
   try { return JSON.parse(read()); } catch { return null; }
 };
 
-const head = gitAvailable ? parse(() => git(["show", `HEAD:${LOCKFILE}`])) : null;
-const working = parse(() => readFileSync(path.join(ROOT, LOCKFILE), "utf8"));
+const head = gitAvailable
+  ? parse(() => execFileSync("git", ["show", `HEAD:${LOCKFILE}`],
+      { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 }))
+  : null;
+const working = parse(() => readFileSync(LOCK_PATH, "utf8"));
 
-const action = lockfileRestoreAction(head, working, gitAvailable);
-
-if (action === "no-baseline") {
-  console.log(`  --  ${LOCKFILE} left alone — no committed copy to restore from (no git here, or HEAD carries none)`);
+if (!head) {
+  console.log(`  --  ${LOCKFILE} left alone — no committed copy to compare against (no git here, or HEAD carries none)`);
+  process.exit(0);
+}
+if (!working) {
+  /* § 4c fails on this with a message about it, and failing here first would
+     pre-empt that with a worse one. A lockfile that will not parse can also be
+     a merge conflict, which is content, so it is emphatically not something to
+     overwrite. */
+  console.log(`  --  ${LOCKFILE} is missing or will not parse — left alone for verify-deployment § 4c to report`);
   process.exit(0);
 }
 
-if (action === "keep") {
-  console.log(`  ok  ${LOCKFILE} still matches HEAD's platform metadata — nothing to restore`);
+const { restored, lockfile } = lockfilePlatformPatch(head, working);
+
+if (!restored.length) {
+  console.log(`  ok  ${LOCKFILE} keeps the platform metadata HEAD recorded — nothing to restore`);
   process.exit(0);
 }
 
-if (action === "refuse") {
-  /* The guard that makes an automatic repair safe. The working copy has lost
-     platform metadata AND carries real changes — an added or removed package, a
-     moved version, a changed range — so HEAD does not hold everything it holds
-     and a checkout would destroy the difference. That combination is the
-     2026-08 incident itself: an install that carried real work and dropped 102
-     libc blocks with it. It needs a person, not a script. */
-  const losses = lockfileMetadataLoss(head, working);
-  console.error(
-    `\nERROR: ${LOCKFILE} has lost ${losses.length} platform field(s) AND carries real changes\n` +
-    `       (a package added or removed, a version moved, or a changed dependency range).\n` +
-    `       HEAD does not hold those changes, so restoring it would destroy them. Refusing.\n\n` +
-    `       Repair the metadata without losing the change:\n` +
-    `         1. note what you meant to change in ${LOCKFILE}\n` +
-    `         2. git checkout HEAD -- ${LOCKFILE}\n` +
-    `         3. redo the dependency change with \`npm install\`, then check the diff\n` +
-    `            keeps every "libc" / "os" / "cpu" block it started with\n`);
-  process.exit(1);
-}
+const entries = new Set(restored.map((r) => r.pkg));
+console.log(`  --  ${LOCKFILE} had lost ${restored.length} platform field(s) across ${entries.size} entries — restoring them in place`);
 
-/* action === "restore". Report what was actually wrong before changing it, so
-   the build log carries the evidence rather than just the repair. */
-const losses = head && working ? lockfileMetadataLoss(head, working) : [];
-const entries = new Set(losses.map((l) => l.pkg));
-console.log(losses.length
-  ? `  --  ${LOCKFILE} lost ${losses.length} platform field(s) across ${entries.size} entries since HEAD — restoring`
-  : `  --  ${LOCKFILE} is missing or unparseable — restoring HEAD's copy`);
+/* 2-space indent and a trailing newline is what npm writes, so on a tree where
+   nothing was actually missing this rewrite would be byte-identical. */
+writeFileSync(LOCK_PATH, `${JSON.stringify(lockfile, null, 2)}\n`);
 
-git(["checkout", "HEAD", "--", LOCKFILE]);
-
-/* Verify the repair rather than assuming it. A `git checkout` that reported
-   success and left the file unchanged would otherwise hand the same broken
-   lockfile to `npm ci` with a line above it claiming it was fixed. */
-const after = parse(() => readFileSync(path.join(ROOT, LOCKFILE), "utf8"));
-const remaining = head && after ? lockfileMetadataLoss(head, after) : null;
+/* Verify rather than assume. A patch that reported success and left a field
+   missing would otherwise hand the same lockfile to the guards below under a
+   line claiming it was fixed. */
+const after = parse(() => readFileSync(LOCK_PATH, "utf8"));
+const remaining = after ? lockfileMetadataLoss(head, after) : null;
 if (!after || remaining === null || remaining.length) {
-  console.error(`\nERROR: ${LOCKFILE} still differs from HEAD after the restore — not proceeding.\n`);
+  console.error(
+    `\nERROR: ${LOCKFILE} still lacks ${remaining?.length ?? "?"} platform field(s) after the repair — not proceeding.\n`);
   process.exit(1);
 }
-console.log(`  ok  ${LOCKFILE} restored from HEAD — ${Object.keys(after.packages).length} entries`);
+console.log(`  ok  ${LOCKFILE} platform metadata restored — ${Object.keys(after.packages).length} entries, nothing else changed`);
