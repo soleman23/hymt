@@ -236,11 +236,14 @@ confirming the numbers still hold. See #95.
       **Three corrections to how this was written.** Scope it to `--include="*.html"`
       and use `-l`: unscoped it matches 127 binary assets on byte sequences and
       reports 225 files, which reads as catastrophic and means nothing.
-      And `XXX` is dropped from the pattern deliberately — every page carries the
-      GA4 placeholder `G-XXXXXXXXXX`, so while the measurement ID is unset this
-      item can never go green and tells you nothing. It starts passing the moment
-      the real ID lands, which is tracked separately; do not treat the change as
-      evidence of anything else.
+      And `XXX` is dropped from the pattern deliberately — every page used to
+      carry the GA4 placeholder `G-XXXXXXXXXX`, so while the measurement ID was
+      unset this item could never go green and told you nothing. **The real ID
+      `G-J6VZEBPCBC` landed 2026-09-01**, so that reason has lapsed and no page
+      carries the placeholder any more. Putting `XXX` back is therefore now
+      possible, but it is a deliberate call nobody has made — the pattern above
+      is still the one to run. Do not read this item turning green as evidence
+      of anything beyond the ID landing.
       **The third: `TBD` and `TODO` need `\b` word boundaries**, added
       2026-08-31. Without them `-i` matches `TODO` inside **Todo**s Santos and
       the gate reads red on `/destinations/riviera-maya-los-cabos/` forever, on

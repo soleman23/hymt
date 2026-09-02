@@ -5,9 +5,10 @@ GA4 direct via `gtag.js` (`src/components/Analytics.astro`, rendered from
 site with one conversion does not need a management surface, and GTM costs
 ~90 KB plus a second round trip.
 
-**Measurement ID:** placeholder `G-XXXXXXXXXX` until the GA4 property exists.
-Paste the real ID into the `GA4_ID` constant at the top of
-`src/components/Analytics.astro` — that is the only place it lives.
+**Measurement ID:** `G-J6VZEBPCBC`, live since 2026-09-01. It lives in the
+`GA4_ID` constant at the top of `src/components/Analytics.astro` — that is the
+only place it lives. Replacing the property means editing that constant and
+this line, and nothing else.
 
 ## Hard rules
 
