@@ -94,7 +94,7 @@ import {
   internalComments, stripInternalComments,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
-  placeCardAlt,
+  placeCardAlt, postBuildDrift,
   imageDims, imgRatioMismatches, cspScriptHash, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
@@ -3464,6 +3464,40 @@ t("internal-links: the real home page yields its absolute footer link",
   t("ext-links: no decoded href in real output still carries an amp; parameter",
     withEntities.some((u) => /[?&]amp;/.test(u)), false);
 }
+
+/* ── build/build:post parity ── */
+
+/* The green case, and the shape package.json actually ships. */
+t("post-build: build listing every build:post stage passes",
+  postBuildDrift({
+    build: "node tools/check-node.mjs && astro build && node tools/strip-internal-comments.mjs && node tools/restore-images.mjs && node tools/verify-deployment.mjs",
+    "build:post": "node tools/strip-internal-comments.mjs && node tools/restore-images.mjs",
+  }).length, 0);
+
+/* The broken shape this exists for: a stage in the documented post-build
+   command that the real build never runs. Without this the direct path and
+   `npm run build` can repair dist/ differently and nothing says so. */
+t("post-build: a stage missing from build fails",
+  postBuildDrift({
+    build: "astro build && node tools/restore-images.mjs",
+    "build:post": "node tools/strip-internal-comments.mjs && node tools/restore-images.mjs",
+  }).join(","), "node tools/strip-internal-comments.mjs");
+
+/* Order is not the point — running the stages is. */
+t("post-build: reordered stages still pass",
+  postBuildDrift({
+    build: "astro build && node tools/restore-images.mjs && node tools/strip-internal-comments.mjs",
+    "build:post": "node tools/strip-internal-comments.mjs && node tools/restore-images.mjs",
+  }).length, 0);
+
+/* No build:post at all is not drift; there is nothing to keep in sync. */
+t("post-build: absent build:post is not drift",
+  postBuildDrift({ build: "astro build" }).length, 0);
+
+/* Against the real package.json, so the fixtures cannot pass while the file
+   this protects has drifted. */
+t("post-build: the shipped package.json has no drift",
+  postBuildDrift(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
 
 /* ── report ── */
 for (const s of skips) console.log(`  --  skipped ${s}`);
