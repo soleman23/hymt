@@ -94,6 +94,29 @@ export function internalComments(html) {
  *
  * @returns {{html: string, removed: number}}
  */
+/**
+ * `tel:` links that are not in E.164 form.
+ *
+ * A phone number without a leading `+` and country code is only unambiguous to
+ * a handset already on that country's network. `tel:14085681404` asks a phone
+ * abroad — or on a carrier that reads a bare leading 1 as something else — to
+ * guess, and the guess is not always a call to Mark.
+ *
+ * Three pages shipped that form while 126 links carried the correct
+ * `tel:+14085681404`, and one of the three was /contact/, which had both on the
+ * same page. Found by reading hrefs during the pre-cutover browser pass, not by
+ * any check — nothing here looked at the shape of a tel: URL before.
+ *
+ * @returns {string[]} the offending hrefs, empty when clean
+ */
+export function telHrefDefects(html) {
+  const bad = [];
+  for (const [, href] of html.matchAll(/href="(tel:[^"]*)"/g)) {
+    if (!/^tel:\+[0-9]{7,15}$/.test(href)) bad.push(href);
+  }
+  return bad;
+}
+
 export function stripInternalComments(html) {
   let removed = 0;
   const drop = (match, body, replacement) => {

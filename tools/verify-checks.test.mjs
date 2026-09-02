@@ -91,7 +91,7 @@ const REAL_HEAD_LOCK = headJson("package-lock.json");
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
-  internalComments, stripInternalComments,
+  internalComments, stripInternalComments, telHrefDefects,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   placeCardAlt, postBuildDrift,
@@ -313,6 +313,33 @@ t("placeholder: NEEDS FIGURE inside a comment is sanctioned and passes",
    host. These fixtures assert both directions, and the second group asserts
    what the stripper must NOT touch: the ~400 structural markers it shares the
    file with. */
+
+/* ── tel-format ──
+
+   Found by reading hrefs during the pre-cutover browser pass, not by a check:
+   three pages shipped `tel:14085681404` against 126 correct
+   `tel:+14085681404`, and /contact/ carried both forms on the one page. */
+
+t("tel-format: E.164 passes",
+  telHrefDefects(`<a href="tel:+14085681404">(408) 568-1404</a>`).length, 0);
+
+t("tel-format: the exact shape that shipped is caught",
+  telHrefDefects(`<a href="tel:14085681404">(408) 568-1404</a>`)[0], "tel:14085681404");
+
+/* /contact/ was exactly this: the correct link and the broken one together, so
+   a check that stopped at "does this page have a good tel: link" would pass. */
+t("tel-format: both forms on one page still reports the bad one",
+  telHrefDefects(`<a href="tel:+14085681404">a</a><a href="tel:14085681404">b</a>`).join(),
+  "tel:14085681404");
+
+t("tel-format: spaces, dashes and parens are not E.164",
+  telHrefDefects(`<a href="tel:+1 (408) 568-1404">x</a>`).length, 1);
+
+t("tel-format: an empty tel: is caught",
+  telHrefDefects(`<a href="tel:">x</a>`).length, 1);
+
+t("tel-format: a page with no tel: links is clean",
+  telHrefDefects(`<a href="mailto:mark@hymtravel.com">m</a><a href="/faq/">f</a>`).length, 0);
 
 t("internal-comments: a NEEDS MARK comment in built output is caught",
   internalComments(`<p>copy</p>\n<!-- NEEDS MARK: a real client testimonial -->\n`).length, 1);

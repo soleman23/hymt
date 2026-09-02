@@ -19,7 +19,7 @@ import { execFileSync } from "node:child_process";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
-  internalComments, postBuildDrift,
+  internalComments, telHrefDefects, postBuildDrift,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
@@ -1059,6 +1059,15 @@ for (const file of htmlFiles) {
   for (const { excerpt } of internalComments(html)) {
     fail("internal-comments",
       `${url} publishes an internal note in an HTML comment: "${excerpt}" — it belongs in src/ only`);
+  }
+
+  /* tel-format: every callable link in E.164. Three pages shipped
+     `tel:14085681404` against 126 correct `tel:+14085681404`, /contact/ with
+     both on the one page. A bare number is only unambiguous on the country's
+     own network. */
+  for (const href of telHrefDefects(html)) {
+    fail("tel-format",
+      `${url} links ${href} — a tel: href must be E.164, e.g. tel:+14085681404, or a phone abroad has to guess`);
   }
 
   /* unsafe-href / inert-cost-section (SEC-8, #81): content pages render via
