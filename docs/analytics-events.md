@@ -15,21 +15,47 @@ this line, and nothing else.
 - **Never fires on staging.** The script exits unless
   `location.hostname === 'www.hymtravel.com'`. Do not weaken this gate.
 - `gtag.js` loads on first user interaction (`scroll` / `pointerdown` /
-  `keydown`), never on page load. Keep it off the critical path.
+  `keydown`), or **3 seconds after the window `load` event** for a visitor who
+  never interacts. Never on page load itself: keep it off the critical path.
+  The fallback was added 2026-09-02 after the GA4 review — until then a visitor
+  who read above the fold and left sent nothing, so GA undercounted every page
+  against its Search Console clicks. `load` fires after LCP has settled.
 - These four events are the entire taxonomy. Adding an event means updating
-  this file in the same commit.
+  this file **and the privacy policy's Cookies & Analytics section** in the
+  same commit. The policy also states the load rule above in one sentence, so
+  a change to how the tag loads is a policy change too.
 
 ## Events
 
 | Event | Fires when | Where wired |
 | --- | --- | --- |
-| `form_start` | First focus of any field on the Plan Your Trip form, once per page view | `Analytics.astro` (focusin listener, `/plan-your-trip/` only) |
+| `form_start` | First focus of any field inside the Plan Your Trip wizard or the Contact form, once per page view | `Analytics.astro` (focusin listener on `.plan-multistep` or `#contactForm`, whichever the page has) |
 | `form_submit_success` | A form's branded success state is shown (`#successState` on Plan Your Trip, `#cfSuccess` on Contact) | `Analytics.astro` (MutationObserver on the success element) |
-| `phone_click` | Any `tel:` link is clicked | `Analytics.astro` (delegated click listener) |
-| `email_click` | Any `mailto:` link is clicked | `Analytics.astro` (delegated click listener) |
+| `phone_click` | Any `tel:` link is clicked | `Analytics.astro` (delegated click listener), carries `link_location` |
+| `email_click` | Any `mailto:` link is clicked | `Analytics.astro` (delegated click listener), carries `link_location` |
 
-**Primary conversion:** `form_submit_success`. Mark it as a key event in the
-GA4 property once created (Admin → Events → toggle "Mark as key event").
+`form_start` listens on the form's own container rather than the document so
+the newsletter's email field in the footer — present on Contact — cannot count
+as a start. Contact got the event on 2026-09-02; before that only Plan Your Trip
+had one, so Contact had no abandonment rate.
+
+**Primary conversion:** `form_submit_success`. Marked as a key event in the
+GA4 property on 2026-09-02.
+
+## Parameters
+
+Parameters say *where*, never *what*. Nothing typed into a field is ever sent.
+
+| Parameter | On | Value |
+| --- | --- | --- |
+| `page_path` | every event | `location.pathname` |
+| `link_location` | `phone_click`, `email_click` | `header`, `footer`, or `body` — where on the page the link sat. `footer` is anything inside `<footer>`; `header` is a `<header>` or `<nav>` outside `<main>`; everything else is `body` |
+
+`link_location` replaced `link_url` on 2026-09-02. Every `tel:` link on the site
+is the one number and every `mailto:` the one address, so the href could not
+tell placements apart and the report showed one row per event. To read it in
+GA4, register `link_location` as a custom dimension (event scope) under Admin →
+Custom definitions; until then it appears only in Realtime and DebugView.
 
 ### The newsletter is deliberately not counted here
 
