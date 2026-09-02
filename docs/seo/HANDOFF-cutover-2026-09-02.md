@@ -326,3 +326,33 @@ sitemap-index.xml are the repo's, all 122 URLs 200, forms deliver to
 mark@hymtravel.com, GA4 realtime shows a visit, GSC Domain property verified
 and sitemap submitted, Bing imported, nameservers at Hostinger with mail
 records intact, #31/#32/#33/#96/#99/#79 closed with evidence, M5 closed.
+
+---
+
+## Post-launch record (2026-09-02, same day)
+
+Everything below happened after the cutover above, in this order. Issue
+comments carry the evidence; this is the index.
+
+| When (PT) | What | Where recorded |
+|---|---|---|
+| 00:30 | Post-cutover verification: all 122 URLs 200 and byte-identical to `HEAD:dist/`, single-hop redirects, HSTS, no `X-Robots-Tag`, robots/sitemap are the repo's, `verify:prod` clean. GSC sitemap submitted; indexing requested for `/`, `/about/`, `/plan-your-trip/`. | #33, #32 |
+| 01:00 | Launch record (this file) committed, PR #147. | `main` 5408eaa |
+| ~01:30 | **Bing Webmaster Tools** set up as mark@hymtravel.com (Google 2-step prompt on Mark's phone; the code changes if the tab is in the background), site imported from GSC, `sitemap-index.xml` submitted. | #96 (closed) |
+| ~01:45 | **Hostinger plan renewed** by the user for 12 months: auto-renews 2027-09-18, $203.88. hPanel's saved-card path still lands on a manual card form; the user completed it. | hPanel → Billing |
+| ~02:30 | "20+ years" stat removed from the About credentials strip (now 3 cards) and the homepage hero (now 2 stats, "Continents covered"). PR #148 → e363f2a. | #148 |
+| ~03:00 | **Web3Forms upgraded to Pro** ($149/yr, Paddle, invoice #8706-18824) by the user; **Restrict to Domains** set to `www.hymtravel.com, hymtravel.com`. Off-site posts → HTTP 400 "Referer domain does not match"; newsletter test delivered. | #74 |
+| ~08:00 | **Cloudflare Turnstile** built for all three forms: lazy-loaded widget (`src/components/Turnstile.astro`), token wiring, CSP with `challenges.cloudflare.com` in script/connect/frame-src, fixtures. Verified under an enforcing CSP locally. PR #149. | #74, #149 |
+| ~09:15 | Cloudflare plugin installed in Claude Code (`cloudflare/skills`); `turnstile-spin` created widget **hymtravel.com** (Managed, `hymtravel.com` + `www.hymtravel.com`, sitekey `0x4AAAAAAElB27lbtyz5RDEV`) in the Cloudflare account that belongs to mark@hymtravel.com (id `e5e6d167…`). #149 merged with the real key → 0d82534. | #74 |
+| 09:25–09:35 | Secret pasted into Web3Forms by the user (first paste was the API token by mistake — the dashboard masks the field, so only a live submission proves it). Then **Newsletter 09:32, Contact 09:34, Plan Your Trip 09:35** all delivered to mark@hymtravel.com through the live widget; missing/bogus tokens → 400 "Turnstile Captcha Validation Failed". | #74 (acceptance all ticked) |
+| ~09:45 | Credentials retired: API token file and secret file deleted locally, "HYMT" API token deleted in Cloudflare (User API Tokens: none). Web3Forms holds the only live secret; the Cloudflare dashboard can re-show it. | — |
+
+### Still open after this (M6)
+
+- Google Workspace **DKIM** (Admin console needs Mark's passkey); DMARC is `p=none` with no `rua`.
+- **GPTBot / meta-externalagent** get 429 at the LiteSpeed origin despite `robots.txt` allowing them (Hostinger setting or ticket).
+- **HSTS** ramp from 1 day to 1 year (#79, two-place edit) once both certs have served a day.
+- **CSP enforcing** (#100): read report-only violations on production first; Turnstile's origins are already in the policy.
+- Footer "Travel Planning Process" links to `/about/#process`, an anchor that does not exist.
+- Registrar transfer + Wix cancellation only after the 7-day stability window (§ 4.7); the Wix zone (incl. the Mailchimp DKIM CNAMEs) must be cloned into Hostinger first.
+- Hostinger's platform Force-HTTPS makes `http://hymtravel.com/` a 2-hop chain (within tolerance).
