@@ -109,7 +109,7 @@ import {
   lockfilePlatformPatch,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
-import { localDay } from "./git-lastmod.mjs";
+import { localDay, sitemapLastmods } from "./git-lastmod.mjs";
 import {
   externalHrefs, firstPartyHosts, isFirstParty,
   isHardFailure, confirmationIsStale, isNxdomain,
@@ -2440,6 +2440,39 @@ t("localDay: at UTC the shift is a no-op",
 t("localDay defaults to the host offset rather than to zero",
   localDay(new Date(2026, 7, 24, 23, 59)),
   LD(new Date(2026, 7, 24, 23, 59).toISOString(), new Date(2026, 7, 24, 23, 59).getTimezoneOffset()));
+
+/* ── shallow-checkout lastmod ── */
+
+/* sitemapLastmods is the read-back path a shallow checkout takes: the deploy
+   host clones one commit deep, `git log` then dates every source file at HEAD,
+   and staging served all 122 URLs with the same lastmod on 2026-09-02. HEAD's
+   own committed dist/sitemap-0.xml is the faithful record, so it is parsed
+   instead. Same <loc>/<lastmod> pairing rule as lastmodPairs: an entry with
+   no lastmod must not inherit the next entry's date. */
+const SM_HEAD =
+  `<urlset><url><loc>https://www.hymtravel.com/</loc><lastmod>2026-08-24T00:00:00.000Z</lastmod></url>` +
+  `<url><loc>https://www.hymtravel.com/faq/</loc></url>` +
+  `<url><loc>https://www.hymtravel.com/destinations/italy/</loc><lastmod>2026-08-29T00:00:00.000Z</lastmod></url></urlset>`;
+const SM_DATES = sitemapLastmods(SM_HEAD);
+
+t("shallow: a recorded date is keyed by pathname, not by URL",
+  SM_DATES.get("/destinations/italy/"), "2026-08-29");
+t("shallow: the root page is keyed as /",
+  SM_DATES.get("/"), "2026-08-24");
+t("shallow: an entry without a lastmod does not borrow the next entry's date",
+  SM_DATES.has("/faq/"), false);
+t("shallow: only dated entries are recorded",
+  SM_DATES.size, 2);
+t("shallow: a document that is not a sitemap records nothing",
+  sitemapLastmods("<html>not a sitemap</html>").size, 0);
+
+/* Against the real committed sitemap: every dated URL must read back, or the
+   shallow path would silently drop lastmods the full-history build produced. */
+if (GIT_AVAILABLE) {
+  const headSm = execFileSync("git", ["show", "HEAD:dist/sitemap-0.xml"], { cwd: ROOT, encoding: "utf8" });
+  t("shallow: HEAD's committed sitemap reads back one date per dated URL",
+    sitemapLastmods(headSm).size, lastmodPairs(headSm).length);
+}
 
 /* ── node-floor ── */
 
