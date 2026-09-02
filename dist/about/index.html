@@ -100,7 +100,7 @@
 
 /* CREDENTIALS STRIP */
 .credentials {
-  display:grid;grid-template-columns:repeat(4,1fr);
+  display:grid;grid-template-columns:repeat(3,1fr);
   background:var(--bg-page);border-bottom:1px solid var(--border-subtle);
 }
 .credential {
@@ -269,6 +269,8 @@ body.theme-light .pull-quote__text { color:var(--navy-800) }
   .credentials { grid-template-columns:repeat(2,minmax(0,1fr)) }
   .credential { padding:32px 28px }
   .credential { border-right:none;border-bottom:1px solid var(--border-subtle) }
+  /* Three cards on a two-column grid: let the last one span the row. */
+  .credential:last-child { grid-column:1 / -1 }
   .philosophy__grid { grid-template-columns:1fr }
   .letter { grid-template-columns:1fr;gap:40px;padding:64px 28px }
   .pull-quote { flex-direction:column;gap:0;padding:64px 28px }
@@ -341,10 +343,6 @@ body.theme-light .pull-quote__text { color:var(--navy-800) }
 
 <!-- ══ CREDENTIALS ══ -->
 <div class="credentials">
-  <div class="credential">
-    <div class="credential__num">20+</div>
-    <div class="credential__label">Years designing<br>bespoke journeys</div>
-  </div>
   <div class="credential">
     <div class="credential__num">6</div>
     <div class="credential__label">Continents covered<br>by the practice</div>
