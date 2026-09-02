@@ -19,6 +19,7 @@ import { execFileSync } from "node:child_process";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
+  internalComments,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
@@ -1048,6 +1049,18 @@ for (const file of htmlFiles) {
     }
   }
 
+  /* internal-comments: the other half of the same question, and the half that
+     shipped. placeholder-copy strips comments before it looks, which is right
+     for visible copy and is exactly why nobody noticed that 81 of 123 pages
+     were publishing "NEEDS MARK: a real client testimonial for this page" in
+     their source. The notes belong in src/; tools/strip-internal-comments.mjs
+     takes them out of dist/ on every build, and this is what makes that stage
+     load-bearing rather than optional. */
+  for (const { excerpt } of internalComments(html)) {
+    fail("internal-comments",
+      `${url} publishes an internal note in an HTML comment: "${excerpt}" — it belongs in src/ only`);
+  }
+
   /* unsafe-href / inert-cost-section (SEC-8, #81): content pages render via
      set:html with no runtime sanitizer, so what an automated insert writes is
      what ships. Dangerous URL schemes fail everywhere; the .cost-range
@@ -1416,6 +1429,20 @@ if (REMOTE) {
     for (const href of [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="(\/[^"]+)"/gi)].map((m) => m[1])) {
       const asset = await fetch(REMOTE + href, { method: "HEAD" }).catch((e) => ({ ok: false, status: e.message }));
       if (!asset.ok) fail("remote", `${page} links ${href} but it returns ${asset.status} on the server`);
+    }
+    /* The same internal-note check as the local leg, against what the server
+       actually returns. The local one proves the stripper ran in THIS dist/;
+       it cannot prove the upload replaced what the host is serving. A deploy
+       that misses the web root or leaves the previous release in place keeps
+       publishing the notes with every local gate green — which is precisely
+       the state the stripper was written to end, discovered by reading the
+       staging site rather than dist/. The bodies are already fetched here for
+       the stylesheet sweep, so this costs no extra request. Sample-only, like
+       the rest of the deep leg: it catches a stale-or-missed deployment, which
+       is a whole-site condition, not a per-page one. */
+    for (const { excerpt } of internalComments(html)) {
+      fail("remote-internal-comments",
+        `${REMOTE}${page} publishes an internal note: "${excerpt}" — dist/ is clean, so the upload did not replace what the host serves`);
     }
   }
   /* Staging must serve X-Robots-Tag noindex; production must never (P0-3).

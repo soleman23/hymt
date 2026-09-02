@@ -6,7 +6,7 @@ without updating this file in the same commit.
 
 | # | Decision | Answer | Consumed by |
 |---|---|---|---|
-| D1 | GA4 direct vs GTM | **GA4 direct via gtag.js, no GTM.** Implemented in `src/components/Analytics.astro`; real measurement ID still owed (placeholder `G-XXXXXXXXXX`). | P0-5 (done) |
+| D1 | GA4 direct vs GTM | **GA4 direct via gtag.js, no GTM.** Implemented in `src/components/Analytics.astro`; measurement ID `G-J6VZEBPCBC` live since 2026-09-01. | P0-5 (done) |
 | D2 | Consortium / affiliations | **HYMT is part of the Travel Leaders Network.** No other consortium or association memberships to publish. | About page (visible), P2-2 `Organization.memberOf` + `sameAs`, P2-3 Person affiliations |
 | D3 | Public address | **(a) City/region only: Bend, Oregon.** No street address anywhere on the site or in schema. | P2-2 `address` (locality + region only), Google Business Profile |
 | D4 | Google Business Profile | **Yes — Devin creates it** as a service-area business with the address hidden. The profile URL joins `sameAs` once it exists. | P2-2 `sameAs`, off-site entity building (#38) |

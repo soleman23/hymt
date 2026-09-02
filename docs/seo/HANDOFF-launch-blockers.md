@@ -646,9 +646,14 @@ apex and www.
 - ~~`docs/seo/validation-log.md` has an unlisted #33 deliverable~~ — the Rich
   Results Test is now a checklist item in runbook § 4.4, and the log says
   so truthfully.
-- **The GA4 measurement ID is still `G-XXXXXXXXXX`**, so runbook § 2.5's
-  placeholder grep can only go green once a real property exists. The grep is
-  now scoped so it does not also report 127 binary assets.
+- ~~The GA4 measurement ID is still `G-XXXXXXXXXX`~~ — **the real ID
+  `G-J6VZEBPCBC` landed 2026-09-01.** No page carries the placeholder any
+  more, so runbook § 2.5's placeholder grep can now go green; the grep is
+  also scoped so it does not report 127 binary assets. Note the knock-on: the
+  reason `XXX` was kept out of both that grep and
+  `INTERNAL_COMMENT_MARKERS` was the placeholder appearing on every page, and
+  that reason has now lapsed. Adding `XXX` back is a separate, deliberate
+  call — it is not done here.
 - ~~Audit findings not yet acted on~~ — **all seven landed 2026-08-18**, see
   the section above. What is left of the image work is only the 60 remaining
   swatch cards (24 destination on india/jordan/new-zealand/oman, 36
