@@ -1430,6 +1430,20 @@ if (REMOTE) {
       const asset = await fetch(REMOTE + href, { method: "HEAD" }).catch((e) => ({ ok: false, status: e.message }));
       if (!asset.ok) fail("remote", `${page} links ${href} but it returns ${asset.status} on the server`);
     }
+    /* The same internal-note check as the local leg, against what the server
+       actually returns. The local one proves the stripper ran in THIS dist/;
+       it cannot prove the upload replaced what the host is serving. A deploy
+       that misses the web root or leaves the previous release in place keeps
+       publishing the notes with every local gate green — which is precisely
+       the state the stripper was written to end, discovered by reading the
+       staging site rather than dist/. The bodies are already fetched here for
+       the stylesheet sweep, so this costs no extra request. Sample-only, like
+       the rest of the deep leg: it catches a stale-or-missed deployment, which
+       is a whole-site condition, not a per-page one. */
+    for (const { excerpt } of internalComments(html)) {
+      fail("remote-internal-comments",
+        `${REMOTE}${page} publishes an internal note: "${excerpt}" — dist/ is clean, so the upload did not replace what the host serves`);
+    }
   }
   /* Staging must serve X-Robots-Tag noindex; production must never (P0-3).
      The staging header comes from the host-scoped rule in public/.htaccess —

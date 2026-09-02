@@ -65,10 +65,13 @@ intentional, accept it explicitly:
 node tools/verify-deployment.mjs --update-baseline
 ```
 
-`astro build` deletes the aliased images; `npm run build` re-restores them
-itself. If you run `npx astro build` directly, follow it with `npm run restore`
-— the verifier will stop you if you forget. After deploying, confirm the
-upload actually landed (the FTP account does not start in the web root):
+`astro build` deletes the aliased images, and it leaves the internal editorial
+notes in the built HTML; `npm run build` fixes both itself. If you run
+`npx astro build` directly, follow it with `npm run build:post`, which does the
+two together — the verifier will stop you if you forget either. Use
+`npm run restore` only for the images alone, as on a fresh clone where there is
+no `dist/` yet to strip. After deploying, confirm the upload actually landed
+(the FTP account does not start in the web root):
 
 ```bash
 npm run verify:remote
@@ -133,14 +136,22 @@ They are kept for reference only. Edit `src/pages/` and `src/content-pages/`
 directly instead — those are the real source now.
 </details>
 
-> **The image restore must follow every `astro build` — `npm run build` does it
-> automatically; a direct `npx astro build` needs `npm run restore` after.**
+> **The post-build stage must follow every `astro build` — `npm run build` does
+> it automatically; a direct `npx astro build` needs `npm run build:post`
+> after.** It covers two things the raw Astro build leaves wrong.
+>
 > The build regenerates `dist/` from scratch, which deletes the 11 aliased
 > images it writes straight into `dist/assets/` (see `images-b64/ALIASES.json` —
 > `africa-safari.jpg`, `europe-landscape.jpg`, `willamette-vineyard.jpg` and
 > friends). Those aliases are referenced by the destination hub pages, so
 > skipping this step ships a site with broken images and nothing in the build
 > output warns you.
+>
+> It also strips the internal editorial notes out of the built HTML. Those
+> notes are wanted in `src/`, where they record what each page still needs, but
+> an HTML comment is published, not private — on 2026-09-01 the staging site
+> was serving 108 of them across 81 of 123 pages. Skipping this step puts them
+> straight back into `dist/`.
 
 ## Forms
 
