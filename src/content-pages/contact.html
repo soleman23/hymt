@@ -74,7 +74,7 @@
     <h2 class="form-title">Send a message</h2>
     <p class="form-sub">If you'd prefer to plan your trip in detail, use the <a href="/plan-your-trip/" style="color:var(--gold-500)">Plan Your Trip form</a> — it takes about five minutes and gives Mark everything he needs to put together a proposal.</p>
 
-    <form id="contactForm" novalidate>
+    <form id="contactForm" novalidate data-turnstile-host>
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
       <div class="cf-row">
         <div class="cf">
@@ -110,6 +110,7 @@
         <label for="cfmsg">Message</label>
         <textarea id="cfmsg" name="message" maxlength="3000" placeholder="Tell me what's on your mind — a destination, a timing question, or just an idea you're working through." required></textarea>
       </div>
+      <div class="hymt-turnstile" id="cfTurnstile"></div>
       <button class="cf-submit" type="submit" id="cfSubmitBtn">Send Message</button>
       <p id="cfError" style="display:none;font-family:var(--font-b);font-size:13px;color:#c45c5c;margin-top:14px" role="alert"></p>
       <p class="cf-note">By submitting you agree to be contacted by Hit Your Mark Travel. No spam, no sharing. Just a reply from Mark.</p>
@@ -253,6 +254,21 @@
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
 
+    /* Turnstile (#74): usually solved while the visitor typed; wait for the
+       token if not. set(), not append(): the widget also drops a hidden input
+       of the same name into the form. */
+    var tsEl = document.getElementById('cfTurnstile');
+    try {
+      if (tsEl && window.hymtTurnstile) formData.set('cf-turnstile-response', await window.hymtTurnstile.token(tsEl));
+    } catch (err) {
+      errorEl.textContent = 'Please complete the security check and try again.';
+      errorEl.style.display = 'block';
+      sending = false;
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+      return;
+    }
+
     try {
       var response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
       var data = {};
@@ -265,9 +281,11 @@
       }
       errorEl.textContent = data.message || 'Something went wrong. Please try again or email mark@hymtravel.com.';
       errorEl.style.display = 'block';
+      if (tsEl && window.hymtTurnstile) window.hymtTurnstile.reset(tsEl);
     } catch (err) {
       errorEl.textContent = 'Something went wrong. Please try again or call (408) 568-1404.';
       errorEl.style.display = 'block';
+      if (tsEl && window.hymtTurnstile) window.hymtTurnstile.reset(tsEl);
     } finally {
       sending = false;
       submitBtn.textContent = originalText;

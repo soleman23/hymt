@@ -295,9 +295,19 @@ scripted flood live in the Web3Forms dashboard and need a login:
 1. **Restrict allowed domains** to `www.hymtravel.com` (add the apex too if the
    UI requires it). This is the single highest-value setting: it rejects
    submissions that did not originate on the site.
-2. **Enable a CAPTCHA** — Cloudflare Turnstile is the least intrusive. If you
-   turn this on, the forms need a matching widget added to the markup, so tell
-   the next session before enabling it.
+2. **Enable a CAPTCHA** — Cloudflare Turnstile, and the markup side is
+   already done (2026-09-02): `src/components/Turnstile.astro` mounts a
+   widget into each form's `.hymt-turnstile` container on first interaction,
+   and all three submit handlers send `cf-turnstile-response`. Two things are
+   yours: (a) create a Turnstile widget in the Cloudflare dashboard for
+   `hymtravel.com` + `www.hymtravel.com` (Managed mode) and put its **site
+   key** in `src/lib/turnstile.ts` — until then the file carries Cloudflare's
+   always-passes test key, which renders a real widget that protects nothing;
+   (b) paste the **secret key** into Web3Forms → Settings → Spam & Security →
+   Captcha Protection → Cloudflare Turnstile. Order matters: deploy the site
+   key first, then turn the dashboard setting on, or every submission is
+   rejected for the minutes in between. The CSP already carries
+   `challenges.cloudflare.com` in script-src, frame-src and connect-src.
 3. **Enable rate limiting / spam filtering** if the plan offers it.
 
 Verify afterwards with the script rather than hand-rolling a curl — it reads

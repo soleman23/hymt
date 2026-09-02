@@ -972,9 +972,12 @@ export const HTACCESS_SECURITY_HEADERS = [
 ];
 
 /* Each entry: directive, and a source that must appear in it (or null for
-   presence alone). The two non-null ones fail SILENTLY under an enforcing
-   policy - connect-src kills all three forms' fetch, frame-src 'none' is
-   what a CAPTCHA would have to replace rather than extend (#74/#100). */
+   presence alone). The non-'self' ones fail SILENTLY under an enforcing
+   policy - connect-src kills all three forms' fetch, and frame-src is where
+   Cloudflare Turnstile's challenge iframe lives (#74): it was 'none' until
+   2026-09-02, and a CAPTCHA has to REPLACE that value, not extend it — a
+   list carrying both 'none' and a host is read by browsers as a broken
+   source list. So the entry pins the Turnstile origin, not 'none'. */
 export const CSP_DIRECTIVES = [
   ["default-src", "'self'"],
   ["script-src", "'self'"],
@@ -984,7 +987,7 @@ export const CSP_DIRECTIVES = [
   ["connect-src", "https://api.web3forms.com"],
   ["form-action", "https://api.web3forms.com"],
   ["frame-ancestors", "'self'"],
-  ["frame-src", "'none'"],
+  ["frame-src", "https://challenges.cloudflare.com"],
   ["base-uri", "'self'"],
   ["object-src", "'none'"],
 ];

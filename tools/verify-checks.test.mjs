@@ -1423,7 +1423,7 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
   Header set Cache-Control "public, max-age=2592000, no-transform"
 </IfModule>`;
 
@@ -1472,8 +1472,14 @@ t("htaccess: a Cache-Control without no-transform is caught (#95)",
 t("htaccess: dropping api.web3forms.com from connect-src is caught",
   htaccessGaps(HT_GOOD.replace("connect-src 'self' https://api.web3forms.com", "connect-src 'self'")).length, 1);
 
-t("htaccess: dropping frame-src 'none' is caught (the Turnstile half-fix)",
-  htaccessGaps(HT_GOOD.replace("frame-src 'none'; ", "")).length, 1);
+t("htaccess: dropping frame-src entirely is caught",
+  htaccessGaps(HT_GOOD.replace("frame-src https://challenges.cloudflare.com; ", "")).length, 1);
+
+/* The pre-Turnstile value. A CAPTCHA has to REPLACE 'none', and a file that
+   still says 'none' has a widget that cannot render its challenge iframe
+   under an enforcing policy — the exact half-fix #74 warned about. */
+t("htaccess: frame-src still 'none' is caught (the Turnstile half-fix)",
+  htaccessGaps(HT_GOOD.replace("frame-src https://challenges.cloudflare.com; ", "frame-src 'none'; ")).length, 1);
 
 t("htaccess: a missing security header is caught",
   htaccessGaps(HT_GOOD.replace(`  Header set X-Content-Type-Options "nosniff"\n`, "")).length, 1);
@@ -1659,7 +1665,7 @@ t("htaccess: the same CSP header set twice is caught",
    that refuses that, and it does. This pins the division of labour. */
 t("htaccess: one of each CSP name is not this check's failure to report",
   htaccessGaps(HT_GOOD +
-    `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'self'; frame-src 'none'; base-uri 'self'; object-src 'none'"\n`).length, 0);
+    `\n  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://api.web3forms.com; form-action https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"\n`).length, 0);
 
 
 /* ── The staging pair, counted the same way as the production one ──
