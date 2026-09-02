@@ -129,7 +129,7 @@
 
 <section class="plan-section plan-section--multistep">
   <div class="plan-grid plan-grid--solo">
-    <div class="plan-form-wrap plan-multistep">
+    <div class="plan-form-wrap plan-multistep" data-turnstile-host>
       <div class="progress" id="progress">
         <div class="progress-step active" id="ps1"><div class="progress-num">1</div><div class="progress-label">Experience</div></div>
         <div class="progress-line" id="pl1"></div>
@@ -318,6 +318,7 @@
             <span class="check-label">Add me to the Travel Journal — destination notes delivered occasionally, no spam</span>
           </label>
         </div>
+        <div class="hymt-turnstile" id="planTurnstile"></div>
         <div class="form-nav">
           <button type="button" class="btn-back" data-goto="3">← Back</button>
           <span class="step-count">4 / 4</span>
@@ -499,6 +500,21 @@ async function submitForm() {
   submitBtn.textContent = 'Sending...';
   submitBtn.disabled = true;
 
+  /* Turnstile (#74): the widget mounts on the first click inside the wizard
+     and is normally solved long before step 4; wait for its token if not.
+     This wizard has no <form>, so the token has to be added by hand. */
+  var tsEl = document.getElementById('planTurnstile');
+  try {
+    if (tsEl && window.hymtTurnstile) formData.set('cf-turnstile-response', await window.hymtTurnstile.token(tsEl));
+  } catch (err) {
+    errorEl.textContent = 'Please complete the security check and try again.';
+    errorEl.style.display = 'block';
+    planSubmitting = false;
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+    return;
+  }
+
   try {
     var response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
     var data = {};
@@ -513,9 +529,11 @@ async function submitForm() {
     }
     errorEl.textContent = data.message || 'Something went wrong. Please try again or email mark@hymtravel.com.';
     errorEl.style.display = 'block';
+    if (tsEl && window.hymtTurnstile) window.hymtTurnstile.reset(tsEl);
   } catch (err) {
     errorEl.textContent = 'Something went wrong. Please try again or call (408) 568-1404.';
     errorEl.style.display = 'block';
+    if (tsEl && window.hymtTurnstile) window.hymtTurnstile.reset(tsEl);
   } finally {
     planSubmitting = false;
     submitBtn.textContent = originalText;

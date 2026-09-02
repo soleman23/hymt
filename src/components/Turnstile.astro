@@ -1,0 +1,128 @@
+---
+/**
+ * Cloudflare Turnstile, shared by the three Web3Forms forms (#74).
+ *
+ * Rendered by Base.astro AFTER the newsletter and the page slot, so every
+ * `.hymt-turnstile` container on the page exists by the time this runs. Each
+ * form keeps its own submit handler; this only provides the widget.
+ *
+ * LAZY, ON PURPOSE. The newsletter box is on 120 of 123 pages, and loading
+ * a third-party script on every page for a form most visitors never touch
+ * is an LCP and privacy cost with nothing to show for it. So nothing from
+ * challenges.cloudflare.com loads until the visitor focuses or clicks inside
+ * a form that carries `data-turnstile-host`; the widget then mounts into
+ * that form's `.hymt-turnstile` container and is usually solved before the
+ * visitor reaches the submit button. A submit that arrives first waits for
+ * the token (bounded — see token()).
+ *
+ * Explicit rendering (`render=explicit`) rather than the `.cf-turnstile`
+ * auto-scan, for two reasons: Plan Your Trip has no <form> element, so the
+ * implicit path would have nothing to attach to; and explicit rendering
+ * gives each form a widget id it can read a token from and reset after a
+ * rejected submission (tokens are single-use).
+ *
+ * The site key comes from src/lib/turnstile.ts via the data attribute below,
+ * NOT from this script's body, so the inline body is byte-identical on every
+ * page and costs the CSP exactly one script-src hash (csp-script-src).
+ *
+ * CSP: script-src, frame-src and connect-src all carry
+ * https://challenges.cloudflare.com, and frame-src is no longer 'none'. The
+ * three go together — with any one missing the widget fails silently under
+ * an enforcing policy. content-checks.mjs → CSP_DIRECTIVES pins frame-src.
+ *
+ * Trade-off recorded: once Turnstile is ON in the Web3Forms dashboard, a
+ * submission without a token is rejected, so the newsletter's no-JS native
+ * POST fallback (#83) becomes a rejection page instead of a delivery. That
+ * is the cost of a CAPTCHA and was accepted knowingly.
+ */
+import { TURNSTILE_SITE_KEY } from "../lib/turnstile";
+---
+<script is:inline data-sitekey={TURNSTILE_SITE_KEY}>
+  (function () {
+    var KEY = (document.currentScript && document.currentScript.getAttribute('data-sitekey')) || '';
+    var API = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=hymtTurnstileReady';
+    var loading = null;
+    var records = {};
+
+    function load() {
+      if (window.turnstile) return Promise.resolve();
+      if (loading) return loading;
+      loading = new Promise(function (resolve, reject) {
+        window.hymtTurnstileReady = resolve;
+        var s = document.createElement('script');
+        s.src = API;
+        s.async = true;
+        s.defer = true;
+        s.onerror = function () { loading = null; reject(new Error('Turnstile failed to load')); };
+        document.head.appendChild(s);
+      });
+      return loading;
+    }
+
+    function mount(el) {
+      if (el._hymtMount) return el._hymtMount;
+      el._hymtMount = load().then(function () {
+        var rec = { token: '', waiters: [] };
+        var id = window.turnstile.render(el, {
+          sitekey: KEY,
+          theme: document.body.classList.contains('theme-light') ? 'light' : 'dark',
+          size: 'flexible',
+          callback: function (t) {
+            rec.token = t;
+            rec.waiters.splice(0).forEach(function (w) { w.resolve(t); });
+          },
+          'expired-callback': function () { rec.token = ''; },
+          'error-callback': function () {
+            rec.token = '';
+            rec.waiters.splice(0).forEach(function (w) { w.reject(new Error('Turnstile error')); });
+          }
+        });
+        records[id] = rec;
+        el.setAttribute('data-hymt-widget', id);
+        return id;
+      });
+      el._hymtMount.catch(function () { el._hymtMount = null; });
+      return el._hymtMount;
+    }
+
+    /* Resolves with a fresh token, mounting the widget first if the visitor
+       never engaged with the form. Bounded: a challenge that has not
+       resolved in `ms` rejects, and the form shows its retry message rather
+       than hanging on "Sending...". */
+    function token(el, ms) {
+      return mount(el).then(function (id) {
+        var rec = records[id];
+        if (rec.token) return rec.token;
+        return new Promise(function (resolve, reject) {
+          var w = { resolve: resolve, reject: reject };
+          rec.waiters.push(w);
+          setTimeout(function () {
+            var i = rec.waiters.indexOf(w);
+            if (i !== -1) { rec.waiters.splice(i, 1); reject(new Error('Turnstile timed out')); }
+          }, ms || 20000);
+        });
+      });
+    }
+
+    /* Tokens are single-use: after Web3Forms rejects a submission the widget
+       must issue a new one or the retry fails for a reason the visitor cannot
+       see. */
+    function reset(el) {
+      var id = el.getAttribute('data-hymt-widget');
+      if (id && window.turnstile && records[id]) {
+        records[id].token = '';
+        window.turnstile.reset(id);
+      }
+    }
+
+    function arm(el) {
+      var host = el.closest('[data-turnstile-host]') || el.parentElement;
+      var start = function () { mount(el).catch(function () {}); };
+      host.addEventListener('focusin', start, { once: true });
+      host.addEventListener('pointerdown', start, { once: true });
+    }
+
+    window.hymtTurnstile = { mount: mount, token: token, reset: reset };
+    Array.prototype.forEach.call(document.querySelectorAll('.hymt-turnstile'), arm);
+  })();
+</script>

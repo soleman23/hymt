@@ -33,7 +33,7 @@
       remarkable find. No spam, no urgency. Unsubscribe whenever.
     </p>
   </div>
-  <div>
+  <div data-turnstile-host>
     <form class="newsletter__form" id="nlForm" action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="94312057-04b8-44d8-a7a8-7cb083d999b8" />
       <input type="hidden" name="subject" value="Newsletter signup — hymtravel.com" />
@@ -42,6 +42,7 @@
       <input type="email" name="email" class="newsletter__input" maxlength="254" placeholder="Your email address" required aria-label="Email address">
       <button type="submit" class="newsletter__submit">Subscribe</button>
     </form>
+    <div class="hymt-turnstile" id="nlTurnstile"></div>
     <div class="newsletter__success" id="nlSuccess" role="status">
       <strong class="newsletter__success-title">You're on the list.</strong>
       <span class="newsletter__success-body">Notes arrive occasionally, never on a schedule. Unsubscribe from any of them.</span>
@@ -85,18 +86,35 @@
       btn.textContent = 'Sending...';
       btn.disabled = true;
 
+      /* Turnstile (#74): the widget normally solved itself while the visitor
+         typed; this waits for its token if not. set(), not append(): the
+         widget also drops a hidden input of the same name into the form. */
+      var tsEl = document.getElementById('nlTurnstile');
+      try {
+        if (tsEl && window.hymtTurnstile) formData.set('cf-turnstile-response', await window.hymtTurnstile.token(tsEl));
+      } catch (err) {
+        showError('Please complete the security check and try again.');
+        sending = false;
+        btn.textContent = original;
+        btn.disabled = false;
+        return;
+      }
+
       try {
         var response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
         var data = {};
         try { data = await response.json(); } catch (err) {}
         if (response.ok && data.success) {
           form.style.display = 'none';
+          if (tsEl) tsEl.style.display = 'none';
           successEl.classList.add('show');
           return;
         }
         showError(data.message || 'Something went wrong. Please try again or email mark@hymtravel.com.');
+        if (tsEl && window.hymtTurnstile) window.hymtTurnstile.reset(tsEl);
       } catch (err) {
         showError('Something went wrong. Please try again or email mark@hymtravel.com.');
+        if (tsEl && window.hymtTurnstile) window.hymtTurnstile.reset(tsEl);
       } finally {
         sending = false;
         btn.textContent = original;

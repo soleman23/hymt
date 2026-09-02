@@ -5,6 +5,7 @@ import Newsletter from "../components/Newsletter.astro";
 import Accordion from "../components/Accordion.astro";
 import Analytics from "../components/Analytics.astro";
 import Schema from "../components/Schema.astro";
+import Turnstile from "../components/Turnstile.astro";
 
 interface Props {
   title: string;
@@ -142,6 +143,7 @@ const fullTitle = headTitle.includes("Hit Your Mark") ? headTitle : `${headTitle
   <slot />
 </main>
 {showNewsletter && <Newsletter />}
+<Turnstile />
 <Footer />
 <Accordion />
 <Analytics />

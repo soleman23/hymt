@@ -463,6 +463,13 @@ body.theme-light .newsletter__input {
   cursor:pointer;white-space:nowrap;transition:background .15s;
 }
 .newsletter__submit:hover { background:var(--gold-400) }
+/* Cloudflare Turnstile container, one per Web3Forms form (#74). Empty until
+   the visitor engages with the form, and an empty container must cost no
+   space; once the widget mounts it is ~65px tall and `size:flexible` fills
+   the column, so the margin only appears with the widget. */
+.hymt-turnstile { margin:14px 0 4px }
+.hymt-turnstile:empty { margin:0 }
+
 .newsletter__fine {
   font-family:var(--font-b);font-size:11px;color:var(--silver-400);
   margin-top:10px;line-height:1.5;
