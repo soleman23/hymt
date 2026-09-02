@@ -19,7 +19,7 @@ import { execFileSync } from "node:child_process";
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
-  internalComments,
+  internalComments, postBuildDrift,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
@@ -1317,6 +1317,27 @@ notes.push(
       `engines.node "${drift.declared}" is at or above every floor in the tree — ` +
       `strictest is ${drift.strictest.pkg} at "${drift.strictest.range}", ` +
       `${drift.considered} compared, ${drift.unreadable} ranges unreadable`);
+  }
+}
+
+/* ── 4d-bis. build runs every stage build:post documents ──
+   README sends a direct `npx astro build` to `npm run build:post` for the two
+   repairs Astro leaves undone: the aliased images, and the internal editorial
+   notes. `build` lists those stages itself rather than calling `npm run
+   build:post`, because that nested an npm invocation inside the single command
+   the deploy host runs. The cost of writing them twice is that they can
+   diverge, and the failure is silent — the documented path repairing dist/
+   differently from the build, which is the bug that was just fixed. */
+{
+  const pkgScripts = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8"))?.scripts ?? {};
+  const missing = postBuildDrift(pkgScripts);
+  if (missing.length) {
+    fail("post-build-parity",
+      `build:post runs ${missing.length} stage(s) that \`npm run build\` does not: ${missing.join(", ")} — ` +
+      `a direct \`npx astro build\` would then repair dist/ differently from the build`);
+    hints.push("post-build-parity: add the missing stage(s) to the `build` script in package.json, in the same order build:post runs them.");
+  } else if (pkgScripts["build:post"]) {
+    notes.push("build runs every stage build:post documents");
   }
 }
 

@@ -1931,3 +1931,30 @@ function contains(haystack, needle) {
 export function placeCardAlt(name, region) {
   return regionIsRedundant(name, region) ? name : `${name}, ${region}`;
 }
+
+/**
+ * Post-build stages that `build:post` runs but `build` does not.
+ *
+ * `astro build` leaves dist/ wrong in two ways: it deletes the 11 aliased
+ * images, and it leaves the internal editorial notes in the HTML. Both are
+ * repaired afterwards, and README documents `npm run build:post` as the single
+ * command to run after a direct `npx astro build` — the documented path used to
+ * name only the image restore, so following it put every note back.
+ *
+ * `build` briefly called `npm run build:post` so the two could not diverge.
+ * That nested an npm invocation inside the one command the deploy host runs,
+ * which is a bad place to discover a PATH or cache difference, so `build` now
+ * lists the stages directly again. This check is what that costs: with the
+ * stages written twice, a stage added to one and not the other is silent, and
+ * the failure mode is the documented path quietly under-repairing dist/ — the
+ * exact bug that was just fixed.
+ *
+ * Returns the stages missing from `build`, compared as whole `&&` segments in
+ * either direction, so reordering is fine and a dropped or renamed stage is
+ * not. An absent `build:post` returns [] — nothing to keep in sync.
+ */
+export function postBuildDrift(scripts = {}) {
+  const stages = String(scripts["build:post"] ?? "").split("&&").map((s) => s.trim()).filter(Boolean);
+  const build = String(scripts.build ?? "");
+  return stages.filter((stage) => !build.includes(stage));
+}
