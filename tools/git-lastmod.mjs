@@ -32,12 +32,17 @@
  * file appears is its last modification). Files with uncommitted changes get
  * their filesystem mtime — stable across two consecutive builds, which is the
  * property that matters. If git is unavailable entirely, every page gets no
- * lastmod at all: a sitemap without the field beats one that lies.
+ * lastmod at all: a sitemap without the field beats one that lies. A shallow
+ * clone — the shape the deploy host builds from — has no history to walk
+ * either; there the dates are read back from the sitemap HEAD already
+ * commits (see sitemapLastmods) rather than recomputed from a log that
+ * would date every page at HEAD.
  */
 import { execFileSync } from "node:child_process";
 import { readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { lastmodPairs } from "./content-checks.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 
@@ -48,12 +53,53 @@ const CHILD_GLOB_HUBS = new Set(["destinations", "experiences"]);
 let committed = null;
 /** files with uncommitted modifications (or untracked), same key shape. */
 let dirty = null;
+/**
+ * pathname -> YYYY-MM-DD read back from HEAD's committed sitemap. Set only on
+ * a shallow checkout, where there is no history to derive dates from; null
+ * whenever the log walk in load() is trustworthy.
+ */
+let recorded = null;
+
+/**
+ * pathname -> YYYY-MM-DD for every <url> in a sitemap that declares a lastmod.
+ *
+ * The read-back path for a checkout with no usable history. Hostinger builds
+ * from a one-commit-deep clone, so `git log` there reports every source file
+ * as first appearing at HEAD and every page inherits HEAD's commit day: on
+ * 2026-09-02 staging served 122 of 122 URLs dated 2026-09-01 — the lockstep
+ * noise #70 removed, reintroduced by the host. dist/ is committed and CI
+ * fails any commit whose dist/ differs from a full-history build, so HEAD's
+ * own dist/sitemap-0.xml is the record of what those dates are. Pairing rule
+ * is lastmodPairs's: a URL without a lastmod records nothing rather than
+ * borrowing the next entry's date.
+ */
+export function sitemapLastmods(xml) {
+  const out = new Map();
+  for (const [loc, date] of lastmodPairs(xml)) {
+    try { out.set(new URL(loc).pathname, date); } catch { /* not a URL */ }
+  }
+  return out;
+}
+
+/** True when git reports a shallow clone — history cut off at some depth. */
+function isShallow() {
+  return execFileSync("git", ["rev-parse", "--is-shallow-repository"],
+    { cwd: ROOT, encoding: "utf8" }).trim() === "true";
+}
 
 function load() {
   if (committed) return;
   committed = new Map();
   dirty = new Set();
   try {
+    if (isShallow()) {
+      // No history to walk. Read the dates HEAD already carries; if HEAD has
+      // no committed sitemap either, this throws and every page gets no
+      // lastmod at all — the same answer as "git unavailable" below.
+      recorded = sitemapLastmods(execFileSync("git", ["show", "HEAD:dist/sitemap-0.xml"],
+        { cwd: ROOT, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 }));
+      return;
+    }
     // %x00 date sentinel, then the commit's file list. Newest-first, so only
     // the first sighting of each path is recorded.
     const log = execFileSync(
@@ -141,6 +187,7 @@ export const localDay = (d, offsetMinutes = d.getTimezoneOffset()) =>
  */
 export function pageLastmod(pathname) {
   load();
+  if (recorded) return recorded.get(pathname);
   let latest;
   for (const f of sourcesOf(pathname)) {
     let d;
