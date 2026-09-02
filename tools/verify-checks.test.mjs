@@ -105,7 +105,7 @@ const attribution = testimonialAttribution;
 import {
   satisfiesNodeRange, parseNodeVersion, engineFloorDrift,
   lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, lockfileDriftSubject,
-  lockfileRestoreAction,
+  lockfilePlatformPatch,
   crDefect, isBinaryDistFile,
 } from "./repo-checks.mjs";
 import { localDay } from "./git-lastmod.mjs";
@@ -2618,96 +2618,131 @@ t("lockfile-subject: an unreadable working copy falls back to HEAD",
 
 /* ── lockfile-restore ──
 
-   The first stage of `npm run build`. It runs `git checkout` over the working
-   lockfile, so every answer is fixtured and the refusals most of all: the file
-   it repairs and the file it must never touch differ only in ways that are easy
-   to conflate, and getting that wrong destroys someone's work rather than
-   merely failing a build. */
+   The first stage of `npm run build`, and the only stage that writes to a
+   source file. It adds missing platform values back onto entries that are the
+   same artifact in both lockfiles, and touches nothing else — so the fixtures
+   that matter most are the ones proving what it leaves ALONE.
 
-t("lockfile-restore: the installer signature is restored",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), true),
-  "restore");
+   Two earlier versions reverted the whole file to HEAD instead, and each needed
+   a rule for when reverting was safe. Both rules were wrong in opposite
+   directions, which is why the approach is gone: see lockfilePlatformPatch. */
 
-t("lockfile-restore: an intact working copy is left alone",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1 }), true),
-  "keep");
+const patch = (a, b) => lockfilePlatformPatch(a, b);
 
-/* Nothing lost means nothing to do, whatever else the file carries. A bump in
-   progress whose metadata is intact must not be refused — that would fail a
-   build with no problem in it, and this now runs in every build. */
-t("lockfile-restore: a clean dependency bump is not this function's business",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": { ...V2_BARE, ...GNU } }), true),
-  "keep");
+t("lockfile-patch: the installer signature is repaired",
+  patch(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE })).restored.length, 3);
 
-t("lockfile-restore: an added package with metadata intact is left alone",
-  lockfileRestoreAction(
-    LOCK({ "node_modules/a": V1 }),
-    LOCK({ "node_modules/a": V1, "node_modules/b": { version: "1.0.0" } }), true),
-  "keep");
+t("lockfile-patch: and the repaired entry carries HEAD's values again",
+  JSON.stringify(patch(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }))
+    .lockfile.packages["node_modules/a"].libc),
+  JSON.stringify(["glibc"]));
 
-/* A changed artifact's platform support is upstream's business, which is why
-   lockfileMetadataLoss skips it — so there is no loss here to repair and the
-   answer is `keep`, not `refuse`. That is not a hole: a wholesale strip during
-   an upgrade is the drift guard's to catch, and it does, by judging the
-   candidate rather than HEAD. Two checks, one condition each. */
-t("lockfile-restore: a bumped package's own metadata is not ours to restore",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE }), true),
-  "keep");
+t("lockfile-patch: an intact working copy is left alone",
+  patch(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1 })).lockfile, null);
 
-t("lockfile-restore: nor is it when only integrity moved",
-  lockfileRestoreAction(
-    LOCK({ "node_modules/a": V1 }),
-    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-ccc" } }), true),
-  "keep");
+/* THE DEPLOY THAT FAILED. Hostinger's install does not merely strip fields, it
+   re-resolves the tree — so the working lockfile differs from HEAD by an added
+   package as well, and the previous "refuse unless the dependency set is
+   identical" rule declined to run. The build log read "lost 34 platform
+   field(s) AND carries real changes ... Refusing". Now the fields come back AND
+   the added package stays. */
+t("lockfile-patch: a package added alongside the strip is kept, and the strip repaired",
+  (() => {
+    const r = patch(
+      LOCK({ "node_modules/a": V1 }),
+      LOCK({ "node_modules/a": V1_BARE, "node_modules/b": { version: "2.0.0" } }));
+    return `${r.restored.length} restored, b=${!!r.lockfile.packages["node_modules/b"]}`;
+  })(),
+  "3 restored, b=true");
 
-/* The refusals. Each is a working copy where an UNCHANGED artifact lost
-   platform metadata AND the file carries real work, so HEAD does not hold
-   everything it holds and a checkout would discard the difference. */
+/* Codex review on #140, P2, in its original form: an install that carries real
+   work AND drops platform fields is the 2026-08 incident itself. Nothing is
+   reverted now, so the work simply survives. */
+t("lockfile-patch: a bumped version elsewhere survives the repair",
+  (() => {
+    const r = patch(
+      LOCK({ "node_modules/a": V1, "node_modules/b": { version: "1.0.0", integrity: "sha512-b1" } }),
+      LOCK({ "node_modules/a": V1_BARE, "node_modules/b": { version: "9.9.9", integrity: "sha512-b9" } }));
+    return `${r.restored.length} restored, b=${r.lockfile.packages["node_modules/b"].version}`;
+  })(),
+  "3 restored, b=9.9.9");
 
-/* Codex review on #140, P2. Comparing shared keys alone could not see an added
-   or removed package, so `npm install some-pkg` that also stripped libc read as
-   pure installer noise — and the restore would have reverted the new dependency
-   out of the lockfile. That is the 2026-08 incident's own shape. */
-t("lockfile-restore: a package ADDED alongside the strip is refused, not reverted",
-  lockfileRestoreAction(
-    LOCK({ "node_modules/a": V1 }),
-    LOCK({ "node_modules/a": V1_BARE, "node_modules/b": { version: "2.0.0" } }), true),
-  "refuse");
-
-t("lockfile-restore: a package REMOVED alongside the strip is refused too",
-  lockfileRestoreAction(
-    LOCK({ "node_modules/a": V1, "node_modules/b": { version: "2.0.0" } }),
-    LOCK({ "node_modules/a": V1_BARE }), true),
-  "refuse");
-
-t("lockfile-restore: a changed root dependency range alongside the strip is refused",
-  lockfileRestoreAction(
+t("lockfile-patch: a changed root dependency range survives the repair",
+  patch(
     LOCK({ "": { version: "1.0.0", dependencies: { astro: "^7.2.9" } }, "node_modules/a": V1 }),
-    LOCK({ "": { version: "1.0.0", dependencies: { astro: "^8.0.0" } }, "node_modules/a": V1_BARE }), true),
-  "refuse");
+    LOCK({ "": { version: "1.0.0", dependencies: { astro: "^8.0.0" } }, "node_modules/a": V1_BARE }))
+    .lockfile.packages[""].dependencies.astro,
+  "^8.0.0");
 
-t("lockfile-restore: an unparseable working copy is replaced by HEAD's",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), null, true), "restore");
+/* A changed artifact's platform support is upstream's business — HEAD's record
+   describes a different version, so it is not evidence about this one. Left
+   alone; a wholesale strip during an upgrade stays the drift guard's to catch,
+   by judging the candidate rather than HEAD. One condition per check. */
+t("lockfile-patch: a bumped package's own metadata is not ours to restore",
+  patch(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V2_BARE })).lockfile, null);
 
-t("lockfile-restore: no git means there is nothing to restore from",
-  lockfileRestoreAction(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE }), false),
-  "no-baseline");
+t("lockfile-patch: nor is it when only integrity moved",
+  patch(LOCK({ "node_modules/a": V1 }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-ccc" } })).lockfile, null);
 
-t("lockfile-restore: a HEAD with no usable lockfile is not restored from",
-  lockfileRestoreAction(null, LOCK({ "node_modules/a": V1_BARE }), true), "no-baseline");
+/* Union, not overwrite. The claim is that this never removes a value, so a
+   value the working copy has and HEAD does not has to survive. */
+t("lockfile-patch: a value HEAD does not have is kept, not narrowed away",
+  JSON.stringify(patch(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-aaa", libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-aaa", libc: ["uclibc"] } }))
+    .lockfile.packages["node_modules/a"].libc),
+  JSON.stringify(["glibc", "musl", "uclibc"]));
+
+t("lockfile-patch: a narrowed array is widened back to what HEAD recorded",
+  JSON.stringify(patch(
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-aaa", libc: ["glibc", "musl"] } }),
+    LOCK({ "node_modules/a": { version: "1.0.0", integrity: "sha512-aaa", libc: ["glibc"] } }))
+    .lockfile.packages["node_modules/a"].libc),
+  JSON.stringify(["glibc", "musl"]));
+
+t("lockfile-patch: a removed package is not resurrected",
+  patch(LOCK({ "node_modules/a": V1, "node_modules/b": { version: "2.0.0" } }),
+    LOCK({ "node_modules/a": V1 })).lockfile, null);
+
+t("lockfile-patch: an unparseable working copy is not overwritten",
+  patch(LOCK({ "node_modules/a": V1 }), null).lockfile, null);
+
+t("lockfile-patch: no committed baseline means no repair",
+  patch(null, LOCK({ "node_modules/a": V1_BARE })).lockfile, null);
+
+t("lockfile-patch: JSON that parses but is not a lockfile is not repaired",
+  patch({ packages: [] }, LOCK({ "node_modules/a": V1_BARE })).lockfile, null);
+
+/* The repair actually closes what § 4c reports — the two agree, rather than
+   the build passing one and failing the other. */
+t("lockfile-patch: after the repair there are no losses left for § 4c to find",
+  lockfileMetadataLoss(
+    LOCK({ "node_modules/a": V1 }),
+    patch(LOCK({ "node_modules/a": V1 }), LOCK({ "node_modules/a": V1_BARE })).lockfile).length,
+  0);
 
 /* Against the real file, and against HEAD on BOTH sides deliberately.
 
-   Codex review on #140, P1: this asserted `keep` for HEAD-vs-working, which is
-   only true while the working copy is clean. During a dependency upgrade the
-   honest answer can be `refuse`, and since `npm run build` must pass before
-   every commit, that assertion made the mandated workflow impossible to follow
-   at exactly the moment it matters. HEAD against itself is clean in every
-   state, so this still proves the predicate agrees with the shape of the real
-   lockfile without holding an upgrade hostage. */
+   Codex review on #140, P1: this asserted the working copy was clean, which is
+   only true while it is. Mid-upgrade the honest answer differs, and since
+   `npm run build` must pass before every commit, that assertion made the
+   mandated workflow impossible at exactly the moment it matters. HEAD against
+   itself is clean in every state and still proves the predicate matches the
+   shape of the real lockfile. */
 if (REAL_HEAD_LOCK) {
-  t("lockfile-restore: the real committed lockfile against itself needs no repair",
-    lockfileRestoreAction(REAL_HEAD_LOCK, REAL_HEAD_LOCK, GIT_AVAILABLE), "keep");
+  t("lockfile-patch: the real committed lockfile against itself needs no repair",
+    lockfilePlatformPatch(REAL_HEAD_LOCK, REAL_HEAD_LOCK).lockfile, null);
+
+  /* And the real incident replayed on the real file: strip every libc block the
+     way the host does, and every one must come back. */
+  t("lockfile-patch: stripping libc from the real lockfile is fully repaired",
+    lockfilePlatformPatch(REAL_HEAD_LOCK, (() => {
+      const stripped = JSON.parse(JSON.stringify(REAL_HEAD_LOCK));
+      for (const p of Object.values(stripped.packages)) delete p.libc;
+      return stripped;
+    })()).restored.length,
+    Object.values(REAL_HEAD_LOCK.packages).filter((p) => Array.isArray(p.libc)).length);
 }
 
 /* Against the real file rather than a fixture, the way the dist/ block at the

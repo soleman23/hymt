@@ -81,13 +81,18 @@ install was guaranteed to fail. The 2026-08-29 deploy died earlier still, on
 build got far enough to reach the lockfile guard and stopped there.
 
 **No hPanel change is needed.** `tools/restore-lockfile.mjs` runs early in
-`npm run build` and puts the committed lockfile back before anything reads it.
-It repairs only when the repair is provably lossless — same package set, same
-versions and integrity, same root dependency ranges, only the platform fields
-missing — so HEAD holds everything the working copy holds and reverting discards
-nothing. Any other shape is **refused** with an explanation and a non-zero exit,
-because a working copy that lost metadata *and* carries real work (a package
-added, a version moved) is the 2026-08 incident itself and needs a person.
+`npm run build` and puts the missing platform fields back before anything reads
+the lockfile.
+
+It **patches in place rather than reverting**, which matters here: the host's
+install does not merely strip fields, it re-resolves the tree, so its lockfile
+also differs from `HEAD` by an added or removed package. An earlier version
+reverted the whole file and refused to run when anything else had changed — the
+2026-09-01 23:30 build log read `lost 34 platform field(s) AND carries real
+changes ... Refusing`, and the deploy died on a repair that was declining to
+act. The patch only ever adds platform values back onto entries that are the
+same artifact in both files, so there is no shape it has to refuse and nothing
+it can discard.
 
 A healthy deploy log shows the restore line, then the right-hand column above,
 then `ok  package-lock.json keeps its platform metadata — 293 of 293 HEAD

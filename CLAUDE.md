@@ -240,14 +240,18 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
   `tools/verify-deployment.mjs`.
 - The lockfile restore is the one stage that WRITES to a source file, and it
   exists because hPanel's build command cannot be changed on this account: the
-  host installs before it builds, its install strips every `libc`/`os`/`cpu`
-  field out of `package-lock.json`, and the guards below then fail a deploy over
-  a file the repo never produced. It puts the committed lockfile back only when
-  doing so is provably lossless — same package set, same versions and integrity,
-  same root ranges, only the platform fields gone. A working copy that lost
-  metadata AND carries real work is **refused**, loudly, with a non-zero exit;
-  that combination is the 2026-08 incident and a script must not resolve it.
-  It prints what it did either way, so a repair is never invisible.
+  host installs before it builds, its install drops the `libc` blocks out of
+  `package-lock.json`, and the guards below then fail a deploy over a file the
+  repo never produced.
+- It **patches, it does not revert.** It adds missing platform values back onto
+  entries that are the same artifact in both files — same key, version and
+  integrity, so HEAD's record of that exact package's platforms is
+  authoritative — and unions rather than overwrites. An added package, a bumped
+  version, a changed range are all untouched. Two earlier versions reverted the
+  whole file and each needed a rule for when that was safe; both rules were
+  wrong, in opposite directions, and the second one refused the deploy it was
+  written for. Do not reintroduce a revert. It prints what it changed, so a
+  repair is never invisible.
 - A new verifier check must come with fixtures in `tools/verify-checks.test.mjs`
   proving it fails on the broken shape, not only that the build stays green — a
   check that cannot go red is worse than no check, and two shipped that way.
