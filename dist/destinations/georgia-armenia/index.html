@@ -558,6 +558,7 @@ Destination notes, shoulder-season tips, and the occasional
 </script> <footer class="footer"> <div class="footer__top"> <div> <img src="/assets/logo.png" class="footer__brand-logo" alt="Hit Your Mark Travel" width="64" height="64" loading="lazy" decoding="async"> <div class="footer__tagline">Hit Your Mark Travel</div> <div class="footer__contact"> <a href="tel:+14085681404">(408) 568-1404</a><br> <a href="mailto:mark@hymtravel.com">mark@hymtravel.com</a><br> <a href="https://www.hymtravel.com">hymtravel.com</a> </div> </div> <div> <div class="footer__col-title">Experiences</div> <ul class="footer__links"> <li><a class="footer__link" href="/experiences/beach-island-escapes/">Beach &amp; Island Escapes</a></li> <li><a class="footer__link" href="/experiences/all-inclusive-vacations/">All-Inclusive Vacations</a></li> <li><a class="footer__link" href="/experiences/cruises/">Cruises &amp; Yachts</a></li> <li><a class="footer__link" href="/experiences/wellness-retreat-travel/">Wellness &amp; Retreats</a></li> <li><a class="footer__link" href="/experiences/safari-wildlife-travel/">Safari &amp; Wildlife</a></li> <li><a class="footer__link" href="/experiences/romance-celebration-travel/">Romance &amp; Celebration</a></li> </ul> </div> <div> <div class="footer__col-title">Destinations</div> <ul class="footer__links"> <li><a class="footer__link" href="/destinations/caribbean-mexico/">Caribbean &amp; Mexico</a></li> <li><a class="footer__link" href="/destinations/europe/">Europe</a></li> <li><a class="footer__link" href="/destinations/africa/">Africa</a></li> <li><a class="footer__link" href="/destinations/asia/">Asia</a></li> <li><a class="footer__link" href="/destinations/south-pacific/">South Pacific</a></li> <li><a class="footer__link" href="/destinations/middle-east/">Middle East</a></li> <li><a class="footer__link" href="/destinations/north-america/">North America</a></li> <li><a class="footer__link" href="/destinations/south-america/">South America</a></li> <li><a class="footer__link" href="/destinations/polar-regions/">Polar Regions</a></li> </ul> </div> <div> <div class="footer__col-title">Plan Your Trip</div> <ul class="footer__links"> <li><a class="footer__link" href="/plan-your-trip/">Start Planning</a></li> <li><a class="footer__link" href="/plan-your-trip/?type=group">Group Travel Inquiry</a></li> <li><a class="footer__link" href="/plan-your-trip/?type=honeymoon">Honeymoon Inquiry</a></li> <li><a class="footer__link" href="/faq/">FAQ</a></li> </ul> </div> <div> <div class="footer__col-title">Company</div> <ul class="footer__links"> <li><a class="footer__link" href="/about/">About Mark</a></li> <li><a class="footer__link" href="/#process-section">Travel Planning Process</a></li> <li><a class="footer__link" href="/travel-journal/">Travel Journal</a></li> <li><a class="footer__link" href="/privacy-policy/">Privacy Policy</a></li> <li><a class="footer__link" href="/terms-and-conditions/">Terms &amp; Conditions</a></li> </ul> </div> </div> <div class="footer__bottom"> <div class="footer__legal">
 CA Seller of Travel: 2165910-50 &nbsp;·&nbsp; WA Seller of Travel: 605920581 &nbsp;·&nbsp; FL Seller of Travel: ST46122
 </div> <div class="footer__copy">Hit Your Mark Travel © 2026</div> </div> </footer> <script type="module">document.documentElement.classList.add(`js-accordion`),document.addEventListener(`click`,e=>{let t=e.target.closest(`.pf-q, .faq-q`);if(!t)return;let n=t.closest(`.pf-item, .faq-item`);if(!n)return;let r=n.classList.toggle(`open`);t.setAttribute(`aria-expanded`,String(r))}),document.addEventListener(`click`,e=>{let t=e.target.closest(`.faq-cat-btn`);if(!(t instanceof HTMLElement))return;let n=t.dataset.cat;document.querySelectorAll(`.faq-cat-btn`).forEach(e=>{e.classList.toggle(`active`,e===t),e.setAttribute(`aria-pressed`,String(e===t))}),document.querySelectorAll(`.faq-group`).forEach(e=>{e.style.display=n===`all`||e.dataset.cat===n?``:`none`})});</script> <script>(function(){const GA4_ID = "G-J6VZEBPCBC";
+const FALLBACK_MS = 3000;
 
 (function () {
   if (location.hostname !== 'www.hymtravel.com') return;
@@ -580,22 +581,39 @@ CA Seller of Travel: 2165910-50 &nbsp;·&nbsp; WA Seller of Travel: 605920581 &n
   ['scroll', 'pointerdown', 'keydown'].forEach(function (ev) {
     addEventListener(ev, loadGtag, { once: true, passive: true });
   });
+  /* No-interaction fallback. A visitor who reads above the fold and leaves
+     never scrolls, taps or types, so without this their page view is lost.
+     Armed after `load`, when LCP is settled, plus FALLBACK_MS of slack. */
+  function armFallback() { setTimeout(loadGtag, FALLBACK_MS); }
+  if (document.readyState === 'complete') armFallback();
+  else addEventListener('load', armFallback, { once: true });
 
-  /* phone_click / email_click — delegated so every tel:/mailto: link counts */
+  /* phone_click / email_click — delegated so every tel:/mailto: link counts.
+     link_location is where on the page the link sat. The site's <nav> is the
+     header and sits outside <main>; a breadcrumb <nav> inside <main> is body. */
+  function linkLocation(a) {
+    if (a.closest('footer')) return 'footer';
+    if (a.closest('header, nav') && !a.closest('main')) return 'header';
+    return 'body';
+  }
   document.addEventListener('click', function (e) {
     var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
     if (!a) return;
     var isTel = a.getAttribute('href').indexOf('tel:') === 0;
     gtag('event', isTel ? 'phone_click' : 'email_click', {
-      link_url: a.getAttribute('href'),
+      link_location: linkLocation(a),
       page_path: location.pathname
     });
   });
 
-  /* form_start — first field focus on the Plan Your Trip form, once */
-  if (location.pathname === '/plan-your-trip/') {
+  /* form_start — first field focus inside the inquiry form, once per page
+     view. Listens on the form's own container, not the document, so the
+     newsletter field in the footer (present on Contact) cannot count as a
+     start. Plan Your Trip's wizard has no <form>; .plan-multistep wraps it. */
+  var inquiryForm = document.querySelector('.plan-multistep') || document.getElementById('contactForm');
+  if (inquiryForm) {
     var started = false;
-    document.addEventListener('focusin', function (e) {
+    inquiryForm.addEventListener('focusin', function (e) {
       if (started) return;
       var t = e.target;
       if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) {
