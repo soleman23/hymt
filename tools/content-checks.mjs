@@ -94,6 +94,47 @@ export function internalComments(html) {
  *
  * @returns {{html: string, removed: number}}
  */
+/**
+ * `tel:` links a phone abroad cannot dial.
+ *
+ * A number without a leading `+` and country code is only unambiguous to a
+ * handset already on that country's network. `tel:14085681404` asks a phone
+ * elsewhere — or a carrier that reads a bare leading 1 as something else — to
+ * guess, and the guess is not always a call to Mark.
+ *
+ * Three pages shipped that form while 126 links carried the correct
+ * `tel:+14085681404`, and one of the three was /contact/, which had both on the
+ * same page. Found by reading hrefs during the pre-cutover browser pass, not by
+ * any check — nothing here looked at the shape of a tel: URL before.
+ *
+ * Read through anchorHrefs() rather than a regex of its own. Codex review on
+ * #144, P2: the first version matched only `href="…"`, double-quoted and
+ * case-sensitive, and content pages render verbatim through `set:html`, so a
+ * single-quoted or unquoted href in a source fragment reaches dist/ unnormalised
+ * and would have sailed past the gate. That extractor exists precisely because
+ * two checks previously disagreed about quoting; a third one guessing again was
+ * the wrong move.
+ *
+ * The digits are judged AFTER stripping RFC 3966 visual separators, so
+ * `tel:+1-408-568-1404` passes. It is a working link, and a check that reds a
+ * correct one is how people learn to route around the build. A literal space is
+ * still a defect — it is not legal in a URI unencoded — and so is a missing `+`,
+ * which is the thing that actually broke.
+ *
+ * @returns {string[]} the offending hrefs, empty when clean
+ */
+export function telHrefDefects(html) {
+  const bad = [];
+  for (const href of anchorHrefs(html)) {
+    if (!/^tel:/i.test(href)) continue;
+    /* `;ext=123` and friends are legal trailing parameters, not part of the
+       number. Judge the number. */
+    const number = href.slice(4).split(";")[0];
+    if (!/^\+[0-9]{7,15}$/.test(number.replace(/[-.()]/g, ""))) bad.push(href);
+  }
+  return bad;
+}
+
 export function stripInternalComments(html) {
   let removed = 0;
   const drop = (match, body, replacement) => {
