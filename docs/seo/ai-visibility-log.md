@@ -32,6 +32,14 @@ as "fixed"; repeating a probe against a drained one keeps it drained and reads
 as "blocked". The tool bursts and prints the whole sequence, refuses to call a
 burst that opens on 429 a result at all, and brackets the run with controls.
 
+Four things it will not do, each because an earlier version did: call a burst
+"throttled" when a 200 arrives after the 429 (that is not an exhaustion point,
+so no budget number is quoted); pass a run in which any agent came back
+unreadable; blame the origin when it was the browser control or the network
+that failed; or count a 200 as access without checking the body is the page
+rather than a challenge stub. A non-zero exit means read the output, not
+re-run until it is green.
+
 ### 2026-09-03 — GPTBot 429, everything else clean
 
 Measured against `https://www.hymtravel.com/`, origin `195.179.237.168`.
@@ -42,8 +50,17 @@ Measured against `https://www.hymtravel.com/`, origin `195.179.237.168`.
 | OAI-SearchBot, ChatGPT-User | 200 |
 | ClaudeBot, PerplexityBot | 200 |
 | Meta-ExternalAgent | 200 (was 429 when [#156] was filed; changed host-side, no action here) |
-| Googlebot, Bingbot | 200 |
+| Googlebot, Bingbot, Applebot | 200 |
 | control: Chrome 128, unknown UA | 200 × 12 each |
+| Google-Extended, Applebot-Extended | not measurable — see below |
+
+`Google-Extended` and `Applebot-Extended` are robots.txt policy tokens, not
+request user agents: neither is ever sent as an HTTP `User-Agent`, and the
+fetching for both is done by `Googlebot` and `Applebot` respectively. Their rows
+are read off those two agents. An earlier version of the tool sent invented
+`Google-Extended/1.0` and `Applebot-Extended/1.0` strings and reported the 200s
+as coverage, which measured nothing about either company — a 200 for a string no
+Google system sends is the unknown-UA control under a borrowed name.
 
 Open in [#156]. What was established this session, beyond what the issue body
 already said:
@@ -54,9 +71,14 @@ already said:
 - **The counter is shared across everything that matches it, and is not keyed to
   the UA string.** `xGPTBot/1.0` — a string never sent before — came back 429 on
   its first ever request. A per-string token bucket cannot do that.
-- **It is not IP-based.** Chrome and an invented crawler UA both took 12
-  back-to-back requests from the same machine, in the same minute, while GPTBot
-  sat on a 429.
+- **It selects on the user agent — but whether the source IP is also part of the
+  key is untested.** Chrome and an invented crawler UA both took 12 back-to-back
+  requests from the same machine, in the same minute, while GPTBot sat on a 429.
+  That rules out a limiter keyed on IP *alone*. It does not rule out one keyed on
+  `(source IP, gptbot/1)`, which produces every observation above identically.
+  Settling it needs a matching GPTBot request from a second source IP, which has
+  not been done. Do not tell the host "it is not IP-based" — say the matching is
+  user-agent-selective and let them look at the key.
 - **It is path-agnostic.** GPTBot gets 429 on `/`, on `/destinations/africa/`,
   on `/sitemap-index.xml` and on `/robots.txt` — so the crawler cannot read the
   file that grants it permission.

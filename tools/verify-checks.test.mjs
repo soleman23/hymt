@@ -115,7 +115,8 @@ import {
   isHardFailure, confirmationIsStale, isNxdomain,
 } from "./check-external-links.mjs";
 import {
-  AGENTS as CRAWLER_AGENTS, classifyBurst, budgetFrom, controlsHeld, verdict,
+  AGENTS as CRAWLER_AGENTS, DEFAULT_HOST as CRAWLER_HOST,
+  classifyBurst, budgetFrom, controlsHeld, verdict, bodyDiffers, okSizes,
 } from "./check-ai-crawlers.mjs";
 
 /* ── internal-link-floor ── */
@@ -3693,6 +3694,82 @@ t("crawlers: a control that degrades voids the run",
 /* The agent list has to carry controls at all, or nothing brackets the run. */
 t("crawlers: the agent list ships at least two controls",
   CRAWLER_AGENTS.filter((a) => a.control).length >= 2, true);
+
+/* Same rule as every other tool here: the domain is written once, in
+   astro.config.mjs. A private copy in this file would not fail anything — it
+   would quietly measure the old domain and log it under the new one. */
+t("crawlers: the default host is derived from astro.config.mjs, not typed here",
+  CRAWLER_HOST, CONFIGURED_SITE);
+
+/* The line above only goes red once astro.config.mjs actually moves, so it
+   cannot catch a hardcoded copy that happens to still be correct today — which
+   is the state this tool shipped in. This one can: the domain must not appear
+   in the source at all. */
+t("crawlers: ...and the domain is not written in the tool's source",
+  new RegExp(new URL(CONFIGURED_SITE).hostname.replace(/^www\./, "").replace(/\./g, "\\."), "i")
+    .test(readFileSync(path.join(ROOT, "tools", "check-ai-crawlers.mjs"), "utf8")), false);
+
+/* Google-Extended and Applebot-Extended are robots.txt policy tokens: neither
+   is ever sent as an HTTP User-Agent, because Googlebot and Applebot do the
+   fetching. They used to carry invented UA strings and be bursted like real
+   agents, so a 200 for a string no Google system sends was reported as Google
+   coverage — the control-unknown result wearing another agent's name. */
+{
+  const robotsOnly = CRAWLER_AGENTS.filter((a) => a.robotsOnly);
+  t("crawlers: the robots-only policy tokens are declared, not invented",
+    robotsOnly.map((a) => a.name).sort().join(","), "Applebot-Extended,Google-Extended");
+
+  t("crawlers: a robots-only token carries no user agent to burst",
+    robotsOnly.every((a) => a.ua === undefined), true);
+
+  /* Each one has to name a real agent that IS measured, or the token is
+     declared unmeasurable and nothing covers it at all. */
+  const burstable = new Set(
+    CRAWLER_AGENTS.filter((a) => !a.robotsOnly && a.ua).map((a) => a.name),
+  );
+  const orphans = robotsOnly.filter((a) => !burstable.has(a.fetchedBy)).map((a) => a.name);
+  t(`crawlers: every robots-only token names a fetcher that is bursted (${orphans.join(", ") || "none"})`,
+    orphans.length, 0);
+
+  /* The converse: everything else must have a UA, or it silently measures
+     nothing the way the two above did. */
+  t("crawlers: every non-policy agent has a user agent",
+    CRAWLER_AGENTS.filter((a) => !a.robotsOnly && !a.ua).length, 0);
+}
+
+/* ── soft blocks ──
+
+   A 200 is not "got the page". An anti-bot layer answering crawlers with a
+   challenge or a stub does not need a 429 to stop them, and a status-only
+   probe records that as clean access while the log built from it claims the
+   answer engines can fetch the site. */
+
+t("crawlers: a body the size of the control's is fine",
+  bodyDiffers([48000, 48000], [48010, 48000]), false);
+
+t("crawlers: a challenge-page-sized body is not clean access",
+  bodyDiffers([1200, 1200], [48000, 48000]), true);
+
+t("crawlers: sizes we did not record are not evidence of a soft block",
+  bodyDiffers([], [48000]), false);
+
+t("crawlers: ...in either direction",
+  bodyDiffers([48000], []), false);
+
+t("crawlers: okSizes keeps only the bodies of 200s",
+  okSizes([{ code: 200, size: 48000 }, { code: 429, size: 700 }]).join(","), "48000");
+
+/* The gate has to act on it, not just compute it. */
+{
+  const v = verdict([
+    { name: "control-chrome", control: "browser", codes: [200, 200], sizes: [48000, 48000] },
+    { name: "control-unknown", control: "unknown", codes: [200, 200], sizes: [48000, 48000] },
+    { name: "GPTBot", codes: [200, 200], sizes: [1200, 1200] },
+  ]);
+  t("crawlers/verdict: an all-200 burst carrying the wrong page fails the run", v.code, 1);
+  t("crawlers/verdict: ...and names it a soft block",
+    v.lines.some((l) => /soft block/.test(l)), true);
+}
 
 /* The coverage that actually matters, derived from the shipped robots.txt
    rather than typed here. #156's stake is citations, so the set to keep in step

@@ -26,8 +26,8 @@
  * bucket returns 200, and reads as "fixed".
  *
  * So a single status code is not a measurement here, and this tool will not
- * report one. It sends a burst and prints the whole sequence. Two rules follow,
- * and both are enforced below rather than left to the reader:
+ * report one. It sends a burst and prints the whole sequence. Six rules follow,
+ * and all of them are enforced below rather than left to the reader:
  *
  *   1. If a burst's FIRST request is already 429, the bucket was drained before
  *      the run started. That is not a result. It prints as NO RESULT and
@@ -39,6 +39,19 @@
  *      the case-insensitive substring `gptbot/1` and counts everything matching
  *      it together. So bursting one agent can poison the next agent's reading,
  *      and the run order is part of the result. Controls bracket the run.
+ *   3. "Throttled" means 200s, then 429s, and nothing after. A 200 arriving
+ *      after a 429 is not an exhaustion transition, so no budget is quoted.
+ *   4. A run passes only if every crawler in it came back clean AND there was a
+ *      crawler in it. Unreadable is not clean; an empty run is not a pass.
+ *   5. The two controls fail for opposite reasons. Browser degraded: bad
+ *      minute, run void. Unknown degraded with the browser clean: the origin
+ *      selects on user-agent shape, which is a finding, not noise.
+ *   6. 200 is not "got the page". A soft block is a 200, so bodies are compared
+ *      against the browser control's rather than trusting the status line.
+ *
+ * Rules 3 to 6 are all corrections: the first version of this file shipped the
+ * opposite of each, and rules 4 and 5 between them let it print "#156 is not
+ * reproducing" and exit 0 on a run where GPTBot returned 503 every time.
  *
  * ── WHY IT SHELLS OUT TO CURL ──
  *
@@ -48,17 +61,35 @@
  * #156 was taken with curl. Changing the client would make new numbers
  * incomparable with the ones in the issue for no gain.
  *
- * The pure parts — classifying a sequence, deriving the budget — are exported
- * and driven red on fixtures in tools/verify-checks.test.mjs. A tool that is
- * only ever run by hand cannot notice its own classifier regressing.
+ * The pure parts — classifying a sequence, deriving the budget, and the whole
+ * verdict — are exported and driven red on fixtures in verify-checks.test.mjs.
+ * A tool that is only ever run by hand cannot notice its own classifier
+ * regressing. Note "and the whole verdict": the first version fixtured the
+ * classifier and left the decision that consumed it inline in main(), and that
+ * is exactly where the bug was.
  */
 
 import { execFile } from "node:child_process";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
+import { configuredSite } from "./content-checks.mjs";
 
 const execFileAsync = promisify(execFile);
 
-const DEFAULT_HOST = "https://www.hymtravel.com";
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+/**
+ * Read, never typed. The production domain is written once — astro.config.mjs
+ * `site` — and this file had its own copy, which is the drift every other tool
+ * here already derives its way out of (check-external-links, verify-deployment,
+ * and the fixtures all go through configuredSite). A stale copy here would not
+ * fail anything; it would quietly measure crawler access to the old domain and
+ * log the result under the new one.
+ */
+export const DEFAULT_HOST =
+  configuredSite(readFileSync(path.join(ROOT, "astro.config.mjs"), "utf8"));
 
 /**
  * The agents robots.txt names, plus two controls.
@@ -91,15 +122,30 @@ export const AGENTS = [
   { name: "ClaudeBot", ua: "Mozilla/5.0 (compatible; ClaudeBot/1.0; +claudebot@anthropic.com)" },
   { name: "PerplexityBot", ua: "Mozilla/5.0 (compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)" },
   { name: "Perplexity-User", ua: "Mozilla/5.0 (compatible; Perplexity-User/1.0; +https://perplexity.ai/perplexitybot)" },
-  { name: "Google-Extended", ua: "Mozilla/5.0 (compatible; Google-Extended/1.0; +http://www.google.com/bot.html)" },
-  { name: "Applebot-Extended", ua: "Mozilla/5.0 (compatible; Applebot-Extended/1.0; +http://www.apple.com/go/applebot)" },
   { name: "Meta-ExternalAgent", ua: "meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)" },
   { name: "Amazonbot", ua: "Mozilla/5.0 (compatible; Amazonbot/0.1; +https://developer.amazon.com/support/amazonbot)" },
 
+  /* Robots-policy tokens with NO request user agent. Both are names you write
+     in robots.txt to set a training/grounding policy; neither is ever sent as
+     an HTTP User-Agent, because the fetching is done by the ordinary crawler
+     named in `fetchedBy`.
+
+     They had invented UA strings here and were bursted like everything else,
+     which measured nothing about Google or Apple: a 200 for a string no Google
+     system sends is the control-unknown result under another name, and it was
+     being reported as crawler coverage. They stay in the list — robots.txt
+     names them, and the coverage fixture derives from robots.txt — but they are
+     declared unmeasurable rather than measured. */
+  { name: "Google-Extended", robotsOnly: true, fetchedBy: "Googlebot" },
+  { name: "Applebot-Extended", robotsOnly: true, fetchedBy: "Applebot" },
+
   /* Search engines. Not the subject of #156, but they are the reference class:
-     if Googlebot is fine while GPTBot is not, the treatment is per-agent. */
+     if Googlebot is fine while GPTBot is not, the treatment is per-agent. They
+     are also the agents that actually fetch for the two tokens above, so a
+     verdict on Google-Extended is read off Googlebot's row. */
   { name: "Googlebot", ua: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" },
   { name: "Bingbot", ua: "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)" },
+  { name: "Applebot", ua: "Mozilla/5.0 (compatible; Applebot/0.1; +http://www.apple.com/go/applebot)" },
 ];
 
 /**
@@ -149,6 +195,40 @@ export function controlsHeld(results) {
   return results
     .filter((r) => r.control)
     .every((r) => classifyBurst(r.codes) === "clean");
+}
+
+/**
+ * Does this agent's 200 carry the same page the browser control got?
+ *
+ * A soft block is a 200. An anti-bot layer that answers crawlers with a
+ * challenge, a consent interstitial or a stub does not need to return 429 to
+ * stop them, and a tool that reads only the status line records that as clean
+ * access — while the log built from it promises to answer "can the answer
+ * engines actually FETCH the site". They could not, and it would say they did.
+ *
+ * `/` is one static file here, so every 200 should be the same length. The
+ * tolerance is for transfer-level variation, not for content: a challenge page
+ * is not within 10% of a 123-page site's homepage.
+ *
+ * Sizes are optional throughout — a result with none skips the check rather
+ * than failing it, because "we did not record sizes" is not evidence of a soft
+ * block and this tool does not manufacture findings out of missing data.
+ */
+export function medianSize(sizes) {
+  if (!Array.isArray(sizes) || sizes.length === 0) return null;
+  return [...sizes].sort((a, b) => a - b)[Math.floor(sizes.length / 2)];
+}
+
+export function bodyDiffers(agentSizes, controlSizes, tolerance = 0.1) {
+  const a = medianSize(agentSizes);
+  const c = medianSize(controlSizes);
+  if (a === null || c === null || c === 0) return false;
+  return Math.abs(a - c) / c > tolerance;
+}
+
+/** The transferred body sizes of the 200s in a burst. */
+export function okSizes(samples) {
+  return (samples ?? []).filter((s) => s.code === 200).map((s) => s.size);
 }
 
 /**
@@ -245,6 +325,25 @@ export function verdict(results, { only = null } = {}) {
   }
   if (crawlers.some((r) => cls(r) === "throttled")) lines.push("");
 
+  /* 200 is not the same thing as "got the page". Compared against the browser
+     control, because that is the run's own definition of what the page looks
+     like to something that is definitely not being blocked. */
+  const controlSizes = controls
+    .filter((r) => r.control !== "unknown")
+    .flatMap((r) => r.sizes ?? []);
+  const softBlocked = crawlers.filter(
+    (r) => cls(r) === "clean" && bodyDiffers(r.sizes, controlSizes),
+  );
+  for (const r of softBlocked) {
+    lines.push(
+      `${r.name} got 200 on every request, but the body it received is`,
+      `${medianSize(r.sizes)} bytes against the browser control's ${medianSize(controlSizes)}.`,
+      "A 200 that does not carry the page is a soft block, and counting it as",
+      "access is how a challenge page gets logged as a healthy crawl.",
+      "",
+    );
+  }
+
   /* A run with no crawler in it cannot support a conclusion about crawlers.
      Reachable via `--only <typo>`, which used to leave just the two controls
      and then print " took the full burst" with an empty list of names. */
@@ -255,7 +354,7 @@ export function verdict(results, { only = null } = {}) {
     return { code: 1, lines };
   }
 
-  if (crawlers.every((r) => cls(r) === "clean") && !selective) {
+  if (crawlers.every((r) => cls(r) === "clean") && !selective && softBlocked.length === 0) {
     lines.push(
       only
         ? `${crawlers.map((a) => a.name).join(", ")} took the full burst. This run measured that\n` +
@@ -275,19 +374,20 @@ async function status(url, ua) {
     const { stdout } = await execFileAsync(
       "curl",
       ["-s", "-o", process.platform === "win32" ? "NUL" : "/dev/null",
-       "-w", "%{http_code}", "--max-time", "20", "-A", ua, url],
+       "-w", "%{http_code} %{size_download}", "--max-time", "20", "-A", ua, url],
       { timeout: 30_000 },
     );
-    return Number.parseInt(stdout.trim(), 10) || 0;
+    const [code, size] = stdout.trim().split(/\s+/);
+    return { code: Number.parseInt(code, 10) || 0, size: Number.parseInt(size, 10) || 0 };
   } catch {
-    return 0;
+    return { code: 0, size: 0 };
   }
 }
 
 async function burst(url, ua, n) {
-  const codes = [];
-  for (let i = 0; i < n; i += 1) codes.push(await status(url, ua));
-  return codes;
+  const samples = [];
+  for (let i = 0; i < n; i += 1) samples.push(await status(url, ua));
+  return samples;
 }
 
 const VERDICT = {
@@ -305,7 +405,7 @@ async function recover(url, agent, maxMinutes) {
   // the window is longer than the run, or every request extends it.
   process.stdout.write(`Timing cooldown for ${agent.name}, one probe per minute, max ${maxMinutes}.\n`);
   for (let i = 1; i <= maxMinutes; i += 1) {
-    const code = await status(url, agent.ua);
+    const { code } = await status(url, agent.ua);
     const stamp = new Date().toISOString().slice(11, 19);
     process.stdout.write(`  ${stamp}  probe ${String(i).padStart(2)}  ${code}\n`);
     if (code === 200) {
@@ -329,6 +429,13 @@ async function main() {
     return i === -1 ? fallback : argv[i + 1];
   };
   const host = (arg("--host", DEFAULT_HOST) || DEFAULT_HOST).replace(/\/$/, "");
+  if (!host) {
+    process.stderr.write(
+      "Could not read `site` from astro.config.mjs, and no --host was given.\n" +
+      "Refusing to guess a domain to measure crawler access against.\n",
+    );
+    process.exit(2);
+  }
   const url = `${host}/`;
   const only = arg("--only", null);
   const recoverFor = arg("--recover", null);
@@ -348,15 +455,31 @@ async function main() {
       process.stderr.write(`Unknown agent "${recoverFor}".\n`);
       process.exit(2);
     }
+    if (agent.robotsOnly) {
+      process.stderr.write(
+        `${agent.name} is a robots.txt policy token with no request user agent.\n` +
+        `Time ${agent.fetchedBy} instead — that is what fetches for it.\n`,
+      );
+      process.exit(2);
+    }
     process.exit(await recover(url, agent, Number.parseInt(arg("--minutes", "40"), 10)));
   }
 
   /* `--recover` has always validated its agent name; `--only` did not, so a
      typo quietly left just the two controls and the run then claimed the burst
      was taken by an empty list of agents. Same check, same exit code. */
-  if (only && !AGENTS.some((a) => a.name.toLowerCase() === only.toLowerCase())) {
+  const named = only && AGENTS.find((a) => a.name.toLowerCase() === only.toLowerCase());
+  if (only && !named) {
     process.stderr.write(
       `Unknown agent "${only}". Known: ${AGENTS.map((a) => a.name).join(", ")}\n`,
+    );
+    process.exit(2);
+  }
+  if (named && named.robotsOnly) {
+    process.stderr.write(
+      `${named.name} is a robots.txt policy token, not a request user agent — there\n` +
+      `is nothing to burst. Its fetching is done by ${named.fetchedBy}:\n` +
+      `  node tools/check-ai-crawlers.mjs --only ${named.fetchedBy}\n`,
     );
     process.exit(2);
   }
@@ -369,21 +492,43 @@ async function main() {
   process.stdout.write("Read the whole sequence. A single code is not a measurement.\n\n");
 
   const results = [];
+  const baseline = []; // the browser control's page size, once it has run
   for (const agent of agents) {
-    const codes = await burst(url, agent.ua, size);
-    results.push({ ...agent, codes });
+    /* No request user agent exists for these, so there is nothing to burst.
+       Say that, rather than inventing a string and reporting the reply. */
+    if (agent.robotsOnly) {
+      process.stdout.write(
+        `${"POLICY    "}${agent.name.padEnd(24)}robots.txt token only — fetched as ${agent.fetchedBy}\n`,
+      );
+      continue;
+    }
+    const samples = await burst(url, agent.ua, size);
+    const codes = samples.map((s) => s.code);
+    const sizes = okSizes(samples);
+    results.push({ ...agent, codes, sizes });
+    /* The browser control runs first, so its page size is known for every row
+       after it. A row that says OK while the body it got was a challenge page
+       is the same trap as a status code read on its own, one line higher up. */
     const shape = classifyBurst(codes);
-    process.stdout.write(`${VERDICT[shape]}${agent.name.padEnd(24)}${codes.join(" ")}\n`);
+    const soft = shape === "clean" && !agent.control && bodyDiffers(sizes, baseline);
+    process.stdout.write(
+      `${soft ? "NO PAGE   " : VERDICT[shape]}${agent.name.padEnd(24)}${codes.join(" ")}\n`,
+    );
+    if (soft) {
+      process.stdout.write(`${" ".repeat(34)}^ ${medianSize(sizes)} bytes, not ${medianSize(baseline)}\n`);
+    }
     if (shape === "throttled") {
       process.stdout.write(`${" ".repeat(34)}^ ${budgetFrom(codes)} through, then 429\n`);
     }
+    if (agent.control === "browser") baseline.push(...sizes);
   }
 
   // Re-burst the first control last. If it degraded across the run, the origin
   // changed underneath the measurements and every verdict above is suspect.
-  const bracket = await burst(url, AGENTS[0].ua, size);
+  const bracketSamples = await burst(url, AGENTS[0].ua, size);
+  const bracket = bracketSamples.map((s) => s.code);
   const bracketName = `${AGENTS[0].name} (again)`;
-  results.push({ ...AGENTS[0], name: bracketName, codes: bracket });
+  results.push({ ...AGENTS[0], name: bracketName, codes: bracket, sizes: okSizes(bracketSamples) });
   process.stdout.write(`${VERDICT[classifyBurst(bracket)]}${bracketName.padEnd(24)}${bracket.join(" ")}\n\n`);
 
   /* Every remaining decision — what this run is allowed to claim, and what it
