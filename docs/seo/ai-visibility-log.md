@@ -70,9 +70,17 @@ already said:
   analytics show 0 requests and **0 × 429 over 7 days**. It is switched on in
   the panel but serving no traffic. Blocking or unblocking anything there would
   have changed nothing — worth knowing before someone spends an afternoon on it.
-- **It does not clear on its own timescale.** One probe per minute for 12
-  consecutive minutes returned 429 every time. At that rate the site's 122
-  sitemap URLs cannot be crawled at all.
+- **It does not clear, on any timescale a crawler would wait.** One probe per
+  minute for **40 consecutive minutes** (21:54–22:34 UTC) returned 429 every
+  single time. An agent that had just taken seven back-to-back requests cannot
+  be exhausted by 1 req/min, so either the window is longer than 40 minutes or
+  every request extends it — and with no `Retry-After` a crawler has no way to
+  tell which. Whichever it is, the site's 122 sitemap URLs cannot be crawled.
+
+  This is the number that should go in the support ticket. "Rate-limited" is
+  technically accurate and understates it: a limiter that never refills across
+  40 minutes of minimal traffic is a block with extra steps, and describing it
+  as throttling invites the reply that the crawler should simply slow down.
 
 Nothing in this repo can produce it: `public/.htaccess` is byte-identical
 (17,083 bytes) in repo, `dist/` and on the host, and contains no user-agent rule,
