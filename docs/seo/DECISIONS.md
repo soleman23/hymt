@@ -85,3 +85,51 @@ why a single band would mislead. `held` as a data state is retired; the
 replacement field is `noBand`, and 22 rows carry it — the 21 originally grouped by
 #108 plus `georgia-armenia`, whose research came back saying the same thing: half
 its itinerary has no five-star tier to normalise to.
+
+## D9 — Hostinger's platform Force HTTPS stays on, and the apex keeps two hops
+
+**Decided 2026-09-03 (#159).** Not a deferral. The issue is closed.
+
+`http://hymtravel.com/` reaches the canonical URL in two 301s:
+
+```
+http://hymtravel.com/   → 301 https://hymtravel.com/
+https://hymtravel.com/  → 301 https://www.hymtravel.com/
+```
+
+`public/.htaccess` is written to do this in **one** hop — the apex→www rule runs
+before the HTTPS rule and targets `https://www.` directly, with a comment saying
+why. It never gets the chance. Hostinger's platform Force-HTTPS redirects to
+`https://` on the same host first.
+
+That the first hop is the platform and not us is not inferred, it is visible in
+the headers. `.htaccess` sets `X-Content-Type-Options` unconditionally and HSTS
+for `^(www\.)?hymtravel\.com$`, so both would be on hop 1 if it had run:
+
+| | hop 1 `http://hymtravel.com/` | hop 2 `https://hymtravel.com/` |
+|---|---|---|
+| `X-Content-Type-Options` | absent | `nosniff` |
+| `Strict-Transport-Security` | absent | present |
+| `Content-Security-Policy` | Hostinger's `upgrade-insecure-requests` | ours, with script hashes |
+
+It is also not an hPanel-managed redirect — that list is empty — so the only
+control is hPanel → Security → SSL → ⋮ → **Unforce HTTPS**.
+
+**We are not turning it off**, and the reason is that the trade inverts on
+inspection. HSTS is `max-age=31536000; includeSubDomains`, so a browser that has
+visited once never makes the `http://` request at all. The population that would
+gain a hop is therefore first-time visitors and crawlers — and that is the exact
+same population that would be served **plaintext HTTP** if `.htaccess` ever
+failed to ship, because HSTS cannot protect a client that has never been here.
+So the change would buy one redirect for the same people it exposes.
+
+Against that, the cost of the second hop is close to zero: Google follows up to
+ten redirects and consolidates signals across 301 chains, the apex has no inbound
+links of note, and the Wix site canonicalised to `www` as well.
+
+`.htaccess` lives in `dist/`, which means a partial or failed deploy takes the
+HTTPS forcing and every security header with it. The platform toggle is the only
+thing that survives that, which is the whole point of leaving it on.
+
+Re-open only if the apex acquires real inbound links, or if the hop shows up as
+an actual crawl-budget problem in Search Console rather than a theoretical one.
