@@ -5978,5 +5978,50 @@
   "b64": "images-b64/assets__img__jc-napa-sonoma-the-valley-floor.jpg.b64",
   "target": "public/assets/img/jc-napa-sonoma-the-valley-floor.jpg",
   "bytes": 51583
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-logo.png.b64",
+  "target": "public/assets/img/nl-2026-09-launch-logo.png",
+  "bytes": 30453
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-hero-overwater-villa.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-hero-overwater-villa.jpg",
+  "bytes": 107673
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-plan-your-trip.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-plan-your-trip.jpg",
+  "bytes": 36814
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-destinations.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-destinations.jpg",
+  "bytes": 26747
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-experiences.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-experiences.jpg",
+  "bytes": 18765
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-travel-journal.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-travel-journal.jpg",
+  "bytes": 28317
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-sports-event-travel.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-sports-event-travel.jpg",
+  "bytes": 24770
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-mark-sole-avalon.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-mark-sole-avalon.jpg",
+  "bytes": 25833
+ },
+ {
+  "b64": "images-b64/assets__img__nl-2026-09-launch-vineyard-andes.jpg.b64",
+  "target": "public/assets/img/nl-2026-09-launch-vineyard-andes.jpg",
+  "bytes": 46207
  }
 ]
