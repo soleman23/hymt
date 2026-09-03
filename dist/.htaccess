@@ -124,9 +124,15 @@ ErrorDocument 404 /404.html
   # with gtag loading and the GA4 collect hit landing on www. Zero violations.
   # Violations surface in the browser console; there is no report endpoint
   # because a static host has nothing to receive one. Rollback is the header
-  # name alone: append `-Report-Only` and the policy stops blocking. Hostinger's
-  # edge also sends its own `Content-Security-Policy: upgrade-insecure-requests`;
-  # a browser applies both, and the intersection is this policy.
+  # name alone: append `-Report-Only` and the policy stops blocking.
+  #
+  # Under report-only, responses carried TWO CSP headers: Hostinger's platform
+  # `Content-Security-Policy: upgrade-insecure-requests` and this one. With the
+  # same name, `Header always set` replaces the platform header, so production
+  # now sends exactly one CSP — this policy — verified on /, /contact/ and a
+  # CSS asset after the flip. Nothing is lost: every resource is same-origin
+  # or already https, and HSTS covers the downgrade case. Renaming back to
+  # -Report-Only brings the platform header back too.
   #
   # Inventory this was built from, against dist/ on 2026-08-17, script-src
   # revised 2026-08-18:
