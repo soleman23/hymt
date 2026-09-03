@@ -1418,7 +1418,7 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 </IfModule>
 <IfModule mod_headers.c>
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
-  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=IS_PROD
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
@@ -1540,15 +1540,24 @@ t("htaccess: a production matcher that rejects an explicit port is caught",
 /* Unscoping it is a regression, not a simplification: it would pin the
    Hostinger preview host to HTTPS on a certificate this repo does not own. */
 t("htaccess: dropping env=IS_PROD so HSTS goes to every host is caught",
-  htaccessGaps(HT_GOOD.replace(` "max-age=86400" env=IS_PROD`, ` "max-age=86400"`)).length, 1);
+  htaccessGaps(HT_GOOD.replace(` "max-age=31536000; includeSubDomains" env=IS_PROD`, ` "max-age=31536000; includeSubDomains"`)).length, 1);
 
 t("htaccess: preload is refused even at the correct max-age",
-  htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=86400; preload"`)).length, 1);
+  htaccessGaps(HT_GOOD.replace(`"max-age=31536000; includeSubDomains"`, `"max-age=31536000; includeSubDomains; preload"`)).length, 1);
 
-/* The ramp is the safety argument, so widening it in the .htaccess alone
-   must fail rather than quietly commit every visitor for a year. */
-t("htaccess: raising max-age in the .htaccess alone is caught",
-  htaccessGaps(HT_GOOD.replace(`"max-age=86400"`, `"max-age=31536000; includeSubDomains"`)).length, 1);
+/* The value is pinned exactly, so changing it in the .htaccess alone — up,
+   down, or by dropping includeSubDomains — must fail rather than ship a
+   policy the checks never saw. */
+t("htaccess: changing max-age in the .htaccess alone is caught",
+  htaccessGaps(HT_GOOD.replace(`"max-age=31536000; includeSubDomains"`, `"max-age=63072000; includeSubDomains"`)).length, 1);
+
+t("htaccess: dropping includeSubDomains in the .htaccess alone is caught",
+  htaccessGaps(HT_GOOD.replace(`"max-age=31536000; includeSubDomains"`, `"max-age=31536000"`)).length, 1);
+
+/* The 1-day ramp value that shipped at cutover must now read as a
+   regression, not as the expected string. */
+t("htaccess: the retired 1-day ramp value is caught",
+  htaccessGaps(HT_GOOD.replace(`"max-age=31536000; includeSubDomains"`, `"max-age=86400"`)).length, 1);
 
 /* ── The APPENDED shapes, which first-match-only reading let through ──
    These two are the genuine zero-gap holes: `Header set` is last-wins and
@@ -1728,8 +1737,8 @@ t("htaccess: losing the canonical pair while another host rule remains is caught
 /* ── Apache block scope: a directive can be present and still not ship ── */
 t("htaccess: HSTS moved inside a <FilesMatch> is caught",
   htaccessGaps(HT_GOOD.replace(
-    `  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD\n`,
-    `  <FilesMatch "\\.html$">\n    Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD\n  </FilesMatch>\n`)).length, 1);
+    `  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=IS_PROD\n`,
+    `  <FilesMatch "\\.html$">\n    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=IS_PROD\n  </FilesMatch>\n`)).length, 1);
 
 t("htaccess: a misspelled <IfModule> container is caught per directive",
   htaccessGaps(HT_GOOD.replace("<IfModule mod_headers.c>", "<IfModule mod_header.c>"))

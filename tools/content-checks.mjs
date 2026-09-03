@@ -1371,7 +1371,7 @@ export function htaccessGaps(text, productionSite) {
      Scoped to production on purpose (see public/.htaccess): the point is to
      be already live at cutover, because the header this replaces is one the
      Wix edge sends today and stops sending the moment DNS moves. */
-  const HSTS_MAX_AGE = "max-age=86400";
+  const HSTS_MAX_AGE = "max-age=31536000; includeSubDomains";
   let configuredHost = "";
   try {
     configuredHost = new URL(productionSite).hostname.toLowerCase();
