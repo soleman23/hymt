@@ -114,6 +114,9 @@ import {
   externalHrefs, firstPartyHosts, isFirstParty,
   isHardFailure, confirmationIsStale, isNxdomain,
 } from "./check-external-links.mjs";
+import {
+  AGENTS as CRAWLER_AGENTS, classifyBurst, budgetFrom, controlsHeld,
+} from "./check-ai-crawlers.mjs";
 
 /* ── internal-link-floor ── */
 
@@ -3605,6 +3608,110 @@ t("post-build: absent build:post is not drift",
    this protects has drifted. */
 t("post-build: the shipped package.json has no drift",
   postBuildDrift(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
+
+/* ── check-ai-crawlers (#156) ── */
+
+/* Same split as check-external-links: the network half is a manual command,
+   the half that decides what a sequence MEANS is pure and lives here. That
+   half is the whole reason the tool exists — #156 was mis-measured twice by
+   reading a status code without reading the shape around it — so a regression
+   that quietly turned a drained bucket back into a verdict has to fail here. */
+
+t("crawlers: a full burst of 200s is clean",
+  classifyBurst([200, 200, 200, 200]), "clean");
+
+t("crawlers: 200s then 429s is a real throttle observation",
+  classifyBurst([200, 200, 200, 429, 429]), "throttled");
+
+/* THE fixture. A burst that opens on 429 measured nothing but its own history,
+   and calling it "throttled" is exactly the error that put a wrong conclusion
+   into #156 twice. It must classify as its own thing, not as a milder throttle. */
+t("crawlers: a burst that OPENS on 429 is not a result",
+  classifyBurst([429, 429, 429, 429]), "drained");
+
+t("crawlers: ...and specifically is not reported as throttled",
+  classifyBurst([429, 429]) === "throttled", false);
+
+/* One 200 at the front is the difference between a measurement and a replay of
+   an exhausted bucket, so the classifier must turn on that single position. */
+t("crawlers: one leading 200 turns the same tail into a measurement",
+  classifyBurst([200, 429, 429, 429]), "throttled");
+
+t("crawlers: a non-200/429 code is an error, not a verdict",
+  classifyBurst([200, 503, 200]), "error");
+
+t("crawlers: an empty burst is not silently clean",
+  classifyBurst([]) === "clean", false);
+
+/* The budget is only meaningful when the burst caught the transition. */
+t("crawlers: budget is the count of 200s before the first 429",
+  budgetFrom([200, 200, 200, 200, 200, 200, 200, 429, 429]), 7);
+
+/* A clean burst proves the budget is bigger than the burst, not what it is.
+   Returning a number here is how "7" would become "the documented limit". */
+t("crawlers: a clean burst yields no budget number",
+  budgetFrom([200, 200, 200]), null);
+
+t("crawlers: a drained burst yields no budget number",
+  budgetFrom([429, 429, 429]), null);
+
+/* Controls bracket the run; a degraded control voids every verdict. */
+t("crawlers: controls holding is what makes the run readable",
+  controlsHeld([
+    { control: true, codes: [200, 200] },
+    { codes: [200, 429] },
+  ]), true);
+
+t("crawlers: a control that degrades voids the run",
+  controlsHeld([
+    { control: true, codes: [200, 429] },
+    { codes: [200, 200] },
+  ]), false);
+
+/* The agent list has to carry controls at all, or nothing brackets the run. */
+t("crawlers: the agent list ships at least two controls",
+  CRAWLER_AGENTS.filter((a) => a.control).length >= 2, true);
+
+/* The coverage that actually matters, derived from the shipped robots.txt
+   rather than typed here. #156's stake is citations, so the set to keep in step
+   is the "AI answer engines: allowed, deliberately" block: allow a new answer
+   engine there and forget to measure it, and the host could be 429ing it for
+   months with nothing to notice. The harvest-only block is deliberately NOT
+   covered — we disallow those, so how the host treats them is not our problem. */
+{
+  const robots = readFileSync(path.join(ROOT, "public", "robots.txt"), "utf8");
+  const block = robots.split(/^# ── /m)
+    .find((s) => s.startsWith("AI answer engines"));
+
+  /* Assert the section exists before asserting anything about its contents.
+     Without this, restructuring robots.txt would empty the set and turn the
+     coverage check below green by having nothing left to check. */
+  t("crawlers: robots.txt still has an 'AI answer engines' block to derive from",
+    typeof block === "string" && block.length > 0, true);
+
+  const answerEngines = [...(block ?? "").matchAll(/^User-agent:\s*(\S+)/gim)].map((m) => m[1]);
+  t("crawlers: ...and it is not empty",
+    answerEngines.length > 0, true);
+
+  const covered = new Set(CRAWLER_AGENTS.map((a) => a.name.toLowerCase()));
+  const missing = answerEngines.filter((n) => !covered.has(n.toLowerCase()));
+  t(`crawlers: every allowed AI answer engine is measured (${missing.join(", ") || "none missing"})`,
+    missing.length, 0);
+}
+
+/* The other direction: never burst an agent we have told to stay away. A
+   Disallow in robots.txt plus a burst from this tool is us generating exactly
+   the traffic we asked not to receive, and it would pollute the audit too. */
+{
+  const robots = readFileSync(path.join(ROOT, "public", "robots.txt"), "utf8");
+  const disallowed = [...robots.matchAll(/^User-agent:\s*(\S+)\s*\r?\nDisallow:\s*\//gim)]
+    .map((m) => m[1].toLowerCase());
+  const wrong = CRAWLER_AGENTS
+    .filter((a) => !a.control && disallowed.includes(a.name.toLowerCase()))
+    .map((a) => a.name);
+  t(`crawlers: no agent robots.txt disallows is bursted (${wrong.join(", ") || "none"})`,
+    wrong.length, 0);
+}
 
 /* ── report ── */
 for (const s of skips) console.log(`  --  skipped ${s}`);
