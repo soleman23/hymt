@@ -98,23 +98,35 @@ ErrorDocument 404 /404.html
   #
   # A browser ignores HSTS received over a bad certificate, so this cannot
   # lock anyone out of a host whose SSL is not ready yet; what it can do is
-  # commit them for max-age once SSL IS good. Hence the issue's 1-day ramp
-  # value, not the 1-year target. Raising it is a deliberate two-place edit:
-  # here, and the `expected` string in content-checks.mjs → htaccessGaps.
-  # Confirm valid certs on BOTH apex and www (#32/#33) before raising.
+  # commit them for max-age once SSL IS good. Hence the issue's 1-day ramp at
+  # cutover (2026-09-02), raised to a year on 2026-09-03 after apex and www
+  # both verified on the Let's Encrypt cert and a day of clean production
+  # traffic. The value is a deliberate two-place edit: here, and HSTS_MAX_AGE
+  # in content-checks.mjs → htaccessGaps, so it cannot drift silently.
+  #
+  # includeSubDomains is on. The zone has no HTTP-serving subdomain (the Wix
+  # `en` record was deleted at cutover; the remaining records are MX, TXT and
+  # DKIM CNAMEs, none of which browsers fetch), the apex→www 301 carries this
+  # header via `always`, and any future subdomain on this host gets a
+  # Let's Encrypt cert for free — so the directive closes a cookie-scoping
+  # hole and costs nothing.
   #
   # No `preload`. That is a one-way submission to a browser-shipped list and
   # #79 explicitly does not ask for it.
-  Header always set Strict-Transport-Security "max-age=86400" env=IS_PROD
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=IS_PROD
 
-  # ── SEC-9 (#82): Content-Security-Policy, REPORT-ONLY ──
-  # Report-only on purpose. It is a latent-XSS mitigation for author-controlled
-  # static HTML, so it is hardening rather than a cutover blocker, and shipping
-  # it enforcing without a browse first is how you find out at launch that the
-  # inquiry form no longer submits. Violations surface in the browser console;
-  # there is no report endpoint because a static host has nothing to receive
-  # one. Switching to enforcing is #100, and only after a clean browse of the
-  # homepage, a destination page, a journal post, Contact and Plan Your Trip.
+  # ── SEC-9 (#82) → SEC-9b (#100): Content-Security-Policy, ENFORCING ──
+  # Shipped report-only at cutover (#82) and flipped to enforcing on
+  # 2026-09-03 (#100) after a clean browse of production under the report-only
+  # header: home, Contact (both Turnstile widgets mounted), Plan Your Trip (all
+  # steppers), both hubs, a destination page, an experience page, the journal
+  # index and a post, About, FAQ (accordions toggled), Privacy and the 404 —
+  # with gtag loading and the GA4 collect hit landing on www. Zero violations.
+  # Violations surface in the browser console; there is no report endpoint
+  # because a static host has nothing to receive one. Rollback is the header
+  # name alone: append `-Report-Only` and the policy stops blocking. Hostinger's
+  # edge also sends its own `Content-Security-Policy: upgrade-insecure-requests`;
+  # a browser applies both, and the intersection is this policy.
   #
   # Inventory this was built from, against dist/ on 2026-08-17, script-src
   # revised 2026-08-18:
@@ -183,7 +195,7 @@ ErrorDocument 404 /404.html
   # entries above are therefore reasoned from the code, not observed. **That is
   # the specific thing to watch in the report-only console review before #100
   # flips this to enforcing.**
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-0HKveyXTp8dT0e1/MEiU4v2jMTmX5fq7MyB5W1B5sJI=' 'sha256-2enSBrTaqAgikPryFm7SETfa8CikvpEL0Zjk3GYqWpw=' 'sha256-A8nJuRMRV8gKhPBmgyiqQ1OaNtXjid2FlgDx+JCwpOg=' 'sha256-OprcYVb9g6B+bGRMVqGN3Tsi2plM7FtxfK8fmvlYA8w=' 'sha256-PEeAqcxwbn/3mtFV3LurhrP3znaTQu4kaR5x45LYgDE=' 'sha256-VuDxb/TjA2hpjbD1CWiKjTjRHb5qd15mTvoFZA8cmkM=' 'sha256-XaxB7SY+bFMKA3tBIjRqAPMA80qdIvtlSh0lUTGeylg=' 'sha256-fCHhwQhITGY1UJwPFEP34nkkX42PQ7rWNF/7PCu4rLk=' 'sha256-gZlO3LW5cSSj8sJP0nHvVWY/FHLbeCWq7yBNNB4raYM=' 'sha256-wAVnXScwilMBlVQWEhKMAX22oACFVdB1bL6msRvDaM0=' 'sha256-wtlY0QypsoxQFoIz4YB1ZWUnA1Gnotp/yhzSc4cd7o4=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-0HKveyXTp8dT0e1/MEiU4v2jMTmX5fq7MyB5W1B5sJI=' 'sha256-2enSBrTaqAgikPryFm7SETfa8CikvpEL0Zjk3GYqWpw=' 'sha256-A8nJuRMRV8gKhPBmgyiqQ1OaNtXjid2FlgDx+JCwpOg=' 'sha256-OprcYVb9g6B+bGRMVqGN3Tsi2plM7FtxfK8fmvlYA8w=' 'sha256-PEeAqcxwbn/3mtFV3LurhrP3znaTQu4kaR5x45LYgDE=' 'sha256-VuDxb/TjA2hpjbD1CWiKjTjRHb5qd15mTvoFZA8cmkM=' 'sha256-XaxB7SY+bFMKA3tBIjRqAPMA80qdIvtlSh0lUTGeylg=' 'sha256-fCHhwQhITGY1UJwPFEP34nkkX42PQ7rWNF/7PCu4rLk=' 'sha256-gZlO3LW5cSSj8sJP0nHvVWY/FHLbeCWq7yBNNB4raYM=' 'sha256-wAVnXScwilMBlVQWEhKMAX22oACFVdB1bL6msRvDaM0=' 'sha256-wtlY0QypsoxQFoIz4YB1ZWUnA1Gnotp/yhzSc4cd7o4=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
   # ── Static asset caching ──
   #
   # NOT `immutable`, deliberately (#107). `immutable` is a promise that the URL
