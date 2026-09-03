@@ -30,9 +30,9 @@
  * and both are enforced below rather than left to the reader:
  *
  *   1. If a burst's FIRST request is already 429, the bucket was drained before
- *      the run started. That is not a result. It is reported as
- *      DRAINED-BEFORE-START, never as "throttled", because the run has measured
- *      nothing except its own history.
+ *      the run started. That is not a result. It prints as NO RESULT and
+ *      classifies as "drained" — never as "throttled", because the run has
+ *      measured nothing except its own history.
  *   2. Agents can share one counter. Measured 2026-09-03: the invented strings
  *      `xGPTBot/1.0` and `foo GPTBot/1.0 bar` were 429 on their first ever
  *      request, while `GPTBot/9.9` and `GPTBotx/1.0` passed. The origin matches
@@ -215,17 +215,18 @@ async function main() {
     const codes = await burst(url, agent.ua, size);
     results.push({ ...agent, codes });
     const verdict = classifyBurst(codes);
-    process.stdout.write(`${VERDICT[verdict]}${agent.name.padEnd(20)}${codes.join(" ")}\n`);
+    process.stdout.write(`${VERDICT[verdict]}${agent.name.padEnd(24)}${codes.join(" ")}\n`);
     if (verdict === "throttled") {
-      process.stdout.write(`${" ".repeat(10)}${" ".repeat(20)}^ ${budgetFrom(codes)} through, then 429\n`);
+      process.stdout.write(`${" ".repeat(34)}^ ${budgetFrom(codes)} through, then 429\n`);
     }
   }
 
   // Re-burst the first control last. If it degraded across the run, the origin
   // changed underneath the measurements and every verdict above is suspect.
   const bracket = await burst(url, AGENTS[0].ua, size);
-  results.push({ ...AGENTS[0], name: "control-chrome (again)", codes: bracket });
-  process.stdout.write(`${VERDICT[classifyBurst(bracket)]}${"control-chrome (again)".padEnd(20)}${bracket.join(" ")}\n\n`);
+  const bracketName = `${AGENTS[0].name} (again)`;
+  results.push({ ...AGENTS[0], name: bracketName, codes: bracket });
+  process.stdout.write(`${VERDICT[classifyBurst(bracket)]}${bracketName.padEnd(24)}${bracket.join(" ")}\n\n`);
 
   if (!controlsHeld(results)) {
     process.stdout.write("A control did not come back clean. The origin is degrading for\n");
@@ -245,7 +246,18 @@ async function main() {
   }
 
   if (throttled.length === 0 && drained.length === 0) {
-    process.stdout.write("Every agent took the full burst. #156 is not reproducing right now.\n");
+    /* Scope the claim to what was actually bursted. Saying "#156 is not
+       reproducing" after a --only run that never sent a GPTBot request would be
+       the same species of error this tool exists to stop — a conclusion about
+       an agent from a measurement that did not include it. */
+    const measured = agents.filter((a) => !a.control).map((a) => a.name);
+    process.stdout.write(
+      only
+        ? `${measured.join(", ")} took the full burst. This run measured that and\n` +
+          `nothing else — it says nothing about the other agents, #156 included.\n` +
+          `Drop --only for a verdict on the issue.\n`
+        : "Every agent took the full burst. #156 is not reproducing right now.\n",
+    );
     process.stdout.write("Log the run in docs/seo/ai-visibility-log.md before closing anything.\n");
     process.exit(0);
   }
