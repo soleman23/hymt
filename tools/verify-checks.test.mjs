@@ -115,7 +115,7 @@ import {
   isHardFailure, confirmationIsStale, isNxdomain,
 } from "./check-external-links.mjs";
 import {
-  AGENTS as CRAWLER_AGENTS, classifyBurst, budgetFrom, controlsHeld,
+  AGENTS as CRAWLER_AGENTS, classifyBurst, budgetFrom, controlsHeld, verdict,
 } from "./check-ai-crawlers.mjs";
 
 /* ── internal-link-floor ── */
@@ -3697,6 +3697,85 @@ t("crawlers: the agent list ships at least two controls",
   const missing = answerEngines.filter((n) => !covered.has(n.toLowerCase()));
   t(`crawlers: every allowed AI answer engine is measured (${missing.join(", ") || "none missing"})`,
     missing.length, 0);
+}
+
+/* ── the verdict gate ──
+
+   The classifier above had fifteen fixtures and the decision that CONSUMED it
+   had none, so that is where the bug was: the gate filtered for "throttled"
+   and "drained", an agent that came back 503 matched neither, and a run that
+   never measured GPTBot printed "#156 is not reproducing" and exited 0. Every
+   fixture below fails against that version. */
+
+const CLEAN = [200, 200, 200];
+const chrome = (codes = CLEAN) => ({ name: "control-chrome", control: "browser", codes });
+const unknown = (codes = CLEAN) => ({ name: "control-unknown", control: "unknown", codes });
+const said = (v, re) => v.lines.some((l) => re.test(l));
+
+/* THE fixture for the shipped bug. An unreadable crawler burst is not a pass,
+   however healthy the controls look. */
+t("crawlers/verdict: a crawler that errors fails the run",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: [503, 503, 503] }]).code, 1);
+
+t("crawlers/verdict: ...and does not claim the burst was taken",
+  said(verdict([chrome(), unknown(), { name: "GPTBot", codes: [503, 503, 503] }]),
+       /took the full burst/), false);
+
+/* Reachable by `--burst` with no number, which sent zero requests per agent. */
+t("crawlers/verdict: an agent with no requests sent fails the run",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: [] }]).code, 1);
+
+t("crawlers/verdict: a clean sweep is the only thing that exits 0",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: CLEAN }]).code, 0);
+
+t("crawlers/verdict: a throttled crawler fails the run",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: [200, 429, 429] }]).code, 1);
+
+t("crawlers/verdict: a drained crawler fails the run and points at --recover",
+  said(verdict([chrome(), unknown(), { name: "GPTBot", codes: [429, 429] }]), /--recover GPTBot/), true);
+
+/* `--only <typo>` used to leave only the controls, then print " took the full
+   burst" with an empty list of names and exit 0. */
+t("crawlers/verdict: a run containing no crawler at all cannot pass",
+  verdict([chrome(), unknown()], { only: "GPT-Bot" }).code, 1);
+
+t("crawlers/verdict: ...and says so rather than naming an empty set",
+  said(verdict([chrome(), unknown()], { only: "GPT-Bot" }), /No crawler was measured/), true);
+
+/* The two control failures are opposite findings and used to print the same
+   sentence. Browser degraded: the origin is having a bad minute, run is void. */
+t("crawlers/verdict: a degraded browser control voids the run",
+  verdict([chrome([200, 429, 429]), unknown(), { name: "GPTBot", codes: CLEAN }]).code, 1);
+
+t("crawlers/verdict: ...and says the origin is degrading for everything",
+  said(verdict([chrome([200, 429, 429]), unknown(), { name: "GPTBot", codes: CLEAN }]),
+       /degrading for/), true);
+
+/* Unknown degraded with a clean browser is the OPPOSITE: crawler-selective
+   throttling, the most useful thing this tool can find. Calling that "the
+   origin is degrading for everything" is refuted by the browser rows in the
+   same output, and it threw the finding away. */
+{
+  const v = verdict([chrome(), unknown([200, 429, 429]), { name: "GPTBot", codes: [429, 429] }]);
+  t("crawlers/verdict: a degraded unknown control alone does not blame the origin",
+    said(v, /degrading for/), false);
+  t("crawlers/verdict: ...it reports user-agent-shape throttling instead",
+    said(v, /user-agent shape/), true);
+  t("crawlers/verdict: ...and still fails the run",
+    v.code, 1);
+}
+
+/* Nothing reached the origin at all — offline, or a wrong --host. The old code
+   called this "the origin is degrading for everything", which is a finding
+   invented out of having sent no successful request. */
+{
+  const v = verdict([chrome([0, 0]), unknown([0, 0]), { name: "GPTBot", codes: [0, 0] }]);
+  t("crawlers/verdict: an unreachable origin is not a finding about the origin",
+    said(v, /degrading for/), false);
+  t("crawlers/verdict: ...it says the run never reached a working origin",
+    said(v, /never reached a working/), true);
+  t("crawlers/verdict: ...and explicitly disclaims #156",
+    said(v, /says nothing about #156/), true);
 }
 
 /* The other direction: never burst an agent we have told to stay away. A

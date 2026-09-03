@@ -67,10 +67,17 @@ const DEFAULT_HOST = "https://www.hymtravel.com";
  * run: if a control degrades, the origin is having a bad minute and no verdict
  * in the run is trustworthy. `control-unknown` is a string no list can contain,
  * which separates "this origin throttles bots" from "this origin throttles".
+ *
+ * `control` carries WHICH control it is, not just that it is one, because the
+ * two failures mean opposite things and the first version of this tool reported
+ * both as "the origin is degrading for everything". A degraded browser control
+ * voids the run. A degraded unknown control with a clean browser control is the
+ * opposite of noise — it is crawler-selective throttling, the most useful thing
+ * this tool can find, and it was being thrown away as a bad minute.
  */
 export const AGENTS = [
-  { name: "control-chrome", control: true, ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" },
-  { name: "control-unknown", control: true, ua: "ZeeblorpCrawler/3.7 (+https://example.invalid/bot)" },
+  { name: "control-chrome", control: "browser", ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" },
+  { name: "control-unknown", control: "unknown", ua: "ZeeblorpCrawler/3.7 (+https://example.invalid/bot)" },
 
   /* The "AI answer engines: allowed, deliberately" block of public/robots.txt,
      in full. These are the agents where a 429 costs a citation, which is the
@@ -129,6 +136,125 @@ export function controlsHeld(results) {
   return results
     .filter((r) => r.control)
     .every((r) => classifyBurst(r.codes) === "clean");
+}
+
+/**
+ * The whole decision — exit code and closing text — as a pure function.
+ *
+ * This lives here, exported and fixtured, because the first version had it
+ * inline in main() where nothing could test it, and it shipped the exact bug
+ * this tool exists to prevent: it filtered for "throttled" and "drained" only,
+ * so an agent that came back 503 (or 0, from a failed curl) matched neither,
+ * and a run where GPTBot was never successfully measured printed "Every agent
+ * took the full burst. #156 is not reproducing right now." and exited 0.
+ *
+ * The classifier had fifteen fixtures. The decision that consumed it had none,
+ * which is precisely why the error landed there and not in the classifier.
+ *
+ * So the rule is inverted from what it was. Success is not "nothing I looked
+ * for was found" — it is "every crawler in the run returned a clean burst, and
+ * there was at least one crawler in the run". Everything else is a non-zero
+ * exit, including shapes added to the classifier after this was written.
+ */
+export function verdict(results, { only = null } = {}) {
+  const lines = [];
+  const cls = (r) => classifyBurst(r.codes);
+  const unusable = (r) => cls(r) === "error" || cls(r) === "empty";
+  const controls = results.filter((r) => r.control);
+  const crawlers = results.filter((r) => !r.control);
+
+  /* Nothing usable came back from anything. That is a statement about this
+     machine or --host, not about the origin, and saying "the origin is
+     degrading" here — as the first version did when `--burst` was passed
+     without a number — invents a finding out of having sent no requests. */
+  if (controls.length > 0 && controls.every(unusable)) {
+    lines.push(
+      "No control got a usable response, so this run never reached a working",
+      "origin. Check the network and --host. This says nothing about #156.",
+    );
+    return { code: 1, lines };
+  }
+
+  /* The browser control is the "is this origin healthy at all" question. */
+  if (controls.some((r) => r.control !== "unknown" && cls(r) !== "clean")) {
+    lines.push(
+      "The browser control did not come back clean. The origin is degrading for",
+      "everything, not just crawlers — treat every verdict above as void.",
+    );
+    return { code: 1, lines };
+  }
+
+  /* Browser clean, invented UA throttled. Not a bad minute: the origin is
+     matching on user-agent shape. It changes what #156 is — a generic bot rule
+     rather than a GPTBot-specific one is a different ticket — so it is reported
+     as the finding it is, and the crawler rows below still stand. */
+  const selective = controls.some((r) => r.control === "unknown" && cls(r) !== "clean");
+  if (selective) {
+    lines.push(
+      "control-unknown degraded while the browser control stayed clean. This",
+      "origin throttles by user-agent shape, not just this one crawler, so a 429",
+      "below is evidence of a generic bot rule rather than an agent-specific one.",
+      "That is a different ticket. The crawler rows still stand — read them in",
+      "that light rather than discarding them.",
+      "",
+    );
+  }
+
+  for (const r of crawlers.filter((r) => cls(r) === "drained")) {
+    lines.push(
+      `${r.name} was already on a 429 at the first request, so this run did not`,
+      "measure it. Leave the agent alone until it rests and re-run, or time the",
+      `cooldown: node tools/check-ai-crawlers.mjs --recover ${r.name}`,
+      "",
+    );
+  }
+
+  for (const r of crawlers.filter(unusable)) {
+    const got = r.codes.length ? r.codes.join(" ") : "no requests at all";
+    lines.push(
+      `${r.name} returned ${got}, which is not a sequence this tool can read.`,
+      "That is the absence of a measurement, not a clean one — do not record",
+      "this agent as reachable on the strength of it.",
+      "",
+    );
+  }
+
+  for (const r of crawlers.filter((r) => cls(r) === "unstable")) {
+    lines.push(
+      `${r.name} returned 200s after a 429 (${r.codes.join(" ")}), so the burst never`,
+      "fixed an exhaustion point. Re-run it when the origin is quiet.",
+      "",
+    );
+  }
+
+  for (const r of crawlers.filter((r) => cls(r) === "throttled")) {
+    lines.push(`${r.name} took ${budgetFrom(r.codes)} requests, then 429 for the rest of the burst.`);
+  }
+  if (crawlers.some((r) => cls(r) === "throttled")) lines.push("");
+
+  /* A run with no crawler in it cannot support a conclusion about crawlers.
+     Reachable via `--only <typo>`, which used to leave just the two controls
+     and then print " took the full burst" with an empty list of names. */
+  if (crawlers.length === 0) {
+    lines.push(
+      "No crawler was measured in this run, so it supports no conclusion at all.",
+    );
+    return { code: 1, lines };
+  }
+
+  if (crawlers.every((r) => cls(r) === "clean") && !selective) {
+    lines.push(
+      only
+        ? `${crawlers.map((a) => a.name).join(", ")} took the full burst. This run measured that\n` +
+          "and nothing else — it says nothing about the other agents, #156 included.\n" +
+          "Drop --only for a verdict on the issue."
+        : "Every agent took the full burst. #156 is not reproducing right now.",
+      "Log the run in docs/seo/ai-visibility-log.md before closing anything.",
+    );
+    return { code: 0, lines };
+  }
+
+  return { code: 1, lines };
 }
 
 async function status(url, ua) {
@@ -190,9 +316,17 @@ async function main() {
   };
   const host = (arg("--host", DEFAULT_HOST) || DEFAULT_HOST).replace(/\/$/, "");
   const url = `${host}/`;
-  const size = Number.parseInt(arg("--burst", "12"), 10);
   const only = arg("--only", null);
   const recoverFor = arg("--recover", null);
+
+  /* `--burst` with no number used to yield NaN, which sent zero requests and
+     then still reached a verdict. A flag that silently measures nothing is
+     worse than one that fails. */
+  const size = Number.parseInt(arg("--burst", "12"), 10);
+  if (!Number.isInteger(size) || size < 1) {
+    process.stderr.write(`--burst needs a positive integer, got "${arg("--burst", "") ?? ""}".\n`);
+    process.exit(2);
+  }
 
   if (recoverFor) {
     const agent = AGENTS.find((a) => a.name.toLowerCase() === recoverFor.toLowerCase());
@@ -201,6 +335,16 @@ async function main() {
       process.exit(2);
     }
     process.exit(await recover(url, agent, Number.parseInt(arg("--minutes", "40"), 10)));
+  }
+
+  /* `--recover` has always validated its agent name; `--only` did not, so a
+     typo quietly left just the two controls and the run then claimed the burst
+     was taken by an empty list of agents. Same check, same exit code. */
+  if (only && !AGENTS.some((a) => a.name.toLowerCase() === only.toLowerCase())) {
+    process.stderr.write(
+      `Unknown agent "${only}". Known: ${AGENTS.map((a) => a.name).join(", ")}\n`,
+    );
+    process.exit(2);
   }
 
   const agents = only
@@ -214,9 +358,9 @@ async function main() {
   for (const agent of agents) {
     const codes = await burst(url, agent.ua, size);
     results.push({ ...agent, codes });
-    const verdict = classifyBurst(codes);
-    process.stdout.write(`${VERDICT[verdict]}${agent.name.padEnd(24)}${codes.join(" ")}\n`);
-    if (verdict === "throttled") {
+    const shape = classifyBurst(codes);
+    process.stdout.write(`${VERDICT[shape]}${agent.name.padEnd(24)}${codes.join(" ")}\n`);
+    if (shape === "throttled") {
       process.stdout.write(`${" ".repeat(34)}^ ${budgetFrom(codes)} through, then 429\n`);
     }
   }
@@ -228,41 +372,12 @@ async function main() {
   results.push({ ...AGENTS[0], name: bracketName, codes: bracket });
   process.stdout.write(`${VERDICT[classifyBurst(bracket)]}${bracketName.padEnd(24)}${bracket.join(" ")}\n\n`);
 
-  if (!controlsHeld(results)) {
-    process.stdout.write("A control did not come back clean. The origin is degrading for\n");
-    process.stdout.write("everything, not just crawlers — treat every verdict above as void.\n");
-    process.exit(1);
-  }
-
-  const drained = results.filter((r) => classifyBurst(r.codes) === "drained");
-  const throttled = results.filter((r) => classifyBurst(r.codes) === "throttled");
-
-  for (const r of drained) {
-    process.stdout.write(
-      `${r.name} was already on a 429 at the first request, so this run did not\n` +
-      `measure it. Leave the agent alone until it rests and re-run, or time the\n` +
-      `cooldown: node tools/check-ai-crawlers.mjs --recover ${r.name}\n\n`,
-    );
-  }
-
-  if (throttled.length === 0 && drained.length === 0) {
-    /* Scope the claim to what was actually bursted. Saying "#156 is not
-       reproducing" after a --only run that never sent a GPTBot request would be
-       the same species of error this tool exists to stop — a conclusion about
-       an agent from a measurement that did not include it. */
-    const measured = agents.filter((a) => !a.control).map((a) => a.name);
-    process.stdout.write(
-      only
-        ? `${measured.join(", ")} took the full burst. This run measured that and\n` +
-          `nothing else — it says nothing about the other agents, #156 included.\n` +
-          `Drop --only for a verdict on the issue.\n`
-        : "Every agent took the full burst. #156 is not reproducing right now.\n",
-    );
-    process.stdout.write("Log the run in docs/seo/ai-visibility-log.md before closing anything.\n");
-    process.exit(0);
-  }
-
-  process.exit(1);
+  /* Every remaining decision — what this run is allowed to claim, and what it
+     exits with — is made in verdict(), which is pure and fixtured. Nothing in
+     main() gets to decide, because that is where the last one went wrong. */
+  const { code, lines } = verdict(results, { only });
+  process.stdout.write(`${lines.join("\n")}\n`);
+  process.exit(code);
 }
 
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("check-ai-crawlers.mjs")) {
