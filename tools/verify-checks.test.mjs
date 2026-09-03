@@ -3637,6 +3637,28 @@ t("crawlers: ...and specifically is not reported as throttled",
 t("crawlers: one leading 200 turns the same tail into a measurement",
   classifyBurst([200, 429, 429, 429]), "throttled");
 
+/* A 200 after a 429 is not an exhaustion transition. The classifier used to
+   call this "throttled" and budgetFrom then reported "2 through, then 429"
+   while requests 4-6 all succeeded — over-claiming a fixed limit from a shape
+   that does not show one, which is the single-status-code error wearing a
+   longer sequence. The bucket refilled mid-burst, or the origin was
+   intermittent; neither fixes a transition point. */
+t("crawlers: a 200 after a 429 is not a throttle observation",
+  classifyBurst([200, 200, 429, 200, 200, 200]), "unstable");
+
+t("crawlers: ...nor is a single bounce",
+  classifyBurst([200, 429, 200]), "unstable");
+
+t("crawlers: ...nor an alternating sequence",
+  classifyBurst([200, 429, 200, 429]), "unstable");
+
+t("crawlers: an unstable burst yields no budget number",
+  budgetFrom([200, 200, 429, 200, 200, 200]), null);
+
+/* The boundary the rule turns on: 429s must run to the end of the burst. */
+t("crawlers: 429s running to the end of the burst is still a throttle",
+  classifyBurst([200, 200, 429, 429, 429]), "throttled");
+
 t("crawlers: a non-200/429 code is an error, not a verdict",
   classifyBurst([200, 503, 200]), "error");
 
@@ -3730,6 +3752,14 @@ t("crawlers/verdict: a clean sweep is the only thing that exits 0",
 
 t("crawlers/verdict: a throttled crawler fails the run",
   verdict([chrome(), unknown(), { name: "GPTBot", codes: [200, 429, 429] }]).code, 1);
+
+/* An unstable burst is not a pass either — it is a re-run, not a result. */
+{
+  const v = verdict([chrome(), unknown(), { name: "GPTBot", codes: [200, 429, 200] }]);
+  t("crawlers/verdict: an unstable crawler burst fails the run", v.code, 1);
+  t("crawlers/verdict: ...and does not quote a budget for it",
+    said(v, /took \d+ requests, then 429/), false);
+}
 
 t("crawlers/verdict: a drained crawler fails the run and points at --recover",
   said(verdict([chrome(), unknown(), { name: "GPTBot", codes: [429, 429] }]), /--recover GPTBot/), true);

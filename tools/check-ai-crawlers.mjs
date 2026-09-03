@@ -108,6 +108,18 @@ export const AGENTS = [
  * "drained" is the one that matters. It is not a milder "throttled" — it is the
  * absence of a measurement, and conflating the two is the exact mistake that
  * put a wrong conclusion into #156 twice.
+ *
+ * "throttled" means one specific shape and nothing else: a run of 200s, then a
+ * 429, then 429 to the end of the burst. That is an exhaustion transition, and
+ * it is the only shape from which the position of the first 429 means anything.
+ *
+ * A 200 arriving AFTER a 429 is not that. `[200, 200, 429, 200, 200, 200]` used
+ * to classify as "throttled" and print "2 through, then 429" while requests 4
+ * through 6 all succeeded — the tool over-claiming a fixed limit from a shape
+ * that does not show one, which is the same failure as reading a single status
+ * code, just with more digits in front of it. The bucket refilled mid-burst, or
+ * the origin was intermittent; neither fixes a transition point, so it is
+ * "unstable" and yields no budget number.
  */
 export function classifyBurst(codes) {
   if (!Array.isArray(codes) || codes.length === 0) return "empty";
@@ -115,7 +127,7 @@ export function classifyBurst(codes) {
   if (bad !== undefined) return "error";
   if (codes[0] === 429) return "drained";
   if (codes.every((c) => c === 200)) return "clean";
-  return "throttled";
+  return codes.slice(codes.indexOf(429)).every((c) => c === 429) ? "throttled" : "unstable";
 }
 
 /**
@@ -123,9 +135,10 @@ export function classifyBurst(codes) {
  *
  * Null unless the burst actually caught the transition, because that is the
  * only shape where the number means anything. On a "clean" burst the budget is
- * merely "more than we sent"; on a "drained" burst it is unknown. Returning a
- * number in either case would invite it to be quoted as the limit — the issue
- * already had to add "treat 7 as one observation, not a documented limit".
+ * merely "more than we sent"; on a "drained" burst it is unknown; on an
+ * "unstable" one the 429 was not a transition at all. Returning a number in any
+ * of those cases would invite it to be quoted as the limit — the issue already
+ * had to add "treat 7 as one observation, not a documented limit".
  */
 export function budgetFrom(codes) {
   return classifyBurst(codes) === "throttled" ? codes.indexOf(429) : null;
@@ -281,6 +294,7 @@ const VERDICT = {
   clean: "OK        ",
   throttled: "THROTTLED ",
   drained: "NO RESULT ",
+  unstable: "UNSTABLE  ",
   error: "ERROR     ",
   empty: "ERROR     ",
 };
