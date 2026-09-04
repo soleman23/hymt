@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **hymt** (5357 symbols, 11199 relationships, 37 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **hymt** (5416 symbols, 11356 relationships, 38 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -157,3 +157,27 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
   check that cannot go red is worse than no check, and two shipped that way.
 - Intentional `<title>`/description/canonical changes:
   `node tools/verify-deployment.mjs --update-baseline`, in their own commit.
+
+### After merging to main
+
+- **A merge to `main` deploys production.** There is no staging host and no
+  approval step: hPanel's auto-deployment clones the new commit and runs the
+  build, and `www.hymtravel.com` serves the result. Treat every merge as a
+  release.
+- **Budget ~10 minutes before calling a deploy broken, not 1–2.** Measured
+  2026-09-04 on a `public/.htaccess` change (#166): the new header first
+  appeared on the wire **405 s** after polling began, and polling started a
+  minute or two after the merge — so roughly **7–9 minutes** end to end. An
+  earlier deploy took about **11 minutes**. The "~1–2 minutes" figure that has
+  been repeated around this repo came from an images-only deploy and does not
+  generalise: the host runs a full `npm ci` + `astro build`, so a change is not
+  live the moment the merge lands.
+- Consequently, a header or page that has not changed 2 minutes after a merge
+  is almost always **still building**, not a failed deploy. Poll for the change
+  itself rather than re-pushing or re-deploying on top of a run in flight.
+- **Verify the deployed site, do not assume it.** `npm run verify:prod` runs
+  the full suite against `https://www.hymtravel.com`, including the live
+  security headers (#167) — the only check that proves the host actually
+  applies `public/.htaccess` rather than that the file is correct locally.
+  Expect it to FAIL between the merge and the end of the host's build; that is
+  the drift being reported honestly, not a flaky check.
