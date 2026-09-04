@@ -131,9 +131,36 @@ ErrorDocument 404 /404.html
   # steppers), both hubs, a destination page, an experience page, the journal
   # index and a post, About, FAQ (accordions toggled), Privacy and the 404 —
   # with gtag loading and the GA4 collect hit landing on www. Zero violations.
-  # Violations surface in the browser console; there is no report endpoint
-  # because a static host has nothing to receive one. Rollback is the header
-  # name alone: append `-Report-Only` and the policy stops blocking.
+  # Violations surface in the browser console. Rollback is the header name
+  # alone: append `-Report-Only` and the policy stops blocking.
+  #
+  # NO REPORT ENDPOINT, DECIDED NOT OVERLOOKED (#168, closed 2026-09-04).
+  # The older note here said a static host "has nothing to receive one",
+  # which was the wrong reason — report-uri.com and Sentry have free tiers
+  # that need no host at all. The actual reason is that the failure modes a
+  # collector would catch are now caught earlier and cheaper:
+  #   - our own inline scripts drifting  → csp-script-src regenerates the
+  #     hash list from dist/ and fails the build with the value to paste
+  #   - an edit dropping a vendor origin → CSP_DIRECTIVES pins all four
+  #     load-bearing hosts (#171). Losing googletagmanager from script-src
+  #     kills analytics; losing challenges.cloudflare.com kills the CAPTCHA
+  #     and with it all three forms. Both were silent before that.
+  #   - production losing this block    → liveSecurityHeaderGaps reads the
+  #     header the host actually SENDS under verify:prod, not this file
+  #     (#167), and names the -Report-Only rollback if it is left engaged
+  # What is knowingly accepted: a vendor adopting a NEW origin never listed
+  # here. No static check sees that, because this header is correct and the
+  # vendor moved. It is the only unguarded path left, it presents as
+  # analytics flatlining or forms not submitting, and a collector costs an
+  # account plus ongoing triage — and CSP reports carry visitor URLs, which
+  # has to stay consistent with the Privacy Policy (#75).
+  # If that trade is ever revisited: add report-to + report-uri + the
+  # Reporting-Endpoints header, pin them in CSP_DIRECTIVES, and filter
+  # chrome-extension:// / moz-extension:// / safari-web-extension:// noise.
+  # Do NOT paste the endpoint from the 2026-09 hardening playbook —
+  # csp-report.hymtravel.com is NXDOMAIN, so every snippet in that document
+  # sends reports nowhere, and it sits inside this domain's includeSubDomains
+  # HSTS scope so it would need a valid certificate first.
   #
   # Under report-only, responses carried TWO CSP headers: Hostinger's platform
   # `Content-Security-Policy: upgrade-insecure-requests` and this one. With the
