@@ -86,7 +86,16 @@ ErrorDocument 404 /404.html
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
-  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  # payment=() and browsing-topics=() added 2026-09-04 (#166). The site takes
+  # no payments — every enquiry goes to Web3Forms and then to email — so the
+  # Payment Request API has no caller here and denying it removes one more
+  # thing an injected script could reach. browsing-topics=() opts the origin
+  # out of Chrome's Topics API, which is a privacy posture choice rather than
+  # an XSS control and matches what the Privacy Policy tells visitors (#75).
+  # The value is pinned in THREE places and the build enforces all three:
+  # here, HTACCESS_SECURITY_HEADERS in content-checks.mjs, and the HT_GOOD
+  # fixture in verify-checks.test.mjs. The match is exact string equality.
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"
 
   # ── SEC-4 (#79): HSTS, production host only ──
   # #79 reads as "add this after cutover", but the reason it exists is a

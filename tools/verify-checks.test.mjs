@@ -99,6 +99,7 @@ import {
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
   htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
+  liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
@@ -1426,7 +1427,7 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
-  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"
   Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
   Header set Cache-Control "public, max-age=2592000, no-transform"
 </IfModule>`;
@@ -1866,6 +1867,134 @@ t("htaccess: a var named only inside a match pattern arms nothing",
    once. */
 t("htaccess: an empty file reports all 13 gaps and does not throw",
   htaccessGaps("").length, 13);
+
+/* The #166 additions are pinned by exact string equality, so the value that
+   shipped before them must now be a gap. Without this, the three copies could
+   drift back to the old value and every check would stay green. */
+t("htaccess: the pre-#166 Permissions-Policy value is now a gap",
+  htaccessGaps(HT_GOOD.replace(
+    `"geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"`,
+    `"geolocation=(), microphone=(), camera=()"`)).length, 1);
+
+/* ── remote-security-headers (#167) ──
+   htaccessGaps proves the FILE. These prove the WIRE. Real Headers objects,
+   not a fake — the production caller hands over a fetch response, and a stub
+   with different lookup semantics would test the stub. */
+
+const LIVE_CSP = `default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'`;
+
+const liveHeaders = (over = {}) => {
+  const base = {
+    "Content-Security-Policy": LIVE_CSP,
+    "Strict-Transport-Security": HSTS_MAX_AGE,
+  };
+  for (const [name, value] of HTACCESS_SECURITY_HEADERS) base[name] = value;
+  const merged = { ...base, ...over };
+  const h = new Headers();
+  for (const [k, v] of Object.entries(merged)) if (v !== null) h.set(k, v);
+  return h;
+};
+
+t("live-headers: a correct production response is clean",
+  liveSecurityHeaderGaps(liveHeaders(), true).length, 0);
+
+t("live-headers: a correct staging response is clean without HSTS",
+  liveSecurityHeaderGaps(liveHeaders({ "Strict-Transport-Security": null }), false).length, 0);
+
+/* The whole point of the check: mod_headers unavailable, or a deploy serving
+   a tree with no .htaccess, strips every one of these and nothing else in the
+   build notices. Each is asserted on its own so a single missing header can
+   never be masked by another. */
+for (const [name] of HTACCESS_SECURITY_HEADERS) {
+  t(`live-headers: a missing ${name} is caught`,
+    liveSecurityHeaderGaps(liveHeaders({ [name]: null }), true).length, 1);
+
+  t(`live-headers: a wrong ${name} value is caught`,
+    liveSecurityHeaderGaps(liveHeaders({ [name]: "bogus" }), true).length, 1);
+}
+
+t("live-headers: the whole block being stripped reports every header at once",
+  liveSecurityHeaderGaps(new Headers(), true).length,
+  HTACCESS_SECURITY_HEADERS.length + 2);
+
+/* HSTS is env=IS_PROD, so it is a gap on production and correct to omit on
+   the preview host. Both directions, because asserting it everywhere would
+   demand the one thing #79 says must not ship. */
+t("live-headers: missing HSTS is caught on production",
+  liveSecurityHeaderGaps(liveHeaders({ "Strict-Transport-Security": null }), true).length, 1);
+
+t("live-headers: a shortened HSTS max-age is caught",
+  liveSecurityHeaderGaps(liveHeaders({ "Strict-Transport-Security": "max-age=86400" }), true).length, 1);
+
+t("live-headers: HSTS with preload is caught — #79 declined it deliberately",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Strict-Transport-Security": `${HSTS_MAX_AGE}; preload` }), true).length, 1);
+
+t("live-headers: HSTS on the preview host is not demanded",
+  liveSecurityHeaderGaps(liveHeaders({ "Strict-Transport-Security": null }), false).length, 0);
+
+/* The more dangerous half. A stray HSTS on staging pins a host whose cert
+   this repo does not control, and #79 calls that unrecoverable for the length
+   of max-age — so it has to be a gap, not a silent pass. */
+t("live-headers: HSTS leaking onto the preview host is caught",
+  liveSecurityHeaderGaps(liveHeaders(), false).length, 1);
+
+t("live-headers: the staging-HSTS gap explains why it must not ship there",
+  liveSecurityHeaderGaps(liveHeaders(), false)[0].includes("env=IS_PROD"), true);
+
+/* The documented one-word rollback. Appending -Report-Only stops the policy
+   blocking and changes nothing else about the response, so it is invisible
+   without this. */
+t("live-headers: a report-only CSP is caught as the rollback being engaged",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": null,
+    "Content-Security-Policy-Report-Only": LIVE_CSP }), true).length, 1);
+
+t("live-headers: the report-only gap names the rollback",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": null,
+    "Content-Security-Policy-Report-Only": LIVE_CSP }), true)[0].includes("Report-Only"), true);
+
+t("live-headers: no CSP at all is caught",
+  liveSecurityHeaderGaps(liveHeaders({ "Content-Security-Policy": null }), true).length, 1);
+
+/* Hostinger's edge sends its own `Content-Security-Policy:
+   upgrade-insecure-requests`. Same name, so `Header always set` replaces it —
+   if that stops being true, the platform value is what arrives and every
+   directive is missing at once. */
+t("live-headers: the platform CSP arriving instead reports the missing directives",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": "upgrade-insecure-requests" }), true).length,
+  CSP_DIRECTIVES.length);
+
+/* The two origins that fail SILENTLY under an enforcing policy: connect-src
+   kills all three forms' fetch, frame-src is where Turnstile's challenge
+   iframe lives (#74). */
+t("live-headers: a CSP that lost the Web3Forms origin is caught",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": LIVE_CSP.replace(
+      "connect-src 'self' https://api.web3forms.com", "connect-src 'self'") }), true).length, 1);
+
+t("live-headers: a CSP that lost the Turnstile frame-src is caught",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": LIVE_CSP.replace(
+      "frame-src https://challenges.cloudflare.com; ", "") }), true).length, 1);
+
+/* script-src must not match inside script-src-elem — the `;` anchor is what
+   stops it, and losing that would report a present directive as missing. */
+t("live-headers: script-src is not satisfied by script-src-elem alone",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": LIVE_CSP.replace("script-src 'self'", "script-src-elem 'self'") }), true).length, 1);
+
+/* A header sent with surrounding whitespace is the same header. */
+t("live-headers: a padded value is not reported as wrong",
+  liveSecurityHeaderGaps(liveHeaders({ "X-Frame-Options": "  SAMEORIGIN  " }), true).length, 0);
+
+/* Never throw on a response that has no headers at all — the caller reaches
+   this with whatever the host returned. */
+t("live-headers: an absent headers object does not throw",
+  liveSecurityHeaderGaps(undefined, true).length,
+  HTACCESS_SECURITY_HEADERS.length + 2);
 
 /* ── configuredSite ──
    One parser, two readers. Both drifts below were live in the two copies it
