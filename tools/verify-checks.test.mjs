@@ -1428,7 +1428,7 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.google-analytics.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
   Header set Cache-Control "public, max-age=2592000, no-transform"
 </IfModule>`;
 
@@ -1881,7 +1881,7 @@ t("htaccess: the pre-#166 Permissions-Policy value is now a gap",
    not a fake — the production caller hands over a fetch response, and a stub
    with different lookup semantics would test the stub. */
 
-const LIVE_CSP = `default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'`;
+const LIVE_CSP = `default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.google-analytics.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'`;
 
 const liveHeaders = (over = {}) => {
   const base = {
@@ -1980,11 +1980,48 @@ t("live-headers: a CSP that lost the Turnstile frame-src is caught",
     "Content-Security-Policy": LIVE_CSP.replace(
       "frame-src https://challenges.cloudflare.com; ", "") }), true).length, 1);
 
+/* #168: the four vendor origins that were load-bearing but unpinned. Each is
+   dropped from ONE directive while surviving in the others, which is exactly
+   what a careless edit looks like — and what a whole-header check cannot see.
+   Both readers are driven, because CSP_DIRECTIVES gates the file and the wire
+   from the same list. */
+const VENDOR_PINS = [
+  ["script-src", "https://www.googletagmanager.com", "gtag never loads"],
+  ["script-src", "https://challenges.cloudflare.com", "Turnstile api.js blocked"],
+  ["connect-src", "https://www.google-analytics.com", "GA4 collect blocked"],
+  ["connect-src", "https://challenges.cloudflare.com", "Turnstile calls blocked"],
+];
+
+for (const [directive, origin, effect] of VENDOR_PINS) {
+  /* Narrow the replace to the one directive: these origins appear in several,
+     so a global replace would remove them all and prove nothing about scope. */
+  const dropFrom = (policy) => policy.replace(
+    new RegExp(`(${directive}\\s[^;]*?)\\s*${origin.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`),
+    "$1");
+
+  t(`live-headers: ${directive} losing ${origin} is caught — ${effect}`,
+    liveSecurityHeaderGaps(liveHeaders({
+      "Content-Security-Policy": dropFrom(LIVE_CSP) }), true).length, 1);
+
+  t(`htaccess: ${directive} losing ${origin} is caught — ${effect}`,
+    htaccessGaps(dropFrom(HT_GOOD)).length, 1);
+}
+
+/* The scope guard for the loop above: dropping an origin from one directive
+   must leave the others intact, or the tests would pass for the wrong reason. */
+t("live-headers: challenges.cloudflare.com dropped from script-src only still satisfies frame-src",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": LIVE_CSP.replace(
+      "script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com",
+      "script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com") }), true)
+    .filter((g) => g.includes("frame-src")).length, 0);
+
 /* script-src must not match inside script-src-elem — the `;` anchor is what
    stops it, and losing that would report a present directive as missing. */
 t("live-headers: script-src is not satisfied by script-src-elem alone",
   liveSecurityHeaderGaps(liveHeaders({
-    "Content-Security-Policy": LIVE_CSP.replace("script-src 'self'", "script-src-elem 'self'") }), true).length, 1);
+    "Content-Security-Policy": LIVE_CSP.replace("script-src 'self'", "script-src-elem 'self'") }), true).length,
+  CSP_DIRECTIVES.filter(([d]) => d === "script-src").length);
 
 /* A header sent with surrounding whitespace is the same header. */
 t("live-headers: a padded value is not reported as wrong",
