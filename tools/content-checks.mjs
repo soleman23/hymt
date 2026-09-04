@@ -986,13 +986,54 @@ export const HSTS_MAX_AGE = "max-age=31536000; includeSubDomains";
    2026-09-02, and a CAPTCHA has to REPLACE that value, not extend it — a
    list carrying both 'none' and a host is read by browsers as a broken
    source list. So the entry pins the Turnstile origin, not 'none'. */
+/* THE VENDOR ORIGINS ARE THE POINT (#168). Every non-'self' entry below is a
+   host whose loss fails SILENTLY under an enforcing policy: no error page, no
+   build failure, just a feature that stops working for real visitors. The
+   list originally pinned two of them, which left the four most damaging
+   unpinned — dropping either script-src host kills analytics or the CAPTCHA
+   outright, and nothing anywhere would have said so.
+
+   Both readers consume this one list, so an entry here is enforced twice:
+   htaccessGaps against public/.htaccess in every build, and
+   liveSecurityHeaderGaps against the header production actually sends (#167).
+
+   Why each vendor entry exists, from the code that needs it:
+     script-src  googletagmanager   Analytics.astro injects gtag.js at runtime.
+                                    There is no <script src> in the HTML, so
+                                    nothing else in the build would notice.
+     script-src  challenges.cf      Turnstile.astro injects api.js on first
+                                    interaction with a form (#74). Losing it
+                                    blocks the CAPTCHA, which blocks all three
+                                    forms — the worst single failure here.
+     connect-src challenges.cf      the widget's own calls.
+     connect-src google-analytics   the GA4 collect hit. Losing it looks like
+                                    a traffic drop, not a bug.
+     connect-src api.web3forms.com  the three forms' fetch.
+     form-action api.web3forms.com  the newsletter keeps a native action= as
+                                    its no-JS fallback (#83).
+     frame-src   challenges.cf      the challenge iframe. It was 'none' until
+                                    2026-09-02, and a CAPTCHA has to REPLACE
+                                    that value, not extend it — a list carrying
+                                    both 'none' and a host is read by browsers
+                                    as a broken source list, so this pins the
+                                    origin rather than 'none'.
+
+   Deliberately NOT pinned: the img-src analytics beacons and the two
+   *.google-analytics / *.analytics.google.com wildcards. Those are fallback
+   transports — gtag prefers connect-src and degrades rather than dying — so
+   pinning them would freeze the policy against Google changing its own
+   endpoints without buying a real failure mode. */
 export const CSP_DIRECTIVES = [
   ["default-src", "'self'"],
   ["script-src", "'self'"],
+  ["script-src", "https://www.googletagmanager.com"],
+  ["script-src", "https://challenges.cloudflare.com"],
   ["style-src", "'self'"],
   ["img-src", "'self'"],
   ["font-src", "'self'"],
   ["connect-src", "https://api.web3forms.com"],
+  ["connect-src", "https://www.google-analytics.com"],
+  ["connect-src", "https://challenges.cloudflare.com"],
   ["form-action", "https://api.web3forms.com"],
   ["frame-ancestors", "'self'"],
   ["frame-src", "https://challenges.cloudflare.com"],
