@@ -350,9 +350,9 @@ comments carry the evidence; this is the index.
 ### Still open after this (M6)
 
 - Google Workspace **DKIM** (Admin console needs Mark's passkey); DMARC is `p=none` with no `rua`.
-- **GPTBot / meta-externalagent** get 429 at the LiteSpeed origin despite `robots.txt` allowing them (Hostinger setting or ticket).
+- **GPTBot** gets 429 at the LiteSpeed origin despite `robots.txt` allowing it (#156 — needs a Hostinger ticket; no hPanel control reaches that layer, and CDN → AI Audit is not it). meta-externalagent resolved host-side on 2026-09-03 with no action here. Re-test with `npm run check:crawlers`, never with a single probe.
 - **HSTS** ramp from 1 day to 1 year (#79, two-place edit) once both certs have served a day.
 - **CSP enforcing** (#100): read report-only violations on production first; Turnstile's origins are already in the policy.
 - Footer "Travel Planning Process" links to `/about/#process`, an anchor that does not exist.
 - Registrar transfer + Wix cancellation only after the 7-day stability window (§ 4.7); the Wix zone (incl. the Mailchimp DKIM CNAMEs) must be cloned into Hostinger first.
-- Hostinger's platform Force-HTTPS makes `http://hymtravel.com/` a 2-hop chain (within tolerance).
+- ~~Hostinger's platform Force-HTTPS makes `http://hymtravel.com/` a 2-hop chain~~ — **settled 2026-09-03, see DECISIONS.md § D9.** The toggle stays on deliberately; #159 is closed, not deferred.

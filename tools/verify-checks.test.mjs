@@ -114,6 +114,10 @@ import {
   externalHrefs, firstPartyHosts, isFirstParty,
   isHardFailure, confirmationIsStale, isNxdomain,
 } from "./check-external-links.mjs";
+import {
+  AGENTS as CRAWLER_AGENTS, DEFAULT_HOST as CRAWLER_HOST,
+  classifyBurst, budgetFrom, controlsHeld, verdict, bodyDiffers, okSizes,
+} from "./check-ai-crawlers.mjs";
 
 /* ── internal-link-floor ── */
 
@@ -3605,6 +3609,295 @@ t("post-build: absent build:post is not drift",
    this protects has drifted. */
 t("post-build: the shipped package.json has no drift",
   postBuildDrift(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
+
+/* ── check-ai-crawlers (#156) ── */
+
+/* Same split as check-external-links: the network half is a manual command,
+   the half that decides what a sequence MEANS is pure and lives here. That
+   half is the whole reason the tool exists — #156 was mis-measured twice by
+   reading a status code without reading the shape around it — so a regression
+   that quietly turned a drained bucket back into a verdict has to fail here. */
+
+t("crawlers: a full burst of 200s is clean",
+  classifyBurst([200, 200, 200, 200]), "clean");
+
+t("crawlers: 200s then 429s is a real throttle observation",
+  classifyBurst([200, 200, 200, 429, 429]), "throttled");
+
+/* THE fixture. A burst that opens on 429 measured nothing but its own history,
+   and calling it "throttled" is exactly the error that put a wrong conclusion
+   into #156 twice. It must classify as its own thing, not as a milder throttle. */
+t("crawlers: a burst that OPENS on 429 is not a result",
+  classifyBurst([429, 429, 429, 429]), "drained");
+
+t("crawlers: ...and specifically is not reported as throttled",
+  classifyBurst([429, 429]) === "throttled", false);
+
+/* One 200 at the front is the difference between a measurement and a replay of
+   an exhausted bucket, so the classifier must turn on that single position. */
+t("crawlers: one leading 200 turns the same tail into a measurement",
+  classifyBurst([200, 429, 429, 429]), "throttled");
+
+/* A 200 after a 429 is not an exhaustion transition. The classifier used to
+   call this "throttled" and budgetFrom then reported "2 through, then 429"
+   while requests 4-6 all succeeded — over-claiming a fixed limit from a shape
+   that does not show one, which is the single-status-code error wearing a
+   longer sequence. The bucket refilled mid-burst, or the origin was
+   intermittent; neither fixes a transition point. */
+t("crawlers: a 200 after a 429 is not a throttle observation",
+  classifyBurst([200, 200, 429, 200, 200, 200]), "unstable");
+
+t("crawlers: ...nor is a single bounce",
+  classifyBurst([200, 429, 200]), "unstable");
+
+t("crawlers: ...nor an alternating sequence",
+  classifyBurst([200, 429, 200, 429]), "unstable");
+
+t("crawlers: an unstable burst yields no budget number",
+  budgetFrom([200, 200, 429, 200, 200, 200]), null);
+
+/* The boundary the rule turns on: 429s must run to the end of the burst. */
+t("crawlers: 429s running to the end of the burst is still a throttle",
+  classifyBurst([200, 200, 429, 429, 429]), "throttled");
+
+t("crawlers: a non-200/429 code is an error, not a verdict",
+  classifyBurst([200, 503, 200]), "error");
+
+t("crawlers: an empty burst is not silently clean",
+  classifyBurst([]) === "clean", false);
+
+/* The budget is only meaningful when the burst caught the transition. */
+t("crawlers: budget is the count of 200s before the first 429",
+  budgetFrom([200, 200, 200, 200, 200, 200, 200, 429, 429]), 7);
+
+/* A clean burst proves the budget is bigger than the burst, not what it is.
+   Returning a number here is how "7" would become "the documented limit". */
+t("crawlers: a clean burst yields no budget number",
+  budgetFrom([200, 200, 200]), null);
+
+t("crawlers: a drained burst yields no budget number",
+  budgetFrom([429, 429, 429]), null);
+
+/* Controls bracket the run; a degraded control voids every verdict. */
+t("crawlers: controls holding is what makes the run readable",
+  controlsHeld([
+    { control: true, codes: [200, 200] },
+    { codes: [200, 429] },
+  ]), true);
+
+t("crawlers: a control that degrades voids the run",
+  controlsHeld([
+    { control: true, codes: [200, 429] },
+    { codes: [200, 200] },
+  ]), false);
+
+/* The agent list has to carry controls at all, or nothing brackets the run. */
+t("crawlers: the agent list ships at least two controls",
+  CRAWLER_AGENTS.filter((a) => a.control).length >= 2, true);
+
+/* Same rule as every other tool here: the domain is written once, in
+   astro.config.mjs. A private copy in this file would not fail anything — it
+   would quietly measure the old domain and log it under the new one. */
+t("crawlers: the default host is derived from astro.config.mjs, not typed here",
+  CRAWLER_HOST, CONFIGURED_SITE);
+
+/* The line above only goes red once astro.config.mjs actually moves, so it
+   cannot catch a hardcoded copy that happens to still be correct today — which
+   is the state this tool shipped in. This one can: the domain must not appear
+   in the source at all. */
+t("crawlers: ...and the domain is not written in the tool's source",
+  new RegExp(new URL(CONFIGURED_SITE).hostname.replace(/^www\./, "").replace(/\./g, "\\."), "i")
+    .test(readFileSync(path.join(ROOT, "tools", "check-ai-crawlers.mjs"), "utf8")), false);
+
+/* Google-Extended and Applebot-Extended are robots.txt policy tokens: neither
+   is ever sent as an HTTP User-Agent, because Googlebot and Applebot do the
+   fetching. They used to carry invented UA strings and be bursted like real
+   agents, so a 200 for a string no Google system sends was reported as Google
+   coverage — the control-unknown result wearing another agent's name. */
+{
+  const robotsOnly = CRAWLER_AGENTS.filter((a) => a.robotsOnly);
+  t("crawlers: the robots-only policy tokens are declared, not invented",
+    robotsOnly.map((a) => a.name).sort().join(","), "Applebot-Extended,Google-Extended");
+
+  t("crawlers: a robots-only token carries no user agent to burst",
+    robotsOnly.every((a) => a.ua === undefined), true);
+
+  /* Each one has to name a real agent that IS measured, or the token is
+     declared unmeasurable and nothing covers it at all. */
+  const burstable = new Set(
+    CRAWLER_AGENTS.filter((a) => !a.robotsOnly && a.ua).map((a) => a.name),
+  );
+  const orphans = robotsOnly.filter((a) => !burstable.has(a.fetchedBy)).map((a) => a.name);
+  t(`crawlers: every robots-only token names a fetcher that is bursted (${orphans.join(", ") || "none"})`,
+    orphans.length, 0);
+
+  /* The converse: everything else must have a UA, or it silently measures
+     nothing the way the two above did. */
+  t("crawlers: every non-policy agent has a user agent",
+    CRAWLER_AGENTS.filter((a) => !a.robotsOnly && !a.ua).length, 0);
+}
+
+/* ── soft blocks ──
+
+   A 200 is not "got the page". An anti-bot layer answering crawlers with a
+   challenge or a stub does not need a 429 to stop them, and a status-only
+   probe records that as clean access while the log built from it claims the
+   answer engines can fetch the site. */
+
+t("crawlers: a body the size of the control's is fine",
+  bodyDiffers([48000, 48000], [48010, 48000]), false);
+
+t("crawlers: a challenge-page-sized body is not clean access",
+  bodyDiffers([1200, 1200], [48000, 48000]), true);
+
+t("crawlers: sizes we did not record are not evidence of a soft block",
+  bodyDiffers([], [48000]), false);
+
+t("crawlers: ...in either direction",
+  bodyDiffers([48000], []), false);
+
+t("crawlers: okSizes keeps only the bodies of 200s",
+  okSizes([{ code: 200, size: 48000 }, { code: 429, size: 700 }]).join(","), "48000");
+
+/* The gate has to act on it, not just compute it. */
+{
+  const v = verdict([
+    { name: "control-chrome", control: "browser", codes: [200, 200], sizes: [48000, 48000] },
+    { name: "control-unknown", control: "unknown", codes: [200, 200], sizes: [48000, 48000] },
+    { name: "GPTBot", codes: [200, 200], sizes: [1200, 1200] },
+  ]);
+  t("crawlers/verdict: an all-200 burst carrying the wrong page fails the run", v.code, 1);
+  t("crawlers/verdict: ...and names it a soft block",
+    v.lines.some((l) => /soft block/.test(l)), true);
+}
+
+/* The coverage that actually matters, derived from the shipped robots.txt
+   rather than typed here. #156's stake is citations, so the set to keep in step
+   is the "AI answer engines: allowed, deliberately" block: allow a new answer
+   engine there and forget to measure it, and the host could be 429ing it for
+   months with nothing to notice. The harvest-only block is deliberately NOT
+   covered — we disallow those, so how the host treats them is not our problem. */
+{
+  const robots = readFileSync(path.join(ROOT, "public", "robots.txt"), "utf8");
+  const block = robots.split(/^# ── /m)
+    .find((s) => s.startsWith("AI answer engines"));
+
+  /* Assert the section exists before asserting anything about its contents.
+     Without this, restructuring robots.txt would empty the set and turn the
+     coverage check below green by having nothing left to check. */
+  t("crawlers: robots.txt still has an 'AI answer engines' block to derive from",
+    typeof block === "string" && block.length > 0, true);
+
+  const answerEngines = [...(block ?? "").matchAll(/^User-agent:\s*(\S+)/gim)].map((m) => m[1]);
+  t("crawlers: ...and it is not empty",
+    answerEngines.length > 0, true);
+
+  const covered = new Set(CRAWLER_AGENTS.map((a) => a.name.toLowerCase()));
+  const missing = answerEngines.filter((n) => !covered.has(n.toLowerCase()));
+  t(`crawlers: every allowed AI answer engine is measured (${missing.join(", ") || "none missing"})`,
+    missing.length, 0);
+}
+
+/* ── the verdict gate ──
+
+   The classifier above had fifteen fixtures and the decision that CONSUMED it
+   had none, so that is where the bug was: the gate filtered for "throttled"
+   and "drained", an agent that came back 503 matched neither, and a run that
+   never measured GPTBot printed "#156 is not reproducing" and exited 0. Every
+   fixture below fails against that version. */
+
+const CLEAN = [200, 200, 200];
+const chrome = (codes = CLEAN) => ({ name: "control-chrome", control: "browser", codes });
+const unknown = (codes = CLEAN) => ({ name: "control-unknown", control: "unknown", codes });
+const said = (v, re) => v.lines.some((l) => re.test(l));
+
+/* THE fixture for the shipped bug. An unreadable crawler burst is not a pass,
+   however healthy the controls look. */
+t("crawlers/verdict: a crawler that errors fails the run",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: [503, 503, 503] }]).code, 1);
+
+t("crawlers/verdict: ...and does not claim the burst was taken",
+  said(verdict([chrome(), unknown(), { name: "GPTBot", codes: [503, 503, 503] }]),
+       /took the full burst/), false);
+
+/* Reachable by `--burst` with no number, which sent zero requests per agent. */
+t("crawlers/verdict: an agent with no requests sent fails the run",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: [] }]).code, 1);
+
+t("crawlers/verdict: a clean sweep is the only thing that exits 0",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: CLEAN }]).code, 0);
+
+t("crawlers/verdict: a throttled crawler fails the run",
+  verdict([chrome(), unknown(), { name: "GPTBot", codes: [200, 429, 429] }]).code, 1);
+
+/* An unstable burst is not a pass either — it is a re-run, not a result. */
+{
+  const v = verdict([chrome(), unknown(), { name: "GPTBot", codes: [200, 429, 200] }]);
+  t("crawlers/verdict: an unstable crawler burst fails the run", v.code, 1);
+  t("crawlers/verdict: ...and does not quote a budget for it",
+    said(v, /took \d+ requests, then 429/), false);
+}
+
+t("crawlers/verdict: a drained crawler fails the run and points at --recover",
+  said(verdict([chrome(), unknown(), { name: "GPTBot", codes: [429, 429] }]), /--recover GPTBot/), true);
+
+/* `--only <typo>` used to leave only the controls, then print " took the full
+   burst" with an empty list of names and exit 0. */
+t("crawlers/verdict: a run containing no crawler at all cannot pass",
+  verdict([chrome(), unknown()], { only: "GPT-Bot" }).code, 1);
+
+t("crawlers/verdict: ...and says so rather than naming an empty set",
+  said(verdict([chrome(), unknown()], { only: "GPT-Bot" }), /No crawler was measured/), true);
+
+/* The two control failures are opposite findings and used to print the same
+   sentence. Browser degraded: the origin is having a bad minute, run is void. */
+t("crawlers/verdict: a degraded browser control voids the run",
+  verdict([chrome([200, 429, 429]), unknown(), { name: "GPTBot", codes: CLEAN }]).code, 1);
+
+t("crawlers/verdict: ...and says the origin is degrading for everything",
+  said(verdict([chrome([200, 429, 429]), unknown(), { name: "GPTBot", codes: CLEAN }]),
+       /degrading for/), true);
+
+/* Unknown degraded with a clean browser is the OPPOSITE: crawler-selective
+   throttling, the most useful thing this tool can find. Calling that "the
+   origin is degrading for everything" is refuted by the browser rows in the
+   same output, and it threw the finding away. */
+{
+  const v = verdict([chrome(), unknown([200, 429, 429]), { name: "GPTBot", codes: [429, 429] }]);
+  t("crawlers/verdict: a degraded unknown control alone does not blame the origin",
+    said(v, /degrading for/), false);
+  t("crawlers/verdict: ...it reports user-agent-shape throttling instead",
+    said(v, /user-agent shape/), true);
+  t("crawlers/verdict: ...and still fails the run",
+    v.code, 1);
+}
+
+/* Nothing reached the origin at all — offline, or a wrong --host. The old code
+   called this "the origin is degrading for everything", which is a finding
+   invented out of having sent no successful request. */
+{
+  const v = verdict([chrome([0, 0]), unknown([0, 0]), { name: "GPTBot", codes: [0, 0] }]);
+  t("crawlers/verdict: an unreachable origin is not a finding about the origin",
+    said(v, /degrading for/), false);
+  t("crawlers/verdict: ...it says the run never reached a working origin",
+    said(v, /never reached a working/), true);
+  t("crawlers/verdict: ...and explicitly disclaims #156",
+    said(v, /says nothing about #156/), true);
+}
+
+/* The other direction: never burst an agent we have told to stay away. A
+   Disallow in robots.txt plus a burst from this tool is us generating exactly
+   the traffic we asked not to receive, and it would pollute the audit too. */
+{
+  const robots = readFileSync(path.join(ROOT, "public", "robots.txt"), "utf8");
+  const disallowed = [...robots.matchAll(/^User-agent:\s*(\S+)\s*\r?\nDisallow:\s*\//gim)]
+    .map((m) => m[1].toLowerCase());
+  const wrong = CRAWLER_AGENTS
+    .filter((a) => !a.control && disallowed.includes(a.name.toLowerCase()))
+    .map((a) => a.name);
+  t(`crawlers: no agent robots.txt disallows is bursted (${wrong.join(", ") || "none"})`,
+    wrong.length, 0);
+}
 
 /* ── report ── */
 for (const s of skips) console.log(`  --  skipped ${s}`);
