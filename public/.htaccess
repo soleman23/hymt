@@ -147,15 +147,25 @@ ErrorDocument 404 /404.html
   #     and with it all three forms. Both were silent before that.
   #   - production losing this block    → liveSecurityHeaderGaps reads the
   #     header the host actually SENDS under verify:prod, not this file
-  #     (#167), and names the -Report-Only rollback if it is left engaged
+  #     (#167), and names the -Report-Only rollback if it is left engaged —
+  #     including in the shape described below, where rolling back brings
+  #     the platform's enforcing header back beside ours. That check read
+  #     the rollback only when NO enforcing header arrived until #172, so
+  #     the real shape reported 15 missing directives against a policy that
+  #     was never ours and never said "-Report-Only"
   # What is knowingly accepted: a vendor adopting a NEW origin never listed
   # here. No static check sees that, because this header is correct and the
   # vendor moved. It is the only unguarded path left, it presents as
   # analytics flatlining or forms not submitting, and a collector costs an
   # account plus ongoing triage — and CSP reports carry visitor URLs, which
   # has to stay consistent with the Privacy Policy (#75).
-  # If that trade is ever revisited: add report-to + report-uri + the
-  # Reporting-Endpoints header, pin them in CSP_DIRECTIVES, and filter
+  # If that trade is ever revisited, the two halves pin in DIFFERENT lists.
+  # report-to and report-uri are CSP directives, so they go in
+  # CSP_DIRECTIVES. Reporting-Endpoints is a separate RESPONSE HEADER, and
+  # both CSP_DIRECTIVES readers only regex inside the policy value — pinning
+  # it there would fail the build hunting a directive that cannot exist. It
+  # belongs in HTACCESS_SECURITY_HEADERS, which compares whole header values
+  # on the file and on the wire. Then filter the
   # chrome-extension:// / moz-extension:// / safari-web-extension:// noise.
   # Do NOT paste the endpoint from the 2026-09 hardening playbook —
   # csp-report.hymtravel.com is NXDOMAIN, so every snippet in that document
