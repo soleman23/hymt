@@ -1944,7 +1944,12 @@ t("live-headers: the staging-HSTS gap explains why it must not ship there",
 
 /* The documented one-word rollback. Appending -Report-Only stops the policy
    blocking and changes nothing else about the response, so it is invisible
-   without this. */
+   without this.
+
+   TWO shapes, and until #172 only the unreachable one was pinned. This first
+   pair drops the enforcing header entirely — which is what a rollback looks
+   like on a host that sends no CSP of its own, but NOT what it looks like
+   here. The pair below it is the shape production actually produces. */
 t("live-headers: a report-only CSP is caught as the rollback being engaged",
   liveSecurityHeaderGaps(liveHeaders({
     "Content-Security-Policy": null,
@@ -1954,6 +1959,29 @@ t("live-headers: the report-only gap names the rollback",
   liveSecurityHeaderGaps(liveHeaders({
     "Content-Security-Policy": null,
     "Content-Security-Policy-Report-Only": LIVE_CSP }), true)[0].includes("Report-Only"), true);
+
+/* THE REAL ROLLBACK SHAPE (#172). public/.htaccess records that renaming our
+   header back to -Report-Only "brings the platform header back too" — our
+   `Header always set` was replacing Hostinger's
+   `Content-Security-Policy: upgrade-insecure-requests` by having the same
+   name. So the enforcing header is present, it just isn't ours.
+
+   The check went red before this, but for the wrong reason and with the wrong
+   words: fifteen "the CSP on the wire has no <directive> directive" lines and
+   no mention of -Report-Only. These three drive that: one gap, it names the
+   rollback, and it says which policy is actually enforcing. */
+const ROLLED_BACK = () => liveSecurityHeaderGaps(liveHeaders({
+  "Content-Security-Policy": "upgrade-insecure-requests",
+  "Content-Security-Policy-Report-Only": LIVE_CSP }), true);
+
+t("live-headers: the rollback is caught when the platform CSP returns beside it",
+  ROLLED_BACK().length, 1);
+
+t("live-headers: the real-shape rollback gap names -Report-Only, not missing directives",
+  ROLLED_BACK()[0].includes("Report-Only"), true);
+
+t("live-headers: the real-shape rollback gap names the platform policy that replaced ours",
+  ROLLED_BACK()[0].includes("upgrade-insecure-requests"), true);
 
 t("live-headers: no CSP at all is caught",
   liveSecurityHeaderGaps(liveHeaders({ "Content-Security-Policy": null }), true).length, 1);
