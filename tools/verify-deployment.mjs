@@ -24,7 +24,7 @@ import {
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
   imageDims, imgRatioMismatches, inlineScriptHashes, cspDirective, cspScriptSrcDrift, cspHeaders,
   analyticsUngated, unscopedAccordionHides, web3formsKeys, hasHoneypot,
-  htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, photoGridDefects,
+  htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, liveSecurityHeaderGaps, photoGridDefects,
   configuredSite, internalHrefs, deadInternalHrefs, linkTargets, decodeEntities, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
 } from "./content-checks.mjs";
@@ -1492,6 +1492,21 @@ if (REMOTE) {
     if (!isStaging && /noindex/i.test(tag)) {
       fail("prod-indexable",
         `${host} serves "X-Robots-Tag: ${tag}" — production must never carry noindex.`);
+    }
+
+    /* The security headers, on the same response that was already fetched for
+       the X-Robots-Tag check — so this costs no extra request (#167).
+       htaccess-headers above proves public/.htaccess is correct; only this
+       proves the host applies it. Every directive it checks lives inside
+       <IfModule mod_headers.c>, which fails silently and open, so without
+       this leg the entire block can be missing from production with the
+       build fully green. HSTS is asserted on production only: it is
+       env=IS_PROD by design and must stay inert on the preview host (#79). */
+    const headerGaps = liveSecurityHeaderGaps(front.headers, !isStaging);
+    for (const gap of headerGaps) fail("remote-security-headers", `${host}: ${gap}`);
+    if (!headerGaps.length) {
+      notes.push(`${host} sends all ${HTACCESS_SECURITY_HEADERS.length} security headers and an enforcing CSP with ${CSP_DIRECTIVES.length} directives` +
+        (isStaging ? ", and correctly omits HSTS" : ", plus HSTS"));
     }
   }
   notes.push(`remote spot-check against ${REMOTE}`);

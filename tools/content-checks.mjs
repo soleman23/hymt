@@ -968,8 +968,16 @@ export const HTACCESS_SECURITY_HEADERS = [
   ["X-Content-Type-Options", "nosniff"],
   ["X-Frame-Options", "SAMEORIGIN"],
   ["Referrer-Policy", "strict-origin-when-cross-origin"],
-  ["Permissions-Policy", "geolocation=(), microphone=(), camera=()"],
+  ["Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"],
 ];
+
+/* HSTS sits outside the table because it is host-scoped (env=IS_PROD) and
+   every reader of that table asserts an unconditional header. One definition,
+   two readers: htaccessGaps proves the .htaccess carries it, and
+   liveSecurityHeaderGaps proves production actually sends it (#167). The only
+   other copy is public/.htaccess itself, which CLAUDE.md already flags as a
+   deliberate two-place edit so the value cannot drift silently. */
+export const HSTS_MAX_AGE = "max-age=31536000; includeSubDomains";
 
 /* Each entry: directive, and a source that must appear in it (or null for
    presence alone). The non-'self' ones fail SILENTLY under an enforcing
@@ -1371,7 +1379,6 @@ export function htaccessGaps(text, productionSite) {
      Scoped to production on purpose (see public/.htaccess): the point is to
      be already live at cutover, because the header this replaces is one the
      Wix edge sends today and stops sending the moment DNS moves. */
-  const HSTS_MAX_AGE = "max-age=31536000; includeSubDomains";
   let configuredHost = "";
   try {
     configuredHost = new URL(productionSite).hostname.toLowerCase();
@@ -1612,6 +1619,85 @@ export function htaccessGaps(text, productionSite) {
       out.push(`Cache-Control "${c[1]}" lacks no-transform (#95) — the CDN may recompress the asset`);
     }
   }
+  return out;
+}
+
+/**
+ * Security headers a deployed host actually SENDS (#167).
+ *
+ * htaccessGaps above asserts public/.htaccess, which is a check on a source
+ * file in a local build. It cannot prove the server applies it, and every
+ * directive it checks sits inside `<IfModule mod_headers.c>` — a container
+ * that fails SILENTLY AND OPEN. So the whole header block can be absent from
+ * production with every local gate green. Ways that happens without one red
+ * check: mod_headers unavailable on the host, a deploy that misses the web
+ * root or leaves the previous release in place (the internal-comments check
+ * next to this one exists because that has already happened), a SetEnvIfNoCase
+ * host matcher that stops matching, or Hostinger changing platform behaviour —
+ * the file's own comments record that the platform sends its own CSP and that
+ * `Header always set` is what replaces it.
+ *
+ * Takes a Headers (or anything with .get) so the caller can hand over a real
+ * fetch response and the fixtures can build one without a fake.
+ *
+ * isProduction gates HSTS ONLY. The header is deliberately env=IS_PROD and
+ * inert on *.hostingersite.com (#79): pinning a preview host to HTTPS relies
+ * on a certificate this repo does not control. Asserting it there would
+ * demand the one thing that must not ship.
+ */
+export function liveSecurityHeaderGaps(headers, isProduction) {
+  const out = [];
+  const get = (n) => (headers?.get?.(n) ?? "").trim();
+
+  for (const [name, value] of HTACCESS_SECURITY_HEADERS) {
+    const got = get(name);
+    if (!got) out.push(`${name} is not sent — public/.htaccess has it, so mod_headers is not applying the file the host is serving`);
+    else if (got !== value) out.push(`${name} is "${got}" on the wire, expected "${value}"`);
+  }
+
+  /* Both directions, like the X-Robots-Tag check this sits beside. Production
+     must send HSTS; the preview host must NOT. A stray HSTS on staging is the
+     more dangerous half and the one #79 spells out: it pins that host to HTTPS
+     on a certificate this repo does not control, and an expiry there is
+     unrecoverable from the browser side for the length of max-age. Skipping
+     the assertion off-production would let exactly that ship in silence. */
+  const hsts = get("Strict-Transport-Security");
+  if (isProduction) {
+    if (!hsts) out.push(`Strict-Transport-Security is not sent — the IS_PROD host matcher is not arming on this host, so production is unprotected while the .htaccess still looks correct (#79)`);
+    else if (hsts !== HSTS_MAX_AGE) out.push(`Strict-Transport-Security is "${hsts}" on the wire, expected "${HSTS_MAX_AGE}"`);
+  } else if (hsts) {
+    out.push(`Strict-Transport-Security is sent as "${hsts}" on a non-production host — HSTS is env=IS_PROD for a reason: this pins a host whose certificate the repo does not control, and an expiry is unrecoverable for the length of max-age (#79)`);
+  }
+
+  /* The CSP is checked by header NAME first. Appending `-Report-Only` is the
+     documented one-word rollback, so a report-only header arriving from
+     production is the rollback left engaged — the policy stops blocking and
+     nothing else about the response changes. That is invisible without this. */
+  const enforcing = get("Content-Security-Policy");
+  const reportOnly = get("Content-Security-Policy-Report-Only");
+  if (!enforcing && reportOnly) {
+    out.push("CSP is sent as Content-Security-Policy-Report-Only — the rollback is engaged, so the policy is logging and not blocking (#100)");
+  } else if (!enforcing) {
+    out.push("no Content-Security-Policy is sent at all");
+  } else {
+    /* Hostinger's edge sends its own `Content-Security-Policy:
+       upgrade-insecure-requests`. Same name, so `Header always set` replaces
+       it — if that ever stops being true the platform value is what arrives,
+       and these directives are how we find out.
+
+       Deliberately the same regex shape as the .htaccess reader above, so a
+       policy that satisfies one check cannot fail the other for a parsing
+       reason. Anchoring on `;` is what stops script-src matching inside
+       script-src-elem. */
+    for (const [directive, needle] of CSP_DIRECTIVES) {
+      const d = new RegExp(`(?:^|;)\\s*${directive}\\s+([^;]*)`).exec(enforcing);
+      if (!d) out.push(`the CSP on the wire has no ${directive} directive`);
+      else if (needle && !d[1].includes(needle)) {
+        out.push(`the CSP on the wire has ${directive} without ${needle} — it fails silently under an enforcing policy`);
+      }
+    }
+  }
+
   return out;
 }
 
