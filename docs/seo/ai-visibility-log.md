@@ -49,7 +49,7 @@ Measured against `https://www.hymtravel.com/`, origin `195.179.237.168`.
 | GPTBot | **429** |
 | OAI-SearchBot, ChatGPT-User | 200 |
 | ClaudeBot, PerplexityBot | 200 |
-| Meta-ExternalAgent | 200 (was 429 when [#156] was filed; changed host-side, no action here) |
+| Meta-ExternalAgent | 200 (was 429 when [#156] was filed) — but see 2026-09-04 below before reading this as fixed |
 | Googlebot, Bingbot, Applebot | 200 |
 | control: Chrome 128, unknown UA | 200 × 12 each |
 | Google-Extended, Applebot-Extended | not measurable — see below |
@@ -107,6 +107,73 @@ already said:
 Nothing in this repo can produce it: `public/.htaccess` is byte-identical
 (17,083 bytes) in repo, `dist/` and on the host, and contains no user-agent rule,
 no rate limit and no 429. `robots.txt` explicitly `Allow`s GPTBot.
+
+### 2026-09-04 — the same origin runs a working limiter and a broken one
+
+`npm run check:crawlers`, 12-request bursts, 00:14–00:17 UTC. Exit 1.
+
+| Agent | Result |
+|---|---|
+| GPTBot | **429 × 12** — `NO RESULT`, the burst opened on a 429 |
+| Meta-ExternalAgent | **429 × 12** — `NO RESULT`, the burst opened on a 429; recovered ~6 min later |
+| OAI-SearchBot, ChatGPT-User | 200 × 12 |
+| Claude-SearchBot, Claude-User, ClaudeBot | 200 × 12 |
+| PerplexityBot, Perplexity-User, Amazonbot | 200 × 12 |
+| Googlebot, Bingbot, Applebot | 200 × 12 |
+| control: Chrome 128, unknown UA, Chrome again | 200 × 12 each |
+
+Neither 429 row is a measurement. Both opened on a 429, so they classify as
+`NO RESULT` and this run establishes only that both agents were already on one
+when it started. Do not quote "429 × 12" as evidence of a limit — that is the
+error this log exists to stop, and the run of twelve is the drained bucket
+answering, not twelve trials.
+
+Bodies were compared against the browser control on every 200, so the clean rows
+are clean access and not a 200-with-a-challenge-page.
+
+What this run establishes:
+
+- **GPTBot did not refill across 100 minutes of zero traffic.** The last request
+  it received was the cooldown probe at 22:34 UTC on 2026-09-03; this burst
+  opened at 00:14 UTC and got 429 on the first request. That closes the hole in
+  the 40-minute result above, where every probe could have been extending its
+  own window: this gap contained no probes at all. So the window is longer than
+  100 minutes, or it is not a time window. **Use this in the ticket rather than
+  the 40-minute figure** — "does not refill across 100 minutes of no traffic"
+  cannot be answered with "your crawler should slow down".
+
+- **Meta-ExternalAgent is rate-limited, and its limiter works.** It was already
+  on a 429 when the run started, so the burst measured nothing. Timing the
+  cooldown immediately afterwards did measure it:
+
+  ```
+  00:18:43  probe  1  429
+  00:19:43  probe  2  429
+  00:20:44  probe  3  429
+  00:21:44  probe  4  429
+  00:22:45  probe  5  200
+  ```
+
+  Recovered about six minutes after the burst ended, **while still being probed
+  once a minute** — so requests during the drained state do not extend it. That
+  is an ordinary token bucket doing its job.
+
+- **Which makes the two agents qualitatively different, not differently severe.**
+  Both of Meta-ExternalAgent's readings fit one mechanism — a bucket holding at
+  least 12 that refills in minutes; on 2026-09-03 it was rested, on 2026-09-04
+  it was not. GPTBot fits no such mechanism: a bucket that does not refill
+  across 100 idle minutes is not a bucket.
+
+  This is the most useful thing in the ticket, because it is a control the host
+  cannot dismiss. The same LiteSpeed origin, in the same minute, runs a working
+  rate limiter for `meta-externalagent/1.1` and something that never releases
+  for `gptbot/1`. Whatever is happening to GPTBot is therefore not "our rate
+  limiting working as intended".
+
+The 2026-09-03 note calling Meta-ExternalAgent "resolved host-side" was wrong
+about the cause and right about the outcome. Nothing established a host-side
+change; what was measured was a rested bucket. But it can crawl the site, which
+is what the entry was trying to say. **Only GPTBot needs the ticket.**
 
 ---
 

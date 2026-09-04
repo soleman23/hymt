@@ -350,7 +350,7 @@ comments carry the evidence; this is the index.
 ### Still open after this (M6)
 
 - Google Workspace **DKIM** (Admin console needs Mark's passkey); DMARC is `p=none` with no `rua`.
-- **GPTBot** gets 429 at the LiteSpeed origin despite `robots.txt` allowing it (#156 — needs a Hostinger ticket; no hPanel control reaches that layer, and CDN → AI Audit is not it). meta-externalagent resolved host-side on 2026-09-03 with no action here. Re-test with `npm run check:crawlers`, never with a single probe.
+- **GPTBot** gets 429 at the LiteSpeed origin despite `robots.txt` allowing it, and does not refill across 100 idle minutes (#156 — needs a Hostinger ticket; no hPanel control reaches that layer, and CDN → AI Audit is not it). Meta-ExternalAgent is rate-limited too, but its limiter *works* — drained by a 12-burst, recovered in ~6 minutes on 2026-09-04 — so it can crawl and is not part of the ticket. An earlier revision of this line called it "resolved host-side on 2026-09-03", which was wrong about the cause: nothing changed host-side, that run caught a rested bucket. The contrast is the ticket's best evidence — same origin, same minute, a working limiter for one agent and one that never releases for the other. Re-test with `npm run check:crawlers`, never with a single probe, and read a burst that opens on 429 as `NO RESULT` rather than as a verdict.
 - **HSTS** ramp from 1 day to 1 year (#79, two-place edit) once both certs have served a day.
 - **CSP enforcing** (#100): read report-only violations on production first; Turnstile's origins are already in the policy.
 - Footer "Travel Planning Process" links to `/about/#process`, an anchor that does not exist.
