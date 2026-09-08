@@ -118,7 +118,7 @@ q www.hymtravel.com CNAME; q hymtravel.com A; q hymtravel.com MX; q hymtravel.co
 | `en` | CNAME | `cdn3.wixdns.net` | 1800 |
 | `@` | MX | `aspmx.l.google.com` 10, `alt1` 20, `alt2` 30, `alt3` 40, `alt4` 50 (`.aspmx.l.google.com`) | 3600 |
 | `@` | TXT | `v=spf1 include:_spf.google.com ~all` | 1800 |
-| `@` | TXT | `google-site-verification=LQXT8l-RiTxAHfGiHzFfeEBXoxbVP4Vh8GRJQNeKxLs` (unknown owner — keep it) | 1800 |
+| `@` | TXT | `google-site-verification=LQXT8l-RiTxAHfGiHzFfeEBXoxbVP4Vh8GRJQNeKxLs` (unknown owner — keep it; identified 2026-09-08 as Wix's Google Workspace reseller, see DECISIONS.md § D10) | 1800 |
 | `_dmarc` | TXT | `v=DMARC1; p=none;` | 600 |
 | `@` | NS | `ns4.wixdns.net`, `ns5.wixdns.net` | 86400 |
 | `@` | AAAA / CAA / DNSKEY | none | — |
