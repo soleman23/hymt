@@ -9,13 +9,20 @@
 
   Why this file exists (2026-09-08): the signature installed in Gmail showed a broken-image
   placeholder for the logo on the iPad Gmail app and on any computer other than the one it
-  was built on. Gmail stores the signature server-side, so a logo that only renders on one
-  machine means its <img> pointed at something only that machine could load (a local file
-  or an embedded data: image, which Gmail drops on save). Every image here is an absolute
-  https URL on the production site, so it loads wherever the mail is read.
+  was built on. The cause was the logo's URL: a private Google Drive image
+  (lh3.googleusercontent.com/d/<file id>), which only loads in a browser signed into that
+  Drive account. Gmail's image proxy, the Gmail mobile apps and recipients' mail clients
+  fetch anonymously and get nothing. Every image here is an absolute https URL on the
+  production site, so it loads wherever the mail is read.
 
   Logo: https://www.hymtravel.com/assets/logo.png (256x256 PNG, the site header logo,
   shown at 88px so it stays sharp on retina screens).
+
+  What is live in Gmail (2026-09-08): the account's two default signatures, "HYMT" (new
+  mail) and "HYMT Reply" (replies and forwards), were edited in place, swapping the logo
+  URL and the phone number and keeping Mark's original markup. This file is the reference
+  layout for the next full rebuild. Three older signatures in the same account ("Mark 2",
+  "Mark Sole", "Mark sole - with links") are unused and were left untouched.
 
   INSTALL (Gmail on the web - this is where the mark@hymtravel.com alias lives)
     1. Open this file in Chrome or Edge.
