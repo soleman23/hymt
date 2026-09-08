@@ -118,7 +118,16 @@ const fullTitle = headTitle.includes("Hit Your Mark") ? headTitle : `${headTitle
 <meta name="twitter:image" content={`${site}${ogImage}`}>
 <meta name="twitter:image:alt" content={ogImageAlt}>
 
-<link rel="icon" type="image/png" href="/assets/logo.png">
+{/* Icons. The 256px PNG is what Google's favicon fetcher and modern browsers
+    take from this list. /favicon.ico exists because crawlers, browsers and
+    feed readers also request that path unconditionally, whatever the head
+    says: Search Console's crawl stats logged Googlebot getting a 404 on it on
+    2026-09-01, the only 404 in 667 requests. The .ico is built from the same
+    logo (16/32/48px entries) and lives in public/, tracked in git: at 8 kB it
+    does not go through the images-b64 pipeline. This is an expression comment,
+    not an HTML one, so it stays out of the 123 built pages. */}
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/logo.png">
 <link rel="apple-touch-icon" href="/assets/logo.png">
 
 <!-- Self-hosted fonts (P1-3): declared in styles-master.css, served from

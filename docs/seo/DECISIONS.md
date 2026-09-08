@@ -133,3 +133,39 @@ thing that survives that, which is the whole point of leaving it on.
 
 Re-open only if the apex acquires real inbound links, or if the hop shows up as
 an actual crawl-budget problem in Search Console rather than a theoretical one.
+
+## D10 — The second `google-site-verification` TXT is Wix's Workspace reseller, and it stays
+
+**Decided 2026-09-08.** Search Console's Overview shows a standing
+recommendation, "1 unused verification tokens were found on your property",
+with a REMOVE button under Settings → Users and permissions → Unused ownership
+tokens. It is not going to be acted on, and this records why so the next person
+to see the yellow lightbulb does not click it.
+
+The token is the DNS TXT the cutover handoff listed as "unknown owner — keep
+it":
+
+```
+google-site-verification=LQXT8l-RiTxAHfGiHzFfeEBXoxbVP4Vh8GRJQNeKxLs
+```
+
+Search Console names its owner: `reseller-api-user-do-not-delete`
+`@reseller.gappsemail.wix.com` — Wix's Google Workspace reseller identity.
+That is the account through which Wix provisions Google Workspace on a domain
+it manages, and this domain's mail is Google Workspace (`aspmx.l.google.com`
+MX, `mark@hymtravel.com`). Search Console's own caveat on that page says such
+tokens "might still be in use by other Google services (like Merchant Center or
+Google Workspace) to verify site ownership".
+
+So the "unused" in the recommendation means unused **by Search Console**. The
+one thing it could still be doing is holding up the Workspace domain claim for
+Mark's mailbox, and the downside of being wrong about that is losing mail. The
+upside of removing it is closing a re-verification path for an account named
+*do-not-delete* that Wix operates. That trade is not close.
+
+Two tokens are on the zone. The other one, `QXOKFB5L…`, is ours (#96) and is
+what verifies `mark@hymtravel.com` as the owner of this property.
+
+Re-open only when the Workspace subscription demonstrably no longer runs
+through Wix — then the token is dead and both the GSC entry and the Wix DNS
+record can go together.
