@@ -32,7 +32,7 @@ Every profile must agree on all of the following, exactly:
 | Location | Bend, Oregon |
 | Street address | **None.** Per DECISIONS.md D3 the address is city and region only — on the site, in schema, and in every profile |
 | Affiliation | "part of the Travel Leaders Network" — and nothing beyond that wording until Mark confirms the membership level and profile URL (D2) |
-| Phone | (408) 568-1404 |
+| Phone | (541) 241-6481 |
 | Email | mark@hymtravel.com |
 | Website | https://www.hymtravel.com/ |
 | Instagram | https://www.instagram.com/travelwithsoleman/ |
@@ -405,7 +405,7 @@ the only part that must wait.
 > talk.
 >
 > Based in Bend, Oregon. Available anywhere.
-> mark@hymtravel.com · (408) 568-1404
+> mark@hymtravel.com · (541) 241-6481
 > CA Seller of Travel 2165910-50 · WA 605920581 · FL ST46122
 
 ### Licenses & Certifications entries

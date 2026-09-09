@@ -345,7 +345,7 @@ staging host and make three working forms look broken.
 - **The About page photo is your real family photo** (from the files you provided) — no fake people anywhere on the site.
 - **Forms**: Plan Your Trip + Contact + newsletter all run on Web3Forms (free, no backend needed). The live key is already in place — see step 4.
 - **E-commerce/booking**: not included per your call — the structure leaves room to add a booking tool later.
-- Phone shown site-wide: (408) 568-1404 · mark@hymtravel.com · Seller of Travel numbers in the footer (CA 2165910-50, WA 605920581, FL ST46122).
+- Phone shown site-wide: (541) 241-6481 · mark@hymtravel.com · Seller of Travel numbers in the footer (CA 2165910-50, WA 605920581, FL ST46122).
 
 ## If you want changes
 - **Static site**: open the extracted files in Cursor and ask for the change — the design system lives in one stylesheet per page's `<style>` block plus shared CSS. Re-upload changed files.

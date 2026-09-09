@@ -45,7 +45,7 @@ export function organization(site: string, opts: {
       'taste-rich travellers. Safari, polar expedition, Europe, Asia, South Pacific, ' +
       'food and wine, sports and event travel.',
     slogan: 'Where your vision meets the map.',
-    telephone: '+1-408-568-1404',
+    telephone: '+1-541-241-6481',
     email: 'mark@hymtravel.com',
     priceRange: '$$$$',
     founder: { '@id': id.mark },
@@ -78,7 +78,7 @@ export function organization(site: string, opts: {
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      telephone: '+1-408-568-1404',
+      telephone: '+1-541-241-6481',
       email: 'mark@hymtravel.com',
       areaServed: 'US',
       availableLanguage: 'English',
