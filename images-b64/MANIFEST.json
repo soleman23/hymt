@@ -6043,5 +6043,15 @@
   "b64": "images-b64/assets__img__nl-2026-09-launch-sports-event-travel-wide.jpg.b64",
   "target": "public/assets/img/nl-2026-09-launch-sports-event-travel-wide.jpg",
   "bytes": 89594
+ },
+ {
+  "b64": "images-b64/assets__img__australia-barossa-valley-old-vines.jpg.b64",
+  "target": "public/assets/img/australia-barossa-valley-old-vines.jpg",
+  "bytes": 368396
+ },
+ {
+  "b64": "images-b64/assets__img__willamette-valley-dundee-hills-harvest.jpg.b64",
+  "target": "public/assets/img/willamette-valley-dundee-hills-harvest.jpg",
+  "bytes": 323857
  }
 ]
