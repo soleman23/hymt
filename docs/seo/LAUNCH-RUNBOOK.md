@@ -469,13 +469,27 @@ domain keeps resolving from the Wix zone throughout it. Tracked as #160.
 
 **Step 1 — registrar transfer (Mark, at Wix; then Hostinger).**
 
-- [ ] At Hostinger first: create a WHOIS contact profile (hPanel → Domains →
-      WHOIS profiles). None exists as of 2026-09-10, and a transfer cannot be
-      started without one.
-- [ ] At Wix (`manage.wix.com/account/domains` → hymtravel.com → Advanced):
-      turn **off** Domain Lock (RDAP shows `clientTransferProhibited`), turn
-      **off** privacy if it hides the registrant, then **Get EPP / transfer
-      code**. Wix emails it to the registrant contact.
+- [x] At Hostinger first: a WHOIS contact profile. **Done 2026-09-10: profile
+      15809432**, individual, mirroring the Wix registrant field for field
+      (Mark Sole, solefam@gmail.com, +1 408 568 1404, 2318 NW High Lakes Loop,
+      Bend OR 97703, US). It mirrors on purpose: a material change to the
+      registrant name, organisation or email at transfer time triggers ICANN's
+      60-day transfer lock.
+- [ ] **Decide the Google Workspace billing question before touching Wix.**
+      Workspace is a Wix reseller subscription (see step 5), and Wix's own
+      transfer-away dialog says *"Any connected email accounts will stop
+      working"* and *"Starting the transfer process will disable your domain's
+      auto-renewal"*. Either confirm with Wix support, in writing, that the
+      reseller Workspace subscription survives the domain leaving, or move
+      Workspace to direct Google billing first (transfer token from the Admin
+      console, Google's reseller-transfer flow) and confirm mail still works.
+      Do not click the button below on the assumption that it is fine.
+- [ ] At Wix, `manage.wix.com/account/domains`: the row's "..." menu →
+      **Transfer away from Wix** opens the dialog above; its primary button
+      is **Transfer Domain**. That one click is what unlocks the domain and
+      issues the EPP code (privacy is on; Wix does not ask for it to be turned
+      off first). The code goes to the registrant email, solefam@gmail.com.
+      There is no separate "Advanced" page for this.
 - [ ] At Hostinger: Domains → Transfer → `hymtravel.com` with the code. The
       Business plan may include a free transfer; if a price is shown, it is the
       .com transfer fee, which adds one year to the registration. The domain
@@ -521,9 +535,20 @@ issues (#95, #107) and must not ride along with the DNS move.
 
 - [ ] Re-read the Wix zone on the day rather than trusting this table; #158
       and #157 both changed it after the cutover snapshot.
-- [ ] Write the clone into the Hostinger zone (hPanel → Domains → DNS, or the
-      API's `PUT /dns/v1/zones/hymtravel.com`). Hostinger snapshots the zone on
-      every change, so a wrong write is recoverable from hPanel.
+- [ ] Write the clone into the Hostinger zone. **Before the transfer
+      completes this is harder than it looks** (tried 2026-09-10): hPanel has
+      no DNS editor for an external domain — `/external-domain/hymtravel.com/dns`
+      offers only a Transfer button — so the API is the only route, and
+      `PUT /dns/v1/zones/hymtravel.com` refuses `@ A` while the CDN's `@ ALIAS`
+      exists ("ALIAS must not be used with A on the same name"). Removing the
+      ALIAS needs `DELETE` with filters or a snapshot restore; snapshot
+      177715583 (2026-09-02, pre-CDN) has `@ A 195.179.237.168` and no ALIAS
+      but also an `@ AAAA` that Wix does not have. The realistic order is:
+      transfer completes → the domain becomes a Hostinger domain and hPanel's
+      editor appears → delete the ALIAS, the AAAA if present, `autodiscover`,
+      `autoconfig` and the `hostingermail-*` CNAMEs → write the table →
+      read back → only then step 3. Hostinger snapshots the zone on every
+      change, so a wrong write is recoverable from hPanel.
 - [ ] Read the Hostinger zone back and diff it against the table. Hostinger's
       nameservers answer with live (Wix) data for a domain not yet delegated,
       so a `dig @ns1.dns-parking.com` check proves nothing until step 3.
@@ -558,11 +583,10 @@ The Wix account holds three subscriptions (read 2026-09-10 at
 | Domain `hymtravel.com` | 3-year | 2028-12-16 | Nothing. The transfer in step 1 moves it; Wix keeps the money already paid |
 | **2 business email users @hymtravel.com** | 2-year | 2027-12-16 | **Do not cancel.** This is Google Workspace sold through Wix as reseller. Cancelling it deletes `mark@hymtravel.com` and every mailbox with it |
 
-- [ ] Before anything else in this step: decide whether Workspace stays billed
-      through Wix (works indefinitely, even with no Wix site or domain) or
-      moves to direct Google billing. Moving needs a transfer token from the
-      Google Admin console and Google's reseller-transfer flow, and must be
-      complete and confirmed before the Wix email subscription is touched.
+- [ ] The Workspace billing decision was a gate in step 1, before the transfer.
+      Confirm here that it held: `mark@` still sends and receives, and the
+      Admin console shows the subscription where it is expected (Wix reseller
+      or direct). Do not touch the Wix email subscription until it does.
 - [ ] Cancel the Premium plan only; remove the Wix site
 - [ ] Update the memory and handoff notes so nobody reads the Wix rollback
       values as live
