@@ -456,14 +456,116 @@ done
 ### 4.7 Complete registrar separation after the rollback window
 
 Do not couple registrar transfer to launch-day DNS delegation. After the site,
-Hostinger DNS, SSL, Google Workspace mail and GSC have been stable for at least
-seven days:
+SSL, Google Workspace mail and GSC have been stable for at least seven days
+(cutover was 2026-09-02 04:31 UTC; the gate passed on 2026-09-10 with
+`npm run verify:prod` green against production and no rollback in the window):
 
-- [ ] Unlock the domain at Wix and obtain the transfer authorization/EPP code
-- [ ] Transfer the domain registration to Hostinger while retaining the already
-      working Hostinger nameservers
-- [ ] Verify registrar, renewal, contacts, nameservers, DNS, mail and GSC again
-- [ ] Only then cancel Wix hosting/subscriptions and remove the Wix site
+**The order is transfer first, then DNS, then cancellation — not the order
+this section assumed before 2026-09-10.** The cutover left the Wix zone
+authoritative (`ns4/ns5.wixdns.net`), because Wix cannot change the
+nameservers of a Wix-registered domain. So the registrar transfer is not
+housekeeping: it is the step that unlocks moving DNS off Wix at all, and the
+domain keeps resolving from the Wix zone throughout it. Tracked as #160.
+
+**Step 1 — registrar transfer (Mark, at Wix; then Hostinger).**
+
+- [ ] At Hostinger first: create a WHOIS contact profile (hPanel → Domains →
+      WHOIS profiles). None exists as of 2026-09-10, and a transfer cannot be
+      started without one.
+- [ ] At Wix (`manage.wix.com/account/domains` → hymtravel.com → Advanced):
+      turn **off** Domain Lock (RDAP shows `clientTransferProhibited`), turn
+      **off** privacy if it hides the registrant, then **Get EPP / transfer
+      code**. Wix emails it to the registrant contact.
+- [ ] At Hostinger: Domains → Transfer → `hymtravel.com` with the code. The
+      Business plan may include a free transfer; if a price is shown, it is the
+      .com transfer fee, which adds one year to the registration. The domain
+      is paid up to 2029-01-15 at Wix; that expiry carries over.
+- [ ] Approve the transfer email Hostinger sends to the registrant contact.
+      Transfer takes up to 5 days. **Do not delete the Wix site, cancel Wix,
+      or touch Wix DNS during it** — the Wix zone is still serving the domain.
+
+**Step 2 — stage the Hostinger zone as an exact clone (Devin; any time before
+step 3).** Hostinger already holds a zone for `hymtravel.com`, created by the
+hosting plan, and as of 2026-09-10 it is **wrong for delegation**: apex
+`ALIAS` and `www` point at `cdn.hstgr.net`, MX points at `mx1/mx2.hostinger.com`,
+SPF names `_spf.mail.hostinger.com`, `_dmarc` is the pre-#158 value, and the
+two GSC TXTs, the Reach TXT, `google._domainkey`, the Mailchimp CNAMEs and
+`analytics` are all absent. Delegating to it as-is breaks mail and unverifies
+Search Console. Replace it with the live Wix zone, which on 2026-09-10 was
+exactly:
+
+| Name | Type | Value | TTL |
+|---|---|---|---|
+| `@` | A | `195.179.237.168` | 1800 |
+| `www` | CNAME | `hymtravel.com` | 1800 |
+| `analytics` | CNAME | `rising-hallway-507500-t7.web.app` (Firebase Hosting; serves 200) | 1800 |
+| `@` | MX | `10 aspmx.l.google.com`, `20 alt1.`, `30 alt2.`, `40 alt3.`, `50 alt4.aspmx.l.google.com` | 3600 |
+| `@` | TXT | `v=spf1 include:_spf.google.com include:_spf.reach.hostinger.com ~all` | 1800 |
+| `@` | TXT | `93f000c01e98dbcd82dc4148cfcbd320` (Reach domain verification) | 1800 |
+| `@` | TXT | `google-site-verification=QXOKFB5L4TFTcgYo_XMxRIsJFZtkFOKiRGd_sU-c0sc` | 1800 |
+| `@` | TXT | `google-site-verification=LQXT8l-RiTxAHfGiHzFfeEBXoxbVP4Vh8GRJQNeKxLs` | 1800 |
+| `_dmarc` | TXT | `v=DMARC1; p=none; rua=mailto:mark@hymtravel.com; fo=1` | 1800 |
+| `google._domainkey` | TXT | the 2048-bit Workspace key (value in the private snapshot and in the Wix zone) | 3600 |
+| `reach-a._domainkey` | CNAME | `reach-a.dkim.reach.hostinger.com` | 3600 |
+| `reach-b._domainkey` | CNAME | `reach-b.dkim.reach.hostinger.com` | 3600 |
+| `k2._domainkey` | CNAME | `dkim2.mcsv.net` | 1800 |
+| `k3._domainkey` | CNAME | `dkim3.mcsv.net` | 1800 |
+
+No AAAA, SRV or CAA records exist. Remove the Hostinger defaults that have no
+counterpart at Wix — `autodiscover`, `autoconfig` and the three
+`hostingermail-*._domainkey` CNAMEs (there is no Hostinger mail order on this
+account) — and the `cdn.hstgr.net` web records. Keeping the web records on the
+origin IP means delegation changes nothing a visitor or crawler can observe;
+moving the site behind Hostinger's CDN is a separate decision with its own
+issues (#95, #107) and must not ride along with the DNS move.
+
+- [ ] Re-read the Wix zone on the day rather than trusting this table; #158
+      and #157 both changed it after the cutover snapshot.
+- [ ] Write the clone into the Hostinger zone (hPanel → Domains → DNS, or the
+      API's `PUT /dns/v1/zones/hymtravel.com`). Hostinger snapshots the zone on
+      every change, so a wrong write is recoverable from hPanel.
+- [ ] Read the Hostinger zone back and diff it against the table. Hostinger's
+      nameservers answer with live (Wix) data for a domain not yet delegated,
+      so a `dig @ns1.dns-parking.com` check proves nothing until step 3.
+
+**Step 3 — delegate (Devin, from the Hostinger domain panel, once the transfer
+completes).**
+
+- [ ] Change the nameservers to the two hPanel shows for this domain. Never
+      infer them from the preview hostname or from another domain.
+- [ ] NS TTL at Wix is 1 day, so budget 24–48 h to converge. Nothing is
+      instant, and nothing needs to be.
+
+**Step 4 — verify again, 48 h after delegation.**
+
+- [ ] Web: `npm run verify:prod` green; `curl -sI` shows HSTS and the
+      enforcing CSP
+- [ ] `dns.google` returns every row of the table above
+- [ ] Mail: a message in each direction between `mark@` and an outside
+      address; headers show SPF, DKIM (`d=hymtravel.com`) and DMARC pass
+- [ ] GSC Domain property still verified; Bing still imported; Reach domain
+      still `active`
+- [ ] `analytics.hymtravel.com` still answers
+
+**Step 5 — only then, cancel Wix. And not all of it.**
+
+The Wix account holds three subscriptions (read 2026-09-10 at
+`manage.wix.com/account/subscriptions`):
+
+| Subscription | Cycle | Next payment | What to do |
+|---|---|---|---|
+| Premium plan, Business (the site) | yearly | 2026-12-27 | Cancel after step 4. Turn off auto-renew; it runs to the end of the paid year |
+| Domain `hymtravel.com` | 3-year | 2028-12-16 | Nothing. The transfer in step 1 moves it; Wix keeps the money already paid |
+| **2 business email users @hymtravel.com** | 2-year | 2027-12-16 | **Do not cancel.** This is Google Workspace sold through Wix as reseller. Cancelling it deletes `mark@hymtravel.com` and every mailbox with it |
+
+- [ ] Before anything else in this step: decide whether Workspace stays billed
+      through Wix (works indefinitely, even with no Wix site or domain) or
+      moves to direct Google billing. Moving needs a transfer token from the
+      Google Admin console and Google's reseller-transfer flow, and must be
+      complete and confirmed before the Wix email subscription is touched.
+- [ ] Cancel the Premium plan only; remove the Wix site
+- [ ] Update the memory and handoff notes so nobody reads the Wix rollback
+      values as live
 
 ---
 
