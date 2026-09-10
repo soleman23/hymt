@@ -1713,11 +1713,29 @@ export function liveSecurityHeaderGaps(headers, isProduction) {
   /* The CSP is checked by header NAME first. Appending `-Report-Only` is the
      documented one-word rollback, so a report-only header arriving from
      production is the rollback left engaged — the policy stops blocking and
-     nothing else about the response changes. That is invisible without this. */
+     nothing else about the response changes. That is invisible without this.
+
+     The report-only header is read WHETHER OR NOT an enforcing one arrives
+     beside it, because on this host the rollback does not leave the response
+     without an enforcing CSP. Hostinger's edge sends its own
+     `Content-Security-Policy: upgrade-insecure-requests`, which our
+     `Header always set` replaces by having the same name — so rolling back
+     un-replaces it, and the live rollback shape is the PLATFORM policy
+     enforcing plus ours report-only. Gating on `!enforcing` (as this did
+     until #172) matched only the shape where no platform header exists: the
+     real rollback fell through to the directive loop below and reported
+     fifteen generic "has no default-src directive" errors against a policy
+     that was never ours, naming neither the rollback nor the cause. */
   const enforcing = get("Content-Security-Policy");
   const reportOnly = get("Content-Security-Policy-Report-Only");
-  if (!enforcing && reportOnly) {
-    out.push("CSP is sent as Content-Security-Policy-Report-Only — the rollback is engaged, so the policy is logging and not blocking (#100)");
+  if (reportOnly) {
+    /* One gap, not sixteen. The directive loop is deliberately skipped: with
+       our policy renamed, whatever is enforcing is not ours, so checking it
+       for our directives buries the single actionable finding. */
+    out.push("CSP is sent as Content-Security-Policy-Report-Only — the rollback is engaged, so the policy is logging and not blocking (#100)" +
+      (enforcing
+        ? `. The enforcing Content-Security-Policy beside it is "${enforcing}" — that is Hostinger's platform header returning because ours no longer replaces it, not our policy`
+        : ""));
   } else if (!enforcing) {
     out.push("no Content-Security-Policy is sent at all");
   } else {
