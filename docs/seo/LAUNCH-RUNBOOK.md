@@ -132,7 +132,7 @@ live here.
 | DKIM — `google._domainkey` TXT | Google Workspace, selector `google`, 2048-bit, enabled 2026-09-08 (#157). Exact value and TTL (3600 at Wix); confirm against Admin console → Gmail → Authenticate email. Dropping it un-signs every message from `mark@` |
 | DKIM — `reach-a._domainkey`, `reach-b._domainkey` CNAME | Hostinger Reach newsletters: `reach-a.dkim.reach.hostinger.com`, `reach-b.dkim.reach.hostinger.com` |
 | DKIM — `k2._domainkey`, `k3._domainkey` CNAME | Mailchimp: `dkim2.mcsv.net`, `dkim3.mcsv.net`. Carry as-is until that account is confirmed retired |
-| DMARC — `_dmarc` TXT | `v=DMARC1; p=none;` TTL 1800 as of 2026-09-10; #158 adds `rua=`, so re-take the snapshot after it lands |
+| DMARC — `_dmarc` TXT | `v=DMARC1; p=none; rua=mailto:mark@hymtravel.com; fo=1` TTL 1800, set 2026-09-10 (#158). Aggregate reports land in `mark@`; the policy steps up to `quarantine` only after those reports show Google and Reach as the only aligned sources |
 | CAA / SRV | Name, flags/priority/weight/port, value, TTL |
 | Nameservers / SOA | Every value, TTL, serial and timing fields |
 | DNSSEC | DS/DNSKEY state and migration decision |
