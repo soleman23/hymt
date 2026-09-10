@@ -1995,6 +1995,56 @@ t("live-headers: the platform CSP arriving instead reports the missing directive
     "Content-Security-Policy": "upgrade-insecure-requests" }), true).length,
   CSP_DIRECTIVES.length);
 
+/* #173: BOTH policies on one response — what the replacement failing looks
+   like when the platform header does not go away. Built with append(),
+   because that is how a duplicated response header actually arrives, and the
+   Fetch spec then hands get() the two joined with ", ". Before the fix the
+   directive loop read that joined string and its verdict depended on header
+   ORDER: platform first produced exactly one gap naming `default-src` — a
+   directive that is present and correct — and platform second produced NONE,
+   with two CSPs being enforced. Neither order said "two policies". Both are
+   pinned, and each was driven red against the pre-fix code: the first by its
+   gap naming a directive instead of the double, the second by there being no
+   gap at all. */
+const PLATFORM_CSP = "upgrade-insecure-requests";
+const DOUBLE_CSP = (first, second) => {
+  const h = liveHeaders({ "Content-Security-Policy": null });
+  h.append("Content-Security-Policy", first);
+  h.append("Content-Security-Policy", second);
+  return liveSecurityHeaderGaps(h, true);
+};
+
+t("live-headers: two CSP headers, platform first, is one gap",
+  DOUBLE_CSP(PLATFORM_CSP, LIVE_CSP).length, 1);
+
+t("live-headers: two CSP headers, platform first, does not blame default-src",
+  DOUBLE_CSP(PLATFORM_CSP, LIVE_CSP)[0].includes("default-src directive"), false);
+
+t("live-headers: two CSP headers, platform SECOND, is one gap — the order that was silently green",
+  DOUBLE_CSP(LIVE_CSP, PLATFORM_CSP).length, 1);
+
+for (const [order, gaps] of [
+  ["platform first", DOUBLE_CSP(PLATFORM_CSP, LIVE_CSP)],
+  ["platform second", DOUBLE_CSP(LIVE_CSP, PLATFORM_CSP)],
+]) {
+  t(`live-headers: the double-CSP gap (${order}) says how many policies arrived`,
+    gaps[0]?.startsWith("2 Content-Security-Policy policies"), true);
+  t(`live-headers: the double-CSP gap (${order}) names the platform policy that rode along`,
+    gaps[0]?.includes(PLATFORM_CSP), true);
+}
+
+/* The seam is the comma, and CSP3 forbids a comma anywhere inside a policy —
+   so one header carrying "policy1, policy2" is the same shape as two headers
+   and the browser treats it identically. A trailing comma, by contrast, is
+   an empty policy, which the parser skips: not a double. */
+t("live-headers: one comma-joined CSP value is caught the same way as two headers",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": `${LIVE_CSP}, ${PLATFORM_CSP}` }), true).length, 1);
+
+t("live-headers: a trailing comma on a single policy is not a double",
+  liveSecurityHeaderGaps(liveHeaders({
+    "Content-Security-Policy": `${LIVE_CSP},` }), true).length, 0);
+
 /* The two origins that fail SILENTLY under an enforcing policy: connect-src
    kills all three forms' fetch, frame-src is where Turnstile's challenge
    iframe lives (#74). */

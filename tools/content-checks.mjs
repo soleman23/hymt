@@ -1744,15 +1744,42 @@ export function liveSecurityHeaderGaps(headers, isProduction) {
        it — if that ever stops being true the platform value is what arrives,
        and these directives are how we find out.
 
-       Deliberately the same regex shape as the .htaccess reader above, so a
-       policy that satisfies one check cannot fail the other for a parsing
-       reason. Anchoring on `;` is what stops script-src matching inside
-       script-src-elem. */
-    for (const [directive, needle] of CSP_DIRECTIVES) {
-      const d = new RegExp(`(?:^|;)\\s*${directive}\\s+([^;]*)`).exec(enforcing);
-      if (!d) out.push(`the CSP on the wire has no ${directive} directive`);
-      else if (needle && !d[1].includes(needle)) {
-        out.push(`the CSP on the wire has ${directive} without ${needle} — it fails silently under an enforcing policy`);
+       TWO policies on one response is the shape to catch FIRST (#173): the
+       replacement failing without the platform header going away. Fetch
+       joins a duplicated header with ", " before get() returns it, and that
+       is not a quirk to work around — CSP3 § 4.1 defines the header value as
+       a comma-separated list of serialized policies, and a directive value
+       may contain neither a comma nor a semicolon. A comma is never inside a
+       policy; it is always the seam between two. Splitting on it is exact.
+
+       Until #173 the directive loop below read the joined string, and its
+       verdict depended on header ORDER. Platform first cost `default-src`
+       its `^` anchor, so the one gap named a directive that was present and
+       correct. Platform second anchored every directive of ours and the
+       platform policy rode along inside object-src's value: zero gaps, two
+       CSPs enforced. Browsers enforce multiple policies as an intersection,
+       so a second one can only ever tighten the effective policy — the job
+       here is to notice the shape, not to guess whether today's extra policy
+       happens to be harmless.
+
+       One gap, like the rollback branch above. The double is the actionable
+       finding; per-directive results against a joined string bury it and are
+       wrong in one order anyway. */
+    const policies = enforcing.split(",").map((p) => p.trim()).filter(Boolean);
+    if (policies.length > 1) {
+      const shown = policies.map((p) => `"${p.length > 48 ? `${p.slice(0, 45)}...` : p}"`).join(" and ");
+      out.push(`${policies.length} Content-Security-Policy policies are on the wire — ${shown}. More than one header of that name, or one comma-joined value, means \`Header always set\` is no longer replacing Hostinger's platform CSP, and the browser enforces their intersection (#173)`);
+    } else {
+      /* Deliberately the same regex shape as the .htaccess reader above, so a
+         policy that satisfies one check cannot fail the other for a parsing
+         reason. Anchoring on `;` is what stops script-src matching inside
+         script-src-elem. */
+      for (const [directive, needle] of CSP_DIRECTIVES) {
+        const d = new RegExp(`(?:^|;)\\s*${directive}\\s+([^;]*)`).exec(policies[0]);
+        if (!d) out.push(`the CSP on the wire has no ${directive} directive`);
+        else if (needle && !d[1].includes(needle)) {
+          out.push(`the CSP on the wire has ${directive} without ${needle} — it fails silently under an enforcing policy`);
+        }
       }
     }
   }
