@@ -42,6 +42,8 @@
 # ── Default document ──
 DirectoryIndex index.html
 AddDefaultCharset UTF-8
+AddType image/avif .avif
+AddType image/webp .webp
 
 # ── Custom 404 ──
 ErrorDocument 404 /404.html
@@ -61,6 +63,7 @@ ErrorDocument 404 /404.html
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 month"
   ExpiresByType font/woff2 "access plus 1 year"
   ExpiresDefault "access plus 1 week"
@@ -281,7 +284,7 @@ ErrorDocument 404 /404.html
   #
   # A month is long enough to be worth having and short enough that a mistake
   # ages out on its own. Revalidation still makes repeat views free.
-  <FilesMatch "\.(jpg|jpeg|png|webp|svg|woff2?)$">
+  <FilesMatch "\.(jpg|jpeg|png|webp|avif|svg|woff2?)$">
     Header set Cache-Control "public, max-age=2592000, no-transform"
   </FilesMatch>
 

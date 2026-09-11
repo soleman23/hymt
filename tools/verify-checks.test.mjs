@@ -1422,6 +1422,8 @@ t("place-alt: an unrelated region is still kept in the reverse direction",
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 AddDefaultCharset UTF-8
+AddType image/avif .avif
+AddType image/webp .webp
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
@@ -1441,7 +1443,7 @@ AddDefaultCharset UTF-8
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"
   Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.google-analytics.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
-  <FilesMatch "\\.(jpg|jpeg|png|webp|svg|woff2?)$">
+  <FilesMatch "\\.(jpg|jpeg|png|webp|avif|svg|woff2?)$">
     Header set Cache-Control "public, max-age=2592000, no-transform"
   </FilesMatch>
   <FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$">
@@ -1451,6 +1453,9 @@ AddDefaultCharset UTF-8
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
+
+t("htaccess: missing AVIF MIME mapping is caught under nosniff",
+  htaccessGaps(HT_GOOD.replace("AddType image/avif .avif\n", "")).length, 1);
 
 t("htaccess: the verifier cannot skip the configured production site",
   rawHtaccessGaps(HT_GOOD).length, 1);
@@ -1906,8 +1911,8 @@ t("htaccess: a var named only inside a match pattern arms nothing",
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the canonical-host rewrite, sitemap alias, UTF-8 charset,
    the CSP once, the cache once, and the hashed immutable rule. */
-t("htaccess: an empty file reports all 16 gaps and does not throw",
-  htaccessGaps("").length, 16);
+t("htaccess: an empty file reports all 18 gaps and does not throw",
+  htaccessGaps("").length, 18);
 
 /* The #166 additions are pinned by exact string equality, so the value that
    shipped before them must now be a gap. Without this, the three copies could
