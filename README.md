@@ -45,7 +45,8 @@ The restored paths are gitignored — images stay as `images-b64/` in the repo.
 `npm run build` is self-contained: `astro build`, then the sitemap reflow
 (`tools/format-sitemap.mjs`, one `<url>` per line so two content branches can
 merge), the internal-comment strip, the image restore
-(`tools/restore-images.mjs`), the check fixtures, then
+(`tools/restore-images.mjs`), responsive image derivation
+(`tools/build-responsive-images.mjs`), the check fixtures, then
 `tools/verify-deployment.mjs`, which fails the build on the mistakes this
 repo has actually shipped before:
 
@@ -68,10 +69,18 @@ intentional, accept it explicitly:
 node tools/verify-deployment.mjs --update-baseline
 ```
 
+The responsive step creates build-only WebP and AVIF variants under
+`dist/assets/responsive/` for shared heroes and photo-card systems, capped at
+1600px. It adds `<picture>`, `srcset`, `sizes`, intrinsic dimensions, and a
+matching AVIF hero preload while retaining each restored JPEG/PNG as fallback.
+The derived files remain gitignored and out of `images-b64/`; a clean clone
+reproduces them from the recoverable originals. Widths, codec settings, and
+eligible classes live in `tools/build-responsive-images.mjs`.
+
 `astro build` deletes the aliased images, leaves the internal editorial notes
 in the built HTML, and writes the sitemap as one unmergeable line; `npm run
-build` fixes all three itself. If you run `npx astro build` directly, follow it
-with `npm run build:post`, which does the three together — the verifier will
+build` fixes all four itself. If you run `npx astro build` directly, follow it
+with `npm run build:post`, which does the four together — the verifier will
 stop you if you forget any of them. Use
 `npm run restore` only for the images alone, as on a fresh clone where there is
 no `dist/` yet to strip. After deploying, confirm the upload actually landed

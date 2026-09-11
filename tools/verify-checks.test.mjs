@@ -101,6 +101,7 @@ import {
   htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
   liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
+  responsiveImageDefects,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
@@ -120,6 +121,14 @@ import {
   AGENTS as CRAWLER_AGENTS, DEFAULT_HOST as CRAWLER_HOST,
   classifyBurst, budgetFrom, controlsHeld, verdict, bodyDiffers, okSizes,
 } from "./check-ai-crawlers.mjs";
+
+/* ── responsive-images (#191) ── */
+const RESPONSIVE_HERO = `<link rel="preload" as="image" type="image/avif" href="/assets/responsive/hero-1600.avif" imagesrcset="/assets/responsive/hero-768.avif 768w, /assets/responsive/hero-1600.avif 1600w" imagesizes="100vw" fetchpriority="high"><picture class="responsive-picture"><source type="image/avif" srcset="/assets/responsive/hero-768.avif 768w" sizes="100vw"><source type="image/webp" srcset="/assets/responsive/hero-768.webp 768w" sizes="100vw"><img class="dest-hero__img" src="/assets/hero.jpg" srcset="/assets/hero.jpg 2000w" sizes="100vw"></picture>`;
+t("responsive-images: complete hero markup passes", responsiveImageDefects(RESPONSIVE_HERO).length, 0);
+t("responsive-images: an eligible bare image fails", responsiveImageDefects(`<img class="place-card__img" src="/assets/card.jpg">`).length, 1);
+t("responsive-images: missing WebP source fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/<source type="image\/webp"[^>]*>/, "")).length, 1);
+t("responsive-images: missing fallback sizes fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/ sizes="100vw"><\/picture>/, `><\/picture>`)).length, 1);
+t("responsive-images: missing hero preload fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/<link[^>]+>/, "")).length, 1);
 
 /* ── internal-link-floor ── */
 

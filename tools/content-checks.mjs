@@ -15,6 +15,34 @@
  */
 import { createHash } from "node:crypto";
 
+const RESPONSIVE_IMAGE_CLASSES = new Set(["dest-hero__img", "exp-hero__img", "post-hero__img", "place-card__img", "exp-card__img", "cat-card__img", "featured__img"]);
+const RESPONSIVE_HERO_CLASSES = new Set(["dest-hero__img", "exp-hero__img", "post-hero__img"]);
+const imageClasses = (tag) => (tag.match(/\bclass="([^"]*)"/i)?.[1] ?? "").split(/\s+/);
+
+/** Missing responsive markup on the image systems optimized by #191. */
+export function responsiveImageDefects(html) {
+  const defects = [];
+  const pictures = [...html.matchAll(/<picture\b[^>]*>[\s\S]*?<\/picture>/gi)].map((m) => m[0]);
+  const eligible = (html.match(/<img\b[^>]*>/gi) ?? []).filter((tag) => imageClasses(tag).some((name) => RESPONSIVE_IMAGE_CLASSES.has(name)));
+  for (const tag of eligible) {
+    const picture = pictures.find((block) => block.includes(tag));
+    if (!picture) { defects.push("eligible image is not inside <picture>"); continue; }
+    for (const format of ["avif", "webp"]) {
+      if (!new RegExp(`<source\\b[^>]*type="image/${format}"[^>]*\\bsrcset="[^"]+"[^>]*\\bsizes="[^"]+"`, "i").test(picture)) {
+        defects.push(`picture is missing a complete ${format.toUpperCase()} source`);
+      }
+    }
+    if (!/\bsrcset="[^"]+"/i.test(tag) || !/\bsizes="[^"]+"/i.test(tag)) {
+      defects.push("fallback image is missing srcset or sizes");
+    }
+  }
+  if (eligible.some((tag) => imageClasses(tag).some((name) => RESPONSIVE_HERO_CLASSES.has(name))) &&
+      !/<link\b[^>]*rel="preload"[^>]*as="image"[^>]*type="image\/avif"[^>]*imagesrcset="[^"]+"[^>]*imagesizes="100vw"/i.test(html)) {
+    defects.push("hero is missing its responsive AVIF preload");
+  }
+  return defects;
+}
+
 /** Visible text of an HTML fragment, tags and &nbsp; removed. */
 export const textIn = (s) =>
   s.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
