@@ -29,8 +29,8 @@
  *     Hostinger's CDN ever delivers (see tools/cap-image-width.py). Pixels
  *     above that are repo weight nobody is served.
  *   - `images-b64/assets__img__<slug>.jpg.b64` — ONE line, NO trailing newline
- *   - a `MANIFEST.json` entry — indent 1, CRLF, trailing newline, verified
- *     byte-identical against the committed file
+ *   - a `MANIFEST.json` entry — sorted by target, indent 1, LF, trailing
+ *     newline through the shared image-manifest helper
  *   - the markup
  *
  * ── The --photo gate is not negotiable ──
@@ -43,6 +43,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const [srcdir, page, ...specs] = process.argv.slice(2);
 if (!srcdir || !page || !specs.length) {
@@ -67,7 +68,7 @@ if (phCount !== items.length) {
     `the --photo gate needs every card, so this is refused rather than half-applied`);
 }
 
-const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const manifest = await readImageManifest(MANIFEST);
 const done = [];
 
 for (const { file, slug, alt } of items) {
@@ -124,8 +125,8 @@ if (!/exp-cards--photo/.test(html)) throw new Error(`${page}: could not add the 
 
 await writeFile(PAGE, html, "utf8");
 
-/* indent 1 + CRLF + trailing newline — matches the committed file byte for byte. */
-await writeFile(MANIFEST, JSON.stringify(manifest, null, 1).replace(/\n/g, "\r\n") + "\r\n", "utf8");
+/* indent 1 + LF + trailing newline — the shared helper's canonical format. */
+await writeImageManifest(MANIFEST, manifest);
 
 for (const d of done) console.log(`  ${d.slug.padEnd(34)} ${d.width}x${d.height}  ${d.kb} KB`);
 console.log(`${done.length} cards intaken, ${page} converted to .exp-cards--photo, MANIFEST now ${manifest.length} entries`);

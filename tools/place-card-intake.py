@@ -21,9 +21,8 @@ What it does, per image:
      at q85 progressive. (public/assets/img is gitignored; the b64 twin is the
      tracked copy — see docs/seo/HANDOFF-photo-rollout.md.)
   2. images-b64/assets__img__<slug>.jpg.b64 — single line, no trailing newline
-  3. an images-b64/MANIFEST.json entry — written back at indent=1 with CRLF
-     and a trailing newline, which is the committed file's exact format. Do
-     NOT switch this to cap-image-width.py's indent=2.
+  3. an images-b64/MANIFEST.json entry — sorted by target and written at
+     indent=1 with LF and a trailing newline through image-manifest.mjs.
 
 Then, for the page:
   - adds `places-grid--photo` and drops any `--card-desc-lines` style, which is
@@ -50,6 +49,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import sys
 import unicodedata
 
@@ -108,10 +108,14 @@ def intake(base, src_dir, pairs):
 
         print("  %-52s %4dx%-4d %8d B  %s" % (slug, out_w, out_h, len(data), how))
 
-    # indent=1, CRLF, trailing newline — matches the committed file byte for byte.
-    with open(manifest_path, "w", newline="\r\n") as f:
-        json.dump(manifest, f, indent=1)
-        f.write("\n")
+    # The shared Node helper owns validation, target ordering and LF format.
+    subprocess.run(
+        ["node", os.path.join(base, "tools", "image-manifest.mjs"),
+         "--stdin", manifest_path],
+        input=json.dumps(manifest),
+        text=True,
+        check=True,
+    )
     print("  manifest entries: %d" % len(manifest))
 
 

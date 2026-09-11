@@ -54,9 +54,8 @@
  *     copied byte for byte rather than re-encoded, so an approved frame does
  *     not lose a generation to this tool.
  *   - `images-b64/assets__img__<slug>.jpg.b64` — ONE line, NO trailing newline
- *   - a `MANIFEST.json` entry — indent 1, CRLF, trailing newline, which is the
- *     committed file's exact format. Do NOT switch this to cap-image-width.py's
- *     indent 2.
+ *   - a `MANIFEST.json` entry — sorted by target, indent 1, LF, trailing
+ *     newline through the shared image-manifest helper.
  *   - the markup
  *
  * ── The --photo gate is not negotiable ──
@@ -72,6 +71,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { placeCardAlt } from "./content-checks.mjs";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const CAP = 1600;
 const QUALITY = 85;
@@ -181,7 +181,7 @@ if (uncovered.length) {
     `--photo needs every card, so this is refused rather than half-applied.`);
 }
 
-const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const manifest = await readImageManifest(MANIFEST);
 const done = [];
 
 /* Every image is decoded, capped and ratio-checked BEFORE anything is written.
@@ -278,8 +278,8 @@ if (/card-desc-lines/.test(html)) throw new Error(`${page}: a --card-desc-lines 
 
 await writeFile(PAGE, html, "utf8");
 
-/* indent 1 + CRLF + trailing newline — matches the committed file byte for byte. */
-await writeFile(MANIFEST, JSON.stringify(manifest, null, 1).replace(/\n/g, "\r\n") + "\r\n", "utf8");
+/* indent 1 + LF + trailing newline — the shared helper's canonical format. */
+await writeImageManifest(MANIFEST, manifest);
 
 for (const d of done) {
   console.log(`  ${d.slug.padEnd(46)} ${d.width}x${d.height}  ${String(d.kb).padStart(4)} KB  ${d.how}${d.warn}`);

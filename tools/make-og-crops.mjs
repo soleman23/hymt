@@ -55,6 +55,7 @@ import { readFile, writeFile, stat, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PUBLIC = path.join(ROOT, "public");
@@ -111,7 +112,7 @@ async function walk(dir) {
 }
 
 const aliases = JSON.parse(await readFile(path.join(B64, "ALIASES.json"), "utf8"));
-const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const manifest = await readImageManifest(MANIFEST);
 const byTarget = new Map(manifest.map((m) => [m.target, m]));
 
 /* declared hero path -> canonical /assets/img/<file> */
@@ -246,7 +247,7 @@ for (const [canonical, routes] of [...heroes].sort()) {
   table[canonical] = `/assets/img/${out}`;
 }
 
-if (built) await writeFile(MANIFEST, JSON.stringify(manifest, null, 1) + "\n", "utf8");
+if (built) await writeImageManifest(MANIFEST, manifest);
 
 /* Generated, not hand-maintained: the same reason make-home-card-crops.mjs
    exports its table. Lives under src/ so the layouts import it without

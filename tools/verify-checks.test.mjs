@@ -91,6 +91,7 @@ const REAL_HEAD_LOCK = headJson("package-lock.json");
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
   unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, formatSitemap, sitemapLineDefects, visibleText, PLACEHOLDER_PATTERNS,
+  imageManifestDefects, sortImageManifest, formatImageManifest,
   internalComments, stripInternalComments, telHrefDefects,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
@@ -2700,6 +2701,82 @@ t("the sitemap-index shape is scanned too, not just <url>",
 
 t("a clean sitemap yields nothing",
   futureLastmods(sm("https://x/", "2026-08-20") + sm("https://x/about/", "2026-08-24"), "2026-08-24").length, 0);
+
+/* ── image-manifest-canonical ──
+   Every image writer appended to MANIFEST.json, so unrelated image PRs both
+   edited its final array element and conflicted. These fixtures pin the shared
+   helper's target ordering and the verifier path that keeps every writer on
+   it. Shape and uniqueness are part of the same canonical-write contract:
+   sorting duplicate or malformed rows would only make bad data deterministic. */
+const manifestEntry = (target, b64 = `images-b64/${path.basename(target)}.b64`, bytes = 1) =>
+  ({ b64, target, bytes });
+const manifestGood = [
+  manifestEntry("public/assets/img/a.jpg"),
+  manifestEntry("public/assets/img/z.jpg"),
+];
+const manifestBadOrder = [...manifestGood].reverse();
+
+t("image-manifest: target-sorted entries pass",
+  imageManifestDefects(manifestGood).length, 0);
+t("image-manifest: the former append-at-the-end shape fails with both rows named",
+  JSON.stringify(imageManifestDefects(manifestBadOrder)),
+  JSON.stringify(["entry 2 (public/assets/img/a.jpg) sorts before entry 1 (public/assets/img/z.jpg)"]));
+t("image-manifest: the shared writer sorts a copy by target",
+  sortImageManifest(manifestBadOrder).map((entry) => entry.target).join(","),
+  "public/assets/img/a.jpg,public/assets/img/z.jpg");
+t("image-manifest: sorting does not mutate the caller's array",
+  manifestBadOrder[0].target, "public/assets/img/z.jpg");
+t("image-manifest: canonical output is indent-1 LF with one trailing newline",
+  formatImageManifest(manifestBadOrder),
+  '[\n {\n  "b64": "images-b64/a.jpg.b64",\n  "target": "public/assets/img/a.jpg",\n  "bytes": 1\n },\n {\n  "b64": "images-b64/z.jpg.b64",\n  "target": "public/assets/img/z.jpg",\n  "bytes": 1\n }\n]\n');
+t("image-manifest: duplicate targets fail even with different b64 twins",
+  imageManifestDefects([
+    manifestEntry("public/assets/img/a.jpg", "images-b64/a-1.b64"),
+    manifestEntry("public/assets/img/a.jpg", "images-b64/a-2.b64"),
+  ]).some((d) => d.includes("duplicates target")), true);
+t("image-manifest: one b64 twin cannot restore two targets",
+  imageManifestDefects([
+    manifestEntry("public/assets/img/a.jpg", "images-b64/shared.b64"),
+    manifestEntry("public/assets/img/z.jpg", "images-b64/shared.b64"),
+  ]).some((d) => d.includes("duplicates b64")), true);
+t("image-manifest: invalid byte counts fail",
+  imageManifestDefects([manifestEntry("public/assets/img/a.jpg", "images-b64/a.b64", -1)])
+    .some((d) => d.includes("invalid bytes")), true);
+t("image-manifest: a non-array root fails instead of being treated as empty",
+  JSON.stringify(imageManifestDefects({})), JSON.stringify(["root is not an array"]));
+t("image-manifest: the verifier routes defects through a failing check",
+  /const manifestDefects = imageManifestDefects\(manifest\);[\s\S]*?for \(const d of manifestDefects\)[\s\S]*?fail\("image-manifest-canonical"/.test(verifierSrc), true);
+
+const realImageManifest = JSON.parse(
+  readFileSync(path.join(ROOT, "images-b64", "MANIFEST.json"), "utf8"));
+t("image-manifest: the committed manifest is canonical",
+  imageManifestDefects(realImageManifest).join("; "), "");
+t("image-manifest: the committed manifest is the helper's fixed point",
+  JSON.stringify(sortImageManifest(realImageManifest)), JSON.stringify(realImageManifest));
+
+const imageManifestWriters = [
+  "adopt-orphan-assets.mjs",
+  "cap-image-width.py",
+  "exp-card-intake.mjs",
+  "make-dest-card-crops.mjs",
+  "make-event-crops.mjs",
+  "make-home-card-crops.mjs",
+  "make-intro-crops.mjs",
+  "make-itin-crops.mjs",
+  "make-og-crops.mjs",
+  "make-place-card-crops.mjs",
+  "make-related-card-crops.mjs",
+  "p87-page-lazy-images.mjs",
+  "place-card-intake.mjs",
+  "place-card-intake.py",
+];
+for (const file of imageManifestWriters) {
+  const source = readFileSync(path.join(ROOT, "tools", file), "utf8");
+  const usesSharedWriter = file.endsWith(".py")
+    ? /image-manifest\.mjs/.test(source) && /subprocess\.run\(/.test(source)
+    : /from "\.\/image-manifest\.mjs"/.test(source) && /\bwriteImageManifest\s*\(/.test(source);
+  t(`image-manifest: ${file} writes through the shared helper`, usesSharedWriter, true);
+}
 
 /* ── sitemap-line-format ──
    @astrojs/sitemap emits each file as ONE line, dist/ is committed, and so two

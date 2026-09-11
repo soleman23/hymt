@@ -2067,6 +2067,89 @@ export function costFigureShape(html) {
 }
 
 /**
+ * Stable code-point ordering for images-b64/MANIFEST.json.
+ *
+ * Every image intake and crop tool used to append at the array's end, so any
+ * two image PRs changed the same final lines and conflicted even when their
+ * assets were unrelated. Ordering by target distributes additions beside the
+ * asset family they belong to. The b64 tie-breaker makes the comparator total;
+ * duplicate targets are still defects and are rejected below.
+ */
+export function compareImageManifestEntries(a, b) {
+  const targetA = typeof a?.target === "string" ? a.target : "";
+  const targetB = typeof b?.target === "string" ? b.target : "";
+  if (targetA < targetB) return -1;
+  if (targetA > targetB) return 1;
+  const b64A = typeof a?.b64 === "string" ? a.b64 : "";
+  const b64B = typeof b?.b64 === "string" ? b.b64 : "";
+  return b64A < b64B ? -1 : b64A > b64B ? 1 : 0;
+}
+
+/**
+ * Manifest shape, uniqueness and ordering defects; [] means canonical.
+ *
+ * Kept pure so both the writer and verifier exercise exactly the same rule.
+ */
+export function imageManifestDefects(entries) {
+  if (!Array.isArray(entries)) return ["root is not an array"];
+
+  const out = [];
+  const targets = new Map();
+  const b64s = new Map();
+  for (const [i, entry] of entries.entries()) {
+    const n = i + 1;
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+      out.push(`entry ${n} is not an object`);
+      continue;
+    }
+    if (typeof entry.b64 !== "string" || !entry.b64) out.push(`entry ${n} has no b64 path`);
+    if (typeof entry.target !== "string" || !entry.target) out.push(`entry ${n} has no target path`);
+    if (!Number.isSafeInteger(entry.bytes) || entry.bytes < 0) out.push(`entry ${n} has invalid bytes`);
+
+    if (typeof entry.target === "string" && entry.target) {
+      if (targets.has(entry.target)) {
+        out.push(`entry ${n} duplicates target from entry ${targets.get(entry.target)}: ${entry.target}`);
+      } else {
+        targets.set(entry.target, n);
+      }
+    }
+    if (typeof entry.b64 === "string" && entry.b64) {
+      if (b64s.has(entry.b64)) {
+        out.push(`entry ${n} duplicates b64 from entry ${b64s.get(entry.b64)}: ${entry.b64}`);
+      } else {
+        b64s.set(entry.b64, n);
+      }
+    }
+  }
+
+  for (let i = 1; i < entries.length; i++) {
+    const before = entries[i - 1];
+    const current = entries[i];
+    if (typeof before?.target !== "string" || typeof current?.target !== "string") continue;
+    if (compareImageManifestEntries(before, current) > 0) {
+      out.push(`entry ${i + 1} (${current.target}) sorts before entry ${i} (${before.target})`);
+    }
+  }
+  return out;
+}
+
+/** A validated, sorted copy; the caller's array and entries are not mutated. */
+export function sortImageManifest(entries) {
+  if (!Array.isArray(entries)) throw new TypeError("sortImageManifest: root is not an array");
+  const sorted = entries.map((entry) =>
+    entry && typeof entry === "object" && !Array.isArray(entry) ? { ...entry } : entry)
+    .sort(compareImageManifestEntries);
+  const defects = imageManifestDefects(sorted);
+  if (defects.length) throw new Error(`sortImageManifest: ${defects.join("; ")}`);
+  return sorted;
+}
+
+/** Canonical indent-1 JSON with LF and one trailing newline. */
+export function formatImageManifest(entries) {
+  return JSON.stringify(sortImageManifest(entries), null, 1) + "\n";
+}
+
+/**
  * Every [loc, date] pair a sitemap declares, in document order.
  *
  * A lastmod in the future is never valid — it claims a page changed on a day
