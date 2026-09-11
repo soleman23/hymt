@@ -28,6 +28,7 @@ import {
   configuredSite, internalHrefs, deadInternalHrefs, linkTargets, decodeEntities, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
   sitemapLineDefects, imageManifestDefects,
+  responsiveImageDefects,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
@@ -848,6 +849,9 @@ for (const file of htmlFiles) {
         fail("img-attrs", `${url} has an <img> missing ${attr}: ${img.slice(0, 80)}…`);
       }
     }
+  }
+  for (const defect of responsiveImageDefects(html)) {
+    fail("responsive-images", `${url}: ${defect}`);
   }
   /* img-ratio: and the dimensions must be TRUE. Every logo <img> declared
      1254x1254 for a 256x256 file for as long as the file has been 256x256,
