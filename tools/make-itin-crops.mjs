@@ -82,6 +82,7 @@ import { readFile, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const IMG = path.join(ROOT, "public", "assets", "img");
@@ -96,7 +97,7 @@ const HEIGHT = 1000;
 const QUALITY = 80;
 
 const brief = JSON.parse(await readFile(BRIEF, "utf8"));
-const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const manifest = await readImageManifest(MANIFEST);
 const byTarget = new Map(manifest.map((m) => [m.target, m]));
 
 let built = 0, skipped = 0, missing = 0;
@@ -149,7 +150,7 @@ for (const row of brief) {
   );
 }
 
-await writeFile(MANIFEST, JSON.stringify(manifest, null, 1) + "\n", "utf8");
+await writeImageManifest(MANIFEST, manifest);
 
 console.log(`\nbuilt ${built}, skipped ${skipped} (already fresh)` +
   (missing ? `, ${missing} MISSING MASTERS` : ""));

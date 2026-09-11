@@ -27,7 +27,7 @@ import {
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, liveSecurityHeaderGaps, photoGridDefects,
   configuredSite, internalHrefs, deadInternalHrefs, linkTargets, decodeEntities, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
-  sitemapLineDefects,
+  sitemapLineDefects, imageManifestDefects,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
@@ -185,7 +185,17 @@ if (!missingAssets.length) {
    source, not the artifact. */
 {
   const manifest = JSON.parse(await readFile(path.join(ROOT, "images-b64", "MANIFEST.json"), "utf8"));
-  const known = new Set(manifest.map((m) => m.target));
+  const manifestDefects = imageManifestDefects(manifest);
+  for (const d of manifestDefects) {
+    fail("image-manifest-canonical",
+      `${d} — every image writer must use tools/image-manifest.mjs; run ` +
+      "`node tools/image-manifest.mjs` after resolving the underlying entry");
+  }
+  if (!manifestDefects.length) notes.push(`${manifest.length} image manifest entries sorted by target`);
+
+  const validManifest = manifest.filter((m) =>
+    m && typeof m === "object" && typeof m.target === "string");
+  const known = new Set(validManifest.map((m) => m.target));
   const srcRefs = new Map(); // asset -> first source file referencing it
   for (const file of await walk(path.join(ROOT, "src"), (f) => /\.(html|astro)$/.test(f) && !f.includes(".bak"))) {
     const text = await readFile(file, "utf8");
@@ -224,7 +234,7 @@ if (!missingAssets.length) {
     ];
     let haystack = "";
     for (const f of textFiles) haystack += await readFile(f, "utf8");
-    const unused = manifest
+    const unused = validManifest
       .map((m) => m.target)
       .filter((t) => /\.(jpe?g|png|webp)$/i.test(t) && !haystack.includes(path.basename(t)));
     if (unused.length) {

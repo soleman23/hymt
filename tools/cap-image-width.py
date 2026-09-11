@@ -30,12 +30,13 @@ NOTE: this does not make pages load faster for visitors. The CDN was already
 downscaling to 1600 (and to 800 WebP on phones), so the bytes leaving the edge
 are unchanged. The win is repo and pipeline size, not page weight.
 """
-import base64, io, json, os, sys
+import base64, io, json, os, subprocess, sys
 from PIL import Image
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 B64DIR = os.path.join(BASE, "images-b64")
 MANIFEST = os.path.join(B64DIR, "MANIFEST.json")
+MANIFEST_HELPER = os.path.join(BASE, "tools", "image-manifest.mjs")
 
 CAP = 1600
 QUALITY = 85
@@ -103,9 +104,13 @@ def main():
           % (b_before / 1e6, b_after / 1e6, (b_before - b_after) / 1e6))
 
     if apply:
-        # Match the file as committed: CRLF, no trailing newline.
-        with open(MANIFEST, "w", newline="\r\n") as f:
-            json.dump(manifest, f, indent=2)
+        # The shared Node helper owns validation, target ordering and LF format.
+        subprocess.run(
+            ["node", MANIFEST_HELPER, "--stdin", MANIFEST],
+            input=json.dumps(manifest),
+            text=True,
+            check=True,
+        )
         print("\nMANIFEST.json byte counts updated.")
         print("Now run:  python tools/restore_images.py")
     else:

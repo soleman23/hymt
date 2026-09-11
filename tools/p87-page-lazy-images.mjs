@@ -31,6 +31,7 @@ import { readFile, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const IMG = path.join(ROOT, "public", "assets", "img");
@@ -100,7 +101,7 @@ const JOBS = [
 const cropName = (src, prefix) =>
   `${prefix}-${path.basename(src).replace(/\.(jpe?g|png|webp)$/i, "")}.jpg`;
 
-const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const manifest = await readImageManifest(MANIFEST);
 const byTarget = new Map(manifest.map((m) => [m.target, m]));
 
 /** Register a crop that already exists as a file or .b64 twin but may be
@@ -201,7 +202,7 @@ for (const job of JOBS) {
   console.log(`  ${job.name.padEnd(30)} ${String(hits.length).padStart(3)} converted`);
 }
 
-await writeFile(MANIFEST, JSON.stringify(manifest, null, 1) + "\n", "utf8");
+await writeImageManifest(MANIFEST, manifest);
 
 /* The about portrait's alt has to match the caption beside it. */
 const about = await readFile(path.join(ROOT, "src/content-pages/about.html"), "utf8");
