@@ -1279,6 +1279,12 @@ export function htaccessGaps(text, productionSite) {
   const live = liveLines.join("\n");
   const out = [];
 
+  for (const [format, mime] of [["avif", "image/avif"], ["webp", "image/webp"]]) {
+    if (!new RegExp(`^\\s*AddType\\s+${mime.replace("/", "\\/")}\\s+\\.${format}\\s*$`, "mi").test(live)) {
+      out.push(`.${format} has no explicit ${mime} AddType mapping — Hostinger may serve it as text/plain, and nosniff then blocks the image`);
+    }
+  }
+
   /* Which Apache container each live line sits in. Two failure modes need
      this and neither shows up in a grep: a directive moved into a <FilesMatch>
      runs for that subset only, and a MISSPELLED <IfModule> silently disables
