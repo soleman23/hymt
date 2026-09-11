@@ -1326,6 +1326,13 @@ export function htaccessGaps(text, productionSite) {
       .map((textLine, i) => ({ text: textLine, scope: scopes[i] }))
       .filter((d) => assigns(d.text, name));
 
+  const charsets = directiveLines(/^\s*AddDefaultCharset\s+(\S+)\s*$/i);
+  if (charsets.length !== 1 || charsets[0].m[1].toUpperCase() !== "UTF-8") {
+    out.push("AddDefaultCharset must declare UTF-8 exactly once");
+  } else if (narrowedBy(charsets[0])) {
+    out.push("AddDefaultCharset UTF-8 must apply site-wide, not inside a narrowed container");
+  }
+
   /* Same-domain Wix migration paths. These are deliberately absolute and
      precede the structural host/protocol rules in public/.htaccess so an old
      URL never pays for a redirect chain. */
@@ -1664,15 +1671,27 @@ export function htaccessGaps(text, productionSite) {
     }
   }
 
-  const caches = [...live.matchAll(/^\s*Header\s+(?:always\s+)?set\s+Cache-Control\s+"([^"]*)"/gim)];
+  const caches = headerLines("Cache-Control").map((line) => ({
+    ...line,
+    value: /^\s+"([^"]*)"/.exec(line.m[3])?.[1] ?? "",
+  }));
   if (!caches.length) out.push("no Cache-Control header — every asset would fall back to the host default");
   for (const c of caches) {
-    if (/\bimmutable\b/.test(c[1])) {
-      out.push(`Cache-Control "${c[1]}" contains immutable — #107: it promises a URL's bytes never change, which is false for the hand-named files under /assets/img/, and it served a year-old image from the CDN`);
+    const immutable = /\bimmutable\b/.test(c.value);
+    const scope = narrowedBy(c);
+    const hashedScope = scope === 'FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$"';
+    if (immutable && !hashedScope) {
+      out.push(`Cache-Control "${c.value}" contains immutable outside the content-hashed CSS/JS scope — #107 proved stable asset URLs can then replay obsolete bytes`);
     }
-    if (!/\bno-transform\b/.test(c[1])) {
-      out.push(`Cache-Control "${c[1]}" lacks no-transform (#95) — the CDN may recompress the asset`);
+    if (immutable && (!/\bmax-age=31536000\b/.test(c.value) || !/\bno-transform\b/.test(c.value))) {
+      out.push("content-hashed CSS/JS must use max-age=31536000, immutable, no-transform");
     }
+    if (!/\bno-transform\b/.test(c.value)) {
+      out.push(`Cache-Control "${c.value}" lacks no-transform (#95) — the CDN may recompress the asset`);
+    }
+  }
+  if (!caches.some((c) => /\bimmutable\b/.test(c.value) && narrowedBy(c) === 'FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$"')) {
+    out.push("content-hashed CSS/JS immutable cache rule is missing");
   }
   return out;
 }

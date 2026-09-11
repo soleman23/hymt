@@ -41,6 +41,7 @@
 
 # ── Default document ──
 DirectoryIndex index.html
+AddDefaultCharset UTF-8
 
 # ── Custom 404 ──
 ErrorDocument 404 /404.html
@@ -282,6 +283,13 @@ ErrorDocument 404 /404.html
   # ages out on its own. Revalidation still makes repeat views free.
   <FilesMatch "\.(jpg|jpeg|png|webp|svg|woff2?)$">
     Header set Cache-Control "public, max-age=2592000, no-transform"
+  </FilesMatch>
+
+  # Astro's CSS/JS filenames are content-addressed: the 8-character hash
+  # changes whenever the bytes do. Unlike the stable image URLs above, these
+  # assets can be cached for a year without replaying an obsolete build.
+  <FilesMatch "\.[A-Za-z0-9_-]{8}\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable, no-transform"
   </FilesMatch>
 
   # no-transform: Hostinger's CDN (server: hcdn) re-compresses HTML on the

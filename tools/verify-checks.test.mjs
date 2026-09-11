@@ -1411,6 +1411,7 @@ t("place-alt: an unrelated region is still kept in the reverse direction",
 /* ── htaccess-headers ── */
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored
+AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
@@ -1430,7 +1431,12 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"
   Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.google-analytics.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
-  Header set Cache-Control "public, max-age=2592000, no-transform"
+  <FilesMatch "\\.(jpg|jpeg|png|webp|svg|woff2?)$">
+    Header set Cache-Control "public, max-age=2592000, no-transform"
+  </FilesMatch>
+  <FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable, no-transform"
+  </FilesMatch>
 </IfModule>`;
 
 t("htaccess: a complete file is clean",
@@ -1438,6 +1444,12 @@ t("htaccess: a complete file is clean",
 
 t("htaccess: the verifier cannot skip the configured production site",
   rawHtaccessGaps(HT_GOOD).length, 1);
+
+t("htaccess: a missing UTF-8 default charset is caught",
+  htaccessGaps(HT_GOOD.replace("AddDefaultCharset UTF-8\n", "")).length, 1);
+
+t("htaccess: a non-UTF-8 default charset is caught",
+  htaccessGaps(HT_GOOD.replace("AddDefaultCharset UTF-8", "AddDefaultCharset ISO-8859-1")).length, 1);
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
@@ -1475,10 +1487,19 @@ t("htaccess: a commented-out Header line does not satisfy the check",
   htaccessGaps(HT_GOOD.replace(`  Header set X-Frame-Options "SAMEORIGIN"`,
     `  # Header set X-Frame-Options "SAMEORIGIN"`)).length, 1);
 
-/* #107, reproduced exactly. */
-t("htaccess: immutable in a real Cache-Control is caught",
+/* #107, reproduced exactly: immutable is unsafe on stable image URLs. */
+t("htaccess: immutable on stable assets is caught",
   htaccessGaps(HT_GOOD.replace(`"public, max-age=2592000, no-transform"`,
-    `"public, max-age=31536000, immutable"`)).length, 2);   // immutable AND no no-transform
+    `"public, max-age=31536000, immutable"`)).length, 3);   // unsafe scope, bad immutable policy, and no no-transform
+
+t("htaccess: the hashed immutable rule is required",
+  htaccessGaps(HT_GOOD.replace(`  <FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable, no-transform"
+  </FilesMatch>
+`, "")).length, 1);
+
+t("htaccess: immutable is rejected under a broad CSS/JS scope",
+  htaccessGaps(HT_GOOD.replace("\\.[A-Za-z0-9_-]{8}\\.(css|js)$", "\\.(css|js)$")).length, 2);
 
 t("htaccess: a Cache-Control without no-transform is caught (#95)",
   htaccessGaps(HT_GOOD.replace(`, no-transform"`, `"`)).length, 1);
@@ -1871,12 +1892,12 @@ t("htaccess: `SetEnvIf IS_STAGING …` reading the var as input stays green",
 t("htaccess: a var named only inside a match pattern arms nothing",
   htaccessGaps(HT_GOOD + `\n  SetEnvIf Request_URI "IS_PROD" DEBUG=1\n`).length, 0);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 13:
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 16:
    both migration redirects, the 4 security headers, both staging lines, both
-   HSTS lines (#79), the canonical-host rewrite, the CSP once, and the cache
-   once. */
-t("htaccess: an empty file reports all 14 gaps and does not throw",
-  htaccessGaps("").length, 14);
+   HSTS lines (#79), the canonical-host rewrite, sitemap alias, UTF-8 charset,
+   the CSP once, the cache once, and the hashed immutable rule. */
+t("htaccess: an empty file reports all 16 gaps and does not throw",
+  htaccessGaps("").length, 16);
 
 /* The #166 additions are pinned by exact string equality, so the value that
    shipped before them must now be a gap. Without this, the three copies could
