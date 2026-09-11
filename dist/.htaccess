@@ -13,6 +13,11 @@
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
 
+  # Conventional sitemap endpoint. Astro generates sitemap-index.xml; keep
+  # that file as the single source of truth and serve it internally at the
+  # endpoint expected by crawlers and third-party SEO tools.
+  RewriteRule ^sitemap\.xml$ /sitemap-index.xml [L]
+
   # Force apex → www.hymtravel.com (the canonical host used by every
   # <link rel="canonical">, og:url and sitemap entry on the site).
   # Scoped to hymtravel.com on purpose: a blanket www rule would send

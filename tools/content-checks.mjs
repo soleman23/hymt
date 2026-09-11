@@ -1348,6 +1348,20 @@ export function htaccessGaps(text, productionSite) {
     }
   }
 
+  /* Astro emits sitemap-index.xml rather than the conventional sitemap.xml.
+     The alias must be an internal rewrite so /sitemap.xml returns the XML
+     directly without creating another redirect or a second maintained file. */
+  const sitemapAlias = /^\s*RewriteRule\s+\^sitemap\\\.xml\$\s+\/sitemap-index\.xml\s+\[([^\]]+)\]/mi.exec(live);
+  if (!sitemapAlias) {
+    out.push("/sitemap.xml does not internally rewrite to /sitemap-index.xml");
+  } else {
+    const flags = sitemapAlias[1].split(",").map((flag) => flag.trim().toLowerCase());
+    if (!flags.includes("l")) out.push("/sitemap.xml rewrite must terminate with [L]");
+    if (flags.some((flag) => /^r(?:=|$)/.test(flag))) {
+      out.push("/sitemap.xml must be an internal rewrite, not a redirect");
+    }
+  }
+
   /* Counted, not read first-match: `Header set` is last-wins, so an appended
      `Header set X-Frame-Options "ALLOWALL"` is the one that ships while a
      .exec of the first line still reports SAMEORIGIN. */

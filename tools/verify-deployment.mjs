@@ -629,7 +629,7 @@ const inlineHandlerSeen = new Map();
          is host-scoped rather than unconditional, and saying so is the point:
          a reader checking whether #79 shipped should not have to infer it
          from a bare count of the unconditional ones. */
-      notes.push(`.htaccess shipped with ${HTACCESS_SECURITY_HEADERS.length} security headers + host-scoped HSTS (#79), the staging noindex, ${CSP_DIRECTIVES.length} CSP directives, and no immutable cache rule`);
+      notes.push(`.htaccess shipped with ${HTACCESS_SECURITY_HEADERS.length} security headers + host-scoped HSTS (#79), the staging noindex, the /sitemap.xml alias (#192), ${CSP_DIRECTIVES.length} CSP directives, and no immutable cache rule`);
     }
   }
 }

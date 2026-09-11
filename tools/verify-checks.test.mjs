@@ -1414,6 +1414,7 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+  RewriteRule ^sitemap\\.xml$ /sitemap-index.xml [L]
   RewriteCond %{HTTP_HOST} ^hymtravel\\.com$ [NC]
   RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
 </IfModule>
@@ -1446,6 +1447,15 @@ t("htaccess: a legacy redirect with the wrong target is caught",
 
 t("htaccess: a temporary legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace("[R=301,L,NE]", "[R=302,L,NE]")).length, 1);
+
+t("htaccess: a missing conventional sitemap alias is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^sitemap.*$/m, "")).length, 1);
+
+t("htaccess: a redirecting sitemap alias is rejected",
+  htaccessGaps(HT_GOOD.replace("/sitemap-index.xml [L]", "/sitemap-index.xml [R=301,L]")).length, 1);
+
+t("htaccess: a non-terminating sitemap alias is caught",
+  htaccessGaps(HT_GOOD.replace("/sitemap-index.xml [L]", "/sitemap-index.xml [NC]")).length, 1);
 
 t("htaccess: legacy redirects below structural rules are caught",
   htaccessGaps(HT_GOOD
@@ -1865,8 +1875,8 @@ t("htaccess: a var named only inside a match pattern arms nothing",
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the canonical-host rewrite, the CSP once, and the cache
    once. */
-t("htaccess: an empty file reports all 13 gaps and does not throw",
-  htaccessGaps("").length, 13);
+t("htaccess: an empty file reports all 14 gaps and does not throw",
+  htaccessGaps("").length, 14);
 
 /* The #166 additions are pinned by exact string equality, so the value that
    shipped before them must now be a gap. Without this, the three copies could
