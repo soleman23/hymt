@@ -27,6 +27,7 @@ import {
   htaccessGaps, HTACCESS_SECURITY_HEADERS, CSP_DIRECTIVES, liveSecurityHeaderGaps, photoGridDefects,
   configuredSite, internalHrefs, deadInternalHrefs, linkTargets, decodeEntities, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
+  sitemapLineDefects,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
@@ -55,6 +56,9 @@ const DEST_MAX_WORDS = 3500;
 const failures = [];
 const notes = [];
 const hints = [];
+/* Printed on success as `!!` lines: true, actionable, and not a reason to
+   fail the build — a branch behind origin/main is the only one so far. */
+const advisories = [];
 const fail = (check, detail) => failures.push({ check, detail });
 
 /* Checks whose subject matter is built in a LATER phase register here as
@@ -438,6 +442,44 @@ try {
   }
   if (!futures) notes.push(`${seen} sitemap lastmod dates across ${files.length} files, all on or before ${today}`);
 }
+
+/* sitemap-line-format: one entry per line, so two branches that each moved a
+   different page's lastmod merge by themselves. @astrojs/sitemap emits a
+   single line and tools/format-sitemap.mjs reflows it after the build; this
+   is the tripwire for that stage being dropped from `npm run build`. Every
+   other check stays green without it — the single line is valid XML — which
+   is how #189 and #190 came to collide on it (2026-09-10). */
+{
+  const files = (await readdir(DIST)).filter((n) => /^sitemap.*\.xml$/i.test(n)).sort();
+  let entries = 0;
+  for (const name of files) {
+    const xml = await readFile(path.join(DIST, name), "utf8").catch(() => "");
+    for (const d of sitemapLineDefects(xml)) {
+      fail("sitemap-line-format", `${name}: ${d} — node tools/format-sitemap.mjs is a build stage; run it and commit dist/`);
+    }
+    entries += (xml.match(/<(url|sitemap)>/g) || []).length;
+  }
+  if (files.length) notes.push(`${entries} sitemap entries across ${files.length} files, one per line`);
+}
+
+/* branch-behind-main: an advisory, never a failure. Merges land on GitHub, so a
+   local branch is behind origin/main from the moment the next PR merges, and
+   the files every content PR touches (images-b64/MANIFEST.json,
+   tools/head-baseline.json, the sitemap) then conflict in the PR instead of
+   here — #190 was cut from a main one merge behind and needed a hand merge for
+   exactly that. Reads only the local origin/main ref, no network, so it is as
+   fresh as the last `git fetch`; skipped where git or the ref is missing (the
+   host's one-commit clone) and silent on CI, where the pull_request checkout
+   is already the merge with main. */
+try {
+  const behind = execFileSync("git", ["rev-list", "--count", "HEAD..refs/remotes/origin/main"],
+    { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  if (behind !== "0") {
+    advisories.push(`this branch is ${behind} commit${behind === "1" ? "" : "s"} behind origin/main as last fetched — ` +
+      "`git fetch origin && git merge origin/main`, rebuild, then open or update the PR; " +
+      "MANIFEST.json, head-baseline.json and the sitemap conflict on GitHub otherwise");
+  }
+} catch { /* no git, no origin/main, or a shallow clone: nothing to compare against */ }
 
 /* The candidate paths come from linkTargets() in content-checks.mjs so the
    resolution logic is fixture-covered; only the filesystem touch lives here. */
@@ -1516,6 +1558,7 @@ report();
 
 function report() {
   for (const n of notes) console.log(`  ok  ${n}`);
+  for (const a of advisories) console.log(`  !!  ${a}`);
   if (softFailures.length) {
     const byCheck = {};
     for (const f of softFailures) (byCheck[`${f.check} — flips hard in ${f.phase}`] ??= []).push(f.detail);

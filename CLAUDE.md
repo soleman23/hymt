@@ -232,12 +232,40 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
   a real change or a stale working tree, not noise — read it rather than
   reverting it.
 
+### Branching and merging
+
+- **Merges land on GitHub, so local `main` is behind `origin/main` from the
+  moment the next PR merges.** #190 was cut from a local `main` one merge
+  behind and needed a hand merge of three shared files for it. Fetch first and
+  branch from the remote, never from local `main`:
+
+  ```bash
+  git fetch origin && git checkout -b <name> origin/main
+  ```
+
+- Before opening or updating a PR, merge `origin/main` into the branch and
+  rebuild, so any shared-file overlap is resolved here with the build as the
+  judge rather than in GitHub's merge box. `npm run build` prints a `!!`
+  advisory when HEAD is behind `origin/main` as last fetched; it never fails
+  the build, because a branch on unrelated files is allowed to lag.
+- Every content PR touches the same three files: `images-b64/MANIFEST.json`
+  (appends), `tools/head-baseline.json` (one entry) and `dist/sitemap-0.xml`.
+  The sitemap is reflowed to one `<url>` per line by `tools/format-sitemap.mjs`
+  precisely so that two PRs moving different pages' `lastmod` merge by
+  themselves; before 2026-09-10 it was a single line and every second content
+  PR conflicted on it. MANIFEST appends can still conflict when two PRs both
+  add images — resolve as the union, in main's order then the branch's.
+- When a branch is done, return the shared checkout to `main` and fast-forward
+  it (`git checkout main && git merge --ff-only origin/main`): other sessions
+  share this working tree and start from whatever is checked out.
+
 ### Before every commit
 - `npm run build` must pass. It is self-contained: the Node preflight
   (`tools/check-node.mjs`), the lockfile restore (`tools/restore-lockfile.mjs`),
-  astro build, then the image restore (`node tools/restore-images.mjs`), then
-  the check fixtures (`tools/verify-checks.test.mjs`), then
-  `tools/verify-deployment.mjs`.
+  astro build, the sitemap reflow (`tools/format-sitemap.mjs`), the
+  internal-comment strip, then the image restore
+  (`node tools/restore-images.mjs`), then the check fixtures
+  (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
 - The lockfile restore is the one stage that WRITES to a source file, and it
   exists because hPanel's build command cannot be changed on this account: the
   host installs before it builds, its install drops the `libc` blocks out of

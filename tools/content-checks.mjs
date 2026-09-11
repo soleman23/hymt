@@ -2080,6 +2080,64 @@ export function futureLastmods(xml, today) {
 }
 
 /**
+ * A sitemap reflowed to one entry per line.
+ *
+ * @astrojs/sitemap writes each file as a single line. dist/ is committed, so
+ * two branches that each moved a different page's <lastmod> changed the same
+ * line and git could not merge them — #189 and #190 (2026-09-10) were the
+ * latest pair, and the second always needed a hand merge. Whitespace between
+ * elements is insignificant to every sitemap consumer, so this puts the XML
+ * declaration, the root's opening tag, each <url> (or <sitemap>) and the
+ * closing tag on lines of their own. Unrelated pages then land in different
+ * hunks and merge by themselves; the same page moved on both sides still
+ * conflicts, which is right.
+ *
+ * Refuses rather than guesses: anything in the body that is not an entry, or
+ * any reflow that changes more than inter-element whitespace, throws. A drift
+ * in what the integration emits therefore fails the build instead of quietly
+ * dropping an entry. Idempotent, so a rebuild of unchanged sources leaves the
+ * committed file byte-identical.
+ */
+export function formatSitemap(xml) {
+  const m = xml.match(/^\s*(<\?xml[^>]*\?>)?\s*(<(urlset|sitemapindex)\b[^>]*>)([\s\S]*?)(<\/\3>)\s*$/);
+  if (!m) throw new Error("formatSitemap: no <urlset> or <sitemapindex> root");
+  const [, decl, open, root, body, close] = m;
+  const tag = root === "urlset" ? "url" : "sitemap";
+  const entry = new RegExp(`<${tag}>[\\s\\S]*?<\\/${tag}>`, "g");
+  const entries = (body.match(entry) || []).map((e) => e.replace(/>\s+</g, "><"));
+  const stray = body.replace(entry, "").trim();
+  if (stray) throw new Error(`formatSitemap: text outside <${tag}> entries: ${stray.slice(0, 60)}`);
+  const out = [decl, open, ...entries.map((e) => `  ${e}`), close].filter(Boolean).join("\n") + "\n";
+  const squash = (s) => s.replace(/>\s+</g, "><").trim();
+  if (squash(out) !== squash(xml)) throw new Error("formatSitemap: reflow changed more than whitespace between elements");
+  return out;
+}
+
+/**
+ * Why a sitemap file is not one entry per line, as messages; [] when it is.
+ *
+ * The verifier's tripwire for tools/format-sitemap.mjs being dropped from
+ * `npm run build`: that stage is what makes the committed sitemap mergeable,
+ * and a build that skips it stays green on every other check because the
+ * single line is perfectly valid XML.
+ */
+export function sitemapLineDefects(xml) {
+  const root = xml.match(/<(urlset|sitemapindex)\b/);
+  if (!root) return ["no <urlset> or <sitemapindex> root"];
+  const tag = root[1] === "urlset" ? "url" : "sitemap";
+  const opens = new RegExp(`<${tag}>`, "g");
+  const alone = new RegExp(`^\\s*<${tag}>.*<\\/${tag}>\\s*$`);
+  const out = [];
+  xml.split("\n").forEach((line, i) => {
+    const n = (line.match(opens) || []).length;
+    if (n > 1) out.push(`line ${i + 1} holds ${n} <${tag}> entries`);
+    else if (n === 1 && !alone.test(line)) out.push(`line ${i + 1}: the <${tag}> entry shares its line with other markup`);
+  });
+  if (!xml.endsWith("\n")) out.push("no trailing newline");
+  return out;
+}
+
+/**
  * Place-card alt text: `<name>, <region>`, unless the region is only an
  * administrative wrapper around the card's own name.
  *

@@ -42,9 +42,12 @@ The restored paths are gitignored — images stay as `images-b64/` in the repo.
 
 ## Building and verifying
 
-`npm run build` is self-contained: `astro build`, then the image restore
-(`tools/restore-images.mjs`), then `tools/verify-deployment.mjs`, which
-fails the build on the mistakes this repo has actually shipped before:
+`npm run build` is self-contained: `astro build`, then the sitemap reflow
+(`tools/format-sitemap.mjs`, one `<url>` per line so two content branches can
+merge), the internal-comment strip, the image restore
+(`tools/restore-images.mjs`), the check fixtures, then
+`tools/verify-deployment.mjs`, which fails the build on the mistakes this
+repo has actually shipped before:
 
 - a page under `src/pages/destinations/` that leaves `DestinationLayout` or
   reintroduces its own `pageCss` (all 42 share `src/styles/destination.css`;
@@ -65,10 +68,11 @@ intentional, accept it explicitly:
 node tools/verify-deployment.mjs --update-baseline
 ```
 
-`astro build` deletes the aliased images, and it leaves the internal editorial
-notes in the built HTML; `npm run build` fixes both itself. If you run
-`npx astro build` directly, follow it with `npm run build:post`, which does the
-two together — the verifier will stop you if you forget either. Use
+`astro build` deletes the aliased images, leaves the internal editorial notes
+in the built HTML, and writes the sitemap as one unmergeable line; `npm run
+build` fixes all three itself. If you run `npx astro build` directly, follow it
+with `npm run build:post`, which does the three together — the verifier will
+stop you if you forget any of them. Use
 `npm run restore` only for the images alone, as on a fresh clone where there is
 no `dist/` yet to strip. After deploying, confirm the upload actually landed
 (the FTP account does not start in the web root):
@@ -87,8 +91,9 @@ every clean URL until the cutover; it is there for after it happens.
 
 122 pages plus the 404, fully linked, SEO meta/canonicals/JSON-LD in place,
 sitemap + robots included. Every count below rots; derive it rather than
-trusting it — `grep -o "<loc>" dist/sitemap-0.xml | wc -l` for the page total
-(`grep -c` returns 1: the sitemap has no newlines), and
+trusting it — `grep -c "<url>" dist/sitemap-0.xml` for the page total (the
+build reflows the sitemap to one `<url>` per line, so line counts and
+three-way merges both work on it), and
 `find dist/<section> -mindepth 2 -name index.html | wc -l` per section:
 
 - Homepage with 4-slide rotating hero, category grid, featured journey
@@ -138,7 +143,16 @@ directly instead — those are the real source now.
 
 > **The post-build stage must follow every `astro build` — `npm run build` does
 > it automatically; a direct `npx astro build` needs `npm run build:post`
-> after.** It covers two things the raw Astro build leaves wrong.
+> after.** It covers three things the raw Astro build leaves wrong.
+>
+> `@astrojs/sitemap` writes `sitemap-0.xml` and `sitemap-index.xml` as a
+> single line each. `dist/` is committed, so two content branches that each
+> moved a different page's `<lastmod>` changed the same line and every second
+> PR needed a hand merge (#189 and #190 on 2026-09-10 were the latest pair).
+> `tools/format-sitemap.mjs` reflows each file to one `<url>` per line — a
+> whitespace-only change no sitemap consumer notices — so unrelated pages land
+> in different hunks and git merges them by itself. The verifier's
+> `sitemap-line-format` check fails the build if the reflow was skipped.
 >
 > The build regenerates `dist/` from scratch, which deletes the 11 aliased
 > images it writes straight into `dist/assets/` (see `images-b64/ALIASES.json` —

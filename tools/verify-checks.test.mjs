@@ -90,7 +90,7 @@ const REAL_HEAD_LOCK = headJson("package-lock.json");
    drifted — the exact failure mode these tests exist to prevent. */
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
-  unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, formatSitemap, sitemapLineDefects, visibleText, PLACEHOLDER_PATTERNS,
   internalComments, stripInternalComments, telHrefDefects,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
@@ -2470,6 +2470,15 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      means the comparison itself is broken rather than the data. */
   t("real dist/sitemap-0.xml has nothing after its own newest date",
     futureLastmods(smUrls, lastmodPairs(smUrls).map(([, w]) => w).sort().at(-1)).length, 0);
+  /* The committed file must already be reflowed — format-sitemap.mjs runs
+     before this suite in `npm run build` — or two content PRs collide on
+     one line again. */
+  t("real dist/sitemap-0.xml is one entry per line (format-sitemap.mjs ran)",
+    sitemapLineDefects(smUrls).join("; "), "");
+  t("real dist/sitemap-index.xml is one entry per line",
+    sitemapLineDefects(smIdx).join("; "), "");
+  t("real dist/sitemap-0.xml is a fixed point of formatSitemap (a rebuild rewrites nothing)",
+    formatSitemap(smUrls), smUrls);
 
   const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
   /* The real file, which contains `immutable` four times in comments. */
@@ -2660,6 +2669,52 @@ t("the sitemap-index shape is scanned too, not just <url>",
 
 t("a clean sitemap yields nothing",
   futureLastmods(sm("https://x/", "2026-08-20") + sm("https://x/about/", "2026-08-24"), "2026-08-24").length, 0);
+
+/* ── sitemap-line-format ──
+   @astrojs/sitemap emits each file as ONE line, dist/ is committed, and so two
+   branches that each moved a different page's lastmod collided on that line
+   (#189 vs #190, 2026-09-10). formatSitemap reflows to one entry per line;
+   sitemapLineDefects is the verifier's tripwire for the stage being dropped.
+   The first fixture is the exact shape the integration writes: no newline
+   anywhere, no trailing newline. */
+const oneLine = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+  + sm("https://x/", "2026-08-20") + sm("https://x/about/", "2026-08-24") + "</urlset>";
+const reflowed = formatSitemap(oneLine);
+const oneLineIndex = '<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="x"><sitemap><loc>https://x/sitemap-0.xml</loc><lastmod>2026-08-25T00:00:00.000Z</lastmod></sitemap></sitemapindex>';
+
+t("line-format: the single-line file the integration emits is the defect (entries share a line, no trailing newline)",
+  JSON.stringify(sitemapLineDefects(oneLine)),
+  JSON.stringify(["line 1 holds 2 <url> entries", "no trailing newline"]));
+t("line-format: the reflowed file passes",
+  sitemapLineDefects(reflowed).length, 0);
+t("line-format: reflow puts each entry on a line of its own, indented",
+  reflowed.split("\n").filter((l) => /^  <url>.*<\/url>$/.test(l)).length, 2);
+t("line-format: declaration, root open tag and root close tag get their own lines",
+  reflowed.split("\n").slice(0, 2).concat(reflowed.split("\n").slice(-2)).join("|"),
+  '<?xml version="1.0" encoding="UTF-8"?>|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">|</urlset>|');
+t("line-format: reflow keeps every byte that is not inter-element whitespace",
+  reflowed.replace(/>\s+</g, "><").trim(), oneLine);
+t("line-format: reflow is idempotent, so a rebuild of unchanged sources rewrites nothing",
+  formatSitemap(reflowed), reflowed);
+t("line-format: a reflowed file that lost its trailing newline is a defect",
+  JSON.stringify(sitemapLineDefects(reflowed.trimEnd())), JSON.stringify(["no trailing newline"]));
+t("line-format: an entry sharing a line with the root tag is a defect",
+  sitemapLineDefects("<urlset>" + sm("https://x/", "2026-08-20") + "\n</urlset>\n").length, 1);
+t("line-format: the sitemap-index shape is covered too",
+  JSON.stringify(sitemapLineDefects(oneLineIndex)),
+  JSON.stringify(["line 1: the <sitemap> entry shares its line with other markup", "no trailing newline"]));
+t("line-format: reflowing the sitemap-index shape passes",
+  sitemapLineDefects(formatSitemap(oneLineIndex)).length, 0);
+t("line-format: reflow refuses a body it cannot place entirely into entries",
+  (() => { try { formatSitemap("<urlset><url><loc>https://x/</loc></url>stray</urlset>"); return "wrote"; } catch { return "threw"; } })(),
+  "threw");
+t("line-format: reflow refuses input with no sitemap root",
+  (() => { try { formatSitemap("<html></html>"); return "wrote"; } catch { return "threw"; } })(),
+  "threw");
+t("line-format: lastmodPairs still pairs every date across the new line breaks",
+  lastmodPairs(reflowed).length, 2);
+t("line-format: a file with no root is reported rather than passed",
+  sitemapLineDefects("<html></html>\n").length, 1);
 
 /* localDay is the fix itself, not just its guard, so these pin it directly.
 
