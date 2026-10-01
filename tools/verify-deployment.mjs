@@ -28,7 +28,7 @@ import {
   configuredSite, internalHrefs, deadInternalHrefs, linkTargets, decodeEntities, nestedCardAnchors,
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
   sitemapLineDefects, imageManifestDefects,
-  responsiveImageDefects,
+  responsiveImageDefects, assetRestoreHint, restoreScriptGaps, ASSET_RESTORE_STAGES,
 } from "./content-checks.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
@@ -171,10 +171,12 @@ for (const [asset, page] of assetRefs) {
 }
 if (!missingAssets.length) {
   notes.push(`${assetRefs.size} distinct local assets referenced, all present`);
-} else if (missingAssets.every((a) => a.startsWith("/assets/"))) {
+} else {
   // astro build wipes dist/assets/, including the aliased images that only
-  // restore_images.py writes. Nothing else warns about this.
-  hints.push("Every missing file is under /assets/ — run `npm run restore`. astro build wipes these on every run; `npm run build` restores them automatically.");
+  // restore_images.py writes and the /assets/responsive/ variants derived
+  // from them. Nothing else warns about this.
+  const restore = assetRestoreHint(missingAssets);
+  if (restore) hints.push(`Every missing file is under /assets/ — ${restore} astro build wipes these on every run; \`npm run build\` restores them automatically.`);
 }
 
 /* ── 3a. Every asset the SOURCE references is in the image pipeline ──
@@ -308,7 +310,8 @@ for (const file of htmlFiles) {
 }
 for (const p of ogMissing) {
   fail("og-image", `og:image target ${p} is not in dist/`);
-  if (p.startsWith("/assets/")) hints.push(`og:image ${p} lives under /assets/ — run \`npm run restore\`.`);
+  const restore = assetRestoreHint([p]);
+  if (restore) hints.push(`og:image ${p} lives under /assets/ — ${restore}`);
 }
 
 /* ── 4. Head tags match the committed baseline ──
@@ -1403,6 +1406,25 @@ notes.push(
     hints.push("post-build-parity: add the missing stage(s) to the `build` script in package.json, in the same order build:post runs them.");
   } else if (pkgScripts["build:post"]) {
     notes.push("build runs every stage build:post documents");
+  }
+}
+
+/* ── 4d-ter. `npm run restore` refills everything astro build wipes ──
+   The missing-asset and og-image hints above send people to `npm run
+   restore`. After #199 that script still ran restore-images.mjs alone, so a
+   checkout following the hint was left with every /assets/responsive/ variant
+   missing (106 on 2026-10-01). The hint was right about the command and wrong
+   about what it did. */
+{
+  const pkgScripts = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8"))?.scripts ?? {};
+  const gaps = restoreScriptGaps(pkgScripts);
+  if (gaps.length) {
+    fail("restore-parity",
+      `\`npm run restore\` does not run, in order: ${gaps.join(", ")} — the missing-asset hint ` +
+      "sends people to that script to refill dist/assets/, and it would leave files missing");
+    hints.push(`restore-parity: set the \`restore\` script in package.json to \`${ASSET_RESTORE_STAGES.join(" && ")}\`.`);
+  } else {
+    notes.push(`npm run restore runs all ${ASSET_RESTORE_STAGES.length} dist/assets/ stages`);
   }
 }
 

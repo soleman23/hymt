@@ -101,7 +101,7 @@ import {
   htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
   liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
-  responsiveImageDefects,
+  responsiveImageDefects, assetRestoreHint, restoreScriptGaps, ASSET_RESTORE_STAGES,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
@@ -4030,6 +4030,79 @@ t("post-build: absent build:post is not drift",
    this protects has drifted. */
 t("post-build: the shipped package.json has no drift",
   postBuildDrift(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
+
+/* ── missing-asset restore hint ── */
+
+/* The shape reproduced on 2026-10-01: a checkout not built since #199, with
+   the originals restored and every derived variant missing. The old hint
+   named `npm run restore` and stopped there, which left all 106 missing. */
+{
+  const derived = ["/assets/responsive/img/x-01-serengeti-elephants-1600.avif",
+    "/assets/responsive/img/dh-02-asia-temple-valley-1600.avif"];
+  const hint = assetRestoreHint(derived) ?? "";
+  t("restore-hint: derived variants name the stage that writes them",
+    hint.includes("node tools/build-responsive-images.mjs"), true);
+  t("restore-hint: ...after the stage that writes the originals",
+    hint.indexOf("node tools/restore-images.mjs") < hint.indexOf("node tools/build-responsive-images.mjs") &&
+      hint.includes("node tools/restore-images.mjs"), true);
+  t("restore-hint: ...and say how many of the missing are derived",
+    hint.includes("2 of 2 missing files are /assets/responsive/ variants"), true);
+}
+
+/* Originals only: the command, without a claim about derived files. */
+t("restore-hint: originals alone get the command and no derived-variant note",
+  assetRestoreHint(["/assets/img/dh-01-antarctica-ice-cliffs.jpg"]),
+  `run \`npm run restore\` (${ASSET_RESTORE_STAGES.join(" && ")}).`);
+
+/* A mix counts only the derived ones. */
+t("restore-hint: a mix counts the derived files, not all of them",
+  (assetRestoreHint(["/assets/img/a.jpg", "/assets/responsive/img/a-800.webp", "/assets/img/b.jpg"]) ?? "")
+    .includes("1 of 3 missing files is a /assets/responsive/ variant"), true);
+
+/* og:image passes one path at a time. */
+t("restore-hint: a single derived og:image path reads in the singular",
+  (assetRestoreHint(["/assets/responsive/img/a-1600.avif"]) ?? "")
+    .includes("1 of 1 missing file is a /assets/responsive/ variant"), true);
+
+/* Anything outside /assets/ means the build itself went wrong; an image
+   restore would not fix it, so no hint at all. */
+t("restore-hint: a missing stylesheet suppresses the hint",
+  assetRestoreHint(["/assets/responsive/img/a-1600.avif", "/_astro/index.css"]), null);
+t("restore-hint: nothing missing, no hint", assetRestoreHint([]), null);
+
+/* ── restore-parity ── */
+
+t("restore-parity: both stages in order passes",
+  restoreScriptGaps({ restore: "node tools/restore-images.mjs && node tools/build-responsive-images.mjs" }).length, 0);
+
+/* The shape that shipped in #199 and #200: the hint pointed here and the
+   script never derived a single variant. */
+t("restore-parity: restore-images alone fails, naming the derivation",
+  restoreScriptGaps({ restore: "node tools/restore-images.mjs" }).join(","),
+  "node tools/build-responsive-images.mjs");
+
+/* Unlike build/build:post, order is the point: the derivation reads the
+   originals, so running it first derives from whatever was there before. */
+t("restore-parity: derivation before the restore fails",
+  restoreScriptGaps({ restore: "node tools/build-responsive-images.mjs && node tools/restore-images.mjs" }).join(","),
+  "node tools/build-responsive-images.mjs");
+
+/* The hint names `npm run restore`; with no such script it names nothing. */
+t("restore-parity: an absent restore script misses every stage",
+  restoreScriptGaps({ build: "astro build" }).length, ASSET_RESTORE_STAGES.length);
+
+/* Against the real package.json, so the hint cannot pass here while the
+   script it names has drifted. */
+t("restore-parity: the shipped package.json runs every stage",
+  restoreScriptGaps(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
+
+/* And every stage the hint names is one the build itself runs, so `npm run
+   restore` cannot repair dist/ differently from `npm run build`. */
+{
+  const build = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts.build;
+  t("restore-parity: every restore stage is a build stage",
+    ASSET_RESTORE_STAGES.filter((s) => !build.includes(s)).join(","), "");
+}
 
 /* ── check-ai-crawlers (#156) ── */
 
