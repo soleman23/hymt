@@ -1922,6 +1922,61 @@ t("htaccess: the pre-#166 Permissions-Policy value is now a gap",
     `"geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"`,
     `"geolocation=(), microphone=(), camera=()"`)).length, 1);
 
+/* ── Lines Apache cannot parse ──
+   From 2026-08-17 to 2026-10-01 a curl -w example in a public/.htaccess
+   comment had its `\n` escape turned into a real newline, leaving a bare
+   `' <url>` line inside <IfModule mod_headers.c>. LiteSpeed skipped it;
+   Apache would have answered every request with a 500. Every check above
+   reads lines it is looking for, so a line nobody looks for passed them all.
+   Inside these template literals `\n` IS a real newline (the broken shape)
+   and `\\n` is the two-character escape (the correct one). */
+const withComment = (comment) =>
+  HT_GOOD.replace("<IfModule mod_headers.c>\n", `<IfModule mod_headers.c>\n${comment}`);
+const HT_MANGLED = withComment(`  #   curl -s -D - -o /dev/null -w 'wire=%{size_download}\n' <url>\n`);
+
+t("htaccess: a comment whose \\n escape became a real newline is caught",
+  htaccessGaps(HT_MANGLED).length, 1);
+
+t("htaccess: and the gap names the physical line and quotes it",
+  htaccessGaps(HT_MANGLED)[0].startsWith(
+    `line ${HT_MANGLED.split("\n").indexOf("' <url>") + 1} is not a comment, a container tag or a known directive: "' <url>"`), true);
+
+t("htaccess: the same comment with its literal \\n escape stays green",
+  htaccessGaps(withComment(`  #   curl -s -D - -o /dev/null -w 'wire=%{size_download}\\n' <url>\n`)).length, 0);
+
+t("htaccess: a wrapped comment whose second line lost its # is caught",
+  htaccessGaps(withComment(`  # Retest before removing no-transform from\n  the HTML rule, see #95\n`)).length, 1);
+
+/* A misspelled directive is the same 500 ("Invalid command"), and the
+   header it meant to send is also missing — two real gaps, both reported. */
+t("htaccess: a misspelled directive is caught as unparseable",
+  htaccessGaps(HT_GOOD.replace("Header set X-Frame-Options", "Heder set X-Frame-Options"))
+    .some((g) => g.includes(`"Heder set X-Frame-Options`)), true);
+
+t("htaccess: an unclosed container is caught",
+  htaccessGaps(HT_GOOD.replace(/<\/IfModule>$/, "")).length, 1);
+
+t("htaccess: a stray close with no container open is caught",
+  htaccessGaps(HT_GOOD + "\n</IfModule>").length, 1);
+
+/* One defect, one gap: the nesting check stops at the first error, as
+   Apache does, instead of reporting every container after it. */
+t("htaccess: a mismatched close is one gap, not a cascade",
+  htaccessGaps(HT_GOOD.replace("  </FilesMatch>", "  </IfModule>")).length, 1);
+
+t("htaccess: <Directory>, which .htaccess may not open, is one gap",
+  htaccessGaps(HT_GOOD + `\n<Directory "/var/www">\n  Options -Indexes\n</Directory>`).length, 1);
+
+/* False-positive guards: correct Apache this check must not fail. */
+t("htaccess: lowercase directive and container names stay green",
+  htaccessGaps(HT_GOOD + "\n<ifmodule mod_expires.c>\n  expiresactive On\n</IfModule>").length, 0);
+
+t("htaccess: whitespace-only lines and tab-indented comments stay green",
+  htaccessGaps(HT_GOOD.replace("AddType image/webp .webp\n", "AddType image/webp .webp\n \t \n\t# tab-indented\n")).length, 0);
+
+t("htaccess: an <If>/<Else> pair, including the argument-less <Else>, stays green",
+  htaccessGaps(HT_GOOD + `\n<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>\n<Else>\n  Header set X-Test "0"\n</Else>`).length, 0);
+
 /* ── remote-security-headers (#167) ──
    htaccessGaps proves the FILE. These prove the WIRE. Real Headers objects,
    not a fake — the production caller hands over a fetch response, and a stub
@@ -2532,6 +2587,11 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     htaccessGaps(htaccess).join(" | "), "");
   t("real dist/.htaccess does contain `immutable` in comments (so the guard is live)",
     /immutable/.test(htaccess), true);
+  /* The real file, broken the way it actually broke: one comment's tail moved
+     onto a line of its own without the #. Generic over whichever comment
+     matches first, so rewording the comments cannot quietly retire this. */
+  t("real dist/.htaccess with one comment's tail unwrapped is caught",
+    htaccessGaps(htaccess.replace(/^(\s*#.*\S) (\S+)$/m, "$1\n$2")).length, 1);
   /* Whichever spelling the real file ships, exactly as the verifier resolves
      it. These three pinned "-Report-Only" and so would have gone red the day
      #100 flips the header — with messages about missing script-src hashes,
