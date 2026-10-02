@@ -66,8 +66,9 @@ are read off those two agents. An earlier version of the tool sent invented
 as coverage, which measured nothing about either company — a 200 for a string no
 Google system sends is the unknown-UA control under a borrowed name.
 
-Open in [#156]. What was established this session, beyond what the issue body
-already said:
+Open in [#156] until 2026-10-01, when it closed as host policy (see the
+2026-10-01 resolution below). What was established this session, beyond
+what the issue body already said:
 
 - **The matcher is the case-insensitive substring `gptbot/1`.** `GPTBot/1.0`,
   `gptbot/1.0`, `xGPTBot/1.0` and `foo GPTBot/1.0 bar` are all 429; `GPTBot`,
@@ -203,9 +204,8 @@ Then `node tools/check-ai-crawlers.mjs --recover Meta-ExternalAgent --minutes 20
   Today it opened on 429, after nearly four weeks without a request from us,
   and stayed on 429 through 20 minutes of the same once-a-minute probing.
   Whatever limits it changed between those dates, and it now looks like the
-  GPTBot limit. That 09-04 recovery was the control the Hostinger ticket leaned
-  on. The ticket has been revised to report both agents, and is still unfiled
-  as of this entry.
+  GPTBot limit. That 09-04 recovery was the control the drafted Hostinger
+  ticket leaned on. It no longer matters: see the resolution below.
 - **GPTBot's first request from us in 21 days was 429.** That is not a clean
   idle, because the counter is shared with OpenAI's real crawler (2026-09-03
   above), and real GPTBot traffic could have kept it drained. What it does show
@@ -214,6 +214,25 @@ Then `node tools/check-ai-crawlers.mjs --recover Meta-ExternalAgent --minutes 20
   took 12 × 200. [OpenAI's crawler documentation][openai-bots] separates GPTBot
   (model training) from OAI-SearchBot (surfacing sites in ChatGPT search). So
   the 429 does not by itself explain the zero ChatGPT citations in § 2.
+
+**Resolution: host policy, cannot be changed per site. [#156] closed
+2026-10-01.** Hostinger had already answered on 2026-09-10. The answer sat in
+hPanel → Agent → History and was never written down here. A human agent wrote
+that the 429 "is coming from Hostinger's server-level infrastructure. Rate
+limits are applied to specific automated network ranges … these rate limits
+cannot be disabled or adjusted for individual websites or hosting plans". The
+policy is published as [Hostinger server-level rate limits for automated
+traffic][hostinger-429], which names Meta among the ranges, and that covers
+Meta-ExternalAgent too. Our probes came from a residential IP and were still
+refused by user-agent, so the rule matches on user-agent as well as range. The
+outcome does not change either way. `docs/seo/hostinger-ticket-gptbot-429.md`
+now records this in place of the draft.
+
+Keep running `npm run check:crawlers` each cycle. The point is no longer to
+build a case. It is to notice if the agents that matter for citations
+(OAI-SearchBot, ChatGPT-User, the Claude agents, PerplexityBot, Googlebot,
+Bingbot) ever join GPTBot and Meta-ExternalAgent on 429. That would be a
+reason to put a caching CDN in front of the origin.
 
 ---
 
@@ -335,3 +354,4 @@ samples. That is the case for keeping both measurements.
 [#37]: https://github.com/soleman23/hymt/issues/37
 [#156]: https://github.com/soleman23/hymt/issues/156
 [openai-bots]: https://platform.openai.com/docs/bots
+[hostinger-429]: https://www.hostinger.com/support/429-errors-on-automated-integrations-and-link-previews/
