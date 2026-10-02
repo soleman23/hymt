@@ -618,9 +618,13 @@ minutes.
       on 2026-08-17 (#95): compression is negotiated and correct *with*
       `no-transform` in place, so the workaround costs nothing and stays.
       Re-run only to confirm that still holds:
-      `curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}
-' https://www.hymtravel.com/destinations/caribbean-mexico/`
-      Expect `Content-Encoding: br` and a wire size near 13.5 KB. Do **not**
+      `curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}\n' https://www.hymtravel.com/destinations/caribbean-mexico/`
+      Expect `Content-Encoding: br` and a wire size around a quarter of the
+      uncompressed page: 13.5 KB on 2026-08-17, and 15.5 KB of 65 KB on
+      2026-10-01 after the page grew. A fixed byte figure goes stale with
+      every content change, so compare against the uncompressed size taken
+      at the same time (the same curl without the `Accept-Encoding` header).
+      Do **not**
       pipe `--compressed` into `wc -c` — curl decompresses, so that byte count
       reports the full document no matter what the edge did.
 - [ ] Full CWV review against field data

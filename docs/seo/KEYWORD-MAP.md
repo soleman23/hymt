@@ -214,11 +214,17 @@ available and it costs nothing.
 
 ## 4. Measuring this
 
-There is no reliable reporting surface for AI citation. Anyone selling one is
-extrapolating. The honest method:
+Only one first-party reporting surface for AI citation exists: Google's.
+Search Console → Performance → Generative AI features (beta, seen 2026-10-01)
+counts our impressions in Google's AI features by page, without queries.
+Anything else selling an AI-citation number is extrapolating. The honest method
+for every other engine:
 
-**Monthly**, ask ChatGPT, Claude, Perplexity and Google AI Mode roughly ten
-queries drawn from Clusters A–D, in a fresh session with no memory, and record:
+**Monthly**, ask ChatGPT, Claude, Perplexity and Google AI Mode the fixed set of
+ten queries in `ai-visibility-log.md` § 2 (drawn from Clusters A–D), in a fresh
+session with no memory, and record the fields below. As of 2026-10-01,
+Perplexity and Claude will not answer without a signed-in account, so those two
+need a person to run them.
 
 | Field | |
 |---|---|
@@ -229,7 +235,8 @@ queries drawn from Clusters A–D, in a fresh session with no memory, and record
 | If not, who was? | |
 | Answer quality on our topic | 1–5 |
 
-Keep it in `docs/seo/ai-visibility-log.md`. Six months of this is worth more
+Keep it in `docs/seo/ai-visibility-log.md`, with the Search Console figure in
+its § 3. Six months of this is worth more
 than any tool, because it tells you which *specific* competitor page is being
 quoted and therefore what yours needs to beat.
 
