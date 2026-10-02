@@ -1977,6 +1977,78 @@ t("htaccess: whitespace-only lines and tab-indented comments stay green",
 t("htaccess: an <If>/<Else> pair, including the argument-less <Else>, stays green",
   htaccessGaps(HT_GOOD + `\n<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>\n<Else>\n  Header set X-Test "0"\n</Else>`).length, 0);
 
+/* ── Well-formed tags Apache still rejects ──
+   A tag can balance and still be a 500. Each red case below was served from
+   an .htaccess by Apache 2.4.68 and answered 500 with the reason quoted;
+   each green one answered 200. Review of #202 found the first three passing. */
+const HT_IF = `<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>`;
+const HT_ELSE = `<Else>\n  Header set X-Test "0"\n</Else>`;
+const HT_ELSEIF = `<ElseIf "%{HTTP_HOST} == 'example.com'">\n  Header set X-Test "2"\n</ElseIf>`;
+const htPlus = (s) => htaccessGaps(`${HT_GOOD}\n${s}`);
+
+// "<IfModule> directive requires additional arguments"
+t("htaccess: <IfModule> with no module argument is caught",
+  htPlus(`<IfModule>\n  Header set X-Test "1"\n</IfModule>`).some((g) => g.includes("<IfModule> has no argument")), true);
+
+t("htaccess: <IfModule > with only whitespace for an argument is caught",
+  htPlus(`<IfModule >\n  Header set X-Test "1"\n</IfModule>`).length, 1);
+
+t("htaccess: <FilesMatch> with no pattern is caught",
+  htPlus(`<FilesMatch>\n  Header set X-Test "1"\n</FilesMatch>`).length, 1);
+
+// "<Else> does not take an argument", "<RequireAll> directive doesn't take additional arguments"
+t("htaccess: <Else> given an expression is caught",
+  htPlus(`${HT_IF}\n<Else "%{HTTP_HOST} == 'example.com'">\n  Header set X-Test "0"\n</Else>`).length, 1);
+
+t("htaccess: <RequireAll> given an argument is caught",
+  htPlus(`<RequireAll foo>\n  Require all granted\n</RequireAll>`).length, 1);
+
+// "<Else> or <ElseIf> section without previous <If> or <ElseIf> section in same scope"
+t("htaccess: an orphaned <Else> is caught",
+  htPlus(HT_ELSE).some((g) => g.includes("<Else> has no <If> or <ElseIf> before it")), true);
+
+t("htaccess: an orphaned <ElseIf> is caught",
+  htPlus(HT_ELSEIF).length, 1);
+
+t("htaccess: a second <Else> after an <If>/<Else> pair is caught",
+  htPlus(`${HT_IF}\n${HT_ELSE}\n${HT_ELSE}`).length, 1);
+
+t("htaccess: an <Else> inside <Files> cannot pair with an <If> outside it",
+  htPlus(`${HT_IF}\n<Files "x.txt">\n${HT_ELSE}\n</Files>`).length, 1);
+
+/* Stricter than Apache on purpose. With mod_headers loaded Apache splices
+   the <IfModule> body into the outer scope and accepts this; without it the
+   <If> is dropped and the same file is a 500. The pair has to work on every
+   server the file can land on. */
+t("htaccess: an <Else> after an <If> that sits inside <IfModule> is caught",
+  htPlus(`<IfModule mod_headers.c>\n${HT_IF}\n</IfModule>\n${HT_ELSE}`).length, 1);
+
+// "Invalid command 'CacheLookup'"
+t("htaccess: an unguarded LiteSpeed CacheLookup is caught",
+  htPlus(`CacheLookup on`).some((g) => g.includes("CacheLookup is LiteSpeed's")), true);
+
+t("htaccess: CacheLookup under <IfModule !LiteSpeed>, which Apache enters, is caught",
+  htPlus(`<IfModule !LiteSpeed>\n  CacheLookup on\n</IfModule>`).length, 1);
+
+t("htaccess: CacheLookup guarded by some other module is caught",
+  htPlus(`<IfModule mod_headers.c>\n  CacheLookup on\n</IfModule>`).length, 1);
+
+/* False-positive guards, each a 200 from Apache 2.4.68. */
+t("htaccess: an <If>/<ElseIf>/<Else> chain stays green",
+  htPlus(`${HT_IF}\n${HT_ELSEIF}\n${HT_ELSE}`).length, 0);
+
+t("htaccess: a directive and a <Files> block between </If> and <Else> stay green",
+  htPlus(`${HT_IF}\nHeader set X-Between "1"\n<Files "x.txt">\n  Header set X-F "1"\n</Files>\n${HT_ELSE}`).length, 0);
+
+t("htaccess: an <Else> opening an <IfModule> block right after an <If> stays green",
+  htPlus(`${HT_IF}\n<IfModule mod_headers.c>\n${HT_ELSE}\n</IfModule>`).length, 0);
+
+t("htaccess: argument-less <RequireAll> and <Limit> with methods stay green",
+  htPlus(`<RequireAll>\n  Require all granted\n</RequireAll>\n<Limit GET POST>\n  Require all granted\n</Limit>`).length, 0);
+
+t("htaccess: CacheLookup inside <IfModule LiteSpeed>, any case, nested or not, stays green",
+  htPlus(`<IfModule LiteSpeed>\n  CacheLookup on\n</IfModule>\n<IfModule litespeed>\n  <FilesMatch "\\.html$">\n    CacheLookup public on\n  </FilesMatch>\n</IfModule>`).length, 0);
+
 /* ── remote-security-headers (#167) ──
    htaccessGaps proves the FILE. These prove the WIRE. Real Headers objects,
    not a fake — the production caller hands over a fetch response, and a stub
@@ -2592,6 +2664,16 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      matches first, so rewording the comments cannot quietly retire this. */
   t("real dist/.htaccess with one comment's tail unwrapped is caught",
     htaccessGaps(htaccess.replace(/^(\s*#.*\S) (\S+)$/m, "$1\n$2")).length, 1);
+  /* The three mutations the #202 review ran against this file, all of which
+     passed before: an <IfModule> stripped of its module, an orphaned <Else>,
+     an unguarded CacheLookup. */
+  t("real dist/.htaccess with its first <IfModule> argument removed is caught",
+    htaccessGaps(htaccess.replace(/^<IfModule [^>]+>/m, "<IfModule>"))
+      .some((g) => g.includes("<IfModule> has no argument")), true);
+  t("real dist/.htaccess with an orphaned <Else> appended is caught",
+    htaccessGaps(`${htaccess}\n<Else>\n  Header set X-Test "0"\n</Else>\n`).length, 1);
+  t("real dist/.htaccess with an unguarded CacheLookup appended is caught",
+    htaccessGaps(`${htaccess}\nCacheLookup on\n`).length, 1);
   /* Whichever spelling the real file ships, exactly as the verifier resolves
      it. These three pinned "-Report-Only" and so would have gone red the day
      #100 flips the header — with messages about missing script-src hashes,
