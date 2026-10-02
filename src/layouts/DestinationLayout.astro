@@ -59,7 +59,6 @@ interface Props {
 
 const { title, description, ogImage, canonicalPath, schemaType, name, region, hero } = Astro.props;
 const stats = (hero.stats ?? []).filter((s) => s && s.label && s.value);
-const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
 
 /* ── JSON-LD (P2-4/P2-5) ──
    The visible breadcrumb below renders from this same trail array, so the
@@ -127,7 +126,10 @@ const ogCropAlt = (hero?.image && OG_CROPS[hero.image])
   </div>
 
   <section class="dest-hero">
-    <div class="dest-hero__bg" style={bgStyle}>
+    <div class="dest-hero__bg">
+      {hero.image && (
+        <img class="dest-hero__img" src={hero.image} alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="high">
+      )}
       {!hero.image && hero.placeholder && (
         <span class="dest-hero__bg-ph" set:html={hero.placeholder} />
       )}

@@ -25,6 +25,7 @@ import { readFile, writeFile, copyFile, access } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PUB = path.join(ROOT, "public");
@@ -50,7 +51,7 @@ const walk = async (dir) => {
 };
 for (const d of SRC_DIRS) if (await exists(path.join(ROOT, d))) await walk(path.join(ROOT, d));
 
-const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const manifest = await readImageManifest(MANIFEST);
 const known = new Set(manifest.map((m) => m.target));
 
 let adopted = 0, fine = 0;
@@ -73,7 +74,7 @@ for (const ref of [...refs].sort()) {
   adopted++;
 }
 
-if (adopted) await writeFile(MANIFEST, JSON.stringify(manifest, null, 1) + "\n", "utf8");
+if (adopted) await writeImageManifest(MANIFEST, manifest);
 
 console.log(`\nadopted ${adopted}, already in the pipeline ${fine}`);
 if (unrecoverable.length) {

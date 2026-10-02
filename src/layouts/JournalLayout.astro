@@ -59,7 +59,6 @@ interface Props {
 }
 
 const { title, description, ogImage, canonicalPath, publishDate, modifiedDate, name, category, hero } = Astro.props;
-const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
 
 /* en-US long form; parsed at UTC noon so the displayed day never shifts
    across timezones. */
@@ -137,7 +136,10 @@ const ogCropAlt = (hero?.image && OG_CROPS[hero.image]) ? plain(name) : undefine
   active="journal"
 >
   <section class="post-hero">
-    <div class="post-hero__bg" style={bgStyle}>
+    <div class="post-hero__bg">
+      {hero.image && (
+        <img class="post-hero__img" src={hero.image} alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="high">
+      )}
       {!hero.image && hero.placeholder && (
         <span class="post-hero__bg-ph" set:html={hero.placeholder} />
       )}

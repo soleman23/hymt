@@ -90,7 +90,8 @@ const REAL_HEAD_LOCK = headJson("package-lock.json");
    drifted — the exact failure mode these tests exist to prevent. */
 import {
   linkFloor, testimonialAttribution, faqFirstSentenceOver,
-  unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, visibleText, PLACEHOLDER_PATTERNS,
+  unsafeHrefs, inertCostSections, costFigureShape, futureLastmods, lastmodPairs, formatSitemap, sitemapLineDefects, visibleText, PLACEHOLDER_PATTERNS,
+  imageManifestDefects, sortImageManifest, formatImageManifest,
   internalComments, stripInternalComments, telHrefDefects,
   unsafeBlankLinks, eagerImageRefs, llmsClaimMismatches, heroStatLabels,
   undefinedInlineHandlers, linklessCards, inlineHandlers, uncappedFields, itemListDefects,
@@ -100,6 +101,7 @@ import {
   htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
   liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
+  responsiveImageDefects,
 } from "./content-checks.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
@@ -119,6 +121,14 @@ import {
   AGENTS as CRAWLER_AGENTS, DEFAULT_HOST as CRAWLER_HOST,
   classifyBurst, budgetFrom, controlsHeld, verdict, bodyDiffers, okSizes,
 } from "./check-ai-crawlers.mjs";
+
+/* ── responsive-images (#191) ── */
+const RESPONSIVE_HERO = `<link rel="preload" as="image" type="image/avif" href="/assets/responsive/hero-1600.avif" imagesrcset="/assets/responsive/hero-768.avif 768w, /assets/responsive/hero-1600.avif 1600w" imagesizes="100vw" fetchpriority="high"><picture class="responsive-picture"><source type="image/avif" srcset="/assets/responsive/hero-768.avif 768w" sizes="100vw"><source type="image/webp" srcset="/assets/responsive/hero-768.webp 768w" sizes="100vw"><img class="dest-hero__img" src="/assets/hero.jpg" srcset="/assets/hero.jpg 2000w" sizes="100vw"></picture>`;
+t("responsive-images: complete hero markup passes", responsiveImageDefects(RESPONSIVE_HERO).length, 0);
+t("responsive-images: an eligible bare image fails", responsiveImageDefects(`<img class="place-card__img" src="/assets/card.jpg">`).length, 1);
+t("responsive-images: missing WebP source fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/<source type="image\/webp"[^>]*>/, "")).length, 1);
+t("responsive-images: missing fallback sizes fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/ sizes="100vw"><\/picture>/, `><\/picture>`)).length, 1);
+t("responsive-images: missing hero preload fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/<link[^>]+>/, "")).length, 1);
 
 /* ── internal-link-floor ── */
 
@@ -1411,9 +1421,13 @@ t("place-alt: an unrelated region is still kept in the reverse direction",
 /* ── htaccess-headers ── */
 
 const HT_GOOD = `# a comment mentioning immutable, which must be ignored
+AddDefaultCharset UTF-8
+AddType image/avif .avif
+AddType image/webp .webp
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+  RewriteRule ^sitemap\\.xml$ /sitemap-index.xml [L]
   RewriteCond %{HTTP_HOST} ^hymtravel\\.com$ [NC]
   RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
 </IfModule>
@@ -1429,14 +1443,28 @@ const HT_GOOD = `# a comment mentioning immutable, which must be ignored
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"
   Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'sha256-AAA=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.google-analytics.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com; base-uri 'self'; object-src 'none'"
-  Header set Cache-Control "public, max-age=2592000, no-transform"
+  <FilesMatch "\\.(jpg|jpeg|png|webp|avif|svg|woff2?)$">
+    Header set Cache-Control "public, max-age=2592000, no-transform"
+  </FilesMatch>
+  <FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable, no-transform"
+  </FilesMatch>
 </IfModule>`;
 
 t("htaccess: a complete file is clean",
   htaccessGaps(HT_GOOD).length, 0);
 
+t("htaccess: missing AVIF MIME mapping is caught under nosniff",
+  htaccessGaps(HT_GOOD.replace("AddType image/avif .avif\n", "")).length, 1);
+
 t("htaccess: the verifier cannot skip the configured production site",
   rawHtaccessGaps(HT_GOOD).length, 1);
+
+t("htaccess: a missing UTF-8 default charset is caught",
+  htaccessGaps(HT_GOOD.replace("AddDefaultCharset UTF-8\n", "")).length, 1);
+
+t("htaccess: a non-UTF-8 default charset is caught",
+  htaccessGaps(HT_GOOD.replace("AddDefaultCharset UTF-8", "AddDefaultCharset ISO-8859-1")).length, 1);
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
@@ -1446,6 +1474,15 @@ t("htaccess: a legacy redirect with the wrong target is caught",
 
 t("htaccess: a temporary legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace("[R=301,L,NE]", "[R=302,L,NE]")).length, 1);
+
+t("htaccess: a missing conventional sitemap alias is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^sitemap.*$/m, "")).length, 1);
+
+t("htaccess: a redirecting sitemap alias is rejected",
+  htaccessGaps(HT_GOOD.replace("/sitemap-index.xml [L]", "/sitemap-index.xml [R=301,L]")).length, 1);
+
+t("htaccess: a non-terminating sitemap alias is caught",
+  htaccessGaps(HT_GOOD.replace("/sitemap-index.xml [L]", "/sitemap-index.xml [NC]")).length, 1);
 
 t("htaccess: legacy redirects below structural rules are caught",
   htaccessGaps(HT_GOOD
@@ -1465,10 +1502,19 @@ t("htaccess: a commented-out Header line does not satisfy the check",
   htaccessGaps(HT_GOOD.replace(`  Header set X-Frame-Options "SAMEORIGIN"`,
     `  # Header set X-Frame-Options "SAMEORIGIN"`)).length, 1);
 
-/* #107, reproduced exactly. */
-t("htaccess: immutable in a real Cache-Control is caught",
+/* #107, reproduced exactly: immutable is unsafe on stable image URLs. */
+t("htaccess: immutable on stable assets is caught",
   htaccessGaps(HT_GOOD.replace(`"public, max-age=2592000, no-transform"`,
-    `"public, max-age=31536000, immutable"`)).length, 2);   // immutable AND no no-transform
+    `"public, max-age=31536000, immutable"`)).length, 3);   // unsafe scope, bad immutable policy, and no no-transform
+
+t("htaccess: the hashed immutable rule is required",
+  htaccessGaps(HT_GOOD.replace(`  <FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable, no-transform"
+  </FilesMatch>
+`, "")).length, 1);
+
+t("htaccess: immutable is rejected under a broad CSS/JS scope",
+  htaccessGaps(HT_GOOD.replace("\\.[A-Za-z0-9_-]{8}\\.(css|js)$", "\\.(css|js)$")).length, 2);
 
 t("htaccess: a Cache-Control without no-transform is caught (#95)",
   htaccessGaps(HT_GOOD.replace(`, no-transform"`, `"`)).length, 1);
@@ -1861,12 +1907,12 @@ t("htaccess: `SetEnvIf IS_STAGING …` reading the var as input stays green",
 t("htaccess: a var named only inside a match pattern arms nothing",
   htaccessGaps(HT_GOOD + `\n  SetEnvIf Request_URI "IS_PROD" DEBUG=1\n`).length, 0);
 
-/* An empty file — the "someone renamed public/.htaccess" case. Exactly 13:
+/* An empty file — the "someone renamed public/.htaccess" case. Exactly 16:
    both migration redirects, the 4 security headers, both staging lines, both
-   HSTS lines (#79), the canonical-host rewrite, the CSP once, and the cache
-   once. */
-t("htaccess: an empty file reports all 13 gaps and does not throw",
-  htaccessGaps("").length, 13);
+   HSTS lines (#79), the canonical-host rewrite, sitemap alias, UTF-8 charset,
+   the CSP once, the cache once, and the hashed immutable rule. */
+t("htaccess: an empty file reports all 18 gaps and does not throw",
+  htaccessGaps("").length, 18);
 
 /* The #166 additions are pinned by exact string equality, so the value that
    shipped before them must now be a gap. Without this, the three copies could
@@ -1875,6 +1921,133 @@ t("htaccess: the pre-#166 Permissions-Policy value is now a gap",
   htaccessGaps(HT_GOOD.replace(
     `"geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"`,
     `"geolocation=(), microphone=(), camera=()"`)).length, 1);
+
+/* ── Lines Apache cannot parse ──
+   From 2026-08-17 to 2026-10-01 a curl -w example in a public/.htaccess
+   comment had its `\n` escape turned into a real newline, leaving a bare
+   `' <url>` line inside <IfModule mod_headers.c>. LiteSpeed skipped it;
+   Apache would have answered every request with a 500. Every check above
+   reads lines it is looking for, so a line nobody looks for passed them all.
+   Inside these template literals `\n` IS a real newline (the broken shape)
+   and `\\n` is the two-character escape (the correct one). */
+const withComment = (comment) =>
+  HT_GOOD.replace("<IfModule mod_headers.c>\n", `<IfModule mod_headers.c>\n${comment}`);
+const HT_MANGLED = withComment(`  #   curl -s -D - -o /dev/null -w 'wire=%{size_download}\n' <url>\n`);
+
+t("htaccess: a comment whose \\n escape became a real newline is caught",
+  htaccessGaps(HT_MANGLED).length, 1);
+
+t("htaccess: and the gap names the physical line and quotes it",
+  htaccessGaps(HT_MANGLED)[0].startsWith(
+    `line ${HT_MANGLED.split("\n").indexOf("' <url>") + 1} is not a comment, a container tag or a known directive: "' <url>"`), true);
+
+t("htaccess: the same comment with its literal \\n escape stays green",
+  htaccessGaps(withComment(`  #   curl -s -D - -o /dev/null -w 'wire=%{size_download}\\n' <url>\n`)).length, 0);
+
+t("htaccess: a wrapped comment whose second line lost its # is caught",
+  htaccessGaps(withComment(`  # Retest before removing no-transform from\n  the HTML rule, see #95\n`)).length, 1);
+
+/* A misspelled directive is the same 500 ("Invalid command"), and the
+   header it meant to send is also missing — two real gaps, both reported. */
+t("htaccess: a misspelled directive is caught as unparseable",
+  htaccessGaps(HT_GOOD.replace("Header set X-Frame-Options", "Heder set X-Frame-Options"))
+    .some((g) => g.includes(`"Heder set X-Frame-Options`)), true);
+
+t("htaccess: an unclosed container is caught",
+  htaccessGaps(HT_GOOD.replace(/<\/IfModule>$/, "")).length, 1);
+
+t("htaccess: a stray close with no container open is caught",
+  htaccessGaps(HT_GOOD + "\n</IfModule>").length, 1);
+
+/* One defect, one gap: the nesting check stops at the first error, as
+   Apache does, instead of reporting every container after it. */
+t("htaccess: a mismatched close is one gap, not a cascade",
+  htaccessGaps(HT_GOOD.replace("  </FilesMatch>", "  </IfModule>")).length, 1);
+
+t("htaccess: <Directory>, which .htaccess may not open, is one gap",
+  htaccessGaps(HT_GOOD + `\n<Directory "/var/www">\n  Options -Indexes\n</Directory>`).length, 1);
+
+/* False-positive guards: correct Apache this check must not fail. */
+t("htaccess: lowercase directive and container names stay green",
+  htaccessGaps(HT_GOOD + "\n<ifmodule mod_expires.c>\n  expiresactive On\n</IfModule>").length, 0);
+
+t("htaccess: whitespace-only lines and tab-indented comments stay green",
+  htaccessGaps(HT_GOOD.replace("AddType image/webp .webp\n", "AddType image/webp .webp\n \t \n\t# tab-indented\n")).length, 0);
+
+t("htaccess: an <If>/<Else> pair, including the argument-less <Else>, stays green",
+  htaccessGaps(HT_GOOD + `\n<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>\n<Else>\n  Header set X-Test "0"\n</Else>`).length, 0);
+
+/* ── Well-formed tags Apache still rejects ──
+   A tag can balance and still be a 500. Each red case below was served from
+   an .htaccess by Apache 2.4.68 and answered 500 with the reason quoted;
+   each green one answered 200. Review of #202 found the first three passing. */
+const HT_IF = `<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>`;
+const HT_ELSE = `<Else>\n  Header set X-Test "0"\n</Else>`;
+const HT_ELSEIF = `<ElseIf "%{HTTP_HOST} == 'example.com'">\n  Header set X-Test "2"\n</ElseIf>`;
+const htPlus = (s) => htaccessGaps(`${HT_GOOD}\n${s}`);
+
+// "<IfModule> directive requires additional arguments"
+t("htaccess: <IfModule> with no module argument is caught",
+  htPlus(`<IfModule>\n  Header set X-Test "1"\n</IfModule>`).some((g) => g.includes("<IfModule> has no argument")), true);
+
+t("htaccess: <IfModule > with only whitespace for an argument is caught",
+  htPlus(`<IfModule >\n  Header set X-Test "1"\n</IfModule>`).length, 1);
+
+t("htaccess: <FilesMatch> with no pattern is caught",
+  htPlus(`<FilesMatch>\n  Header set X-Test "1"\n</FilesMatch>`).length, 1);
+
+// "<Else> does not take an argument", "<RequireAll> directive doesn't take additional arguments"
+t("htaccess: <Else> given an expression is caught",
+  htPlus(`${HT_IF}\n<Else "%{HTTP_HOST} == 'example.com'">\n  Header set X-Test "0"\n</Else>`).length, 1);
+
+t("htaccess: <RequireAll> given an argument is caught",
+  htPlus(`<RequireAll foo>\n  Require all granted\n</RequireAll>`).length, 1);
+
+// "<Else> or <ElseIf> section without previous <If> or <ElseIf> section in same scope"
+t("htaccess: an orphaned <Else> is caught",
+  htPlus(HT_ELSE).some((g) => g.includes("<Else> has no <If> or <ElseIf> before it")), true);
+
+t("htaccess: an orphaned <ElseIf> is caught",
+  htPlus(HT_ELSEIF).length, 1);
+
+t("htaccess: a second <Else> after an <If>/<Else> pair is caught",
+  htPlus(`${HT_IF}\n${HT_ELSE}\n${HT_ELSE}`).length, 1);
+
+t("htaccess: an <Else> inside <Files> cannot pair with an <If> outside it",
+  htPlus(`${HT_IF}\n<Files "x.txt">\n${HT_ELSE}\n</Files>`).length, 1);
+
+/* Stricter than Apache on purpose. With mod_headers loaded Apache splices
+   the <IfModule> body into the outer scope and accepts this; without it the
+   <If> is dropped and the same file is a 500. The pair has to work on every
+   server the file can land on. */
+t("htaccess: an <Else> after an <If> that sits inside <IfModule> is caught",
+  htPlus(`<IfModule mod_headers.c>\n${HT_IF}\n</IfModule>\n${HT_ELSE}`).length, 1);
+
+// "Invalid command 'CacheLookup'"
+t("htaccess: an unguarded LiteSpeed CacheLookup is caught",
+  htPlus(`CacheLookup on`).some((g) => g.includes("CacheLookup is LiteSpeed's")), true);
+
+t("htaccess: CacheLookup under <IfModule !LiteSpeed>, which Apache enters, is caught",
+  htPlus(`<IfModule !LiteSpeed>\n  CacheLookup on\n</IfModule>`).length, 1);
+
+t("htaccess: CacheLookup guarded by some other module is caught",
+  htPlus(`<IfModule mod_headers.c>\n  CacheLookup on\n</IfModule>`).length, 1);
+
+/* False-positive guards, each a 200 from Apache 2.4.68. */
+t("htaccess: an <If>/<ElseIf>/<Else> chain stays green",
+  htPlus(`${HT_IF}\n${HT_ELSEIF}\n${HT_ELSE}`).length, 0);
+
+t("htaccess: a directive and a <Files> block between </If> and <Else> stay green",
+  htPlus(`${HT_IF}\nHeader set X-Between "1"\n<Files "x.txt">\n  Header set X-F "1"\n</Files>\n${HT_ELSE}`).length, 0);
+
+t("htaccess: an <Else> opening an <IfModule> block right after an <If> stays green",
+  htPlus(`${HT_IF}\n<IfModule mod_headers.c>\n${HT_ELSE}\n</IfModule>`).length, 0);
+
+t("htaccess: argument-less <RequireAll> and <Limit> with methods stay green",
+  htPlus(`<RequireAll>\n  Require all granted\n</RequireAll>\n<Limit GET POST>\n  Require all granted\n</Limit>`).length, 0);
+
+t("htaccess: CacheLookup inside <IfModule LiteSpeed>, any case, nested or not, stays green",
+  htPlus(`<IfModule LiteSpeed>\n  CacheLookup on\n</IfModule>\n<IfModule litespeed>\n  <FilesMatch "\\.html$">\n    CacheLookup public on\n  </FilesMatch>\n</IfModule>`).length, 0);
 
 /* ── remote-security-headers (#167) ──
    htaccessGaps proves the FILE. These prove the WIRE. Real Headers objects,
@@ -2470,6 +2643,15 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      means the comparison itself is broken rather than the data. */
   t("real dist/sitemap-0.xml has nothing after its own newest date",
     futureLastmods(smUrls, lastmodPairs(smUrls).map(([, w]) => w).sort().at(-1)).length, 0);
+  /* The committed file must already be reflowed — format-sitemap.mjs runs
+     before this suite in `npm run build` — or two content PRs collide on
+     one line again. */
+  t("real dist/sitemap-0.xml is one entry per line (format-sitemap.mjs ran)",
+    sitemapLineDefects(smUrls).join("; "), "");
+  t("real dist/sitemap-index.xml is one entry per line",
+    sitemapLineDefects(smIdx).join("; "), "");
+  t("real dist/sitemap-0.xml is a fixed point of formatSitemap (a rebuild rewrites nothing)",
+    formatSitemap(smUrls), smUrls);
 
   const htaccess = await readFile(path.join(dist, ".htaccess"), "utf8");
   /* The real file, which contains `immutable` four times in comments. */
@@ -2477,6 +2659,21 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     htaccessGaps(htaccess).join(" | "), "");
   t("real dist/.htaccess does contain `immutable` in comments (so the guard is live)",
     /immutable/.test(htaccess), true);
+  /* The real file, broken the way it actually broke: one comment's tail moved
+     onto a line of its own without the #. Generic over whichever comment
+     matches first, so rewording the comments cannot quietly retire this. */
+  t("real dist/.htaccess with one comment's tail unwrapped is caught",
+    htaccessGaps(htaccess.replace(/^(\s*#.*\S) (\S+)$/m, "$1\n$2")).length, 1);
+  /* The three mutations the #202 review ran against this file, all of which
+     passed before: an <IfModule> stripped of its module, an orphaned <Else>,
+     an unguarded CacheLookup. */
+  t("real dist/.htaccess with its first <IfModule> argument removed is caught",
+    htaccessGaps(htaccess.replace(/^<IfModule [^>]+>/m, "<IfModule>"))
+      .some((g) => g.includes("<IfModule> has no argument")), true);
+  t("real dist/.htaccess with an orphaned <Else> appended is caught",
+    htaccessGaps(`${htaccess}\n<Else>\n  Header set X-Test "0"\n</Else>\n`).length, 1);
+  t("real dist/.htaccess with an unguarded CacheLookup appended is caught",
+    htaccessGaps(`${htaccess}\nCacheLookup on\n`).length, 1);
   /* Whichever spelling the real file ships, exactly as the verifier resolves
      it. These three pinned "-Report-Only" and so would have gone red the day
      #100 flips the header — with messages about missing script-src hashes,
@@ -2660,6 +2857,128 @@ t("the sitemap-index shape is scanned too, not just <url>",
 
 t("a clean sitemap yields nothing",
   futureLastmods(sm("https://x/", "2026-08-20") + sm("https://x/about/", "2026-08-24"), "2026-08-24").length, 0);
+
+/* ── image-manifest-canonical ──
+   Every image writer appended to MANIFEST.json, so unrelated image PRs both
+   edited its final array element and conflicted. These fixtures pin the shared
+   helper's target ordering and the verifier path that keeps every writer on
+   it. Shape and uniqueness are part of the same canonical-write contract:
+   sorting duplicate or malformed rows would only make bad data deterministic. */
+const manifestEntry = (target, b64 = `images-b64/${path.basename(target)}.b64`, bytes = 1) =>
+  ({ b64, target, bytes });
+const manifestGood = [
+  manifestEntry("public/assets/img/a.jpg"),
+  manifestEntry("public/assets/img/z.jpg"),
+];
+const manifestBadOrder = [...manifestGood].reverse();
+
+t("image-manifest: target-sorted entries pass",
+  imageManifestDefects(manifestGood).length, 0);
+t("image-manifest: the former append-at-the-end shape fails with both rows named",
+  JSON.stringify(imageManifestDefects(manifestBadOrder)),
+  JSON.stringify(["entry 2 (public/assets/img/a.jpg) sorts before entry 1 (public/assets/img/z.jpg)"]));
+t("image-manifest: the shared writer sorts a copy by target",
+  sortImageManifest(manifestBadOrder).map((entry) => entry.target).join(","),
+  "public/assets/img/a.jpg,public/assets/img/z.jpg");
+t("image-manifest: sorting does not mutate the caller's array",
+  manifestBadOrder[0].target, "public/assets/img/z.jpg");
+t("image-manifest: canonical output is indent-1 LF with one trailing newline",
+  formatImageManifest(manifestBadOrder),
+  '[\n {\n  "b64": "images-b64/a.jpg.b64",\n  "target": "public/assets/img/a.jpg",\n  "bytes": 1\n },\n {\n  "b64": "images-b64/z.jpg.b64",\n  "target": "public/assets/img/z.jpg",\n  "bytes": 1\n }\n]\n');
+t("image-manifest: duplicate targets fail even with different b64 twins",
+  imageManifestDefects([
+    manifestEntry("public/assets/img/a.jpg", "images-b64/a-1.b64"),
+    manifestEntry("public/assets/img/a.jpg", "images-b64/a-2.b64"),
+  ]).some((d) => d.includes("duplicates target")), true);
+t("image-manifest: one b64 twin cannot restore two targets",
+  imageManifestDefects([
+    manifestEntry("public/assets/img/a.jpg", "images-b64/shared.b64"),
+    manifestEntry("public/assets/img/z.jpg", "images-b64/shared.b64"),
+  ]).some((d) => d.includes("duplicates b64")), true);
+t("image-manifest: invalid byte counts fail",
+  imageManifestDefects([manifestEntry("public/assets/img/a.jpg", "images-b64/a.b64", -1)])
+    .some((d) => d.includes("invalid bytes")), true);
+t("image-manifest: a non-array root fails instead of being treated as empty",
+  JSON.stringify(imageManifestDefects({})), JSON.stringify(["root is not an array"]));
+t("image-manifest: the verifier routes defects through a failing check",
+  /const manifestDefects = imageManifestDefects\(manifest\);[\s\S]*?for \(const d of manifestDefects\)[\s\S]*?fail\("image-manifest-canonical"/.test(verifierSrc), true);
+
+const realImageManifest = JSON.parse(
+  readFileSync(path.join(ROOT, "images-b64", "MANIFEST.json"), "utf8"));
+t("image-manifest: the committed manifest is canonical",
+  imageManifestDefects(realImageManifest).join("; "), "");
+t("image-manifest: the committed manifest is the helper's fixed point",
+  JSON.stringify(sortImageManifest(realImageManifest)), JSON.stringify(realImageManifest));
+
+const imageManifestWriters = [
+  "adopt-orphan-assets.mjs",
+  "cap-image-width.py",
+  "exp-card-intake.mjs",
+  "make-dest-card-crops.mjs",
+  "make-event-crops.mjs",
+  "make-home-card-crops.mjs",
+  "make-intro-crops.mjs",
+  "make-itin-crops.mjs",
+  "make-og-crops.mjs",
+  "make-place-card-crops.mjs",
+  "make-related-card-crops.mjs",
+  "p87-page-lazy-images.mjs",
+  "place-card-intake.mjs",
+  "place-card-intake.py",
+];
+for (const file of imageManifestWriters) {
+  const source = readFileSync(path.join(ROOT, "tools", file), "utf8");
+  const usesSharedWriter = file.endsWith(".py")
+    ? /image-manifest\.mjs/.test(source) && /subprocess\.run\(/.test(source)
+    : /from "\.\/image-manifest\.mjs"/.test(source) && /\bwriteImageManifest\s*\(/.test(source);
+  t(`image-manifest: ${file} writes through the shared helper`, usesSharedWriter, true);
+}
+
+/* ── sitemap-line-format ──
+   @astrojs/sitemap emits each file as ONE line, dist/ is committed, and so two
+   branches that each moved a different page's lastmod collided on that line
+   (#189 vs #190, 2026-09-10). formatSitemap reflows to one entry per line;
+   sitemapLineDefects is the verifier's tripwire for the stage being dropped.
+   The first fixture is the exact shape the integration writes: no newline
+   anywhere, no trailing newline. */
+const oneLine = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+  + sm("https://x/", "2026-08-20") + sm("https://x/about/", "2026-08-24") + "</urlset>";
+const reflowed = formatSitemap(oneLine);
+const oneLineIndex = '<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="x"><sitemap><loc>https://x/sitemap-0.xml</loc><lastmod>2026-08-25T00:00:00.000Z</lastmod></sitemap></sitemapindex>';
+
+t("line-format: the single-line file the integration emits is the defect (entries share a line, no trailing newline)",
+  JSON.stringify(sitemapLineDefects(oneLine)),
+  JSON.stringify(["line 1 holds 2 <url> entries", "no trailing newline"]));
+t("line-format: the reflowed file passes",
+  sitemapLineDefects(reflowed).length, 0);
+t("line-format: reflow puts each entry on a line of its own, indented",
+  reflowed.split("\n").filter((l) => /^  <url>.*<\/url>$/.test(l)).length, 2);
+t("line-format: declaration, root open tag and root close tag get their own lines",
+  reflowed.split("\n").slice(0, 2).concat(reflowed.split("\n").slice(-2)).join("|"),
+  '<?xml version="1.0" encoding="UTF-8"?>|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">|</urlset>|');
+t("line-format: reflow keeps every byte that is not inter-element whitespace",
+  reflowed.replace(/>\s+</g, "><").trim(), oneLine);
+t("line-format: reflow is idempotent, so a rebuild of unchanged sources rewrites nothing",
+  formatSitemap(reflowed), reflowed);
+t("line-format: a reflowed file that lost its trailing newline is a defect",
+  JSON.stringify(sitemapLineDefects(reflowed.trimEnd())), JSON.stringify(["no trailing newline"]));
+t("line-format: an entry sharing a line with the root tag is a defect",
+  sitemapLineDefects("<urlset>" + sm("https://x/", "2026-08-20") + "\n</urlset>\n").length, 1);
+t("line-format: the sitemap-index shape is covered too",
+  JSON.stringify(sitemapLineDefects(oneLineIndex)),
+  JSON.stringify(["line 1: the <sitemap> entry shares its line with other markup", "no trailing newline"]));
+t("line-format: reflowing the sitemap-index shape passes",
+  sitemapLineDefects(formatSitemap(oneLineIndex)).length, 0);
+t("line-format: reflow refuses a body it cannot place entirely into entries",
+  (() => { try { formatSitemap("<urlset><url><loc>https://x/</loc></url>stray</urlset>"); return "wrote"; } catch { return "threw"; } })(),
+  "threw");
+t("line-format: reflow refuses input with no sitemap root",
+  (() => { try { formatSitemap("<html></html>"); return "wrote"; } catch { return "threw"; } })(),
+  "threw");
+t("line-format: lastmodPairs still pairs every date across the new line breaks",
+  lastmodPairs(reflowed).length, 2);
+t("line-format: a file with no root is reported rather than passed",
+  sitemapLineDefects("<html></html>\n").length, 1);
 
 /* localDay is the fix itself, not just its guard, so these pin it directly.
 

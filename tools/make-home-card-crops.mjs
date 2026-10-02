@@ -33,6 +33,7 @@ import { readFile, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import sharp from "sharp";
+import { readImageManifest, writeImageManifest } from "./image-manifest.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const IMG = path.join(ROOT, "public", "assets", "img");
@@ -84,7 +85,7 @@ export const cropName = (src, prefix) =>
    same table rather than keeping a second copy that can drift. Only the CLI
    path builds anything. */
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+  const manifest = await readImageManifest(MANIFEST);
   const byTarget = new Map(manifest.map((m) => [m.target, m]));
 
   let built = 0, skipped = 0, before = 0, after = 0;
@@ -130,7 +131,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     console.log(`  ${out.padEnd(44)} ${(buf.length / 1024).toFixed(0).padStart(4)} KB  (from ${(srcStat.size / 1024).toFixed(0)} KB)`);
   }
 
-  await writeFile(MANIFEST, JSON.stringify(manifest, null, 1) + "\n", "utf8");
+  await writeImageManifest(MANIFEST, manifest);
 
   console.log(`\nbuilt ${built}, skipped ${skipped} (already fresh)`);
   console.log(`source heroes: ${(before / 1024 / 1024).toFixed(2)} MB  ->  card crops: ${(after / 1024).toFixed(0)} KB`);

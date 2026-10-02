@@ -44,7 +44,6 @@ interface Props {
 }
 
 const { title, description, ogImage, canonicalPath, schemaType, name, hero } = Astro.props;
-const bgStyle = hero.image ? `background-image:url('${hero.image}')` : undefined;
 
 /* ── JSON-LD (P2-4/P2-5) — same pattern as DestinationLayout ── */
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
@@ -106,7 +105,10 @@ const ogCropAlt = (hero?.image && OG_CROPS[hero.image]) ? plain(name) : undefine
   </div>
 
   <section class="exp-hero">
-    <div class="exp-hero__bg" style={bgStyle}>
+    <div class="exp-hero__bg">
+      {hero.image && (
+        <img class="exp-hero__img" src={hero.image} alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="high">
+      )}
       {!hero.image && hero.placeholder && (
         <span class="exp-hero__bg-ph" set:html={hero.placeholder} />
       )}

@@ -15,6 +15,34 @@
  */
 import { createHash } from "node:crypto";
 
+const RESPONSIVE_IMAGE_CLASSES = new Set(["dest-hero__img", "exp-hero__img", "post-hero__img", "place-card__img", "exp-card__img", "cat-card__img", "featured__img"]);
+const RESPONSIVE_HERO_CLASSES = new Set(["dest-hero__img", "exp-hero__img", "post-hero__img"]);
+const imageClasses = (tag) => (tag.match(/\bclass="([^"]*)"/i)?.[1] ?? "").split(/\s+/);
+
+/** Missing responsive markup on the image systems optimized by #191. */
+export function responsiveImageDefects(html) {
+  const defects = [];
+  const pictures = [...html.matchAll(/<picture\b[^>]*>[\s\S]*?<\/picture>/gi)].map((m) => m[0]);
+  const eligible = (html.match(/<img\b[^>]*>/gi) ?? []).filter((tag) => imageClasses(tag).some((name) => RESPONSIVE_IMAGE_CLASSES.has(name)));
+  for (const tag of eligible) {
+    const picture = pictures.find((block) => block.includes(tag));
+    if (!picture) { defects.push("eligible image is not inside <picture>"); continue; }
+    for (const format of ["avif", "webp"]) {
+      if (!new RegExp(`<source\\b[^>]*type="image/${format}"[^>]*\\bsrcset="[^"]+"[^>]*\\bsizes="[^"]+"`, "i").test(picture)) {
+        defects.push(`picture is missing a complete ${format.toUpperCase()} source`);
+      }
+    }
+    if (!/\bsrcset="[^"]+"/i.test(tag) || !/\bsizes="[^"]+"/i.test(tag)) {
+      defects.push("fallback image is missing srcset or sizes");
+    }
+  }
+  if (eligible.some((tag) => imageClasses(tag).some((name) => RESPONSIVE_HERO_CLASSES.has(name))) &&
+      !/<link\b[^>]*rel="preload"[^>]*as="image"[^>]*type="image\/avif"[^>]*imagesrcset="[^"]+"[^>]*imagesizes="100vw"/i.test(html)) {
+    defects.push("hero is missing its responsive AVIF preload");
+  }
+  return defects;
+}
+
 /** Visible text of an HTML fragment, tags and &nbsp; removed. */
 export const textIn = (s) =>
   s.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
@@ -1235,6 +1263,72 @@ export async function deadInternalHrefs(html, site, resolves) {
   return dead;
 }
 
+/* What htaccessGaps accepts as a live line. Not every Apache directive: the
+   ones valid in .htaccess context from core and the modules a static site on
+   this host plausibly reaches for, plus LiteSpeed's CacheLookup (allowed
+   only inside <IfModule LiteSpeed>, see HTACCESS_LITESPEED_ONLY). A real
+   directive missing here fails the build with a message saying to add it,
+   which is the safe direction — a misspelled directive is the same 500 as a
+   stray line ("Invalid command"), so an allowlist catches both.
+   <Directory> and <Location> are left out on purpose: .htaccess may not
+   open them, and Apache answers every request with a 500 if it does. */
+const HTACCESS_DIRECTIVES = new Set([
+  // core
+  "AcceptPathInfo", "AddDefaultCharset", "CGIPassAuth", "DefaultType", "EnableMMAP",
+  "EnableSendfile", "ErrorDocument", "FileETag", "ForceType", "LimitRequestBody",
+  "LimitXMLRequestBody", "Options", "ServerSignature", "SetHandler", "SetInputFilter",
+  "SetOutputFilter",
+  // mod_alias, mod_rewrite
+  "Redirect", "RedirectMatch", "RedirectPermanent", "RedirectTemp",
+  "RewriteBase", "RewriteCond", "RewriteEngine", "RewriteOptions", "RewriteRule",
+  // mod_mime, mod_dir, mod_autoindex, mod_negotiation
+  "AddCharset", "AddEncoding", "AddHandler", "AddInputFilter", "AddLanguage",
+  "AddOutputFilter", "AddType", "DefaultLanguage", "MultiviewsMatch", "RemoveCharset",
+  "RemoveEncoding", "RemoveHandler", "RemoveInputFilter", "RemoveLanguage",
+  "RemoveOutputFilter", "RemoveType",
+  "DirectoryCheckHandler", "DirectoryIndex", "DirectoryIndexRedirect", "DirectorySlash",
+  "FallbackResource", "IndexIgnore", "IndexOptions",
+  "ForceLanguagePriority", "LanguagePriority",
+  // mod_filter, mod_expires, mod_headers
+  "AddOutputFilterByType", "FilterChain", "FilterDeclare", "FilterProtocol", "FilterProvider",
+  "ExpiresActive", "ExpiresByType", "ExpiresDefault",
+  "Header", "RequestHeader",
+  // mod_env, mod_setenvif
+  "PassEnv", "SetEnv", "UnsetEnv",
+  "BrowserMatch", "BrowserMatchNoCase", "SetEnvIf", "SetEnvIfExpr", "SetEnvIfNoCase",
+  // access control and auth
+  "Allow", "Deny", "Order", "Require", "Satisfy",
+  "AuthBasicProvider", "AuthGroupFile", "AuthName", "AuthType", "AuthUserFile",
+  "SSLOptions", "SSLRequireSSL",
+  // PHP handler and LiteSpeed
+  "php_flag", "php_value", "CacheLookup",
+].map((d) => d.toLowerCase()));
+
+const HTACCESS_CONTAINERS = new Set([
+  "IfModule", "IfDefine", "IfVersion", "IfFile", "IfDirective", "IfSection",
+  "If", "ElseIf", "Else", "Files", "FilesMatch", "Limit", "LimitExcept",
+  "RequireAll", "RequireAny", "RequireNone",
+].map((c) => c.toLowerCase()));
+
+/* The containers that refuse an argument. Every other one in the set above
+   requires one. Both are a 500 on Apache 2.4.68: "<IfModule> directive
+   requires additional arguments", "<Else> does not take an argument". */
+const HTACCESS_NO_ARG_CONTAINERS = new Set(["else", "requireall", "requireany", "requirenone"]);
+
+/* Config-time conditionals. Apache skips their body unparsed when the test
+   fails and splices it into the enclosing scope when it passes, so neither
+   what is inside nor an <If> it holds can be relied on from outside. */
+const HTACCESS_CONDITIONALS = new Set(["ifmodule", "ifdefine", "ifversion", "iffile", "ifdirective", "ifsection"]);
+
+/* Containers that start a scope of their own for <If>/<Else> pairing.
+   <Limit> and the <Require*> blocks do not. */
+const HTACCESS_SCOPES = new Set(["if", "elseif", "else", "files", "filesmatch"]);
+
+/* Directives Apache does not have under any module. Apache only tolerates
+   them where it never parses them: inside <IfModule LiteSpeed>, whose test
+   is false on Apache. LiteSpeed's own cache docs wrap CacheLookup this way. */
+const HTACCESS_LITESPEED_ONLY = new Set(["cachelookup"]);
+
 export function htaccessGaps(text, productionSite) {
   /* Apache joins a backslash-continued line with the next BEFORE it parses
      anything, so this has to happen first: otherwise `Header always set \\`
@@ -1242,14 +1336,111 @@ export function htaccessGaps(text, productionSite) {
      the name on any single line, and every line-anchored check below — the
      duplicate counts included — simply does not see the directive. */
   const joined = [];
-  for (const raw of text.split(/\r?\n/)) {
+  const joinedAt = [];
+  for (const [i, raw] of text.split(/\r?\n/).entries()) {
     const prev = joined.length - 1;
     if (prev >= 0 && /\\$/.test(joined[prev])) joined[prev] = joined[prev].replace(/\\$/, " ") + raw.trim();
-    else joined.push(raw);
+    else { joined.push(raw); joinedAt.push(i + 1); }
   }
-  const liveLines = joined.filter((l) => !/^\s*#/.test(l));
+  const isComment = (l) => /^\s*#/.test(l);
+  const liveLines = joined.filter((l) => !isComment(l));
+  /* The physical line each live line starts on, for the syntax gaps below. */
+  const liveAt = joinedAt.filter((_, i) => !isComment(joined[i]));
   const live = liveLines.join("\n");
   const out = [];
+
+  /* Every live line must be something Apache can parse: a known directive or
+     a container tag, with the containers balanced. Apache answers EVERY
+     request with a 500 over a single line it cannot parse; LiteSpeed, which
+     is what Hostinger runs, skips the line and serves on. So this class of
+     defect is invisible in production and fatal the day the file meets
+     Apache. It shipped once: from 2026-08-17 to 2026-10-01 a curl -w example
+     in a comment had its `\n` escape turned into a real newline, leaving a
+     bare `' <url>` line inside <IfModule mod_headers.c>. Every check below
+     reads lines it is looking for, so a line nobody looks for passed all of
+     them. Reported first because it outranks any one missing header.
+     A well-formed tag can still be a 500, so tags are held to Apache's rules
+     too: the argument each container requires or refuses, an <Else> or
+     <ElseIf> only after an <If> or <ElseIf> in the same scope, and a
+     LiteSpeed-only directive only inside <IfModule LiteSpeed>. Every one of
+     these was driven against Apache 2.4.68 before it became a fixture. */
+  {
+    const quote = (l) => JSON.stringify(l.trim().length > 60 ? `${l.trim().slice(0, 57)}...` : l.trim());
+    /* null once the nesting has been reported broken. Apache stops at the
+       first nesting error, so this does too: one misplaced close would
+       otherwise cascade into a gap for every container after it. */
+    let open = [];
+    /* Whether an <Else> or <ElseIf> may open here: true right after an
+       </If> or </ElseIf> in this scope, and kept across plain directives and
+       <Files> blocks, which Apache also lets sit between the two. Each
+       container saves the outer value on open and settles it on close. */
+    let elseOk = false;
+    liveLines.forEach((l, i) => {
+      if (/^\s*$/.test(l)) return;
+      const at = liveAt[i];
+      const close = /^\s*<\/(\w+)\s*>\s*$/.exec(l);
+      const tag = close ?? /^\s*<(\w+)(?:\s(.*))?>\s*$/.exec(l);
+      if (tag) {
+        const name = tag[1];
+        const lower = name.toLowerCase();
+        const known = HTACCESS_CONTAINERS.has(lower);
+        if (!close) {
+          /* Reported once, at the open: its matching close then pops it
+             quietly, so <Directory>…</Directory> is one gap, not two. */
+          if (!known) out.push(`line ${at}: <${name}> is not a container .htaccess allows — Apache answers every request with 500`);
+          const arg = (tag[2] ?? "").trim();
+          if (known && !arg && !HTACCESS_NO_ARG_CONTAINERS.has(lower)) {
+            out.push(`line ${at}: <${name}> has no argument — Apache answers every request with 500 ("directive requires additional arguments")`);
+          }
+          if (known && arg && HTACCESS_NO_ARG_CONTAINERS.has(lower)) {
+            out.push(`line ${at}: <${name}> takes no argument but has ${quote(arg)} — Apache answers every request with 500`);
+          }
+          if ((lower === "else" || lower === "elseif") && open && !elseOk) {
+            out.push(`line ${at}: <${name}> has no <If> or <ElseIf> before it in the same scope — Apache answers every request with 500 (an <If> inside <IfModule> or another conditional block does not count: Apache drops it wherever that test fails)`);
+          }
+          open?.push({ name, at, reported: !known, arg, outerElseOk: elseOk });
+          if (HTACCESS_SCOPES.has(lower) || !known) elseOk = false;
+        } else if (!open) {
+          /* nesting already reported broken */
+        } else if (open.at(-1)?.name.toLowerCase() === lower) {
+          const { outerElseOk } = open.pop();
+          /* A conditional's body may or may not have been spliced in, so an
+             <Else> after it must be valid both ways. An <If> inside
+             <IfModule mod_x.c> pairs with an <Else> after it only on a server
+             that loads mod_x; this asks for the pair that works everywhere. */
+          elseOk = lower === "if" || lower === "elseif" ? true
+            : lower === "else" ? false
+            : HTACCESS_CONDITIONALS.has(lower) ? outerElseOk && elseOk
+            : HTACCESS_SCOPES.has(lower) || !known ? outerElseOk
+            : elseOk;
+        } else {
+          out.push(!known
+            ? `line ${at}: </${name}> is not a container .htaccess allows — Apache answers every request with 500`
+            : open.length
+              ? `line ${at} closes </${name}> while <${open.at(-1).name}> from line ${open.at(-1).at} is still open — Apache answers every request with 500`
+              : `line ${at} closes </${name}> with no container open — Apache answers every request with 500`);
+          open = null;
+        }
+        return;
+      }
+      const directive = /^\s*(\w+)(?:\s|$)/.exec(l)?.[1];
+      if (!directive || !HTACCESS_DIRECTIVES.has(directive.toLowerCase())) {
+        out.push(`line ${at} is not a comment, a container tag or a known directive: ${quote(l)} — Apache answers every request with 500 over a line it cannot parse (LiteSpeed skips it, so production hides the fault). A comment that lost its leading # needs it back; a real directive needs adding to HTACCESS_DIRECTIVES in content-checks.mjs`);
+      } else if (HTACCESS_LITESPEED_ONLY.has(directive.toLowerCase()) && open
+        && !open.some((o) => o.name.toLowerCase() === "ifmodule" && o.arg.toLowerCase() === "litespeed")) {
+        out.push(`line ${at}: ${directive} is LiteSpeed's, not Apache's, and is not inside <IfModule LiteSpeed> — Apache answers every request with 500 ("Invalid command")`);
+      }
+    });
+    for (const o of open ?? []) {
+      if (!o.reported) out.push(`<${o.name}> opened on line ${o.at} is never closed — Apache answers every request with 500`);
+    }
+  }
+
+  for (const [format, mime] of [["avif", "image/avif"], ["webp", "image/webp"]]) {
+    if (!new RegExp(`^\\s*AddType\\s+${mime.replace("/", "\\/")}\\s+\\.${format}\\s*$`, "mi").test(live)) {
+      out.push(`.${format} has no explicit ${mime} AddType mapping — Hostinger may serve it as text/plain, and nosniff then blocks the image`);
+    }
+  }
 
   /* Which Apache container each live line sits in. Two failure modes need
      this and neither shows up in a grep: a directive moved into a <FilesMatch>
@@ -1326,6 +1517,13 @@ export function htaccessGaps(text, productionSite) {
       .map((textLine, i) => ({ text: textLine, scope: scopes[i] }))
       .filter((d) => assigns(d.text, name));
 
+  const charsets = directiveLines(/^\s*AddDefaultCharset\s+(\S+)\s*$/i);
+  if (charsets.length !== 1 || charsets[0].m[1].toUpperCase() !== "UTF-8") {
+    out.push("AddDefaultCharset must declare UTF-8 exactly once");
+  } else if (narrowedBy(charsets[0])) {
+    out.push("AddDefaultCharset UTF-8 must apply site-wide, not inside a narrowed container");
+  }
+
   /* Same-domain Wix migration paths. These are deliberately absolute and
      precede the structural host/protocol rules in public/.htaccess so an old
      URL never pays for a redirect chain. */
@@ -1345,6 +1543,20 @@ export function htaccessGaps(text, productionSite) {
       if (firstStructuralRule !== -1 && m.index > firstStructuralRule) {
         out.push(`legacy redirect /${from} must precede the host/protocol rules to avoid a redirect chain`);
       }
+    }
+  }
+
+  /* Astro emits sitemap-index.xml rather than the conventional sitemap.xml.
+     The alias must be an internal rewrite so /sitemap.xml returns the XML
+     directly without creating another redirect or a second maintained file. */
+  const sitemapAlias = /^\s*RewriteRule\s+\^sitemap\\\.xml\$\s+\/sitemap-index\.xml\s+\[([^\]]+)\]/mi.exec(live);
+  if (!sitemapAlias) {
+    out.push("/sitemap.xml does not internally rewrite to /sitemap-index.xml");
+  } else {
+    const flags = sitemapAlias[1].split(",").map((flag) => flag.trim().toLowerCase());
+    if (!flags.includes("l")) out.push("/sitemap.xml rewrite must terminate with [L]");
+    if (flags.some((flag) => /^r(?:=|$)/.test(flag))) {
+      out.push("/sitemap.xml must be an internal rewrite, not a redirect");
     }
   }
 
@@ -1650,15 +1862,27 @@ export function htaccessGaps(text, productionSite) {
     }
   }
 
-  const caches = [...live.matchAll(/^\s*Header\s+(?:always\s+)?set\s+Cache-Control\s+"([^"]*)"/gim)];
+  const caches = headerLines("Cache-Control").map((line) => ({
+    ...line,
+    value: /^\s+"([^"]*)"/.exec(line.m[3])?.[1] ?? "",
+  }));
   if (!caches.length) out.push("no Cache-Control header — every asset would fall back to the host default");
   for (const c of caches) {
-    if (/\bimmutable\b/.test(c[1])) {
-      out.push(`Cache-Control "${c[1]}" contains immutable — #107: it promises a URL's bytes never change, which is false for the hand-named files under /assets/img/, and it served a year-old image from the CDN`);
+    const immutable = /\bimmutable\b/.test(c.value);
+    const scope = narrowedBy(c);
+    const hashedScope = scope === 'FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$"';
+    if (immutable && !hashedScope) {
+      out.push(`Cache-Control "${c.value}" contains immutable outside the content-hashed CSS/JS scope — #107 proved stable asset URLs can then replay obsolete bytes`);
     }
-    if (!/\bno-transform\b/.test(c[1])) {
-      out.push(`Cache-Control "${c[1]}" lacks no-transform (#95) — the CDN may recompress the asset`);
+    if (immutable && (!/\bmax-age=31536000\b/.test(c.value) || !/\bno-transform\b/.test(c.value))) {
+      out.push("content-hashed CSS/JS must use max-age=31536000, immutable, no-transform");
     }
+    if (!/\bno-transform\b/.test(c.value)) {
+      out.push(`Cache-Control "${c.value}" lacks no-transform (#95) — the CDN may recompress the asset`);
+    }
+  }
+  if (!caches.some((c) => /\bimmutable\b/.test(c.value) && narrowedBy(c) === 'FilesMatch "\\.[A-Za-z0-9_-]{8}\\.(css|js)$"')) {
+    out.push("content-hashed CSS/JS immutable cache rule is missing");
   }
   return out;
 }
@@ -2034,6 +2258,89 @@ export function costFigureShape(html) {
 }
 
 /**
+ * Stable code-point ordering for images-b64/MANIFEST.json.
+ *
+ * Every image intake and crop tool used to append at the array's end, so any
+ * two image PRs changed the same final lines and conflicted even when their
+ * assets were unrelated. Ordering by target distributes additions beside the
+ * asset family they belong to. The b64 tie-breaker makes the comparator total;
+ * duplicate targets are still defects and are rejected below.
+ */
+export function compareImageManifestEntries(a, b) {
+  const targetA = typeof a?.target === "string" ? a.target : "";
+  const targetB = typeof b?.target === "string" ? b.target : "";
+  if (targetA < targetB) return -1;
+  if (targetA > targetB) return 1;
+  const b64A = typeof a?.b64 === "string" ? a.b64 : "";
+  const b64B = typeof b?.b64 === "string" ? b.b64 : "";
+  return b64A < b64B ? -1 : b64A > b64B ? 1 : 0;
+}
+
+/**
+ * Manifest shape, uniqueness and ordering defects; [] means canonical.
+ *
+ * Kept pure so both the writer and verifier exercise exactly the same rule.
+ */
+export function imageManifestDefects(entries) {
+  if (!Array.isArray(entries)) return ["root is not an array"];
+
+  const out = [];
+  const targets = new Map();
+  const b64s = new Map();
+  for (const [i, entry] of entries.entries()) {
+    const n = i + 1;
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+      out.push(`entry ${n} is not an object`);
+      continue;
+    }
+    if (typeof entry.b64 !== "string" || !entry.b64) out.push(`entry ${n} has no b64 path`);
+    if (typeof entry.target !== "string" || !entry.target) out.push(`entry ${n} has no target path`);
+    if (!Number.isSafeInteger(entry.bytes) || entry.bytes < 0) out.push(`entry ${n} has invalid bytes`);
+
+    if (typeof entry.target === "string" && entry.target) {
+      if (targets.has(entry.target)) {
+        out.push(`entry ${n} duplicates target from entry ${targets.get(entry.target)}: ${entry.target}`);
+      } else {
+        targets.set(entry.target, n);
+      }
+    }
+    if (typeof entry.b64 === "string" && entry.b64) {
+      if (b64s.has(entry.b64)) {
+        out.push(`entry ${n} duplicates b64 from entry ${b64s.get(entry.b64)}: ${entry.b64}`);
+      } else {
+        b64s.set(entry.b64, n);
+      }
+    }
+  }
+
+  for (let i = 1; i < entries.length; i++) {
+    const before = entries[i - 1];
+    const current = entries[i];
+    if (typeof before?.target !== "string" || typeof current?.target !== "string") continue;
+    if (compareImageManifestEntries(before, current) > 0) {
+      out.push(`entry ${i + 1} (${current.target}) sorts before entry ${i} (${before.target})`);
+    }
+  }
+  return out;
+}
+
+/** A validated, sorted copy; the caller's array and entries are not mutated. */
+export function sortImageManifest(entries) {
+  if (!Array.isArray(entries)) throw new TypeError("sortImageManifest: root is not an array");
+  const sorted = entries.map((entry) =>
+    entry && typeof entry === "object" && !Array.isArray(entry) ? { ...entry } : entry)
+    .sort(compareImageManifestEntries);
+  const defects = imageManifestDefects(sorted);
+  if (defects.length) throw new Error(`sortImageManifest: ${defects.join("; ")}`);
+  return sorted;
+}
+
+/** Canonical indent-1 JSON with LF and one trailing newline. */
+export function formatImageManifest(entries) {
+  return JSON.stringify(sortImageManifest(entries), null, 1) + "\n";
+}
+
+/**
  * Every [loc, date] pair a sitemap declares, in document order.
  *
  * A lastmod in the future is never valid — it claims a page changed on a day
@@ -2077,6 +2384,64 @@ export function lastmodPairs(xml) {
  */
 export function futureLastmods(xml, today) {
   return lastmodPairs(xml).filter(([, when]) => when > today);
+}
+
+/**
+ * A sitemap reflowed to one entry per line.
+ *
+ * @astrojs/sitemap writes each file as a single line. dist/ is committed, so
+ * two branches that each moved a different page's <lastmod> changed the same
+ * line and git could not merge them — #189 and #190 (2026-09-10) were the
+ * latest pair, and the second always needed a hand merge. Whitespace between
+ * elements is insignificant to every sitemap consumer, so this puts the XML
+ * declaration, the root's opening tag, each <url> (or <sitemap>) and the
+ * closing tag on lines of their own. Unrelated pages then land in different
+ * hunks and merge by themselves; the same page moved on both sides still
+ * conflicts, which is right.
+ *
+ * Refuses rather than guesses: anything in the body that is not an entry, or
+ * any reflow that changes more than inter-element whitespace, throws. A drift
+ * in what the integration emits therefore fails the build instead of quietly
+ * dropping an entry. Idempotent, so a rebuild of unchanged sources leaves the
+ * committed file byte-identical.
+ */
+export function formatSitemap(xml) {
+  const m = xml.match(/^\s*(<\?xml[^>]*\?>)?\s*(<(urlset|sitemapindex)\b[^>]*>)([\s\S]*?)(<\/\3>)\s*$/);
+  if (!m) throw new Error("formatSitemap: no <urlset> or <sitemapindex> root");
+  const [, decl, open, root, body, close] = m;
+  const tag = root === "urlset" ? "url" : "sitemap";
+  const entry = new RegExp(`<${tag}>[\\s\\S]*?<\\/${tag}>`, "g");
+  const entries = (body.match(entry) || []).map((e) => e.replace(/>\s+</g, "><"));
+  const stray = body.replace(entry, "").trim();
+  if (stray) throw new Error(`formatSitemap: text outside <${tag}> entries: ${stray.slice(0, 60)}`);
+  const out = [decl, open, ...entries.map((e) => `  ${e}`), close].filter(Boolean).join("\n") + "\n";
+  const squash = (s) => s.replace(/>\s+</g, "><").trim();
+  if (squash(out) !== squash(xml)) throw new Error("formatSitemap: reflow changed more than whitespace between elements");
+  return out;
+}
+
+/**
+ * Why a sitemap file is not one entry per line, as messages; [] when it is.
+ *
+ * The verifier's tripwire for tools/format-sitemap.mjs being dropped from
+ * `npm run build`: that stage is what makes the committed sitemap mergeable,
+ * and a build that skips it stays green on every other check because the
+ * single line is perfectly valid XML.
+ */
+export function sitemapLineDefects(xml) {
+  const root = xml.match(/<(urlset|sitemapindex)\b/);
+  if (!root) return ["no <urlset> or <sitemapindex> root"];
+  const tag = root[1] === "urlset" ? "url" : "sitemap";
+  const opens = new RegExp(`<${tag}>`, "g");
+  const alone = new RegExp(`^\\s*<${tag}>.*<\\/${tag}>\\s*$`);
+  const out = [];
+  xml.split("\n").forEach((line, i) => {
+    const n = (line.match(opens) || []).length;
+    if (n > 1) out.push(`line ${i + 1} holds ${n} <${tag}> entries`);
+    else if (n === 1 && !alone.test(line)) out.push(`line ${i + 1}: the <${tag}> entry shares its line with other markup`);
+  });
+  if (!xml.endsWith("\n")) out.push("no trailing newline");
+  return out;
 }
 
 /**

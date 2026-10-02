@@ -214,11 +214,20 @@ available and it costs nothing.
 
 ## 4. Measuring this
 
-There is no reliable reporting surface for AI citation. Anyone selling one is
-extrapolating. The honest method:
+No engine reports AI citations first-party. The nearest thing is Google's:
+Search Console → Performance → Generative AI features (beta, seen 2026-10-01)
+counts **impressions**, the times a link to one of our pages was shown in
+Google's AI features, by page and without queries. That is visibility, not a
+citation count. It cannot say which question showed the page, so it cannot
+tell whether we were cited for a query below. Keep it as its own number, and
+never add it into the citation tally. Anything else selling an AI-citation
+number is extrapolating. The honest method for citations, Google included:
 
-**Monthly**, ask ChatGPT, Claude, Perplexity and Google AI Mode roughly ten
-queries drawn from Clusters A–D, in a fresh session with no memory, and record:
+**Monthly**, ask ChatGPT, Claude, Perplexity and Google AI Mode the fixed set of
+ten queries in `ai-visibility-log.md` § 2 (drawn from Clusters A–D), in a fresh
+session with no memory, and record the fields below. As of 2026-10-01,
+Perplexity and Claude will not answer without a signed-in account, so those two
+need a person to run them.
 
 | Field | |
 |---|---|
@@ -226,12 +235,15 @@ queries drawn from Clusters A–D, in a fresh session with no memory, and record
 | Engine | |
 | Query | |
 | Was hymtravel.com cited? | Y/N |
-| If not, who was? | |
+| If not, who was? | URL of each cited page, with its display name |
 | Answer quality on our topic | 1–5 |
 
-Keep it in `docs/seo/ai-visibility-log.md`. Six months of this is worth more
+Keep it in `docs/seo/ai-visibility-log.md`, with the Search Console figure in
+its § 3. Six months of this is worth more
 than any tool, because it tells you which *specific* competitor page is being
-quoted and therefore what yours needs to beat.
+quoted and therefore what yours needs to beat. That only works if the URL is
+recorded. A display name such as "Reddit" or "Tripadvisor" does not identify
+a page once the answer has changed, and the answer cannot be replayed.
 
 **Alongside**, from GSC: impressions and average position per cluster, using the
 target URLs above as the page filter. Impressions moving with no click movement

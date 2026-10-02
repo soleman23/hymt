@@ -29,6 +29,8 @@
      so the space above it is the only area that is free at any hero height. */
   display:flex;align-items:flex-start;justify-content:center;padding-top:56px;
 }
+.dest-hero__bg .responsive-picture { position:absolute;inset:0 }
+.dest-hero__img { display:block;width:100%;height:100%;object-fit:cover;object-position:center }
 .dest-hero__bg-ph {
   font-family:var(--font-d);font-size:11px;font-weight:600;
   letter-spacing:.18em;text-transform:uppercase;color:rgba(138,155,176,.18);
@@ -253,6 +255,7 @@
   display:block;width:100%;aspect-ratio:3/2;object-fit:cover;
   transition:transform .5s cubic-bezier(.16,1,.3,1);
 }
+.places-grid--photo .responsive-picture { display:block;width:100%;overflow:hidden }
 .places-grid--photo .place-card:hover .place-card__img { transform:scale(1.04) }
 /* Solid, and deliberately a fixed navy rather than var(--bg-card): the card
    copy is cream-on-dark in both themes today, and the light theme would flip
