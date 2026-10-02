@@ -32,8 +32,9 @@ disabled for individual websites or hosting plans".
 ## What it does and does not explain
 
 - **It explains Meta-ExternalAgent.** Meta is a named range. That fits it
-  joining GPTBot on a persistent 429 by 2026-10-01
-  (`ai-visibility-log.md` § 1).
+  joining GPTBot on 429 by 2026-10-01, when it did not recover within 20
+  minutes of once-a-minute probing (`ai-visibility-log.md` § 1). That run
+  shows the limit outlasted 20 minutes of probing, not that it never clears.
 - **It does not fully explain our measurements.** Every probe in #156 came from
   a residential IP, not from OpenAI's or Meta's networks, and was still refused
   on user-agent alone. The `gptbot/1` substring match is in the 2026-09-03
@@ -59,3 +60,29 @@ disabled for individual websites or hosting plans".
 
 The full ticket draft, with every measurement, is in git history: the
 2026-09-10 version on `main` and the 2026-10-01 revision in #201's first commit.
+
+**Do not reuse either draft's test loop as written.** Both state the acceptance
+test as twelve back-to-back requests against `/` and against
+`/destinations/africa/`, but the loop under each requests only `/`, so it
+cannot show the second half passed. This one covers both paths, for both
+user-agents:
+
+```
+for bot in gptbot meta; do
+  case $bot in
+    gptbot) ua="Mozilla/5.0 (compatible; GPTBot/1.0; +https://openai.com/gptbot)" ;;
+    meta)   ua="meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)" ;;
+  esac
+  for path in / /destinations/africa/; do
+    printf '%-7s %-22s ' "$bot" "$path"
+    for i in $(seq 1 12); do
+      curl -s -o /dev/null -w '%{http_code} ' -A "$ua" "https://www.hymtravel.com$path"
+    done; echo
+  done
+done
+```
+
+Twelve 200s on each of the four rows is a pass. A row that opens on 429 means
+the limit was already tripped, so it measures nothing. The second row for each
+bot starts with whatever budget the first row left, so if only that row fails,
+rest and rerun it alone before reading it as a failure.
