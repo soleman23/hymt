@@ -330,7 +330,7 @@ for what.
 ### 2026-10-01
 
 "3 months" setting, which covers 2026-08-31 to 2026-09-28, i.e. everything
-since launch: **41 impressions across 23 pages.**
+since launch: **41 impressions for the site, across 23 pages.**
 
 | Page | Impressions |
 |---|---|
@@ -344,14 +344,39 @@ since launch: **41 impressions across 23 pages.**
 | `https://hymtravel.com/` (apex) | 1 |
 | `/destinations/dominican-republic/` | 1 |
 | `/destinations/europe/` | 1 |
-| 13 more pages | — (not read) |
+| `/destinations/greenland/` | 1 |
+| `/destinations/peru/` | 1 |
+| `/destinations/south-pacific/` | 1 |
+| `/destinations/spain/` | 1 |
+| `/destinations/turks-caicos/` | 1 |
+| `/experiences/sports-event-travel/` | 1 |
+| `/experiences/wellness-retreat-travel/` | 1 |
+| `/plan-your-trip/` | 1 |
+| `/privacy-policy/` | 1 |
+| `/travel-journal/botswana-shoulder-season/` | 1 |
+| `/travel-journal/mediterranean-october/` | 1 |
+| `/travel-journal/napa-sonoma-winery-route/` | 1 |
+| `/travel-journal/willamette-valley-winery-route/` | 1 |
+
+**The rows add up to 44, not 41, and both are right.** The headline counts
+impressions for the property, so one AI answer that showed two of our pages
+is one impression. The page table counts the same answer once per page. The
+Countries (14 rows), Devices (3) and Dates (29) tabs are also counted per
+property, and each totals exactly 41. Google documents the difference under
+[Search Console's generative AI report metrics][gsc-ai-metrics]. Do not
+"correct" the headline to the row sum in later entries. The first version of
+this entry read only the first ten rows and called the other 13 "not read";
+they were read on 2026-10-01 after review of #201 flagged the arithmetic.
 
 For scale, all of Search over 28 days: 967 impressions, 12 clicks, average
-position 27.4. None of the ten pages above is a § 2 target. The site is
-surfacing in Google's AI features, but for questions other than the ones § 2
-samples. That is the case for keeping both measurements.
+position 27.4. One of the 23 pages is a § 2 target:
+`/travel-journal/mediterranean-october/` (query 7), with 1 impression. The
+other 22 are not. The site is surfacing in Google's AI features, but mostly
+for questions other than the ones § 2 samples. That is the case for keeping
+both measurements.
 
 [#37]: https://github.com/soleman23/hymt/issues/37
 [#156]: https://github.com/soleman23/hymt/issues/156
 [openai-bots]: https://platform.openai.com/docs/bots
 [hostinger-429]: https://www.hostinger.com/support/429-errors-on-automated-integrations-and-link-previews/
+[gsc-ai-metrics]: https://support.google.com/webmasters/answer/16984139#metrics
