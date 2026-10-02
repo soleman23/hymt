@@ -1922,6 +1922,133 @@ t("htaccess: the pre-#166 Permissions-Policy value is now a gap",
     `"geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()"`,
     `"geolocation=(), microphone=(), camera=()"`)).length, 1);
 
+/* ── Lines Apache cannot parse ──
+   From 2026-08-17 to 2026-10-01 a curl -w example in a public/.htaccess
+   comment had its `\n` escape turned into a real newline, leaving a bare
+   `' <url>` line inside <IfModule mod_headers.c>. LiteSpeed skipped it;
+   Apache would have answered every request with a 500. Every check above
+   reads lines it is looking for, so a line nobody looks for passed them all.
+   Inside these template literals `\n` IS a real newline (the broken shape)
+   and `\\n` is the two-character escape (the correct one). */
+const withComment = (comment) =>
+  HT_GOOD.replace("<IfModule mod_headers.c>\n", `<IfModule mod_headers.c>\n${comment}`);
+const HT_MANGLED = withComment(`  #   curl -s -D - -o /dev/null -w 'wire=%{size_download}\n' <url>\n`);
+
+t("htaccess: a comment whose \\n escape became a real newline is caught",
+  htaccessGaps(HT_MANGLED).length, 1);
+
+t("htaccess: and the gap names the physical line and quotes it",
+  htaccessGaps(HT_MANGLED)[0].startsWith(
+    `line ${HT_MANGLED.split("\n").indexOf("' <url>") + 1} is not a comment, a container tag or a known directive: "' <url>"`), true);
+
+t("htaccess: the same comment with its literal \\n escape stays green",
+  htaccessGaps(withComment(`  #   curl -s -D - -o /dev/null -w 'wire=%{size_download}\\n' <url>\n`)).length, 0);
+
+t("htaccess: a wrapped comment whose second line lost its # is caught",
+  htaccessGaps(withComment(`  # Retest before removing no-transform from\n  the HTML rule, see #95\n`)).length, 1);
+
+/* A misspelled directive is the same 500 ("Invalid command"), and the
+   header it meant to send is also missing — two real gaps, both reported. */
+t("htaccess: a misspelled directive is caught as unparseable",
+  htaccessGaps(HT_GOOD.replace("Header set X-Frame-Options", "Heder set X-Frame-Options"))
+    .some((g) => g.includes(`"Heder set X-Frame-Options`)), true);
+
+t("htaccess: an unclosed container is caught",
+  htaccessGaps(HT_GOOD.replace(/<\/IfModule>$/, "")).length, 1);
+
+t("htaccess: a stray close with no container open is caught",
+  htaccessGaps(HT_GOOD + "\n</IfModule>").length, 1);
+
+/* One defect, one gap: the nesting check stops at the first error, as
+   Apache does, instead of reporting every container after it. */
+t("htaccess: a mismatched close is one gap, not a cascade",
+  htaccessGaps(HT_GOOD.replace("  </FilesMatch>", "  </IfModule>")).length, 1);
+
+t("htaccess: <Directory>, which .htaccess may not open, is one gap",
+  htaccessGaps(HT_GOOD + `\n<Directory "/var/www">\n  Options -Indexes\n</Directory>`).length, 1);
+
+/* False-positive guards: correct Apache this check must not fail. */
+t("htaccess: lowercase directive and container names stay green",
+  htaccessGaps(HT_GOOD + "\n<ifmodule mod_expires.c>\n  expiresactive On\n</IfModule>").length, 0);
+
+t("htaccess: whitespace-only lines and tab-indented comments stay green",
+  htaccessGaps(HT_GOOD.replace("AddType image/webp .webp\n", "AddType image/webp .webp\n \t \n\t# tab-indented\n")).length, 0);
+
+t("htaccess: an <If>/<Else> pair, including the argument-less <Else>, stays green",
+  htaccessGaps(HT_GOOD + `\n<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>\n<Else>\n  Header set X-Test "0"\n</Else>`).length, 0);
+
+/* ── Well-formed tags Apache still rejects ──
+   A tag can balance and still be a 500. Each red case below was served from
+   an .htaccess by Apache 2.4.68 and answered 500 with the reason quoted;
+   each green one answered 200. Review of #202 found the first three passing. */
+const HT_IF = `<If "%{HTTP_HOST} == 'www.example.com'">\n  Header set X-Test "1"\n</If>`;
+const HT_ELSE = `<Else>\n  Header set X-Test "0"\n</Else>`;
+const HT_ELSEIF = `<ElseIf "%{HTTP_HOST} == 'example.com'">\n  Header set X-Test "2"\n</ElseIf>`;
+const htPlus = (s) => htaccessGaps(`${HT_GOOD}\n${s}`);
+
+// "<IfModule> directive requires additional arguments"
+t("htaccess: <IfModule> with no module argument is caught",
+  htPlus(`<IfModule>\n  Header set X-Test "1"\n</IfModule>`).some((g) => g.includes("<IfModule> has no argument")), true);
+
+t("htaccess: <IfModule > with only whitespace for an argument is caught",
+  htPlus(`<IfModule >\n  Header set X-Test "1"\n</IfModule>`).length, 1);
+
+t("htaccess: <FilesMatch> with no pattern is caught",
+  htPlus(`<FilesMatch>\n  Header set X-Test "1"\n</FilesMatch>`).length, 1);
+
+// "<Else> does not take an argument", "<RequireAll> directive doesn't take additional arguments"
+t("htaccess: <Else> given an expression is caught",
+  htPlus(`${HT_IF}\n<Else "%{HTTP_HOST} == 'example.com'">\n  Header set X-Test "0"\n</Else>`).length, 1);
+
+t("htaccess: <RequireAll> given an argument is caught",
+  htPlus(`<RequireAll foo>\n  Require all granted\n</RequireAll>`).length, 1);
+
+// "<Else> or <ElseIf> section without previous <If> or <ElseIf> section in same scope"
+t("htaccess: an orphaned <Else> is caught",
+  htPlus(HT_ELSE).some((g) => g.includes("<Else> has no <If> or <ElseIf> before it")), true);
+
+t("htaccess: an orphaned <ElseIf> is caught",
+  htPlus(HT_ELSEIF).length, 1);
+
+t("htaccess: a second <Else> after an <If>/<Else> pair is caught",
+  htPlus(`${HT_IF}\n${HT_ELSE}\n${HT_ELSE}`).length, 1);
+
+t("htaccess: an <Else> inside <Files> cannot pair with an <If> outside it",
+  htPlus(`${HT_IF}\n<Files "x.txt">\n${HT_ELSE}\n</Files>`).length, 1);
+
+/* Stricter than Apache on purpose. With mod_headers loaded Apache splices
+   the <IfModule> body into the outer scope and accepts this; without it the
+   <If> is dropped and the same file is a 500. The pair has to work on every
+   server the file can land on. */
+t("htaccess: an <Else> after an <If> that sits inside <IfModule> is caught",
+  htPlus(`<IfModule mod_headers.c>\n${HT_IF}\n</IfModule>\n${HT_ELSE}`).length, 1);
+
+// "Invalid command 'CacheLookup'"
+t("htaccess: an unguarded LiteSpeed CacheLookup is caught",
+  htPlus(`CacheLookup on`).some((g) => g.includes("CacheLookup is LiteSpeed's")), true);
+
+t("htaccess: CacheLookup under <IfModule !LiteSpeed>, which Apache enters, is caught",
+  htPlus(`<IfModule !LiteSpeed>\n  CacheLookup on\n</IfModule>`).length, 1);
+
+t("htaccess: CacheLookup guarded by some other module is caught",
+  htPlus(`<IfModule mod_headers.c>\n  CacheLookup on\n</IfModule>`).length, 1);
+
+/* False-positive guards, each a 200 from Apache 2.4.68. */
+t("htaccess: an <If>/<ElseIf>/<Else> chain stays green",
+  htPlus(`${HT_IF}\n${HT_ELSEIF}\n${HT_ELSE}`).length, 0);
+
+t("htaccess: a directive and a <Files> block between </If> and <Else> stay green",
+  htPlus(`${HT_IF}\nHeader set X-Between "1"\n<Files "x.txt">\n  Header set X-F "1"\n</Files>\n${HT_ELSE}`).length, 0);
+
+t("htaccess: an <Else> opening an <IfModule> block right after an <If> stays green",
+  htPlus(`${HT_IF}\n<IfModule mod_headers.c>\n${HT_ELSE}\n</IfModule>`).length, 0);
+
+t("htaccess: argument-less <RequireAll> and <Limit> with methods stay green",
+  htPlus(`<RequireAll>\n  Require all granted\n</RequireAll>\n<Limit GET POST>\n  Require all granted\n</Limit>`).length, 0);
+
+t("htaccess: CacheLookup inside <IfModule LiteSpeed>, any case, nested or not, stays green",
+  htPlus(`<IfModule LiteSpeed>\n  CacheLookup on\n</IfModule>\n<IfModule litespeed>\n  <FilesMatch "\\.html$">\n    CacheLookup public on\n  </FilesMatch>\n</IfModule>`).length, 0);
+
 /* ── remote-security-headers (#167) ──
    htaccessGaps proves the FILE. These prove the WIRE. Real Headers objects,
    not a fake — the production caller hands over a fetch response, and a stub
@@ -2532,6 +2659,21 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
     htaccessGaps(htaccess).join(" | "), "");
   t("real dist/.htaccess does contain `immutable` in comments (so the guard is live)",
     /immutable/.test(htaccess), true);
+  /* The real file, broken the way it actually broke: one comment's tail moved
+     onto a line of its own without the #. Generic over whichever comment
+     matches first, so rewording the comments cannot quietly retire this. */
+  t("real dist/.htaccess with one comment's tail unwrapped is caught",
+    htaccessGaps(htaccess.replace(/^(\s*#.*\S) (\S+)$/m, "$1\n$2")).length, 1);
+  /* The three mutations the #202 review ran against this file, all of which
+     passed before: an <IfModule> stripped of its module, an orphaned <Else>,
+     an unguarded CacheLookup. */
+  t("real dist/.htaccess with its first <IfModule> argument removed is caught",
+    htaccessGaps(htaccess.replace(/^<IfModule [^>]+>/m, "<IfModule>"))
+      .some((g) => g.includes("<IfModule> has no argument")), true);
+  t("real dist/.htaccess with an orphaned <Else> appended is caught",
+    htaccessGaps(`${htaccess}\n<Else>\n  Header set X-Test "0"\n</Else>\n`).length, 1);
+  t("real dist/.htaccess with an unguarded CacheLookup appended is caught",
+    htaccessGaps(`${htaccess}\nCacheLookup on\n`).length, 1);
   /* Whichever spelling the real file ships, exactly as the verifier resolves
      it. These three pinned "-Report-Only" and so would have gone red the day
      #100 flips the header — with messages about missing script-src hashes,

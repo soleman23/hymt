@@ -1263,6 +1263,72 @@ export async function deadInternalHrefs(html, site, resolves) {
   return dead;
 }
 
+/* What htaccessGaps accepts as a live line. Not every Apache directive: the
+   ones valid in .htaccess context from core and the modules a static site on
+   this host plausibly reaches for, plus LiteSpeed's CacheLookup (allowed
+   only inside <IfModule LiteSpeed>, see HTACCESS_LITESPEED_ONLY). A real
+   directive missing here fails the build with a message saying to add it,
+   which is the safe direction — a misspelled directive is the same 500 as a
+   stray line ("Invalid command"), so an allowlist catches both.
+   <Directory> and <Location> are left out on purpose: .htaccess may not
+   open them, and Apache answers every request with a 500 if it does. */
+const HTACCESS_DIRECTIVES = new Set([
+  // core
+  "AcceptPathInfo", "AddDefaultCharset", "CGIPassAuth", "DefaultType", "EnableMMAP",
+  "EnableSendfile", "ErrorDocument", "FileETag", "ForceType", "LimitRequestBody",
+  "LimitXMLRequestBody", "Options", "ServerSignature", "SetHandler", "SetInputFilter",
+  "SetOutputFilter",
+  // mod_alias, mod_rewrite
+  "Redirect", "RedirectMatch", "RedirectPermanent", "RedirectTemp",
+  "RewriteBase", "RewriteCond", "RewriteEngine", "RewriteOptions", "RewriteRule",
+  // mod_mime, mod_dir, mod_autoindex, mod_negotiation
+  "AddCharset", "AddEncoding", "AddHandler", "AddInputFilter", "AddLanguage",
+  "AddOutputFilter", "AddType", "DefaultLanguage", "MultiviewsMatch", "RemoveCharset",
+  "RemoveEncoding", "RemoveHandler", "RemoveInputFilter", "RemoveLanguage",
+  "RemoveOutputFilter", "RemoveType",
+  "DirectoryCheckHandler", "DirectoryIndex", "DirectoryIndexRedirect", "DirectorySlash",
+  "FallbackResource", "IndexIgnore", "IndexOptions",
+  "ForceLanguagePriority", "LanguagePriority",
+  // mod_filter, mod_expires, mod_headers
+  "AddOutputFilterByType", "FilterChain", "FilterDeclare", "FilterProtocol", "FilterProvider",
+  "ExpiresActive", "ExpiresByType", "ExpiresDefault",
+  "Header", "RequestHeader",
+  // mod_env, mod_setenvif
+  "PassEnv", "SetEnv", "UnsetEnv",
+  "BrowserMatch", "BrowserMatchNoCase", "SetEnvIf", "SetEnvIfExpr", "SetEnvIfNoCase",
+  // access control and auth
+  "Allow", "Deny", "Order", "Require", "Satisfy",
+  "AuthBasicProvider", "AuthGroupFile", "AuthName", "AuthType", "AuthUserFile",
+  "SSLOptions", "SSLRequireSSL",
+  // PHP handler and LiteSpeed
+  "php_flag", "php_value", "CacheLookup",
+].map((d) => d.toLowerCase()));
+
+const HTACCESS_CONTAINERS = new Set([
+  "IfModule", "IfDefine", "IfVersion", "IfFile", "IfDirective", "IfSection",
+  "If", "ElseIf", "Else", "Files", "FilesMatch", "Limit", "LimitExcept",
+  "RequireAll", "RequireAny", "RequireNone",
+].map((c) => c.toLowerCase()));
+
+/* The containers that refuse an argument. Every other one in the set above
+   requires one. Both are a 500 on Apache 2.4.68: "<IfModule> directive
+   requires additional arguments", "<Else> does not take an argument". */
+const HTACCESS_NO_ARG_CONTAINERS = new Set(["else", "requireall", "requireany", "requirenone"]);
+
+/* Config-time conditionals. Apache skips their body unparsed when the test
+   fails and splices it into the enclosing scope when it passes, so neither
+   what is inside nor an <If> it holds can be relied on from outside. */
+const HTACCESS_CONDITIONALS = new Set(["ifmodule", "ifdefine", "ifversion", "iffile", "ifdirective", "ifsection"]);
+
+/* Containers that start a scope of their own for <If>/<Else> pairing.
+   <Limit> and the <Require*> blocks do not. */
+const HTACCESS_SCOPES = new Set(["if", "elseif", "else", "files", "filesmatch"]);
+
+/* Directives Apache does not have under any module. Apache only tolerates
+   them where it never parses them: inside <IfModule LiteSpeed>, whose test
+   is false on Apache. LiteSpeed's own cache docs wrap CacheLookup this way. */
+const HTACCESS_LITESPEED_ONLY = new Set(["cachelookup"]);
+
 export function htaccessGaps(text, productionSite) {
   /* Apache joins a backslash-continued line with the next BEFORE it parses
      anything, so this has to happen first: otherwise `Header always set \\`
@@ -1270,14 +1336,105 @@ export function htaccessGaps(text, productionSite) {
      the name on any single line, and every line-anchored check below — the
      duplicate counts included — simply does not see the directive. */
   const joined = [];
-  for (const raw of text.split(/\r?\n/)) {
+  const joinedAt = [];
+  for (const [i, raw] of text.split(/\r?\n/).entries()) {
     const prev = joined.length - 1;
     if (prev >= 0 && /\\$/.test(joined[prev])) joined[prev] = joined[prev].replace(/\\$/, " ") + raw.trim();
-    else joined.push(raw);
+    else { joined.push(raw); joinedAt.push(i + 1); }
   }
-  const liveLines = joined.filter((l) => !/^\s*#/.test(l));
+  const isComment = (l) => /^\s*#/.test(l);
+  const liveLines = joined.filter((l) => !isComment(l));
+  /* The physical line each live line starts on, for the syntax gaps below. */
+  const liveAt = joinedAt.filter((_, i) => !isComment(joined[i]));
   const live = liveLines.join("\n");
   const out = [];
+
+  /* Every live line must be something Apache can parse: a known directive or
+     a container tag, with the containers balanced. Apache answers EVERY
+     request with a 500 over a single line it cannot parse; LiteSpeed, which
+     is what Hostinger runs, skips the line and serves on. So this class of
+     defect is invisible in production and fatal the day the file meets
+     Apache. It shipped once: from 2026-08-17 to 2026-10-01 a curl -w example
+     in a comment had its `\n` escape turned into a real newline, leaving a
+     bare `' <url>` line inside <IfModule mod_headers.c>. Every check below
+     reads lines it is looking for, so a line nobody looks for passed all of
+     them. Reported first because it outranks any one missing header.
+     A well-formed tag can still be a 500, so tags are held to Apache's rules
+     too: the argument each container requires or refuses, an <Else> or
+     <ElseIf> only after an <If> or <ElseIf> in the same scope, and a
+     LiteSpeed-only directive only inside <IfModule LiteSpeed>. Every one of
+     these was driven against Apache 2.4.68 before it became a fixture. */
+  {
+    const quote = (l) => JSON.stringify(l.trim().length > 60 ? `${l.trim().slice(0, 57)}...` : l.trim());
+    /* null once the nesting has been reported broken. Apache stops at the
+       first nesting error, so this does too: one misplaced close would
+       otherwise cascade into a gap for every container after it. */
+    let open = [];
+    /* Whether an <Else> or <ElseIf> may open here: true right after an
+       </If> or </ElseIf> in this scope, and kept across plain directives and
+       <Files> blocks, which Apache also lets sit between the two. Each
+       container saves the outer value on open and settles it on close. */
+    let elseOk = false;
+    liveLines.forEach((l, i) => {
+      if (/^\s*$/.test(l)) return;
+      const at = liveAt[i];
+      const close = /^\s*<\/(\w+)\s*>\s*$/.exec(l);
+      const tag = close ?? /^\s*<(\w+)(?:\s(.*))?>\s*$/.exec(l);
+      if (tag) {
+        const name = tag[1];
+        const lower = name.toLowerCase();
+        const known = HTACCESS_CONTAINERS.has(lower);
+        if (!close) {
+          /* Reported once, at the open: its matching close then pops it
+             quietly, so <Directory>…</Directory> is one gap, not two. */
+          if (!known) out.push(`line ${at}: <${name}> is not a container .htaccess allows — Apache answers every request with 500`);
+          const arg = (tag[2] ?? "").trim();
+          if (known && !arg && !HTACCESS_NO_ARG_CONTAINERS.has(lower)) {
+            out.push(`line ${at}: <${name}> has no argument — Apache answers every request with 500 ("directive requires additional arguments")`);
+          }
+          if (known && arg && HTACCESS_NO_ARG_CONTAINERS.has(lower)) {
+            out.push(`line ${at}: <${name}> takes no argument but has ${quote(arg)} — Apache answers every request with 500`);
+          }
+          if ((lower === "else" || lower === "elseif") && open && !elseOk) {
+            out.push(`line ${at}: <${name}> has no <If> or <ElseIf> before it in the same scope — Apache answers every request with 500 (an <If> inside <IfModule> or another conditional block does not count: Apache drops it wherever that test fails)`);
+          }
+          open?.push({ name, at, reported: !known, arg, outerElseOk: elseOk });
+          if (HTACCESS_SCOPES.has(lower) || !known) elseOk = false;
+        } else if (!open) {
+          /* nesting already reported broken */
+        } else if (open.at(-1)?.name.toLowerCase() === lower) {
+          const { outerElseOk } = open.pop();
+          /* A conditional's body may or may not have been spliced in, so an
+             <Else> after it must be valid both ways. An <If> inside
+             <IfModule mod_x.c> pairs with an <Else> after it only on a server
+             that loads mod_x; this asks for the pair that works everywhere. */
+          elseOk = lower === "if" || lower === "elseif" ? true
+            : lower === "else" ? false
+            : HTACCESS_CONDITIONALS.has(lower) ? outerElseOk && elseOk
+            : HTACCESS_SCOPES.has(lower) || !known ? outerElseOk
+            : elseOk;
+        } else {
+          out.push(!known
+            ? `line ${at}: </${name}> is not a container .htaccess allows — Apache answers every request with 500`
+            : open.length
+              ? `line ${at} closes </${name}> while <${open.at(-1).name}> from line ${open.at(-1).at} is still open — Apache answers every request with 500`
+              : `line ${at} closes </${name}> with no container open — Apache answers every request with 500`);
+          open = null;
+        }
+        return;
+      }
+      const directive = /^\s*(\w+)(?:\s|$)/.exec(l)?.[1];
+      if (!directive || !HTACCESS_DIRECTIVES.has(directive.toLowerCase())) {
+        out.push(`line ${at} is not a comment, a container tag or a known directive: ${quote(l)} — Apache answers every request with 500 over a line it cannot parse (LiteSpeed skips it, so production hides the fault). A comment that lost its leading # needs it back; a real directive needs adding to HTACCESS_DIRECTIVES in content-checks.mjs`);
+      } else if (HTACCESS_LITESPEED_ONLY.has(directive.toLowerCase()) && open
+        && !open.some((o) => o.name.toLowerCase() === "ifmodule" && o.arg.toLowerCase() === "litespeed")) {
+        out.push(`line ${at}: ${directive} is LiteSpeed's, not Apache's, and is not inside <IfModule LiteSpeed> — Apache answers every request with 500 ("Invalid command")`);
+      }
+    });
+    for (const o of open ?? []) {
+      if (!o.reported) out.push(`<${o.name}> opened on line ${o.at} is never closed — Apache answers every request with 500`);
+    }
+  }
 
   for (const [format, mime] of [["avif", "image/avif"], ["webp", "image/webp"]]) {
     if (!new RegExp(`^\\s*AddType\\s+${mime.replace("/", "\\/")}\\s+\\.${format}\\s*$`, "mi").test(live)) {
