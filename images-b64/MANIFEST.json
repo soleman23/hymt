@@ -1055,6 +1055,31 @@
   "bytes": 342590
  },
  {
+  "b64": "images-b64/assets__img__dolomites-alta-via-1-cinque-torri.jpg.b64",
+  "target": "public/assets/img/dolomites-alta-via-1-cinque-torri.jpg",
+  "bytes": 323374
+ },
+ {
+  "b64": "images-b64/assets__img__dolomites-cortina-d-ampezzo.jpg.b64",
+  "target": "public/assets/img/dolomites-cortina-d-ampezzo.jpg",
+  "bytes": 334275
+ },
+ {
+  "b64": "images-b64/assets__img__dolomites-pale-di-san-martino.jpg.b64",
+  "target": "public/assets/img/dolomites-pale-di-san-martino.jpg",
+  "bytes": 316942
+ },
+ {
+  "b64": "images-b64/assets__img__dolomites-seceda-val-gardena.jpg.b64",
+  "target": "public/assets/img/dolomites-seceda-val-gardena.jpg",
+  "bytes": 266393
+ },
+ {
+  "b64": "images-b64/assets__img__dolomites-tre-cime-di-lavaredo.jpg.b64",
+  "target": "public/assets/img/dolomites-tre-cime-di-lavaredo.jpg",
+  "bytes": 273827
+ },
+ {
   "b64": "images-b64/assets__img__dominican-republic-cabarete-and-the-north-coast.jpg.b64",
   "target": "public/assets/img/dominican-republic-cabarete-and-the-north-coast.jpg",
   "bytes": 224764
@@ -1710,6 +1735,16 @@
   "bytes": 81105
  },
  {
+  "b64": "images-b64/assets__img__ev-med-small-ship-cyclades-bay.jpg.b64",
+  "target": "public/assets/img/ev-med-small-ship-cyclades-bay.jpg",
+  "bytes": 52637
+ },
+ {
+  "b64": "images-b64/assets__img__ev-med-small-ship-dalmatian-harbour.jpg.b64",
+  "target": "public/assets/img/ev-med-small-ship-dalmatian-harbour.jpg",
+  "bytes": 71995
+ },
+ {
   "b64": "images-b64/assets__img__ev-multigenerational-travel-arashiyama-bamboo.jpg.b64",
   "target": "public/assets/img/ev-multigenerational-travel-arashiyama-bamboo.jpg",
   "bytes": 73441
@@ -1738,6 +1773,31 @@
   "b64": "images-b64/assets__img__ev-p-03-four-seasons-bora-bora.jpg.b64",
   "target": "public/assets/img/ev-p-03-four-seasons-bora-bora.jpg",
   "bytes": 40233
+ },
+ {
+  "b64": "images-b64/assets__img__ev-river-cruise-danube-budapest.jpg.b64",
+  "target": "public/assets/img/ev-river-cruise-danube-budapest.jpg",
+  "bytes": 72101
+ },
+ {
+  "b64": "images-b64/assets__img__ev-river-cruise-douro-terraces.jpg.b64",
+  "target": "public/assets/img/ev-river-cruise-douro-terraces.jpg",
+  "bytes": 102377
+ },
+ {
+  "b64": "images-b64/assets__img__ev-river-cruise-rhine-castle.jpg.b64",
+  "target": "public/assets/img/ev-river-cruise-rhine-castle.jpg",
+  "bytes": 102442
+ },
+ {
+  "b64": "images-b64/assets__img__ev-river-cruise-rhone-avignon.jpg.b64",
+  "target": "public/assets/img/ev-river-cruise-rhone-avignon.jpg",
+  "bytes": 83728
+ },
+ {
+  "b64": "images-b64/assets__img__ev-river-cruise-seine-normandy.jpg.b64",
+  "target": "public/assets/img/ev-river-cruise-seine-normandy.jpg",
+  "bytes": 95246
  },
  {
   "b64": "images-b64/assets__img__ev-safari-wildlife-travel-mara-river-crossing.jpg.b64",
@@ -1968,6 +2028,26 @@
   "b64": "images-b64/assets__img__georgia-armenia-yerevan-and-the-ararat-plain.jpg.b64",
   "target": "public/assets/img/georgia-armenia-yerevan-and-the-ararat-plain.jpg",
   "bytes": 396781
+ },
+ {
+  "b64": "images-b64/assets__img__golf-irish-links-dunes.jpg.b64",
+  "target": "public/assets/img/golf-irish-links-dunes.jpg",
+  "bytes": 257407
+ },
+ {
+  "b64": "images-b64/assets__img__golf-pacific-clifftop-green.jpg.b64",
+  "target": "public/assets/img/golf-pacific-clifftop-green.jpg",
+  "bytes": 299496
+ },
+ {
+  "b64": "images-b64/assets__img__golf-sandbelt-bunkers.jpg.b64",
+  "target": "public/assets/img/golf-sandbelt-bunkers.jpg",
+  "bytes": 336897
+ },
+ {
+  "b64": "images-b64/assets__img__golf-scottish-links-dunes.jpg.b64",
+  "target": "public/assets/img/golf-scottish-links-dunes.jpg",
+  "bytes": 264118
  },
  {
   "b64": "images-b64/assets__img__greece-athens.jpg.b64",
@@ -4880,6 +4960,11 @@
   "bytes": 75161
  },
  {
+  "b64": "images-b64/assets__img__og-golf-pacific-clifftop-green.jpg.b64",
+  "target": "public/assets/img/og-golf-pacific-clifftop-green.jpg",
+  "bytes": 126998
+ },
+ {
   "b64": "images-b64/assets__img__og-h-01-maldives-aerial.jpg.b64",
   "target": "public/assets/img/og-h-01-maldives-aerial.jpg",
   "bytes": 66950
@@ -5058,6 +5143,11 @@
   "b64": "images-b64/assets__img__og-portugal-the-douro-valley.jpg.b64",
   "target": "public/assets/img/og-portugal-the-douro-valley.jpg",
   "bytes": 152516
+ },
+ {
+  "b64": "images-b64/assets__img__og-river-cruise-rhine-gorge.jpg.b64",
+  "target": "public/assets/img/og-river-cruise-rhine-gorge.jpg",
+  "bytes": 100170
  },
  {
   "b64": "images-b64/assets__img__og-south-america-argentina.jpg.b64",
@@ -5598,6 +5688,11 @@
   "b64": "images-b64/assets__img__rc-x-03-petra-treasury.jpg.b64",
   "target": "public/assets/img/rc-x-03-petra-treasury.jpg",
   "bytes": 36010
+ },
+ {
+  "b64": "images-b64/assets__img__river-cruise-rhine-gorge.jpg.b64",
+  "target": "public/assets/img/river-cruise-rhine-gorge.jpg",
+  "bytes": 254806
  },
  {
   "b64": "images-b64/assets__img__riviera-maya-los-cabos-los-cabos-and-the-corridor.jpg.b64",
