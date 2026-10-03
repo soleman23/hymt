@@ -13,6 +13,15 @@
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
 
+  # Journal posts renamed 2026-10-03: the "-field-report" slugs read as a
+  # first-hand visit, which the site no longer claims. Same posts, new URLs.
+  RewriteRule ^travel-journal/amanjiwo-field-report/?$ https://www.hymtravel.com/travel-journal/amanjiwo/ [R=301,L,NE]
+  RewriteRule ^travel-journal/glacier-express-field-report/?$ https://www.hymtravel.com/travel-journal/glacier-express/ [R=301,L,NE]
+  RewriteRule ^travel-journal/heli-ski-field-report/?$ https://www.hymtravel.com/travel-journal/heli-skiing/ [R=301,L,NE]
+  RewriteRule ^travel-journal/kentucky-derby-field-report/?$ https://www.hymtravel.com/travel-journal/kentucky-derby/ [R=301,L,NE]
+  RewriteRule ^travel-journal/masters-field-report/?$ https://www.hymtravel.com/travel-journal/the-masters/ [R=301,L,NE]
+  RewriteRule ^travel-journal/singita-grumeti-field-report/?$ https://www.hymtravel.com/travel-journal/singita-grumeti/ [R=301,L,NE]
+
   # Conventional sitemap endpoint. Astro generates sitemap-index.xml; keep
   # that file as the single source of truth and serve it internally at the
   # endpoint expected by crawlers and third-party SEO tools.

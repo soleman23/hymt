@@ -1534,6 +1534,12 @@ export function htaccessGaps(text, productionSite) {
   const legacyRedirects = [
     ["terms-conditions", "https://www.hymtravel.com/terms-and-conditions/"],
     ["trips", "https://www.hymtravel.com/travel-journal/"],
+    ["travel-journal/amanjiwo-field-report", "https://www.hymtravel.com/travel-journal/amanjiwo/"],
+    ["travel-journal/glacier-express-field-report", "https://www.hymtravel.com/travel-journal/glacier-express/"],
+    ["travel-journal/heli-ski-field-report", "https://www.hymtravel.com/travel-journal/heli-skiing/"],
+    ["travel-journal/kentucky-derby-field-report", "https://www.hymtravel.com/travel-journal/kentucky-derby/"],
+    ["travel-journal/masters-field-report", "https://www.hymtravel.com/travel-journal/the-masters/"],
+    ["travel-journal/singita-grumeti-field-report", "https://www.hymtravel.com/travel-journal/singita-grumeti/"],
   ];
   const firstStructuralRule = live.search(/^\s*RewriteCond\s+%\{(?:HTTP_HOST|HTTPS)\}/mi);
   for (const [from, want] of legacyRedirects) {
