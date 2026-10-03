@@ -1,6 +1,6 @@
 # /experiences/cruises/yacht-charters/: owner checklist (DRAFT)
 
-Drafted 2026-10-03 on branch `main-0puhp3`. **This is a draft for Mark to review. It is not built and not deployed.**
+Drafted 2026-10-03 on branch `main-0puhp3`. **This is a draft. It is not built and not deployed.** Owner answers applied 2026-10-03 (section 2).
 Nothing outside `docs/drafts/new-pages/` was touched: the parent cruises page,
 `tools/cost-ranges-data.mjs`, `src/data/tiles.mjs`, the journal posts and the
 destination pages are all unchanged. The edits they need at launch are listed
@@ -30,59 +30,73 @@ are written for the promoted location. They do not resolve from `docs/drafts/`.
   `label: "Cruises &amp; Yachts"`. The layout renders crumbs with `set:html`
   and the schema through `plain()`, which decodes `&amp;`, so both render the
   same text. Spell it whichever way the house style prefers.
-- Body word count is **about 2,726**, with comments stripped. The brief's
+- Body word count is **about 2,735**, with comments and tags stripped (2,726 before the owner answers were applied). The brief's
   target was 1,800–2,400 and CONTENT-STANDARDS § 3.4 says 1,200–2,000 for an
   experience page. No verifier check applies an experience ceiling, but the
   page is over both targets. The cost-range block (about 190 words) and the
-  8-question FAQ (about 600) are structural. If Mark wants it shorter, cut in
+  8-question FAQ (about 600) are structural. If it needs to be shorter, cut in
   this order: the "What We Handle" section (about 180 words, and the parent's
   "Charter Brokerage" item covers some of it), then the St. Barth's and Lau
-  cards if he drops those grounds.
+  cards.
 - `tools/head-baseline.json` needs one entry for the new URL, made with
   `node tools/verify-deployment.mjs --update-baseline` in a commit of its own.
 
-## 2. NEEDS MARK, in plain language
+## 2. Owner answers applied (2026-10-03)
 
-Each one is a `<!-- NEEDS MARK -->` comment in the partial. The copy reads
-correctly with every comment still in place.
+**The rule.** Mark has not chartered or inspected these boats, and HYMT claims
+nothing first-hand. The page makes no claim of first-hand experience, names no
+broker, says nothing about how HYMT is paid, gives no group or boat size that
+HYMT books, states no booking lead time as HYMT practice, and carries no client
+story or testimonial. Every detail stays informational and cited. All nine
+`<!-- NEEDS MARK -->` comments are gone from the partial (`grep -c "NEEDS MARK"`
+returns 0), and the header comment now records this rule.
 
-1. **Gulet season, which is the blocking item.** Three HYMT sources disagree:
-   - the cruises event-card "A Gulet of Your Own" says **May – October**;
-   - the Middle East guide's island-fact (line 255) says **June – September**;
-   - the October journal post (line 89) and the Middle East guide's timing card
-     (line 291) both say **October is the last good month**.
+What was applied, removed or neutralised:
 
-   For now the draft states only the window all three share, **June –
-   September**, and treats October as an extension. It does this in the
-   #gulets "The Season" item, the gulet event-card, FAQ 4, and the seasons
-   strip. Mark's one answer has to go into all four, and in the same PR into
-   the parent event-card 4's `event-when` and, if it changes, the Middle East
-   guide's island-fact.
-2. **First-hand experience.** Has Mark chartered or inspected a gulet, a
-   catamaran or a motor yacht himself? Where, and when? If he has, add one
-   first-person sentence to the intro. If he has not, the page stays in third
-   person about how the planning works, as it reads now.
-3. **Brokers and how HYMT is paid.** Which brokers or associations does HYMT
-   actually use? They can be named, or described as "MYBA/CYBA-member
-   brokers". Is HYMT paid by broker commission? If it is, say so in "The
-   Broker and the Shortlist" and check that the CTA note "No booking fees"
-   (copied from the parent) is still honest.
-4. **Group and boat sizes HYMT books.** This is for the "who it is for"
-   paragraph. The draft names no number.
-5. **Booking lead time** for peak July–August Mediterranean charters and for
-   Christmas/New Year in the Caribbean. The draft has no lead-time FAQ. Add
-   one only with Mark's figure.
-6. **Whether to keep the St. Barth's and Lau Group cards.** Keep them only if
-   these are grounds Mark really charters in. With either one removed, the
-   grid still works at four or five cards.
-7. **Gratuity.** The draft gives MYBA's published 5–15% range. If Mark gives
-   clients his own guidance, add it beside the MYBA figure, not in place of it.
-8. **Caribbean "Best Window".** No season item has `season-item--best`. Add it
-   to the Caribbean December – April item only if Mark confirms that window.
-9. **Client testimonial.** None exists, so the page has no testimonial
-   section. Never invent one.
-10. **FAQ 4's last line**, "After October, winter weather closes the route",
-    repeats the October journal post. Keep it only if Mark agrees.
+1. **Gulet season.** June – September is the core season and October is a
+   shoulder month, stated neutrally, consistent with the Middle East guide's
+   island-fact (line 255, "June – September"). Applied in the #gulets "The
+   Season" item, the seasons strip and FAQ 4; the gulet event-card already read
+   June – September. The reconciliation note is removed. The live parent
+   Cruises event-card was already changed to "June – September" on branch
+   `main-0puhp3`, so it is no longer a launch-time edit here.
+2. **First-hand experience.** None added. The intro stays in third person.
+3. **Brokers and payment.** "The Broker and the Shortlist" is now "Charter
+   Brokers" and says only that crewed charters are typically contracted
+   through a charter broker on a standard agreement (MYBA in the Mediterranean,
+   CYBA in the Caribbean, both already cited). The "shortlist comes back as
+   specific boats" line, which implied HYMT's own broker practice, is removed.
+   No fee or commission claim was added. The CTA note line ("No booking fees ·
+   Response within 24 hours · Fully bespoke") is left exactly as on every
+   other page.
+4. **Group and boat sizes.** None stated beyond the cited Red Ensign Group
+   12-passenger rule.
+5. **Booking lead time.** No lead-time FAQ; the placeholder comment is removed.
+   The FAQ stays at 8 questions.
+6. **St. Barth's and Lau Group cards.** Kept as informational cruising
+   grounds. The St. Barth's line "works best as two or three nights at anchor
+   inside a wider week" (an unsourced practice recommendation) became "can be
+   one stop within a wider week". Neither card claims HYMT charters there.
+7. **Gratuity.** Only MYBA's published 5–15% range, unchanged.
+8. **Season "Best Window".** No season item is marked `season-item--best`.
+9. **Testimonial / Mark's note.** No such section exists; the placeholder
+   comment is removed.
+10. **FAQ 4, "After October, winter weather closes the route".** Kept: the
+    post it links, `travel-journal__mediterranean-october.html` line 89, says
+    October is "the last good month for a gulet charter before the winter
+    weather closes the route".
+
+Also neutralised: the FAQ sub-heading "Questions we hear most when planning a
+crewed charter", which implied a client history, now reads "Common questions
+about a crewed charter: the APA, the fee, guest limits, the gulet season,
+tipping and VAT."
+
+Left as written, for the reviewer to judge: the "What We Handle on a Charter"
+items describe HYMT's planning service ("We ask about both", "we walk through
+the terms with you") rather than first-hand experience of boats, and the exp-cta
+body ("I'll come back with specific boats and crews") and the generated
+cost-range note follow the site-wide CTA pattern. None of them names a broker,
+a fee, a size or a client.
 
 ## 3. Image gaps
 
@@ -167,9 +181,9 @@ defined in `section-shared.css` and used on every no-band page. `includes` and
    `<section class="inclusions-section" id="gulets">` in this page, which
    `card-fragment-resolves` will check.
 3. **Parent `src/content-pages/experiences__cruises.html`:**
-   - event-card 4 `event-when` "May – October": change it to Mark's reconciled
-     season (NEEDS MARK 1), and replace the `ev-france-french-riviera.jpg`
-     image with the new gulet image;
+   - event-card 4: replace the `ev-france-french-riviera.jpg` image with the
+     new gulet image (its `event-when` is already "June – September" on
+     `main-0puhp3`);
    - FAQ 4 (`pf-cruises-4`, "Is a private yacht charter complicated to
      arrange?"): add a short closing link-down, e.g. "…come back as one
      proposal. More on <a href="/experiences/cruises/yacht-charters/">how a
@@ -182,8 +196,8 @@ defined in `section-shared.css` and used on every no-band page. `includes` and
    - `travel-journal__mediterranean-october.html` line 89: link "gulet
      charter" → `/experiences/cruises/yacht-charters/#gulets`;
    - `travel-journal__middle-east-destination-guide.html` line 250: link
-     "best explored by gulet" → `#gulets`. If the season changes, also update
-     the island-fact on line 255;
+     "best explored by gulet" → `#gulets`. The island-fact on line 255 already
+     says June – September and needs no change;
    - optional: `travel-journal__caribbean-mexico-destination-guide.html` line
      124, "The right charter operator" → the new page.
 5. **Other reverse links from the brief. Each adds 0 words, which matters
@@ -256,8 +270,8 @@ season (Fiji page lines 80, 169, 216); October as the last gulet month
   secondary CTA "A Gulet of Your Own ↓" points there. The gulet event-card
   links to it with `event-more`. Only one element carries the id.
 - **The events h2 is "Charter Weeks to Start From"**, not the parent's "Trips
-  We Plan Often". That heading would claim a frequency Mark has not
-  confirmed. Restore it if it is true.
+  We Plan Often". That heading would claim a booking frequency, which the
+  owner rule excludes.
 - **Three event-cards, not four.** The optional Lau Group card was dropped
   because the Fiji exp-card and the Fiji page already cover it, and it would
   have been a fourth image gap.
@@ -268,9 +282,9 @@ season (Fiji page lines 80, 169, 216); October as the last gulet month
   and links the parent.
 - **One "FAQ" candidate was dropped:** "Gulet, catamaran or motor yacht?",
   because the boats section answers it. Another, "How far ahead to book?", is
-  held for Mark's figure (NEEDS MARK 5). That leaves 8 FAQs, ids
+  not included: the owner rule excludes lead times as HYMT practice. That leaves 8 FAQs, ids
   `pf-yacht-charters-1…8`. Every opening sentence is 25 words or fewer
-  (longest: 25), and every answer runs 63–75 words.
+  (longest: 25), and every answer runs 64–75 words.
 - Time-sensitive facts are dated by a visible
   `<time datetime="2026-10-03">October 2026</time>` note at the foot of the
   seasons strip.
