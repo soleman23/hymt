@@ -1685,11 +1685,6 @@
   "bytes": 73056
  },
  {
-  "b64": "images-b64/assets__img__ev-e-72-monaco-harbour-terrace-morning.jpg.b64",
-  "target": "public/assets/img/ev-e-72-monaco-harbour-terrace-morning.jpg",
-  "bytes": 64161
- },
- {
   "b64": "images-b64/assets__img__ev-e-73-gulet-turquoise-cove.jpg.b64",
   "target": "public/assets/img/ev-e-73-gulet-turquoise-cove.jpg",
   "bytes": 91898

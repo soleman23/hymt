@@ -80,7 +80,6 @@ const SOURCES = [
   ["ev", "e-68-melbourne-court-dusk.jpg", "centre"],         // sports-event-travel/tennis: Australian Open (attention crop drops the skyline)
   ["ev", "e-67-clay-court-paris.jpg", "left"],             // sports-event-travel/tennis: Roland-Garros (keeps the net and the Eiffel Tower)
   ["ev", "e-70-parkland-circuit-straight.jpg", "centre"],   // sports-event-travel/formula-1: Monza
-  ["ev", "e-72-monaco-harbour-terrace-morning.jpg", "right"], // sports-event-travel/formula-1: Monaco (the harbour, not the cliffs)
 ];
 
 const manifest = await readImageManifest(MANIFEST);
