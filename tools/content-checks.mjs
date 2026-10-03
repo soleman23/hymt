@@ -310,7 +310,11 @@ export function bodyWords(html) {
   const open = /<main\b[^>]*>/i.exec(html);
   if (!open) return "no-main";
   let inner = innerOf(html, open.index + open[0].length, "main");
-  for (const [tag, cls] of [["div", "breadcrumb"], ["section", "dest-hero"]]) {
+  /* section.featured-in is layout chrome too: DestinationLayout derives it
+     from src/data/tiles.mjs, so it is not in the partial an author edits, and
+     on the pages with ~60 words of headroom it would fail page-length for
+     copy nobody wrote. */
+  for (const [tag, cls] of [["div", "breadcrumb"], ["section", "dest-hero"], ["section", "featured-in"]]) {
     const m = new RegExp(`<${tag}\\b[^>]*class="[^"]*\\b${cls}\\b[^"]*"[^>]*>`, "i").exec(inner);
     if (!m) continue;
     const from = m.index + m[0].length;
@@ -1263,6 +1267,72 @@ export async function deadInternalHrefs(html, site, resolves) {
   return dead;
 }
 
+/* What htaccessGaps accepts as a live line. Not every Apache directive: the
+   ones valid in .htaccess context from core and the modules a static site on
+   this host plausibly reaches for, plus LiteSpeed's CacheLookup (allowed
+   only inside <IfModule LiteSpeed>, see HTACCESS_LITESPEED_ONLY). A real
+   directive missing here fails the build with a message saying to add it,
+   which is the safe direction — a misspelled directive is the same 500 as a
+   stray line ("Invalid command"), so an allowlist catches both.
+   <Directory> and <Location> are left out on purpose: .htaccess may not
+   open them, and Apache answers every request with a 500 if it does. */
+const HTACCESS_DIRECTIVES = new Set([
+  // core
+  "AcceptPathInfo", "AddDefaultCharset", "CGIPassAuth", "DefaultType", "EnableMMAP",
+  "EnableSendfile", "ErrorDocument", "FileETag", "ForceType", "LimitRequestBody",
+  "LimitXMLRequestBody", "Options", "ServerSignature", "SetHandler", "SetInputFilter",
+  "SetOutputFilter",
+  // mod_alias, mod_rewrite
+  "Redirect", "RedirectMatch", "RedirectPermanent", "RedirectTemp",
+  "RewriteBase", "RewriteCond", "RewriteEngine", "RewriteOptions", "RewriteRule",
+  // mod_mime, mod_dir, mod_autoindex, mod_negotiation
+  "AddCharset", "AddEncoding", "AddHandler", "AddInputFilter", "AddLanguage",
+  "AddOutputFilter", "AddType", "DefaultLanguage", "MultiviewsMatch", "RemoveCharset",
+  "RemoveEncoding", "RemoveHandler", "RemoveInputFilter", "RemoveLanguage",
+  "RemoveOutputFilter", "RemoveType",
+  "DirectoryCheckHandler", "DirectoryIndex", "DirectoryIndexRedirect", "DirectorySlash",
+  "FallbackResource", "IndexIgnore", "IndexOptions",
+  "ForceLanguagePriority", "LanguagePriority",
+  // mod_filter, mod_expires, mod_headers
+  "AddOutputFilterByType", "FilterChain", "FilterDeclare", "FilterProtocol", "FilterProvider",
+  "ExpiresActive", "ExpiresByType", "ExpiresDefault",
+  "Header", "RequestHeader",
+  // mod_env, mod_setenvif
+  "PassEnv", "SetEnv", "UnsetEnv",
+  "BrowserMatch", "BrowserMatchNoCase", "SetEnvIf", "SetEnvIfExpr", "SetEnvIfNoCase",
+  // access control and auth
+  "Allow", "Deny", "Order", "Require", "Satisfy",
+  "AuthBasicProvider", "AuthGroupFile", "AuthName", "AuthType", "AuthUserFile",
+  "SSLOptions", "SSLRequireSSL",
+  // PHP handler and LiteSpeed
+  "php_flag", "php_value", "CacheLookup",
+].map((d) => d.toLowerCase()));
+
+const HTACCESS_CONTAINERS = new Set([
+  "IfModule", "IfDefine", "IfVersion", "IfFile", "IfDirective", "IfSection",
+  "If", "ElseIf", "Else", "Files", "FilesMatch", "Limit", "LimitExcept",
+  "RequireAll", "RequireAny", "RequireNone",
+].map((c) => c.toLowerCase()));
+
+/* The containers that refuse an argument. Every other one in the set above
+   requires one. Both are a 500 on Apache 2.4.68: "<IfModule> directive
+   requires additional arguments", "<Else> does not take an argument". */
+const HTACCESS_NO_ARG_CONTAINERS = new Set(["else", "requireall", "requireany", "requirenone"]);
+
+/* Config-time conditionals. Apache skips their body unparsed when the test
+   fails and splices it into the enclosing scope when it passes, so neither
+   what is inside nor an <If> it holds can be relied on from outside. */
+const HTACCESS_CONDITIONALS = new Set(["ifmodule", "ifdefine", "ifversion", "iffile", "ifdirective", "ifsection"]);
+
+/* Containers that start a scope of their own for <If>/<Else> pairing.
+   <Limit> and the <Require*> blocks do not. */
+const HTACCESS_SCOPES = new Set(["if", "elseif", "else", "files", "filesmatch"]);
+
+/* Directives Apache does not have under any module. Apache only tolerates
+   them where it never parses them: inside <IfModule LiteSpeed>, whose test
+   is false on Apache. LiteSpeed's own cache docs wrap CacheLookup this way. */
+const HTACCESS_LITESPEED_ONLY = new Set(["cachelookup"]);
+
 export function htaccessGaps(text, productionSite) {
   /* Apache joins a backslash-continued line with the next BEFORE it parses
      anything, so this has to happen first: otherwise `Header always set \\`
@@ -1270,14 +1340,105 @@ export function htaccessGaps(text, productionSite) {
      the name on any single line, and every line-anchored check below — the
      duplicate counts included — simply does not see the directive. */
   const joined = [];
-  for (const raw of text.split(/\r?\n/)) {
+  const joinedAt = [];
+  for (const [i, raw] of text.split(/\r?\n/).entries()) {
     const prev = joined.length - 1;
     if (prev >= 0 && /\\$/.test(joined[prev])) joined[prev] = joined[prev].replace(/\\$/, " ") + raw.trim();
-    else joined.push(raw);
+    else { joined.push(raw); joinedAt.push(i + 1); }
   }
-  const liveLines = joined.filter((l) => !/^\s*#/.test(l));
+  const isComment = (l) => /^\s*#/.test(l);
+  const liveLines = joined.filter((l) => !isComment(l));
+  /* The physical line each live line starts on, for the syntax gaps below. */
+  const liveAt = joinedAt.filter((_, i) => !isComment(joined[i]));
   const live = liveLines.join("\n");
   const out = [];
+
+  /* Every live line must be something Apache can parse: a known directive or
+     a container tag, with the containers balanced. Apache answers EVERY
+     request with a 500 over a single line it cannot parse; LiteSpeed, which
+     is what Hostinger runs, skips the line and serves on. So this class of
+     defect is invisible in production and fatal the day the file meets
+     Apache. It shipped once: from 2026-08-17 to 2026-10-01 a curl -w example
+     in a comment had its `\n` escape turned into a real newline, leaving a
+     bare `' <url>` line inside <IfModule mod_headers.c>. Every check below
+     reads lines it is looking for, so a line nobody looks for passed all of
+     them. Reported first because it outranks any one missing header.
+     A well-formed tag can still be a 500, so tags are held to Apache's rules
+     too: the argument each container requires or refuses, an <Else> or
+     <ElseIf> only after an <If> or <ElseIf> in the same scope, and a
+     LiteSpeed-only directive only inside <IfModule LiteSpeed>. Every one of
+     these was driven against Apache 2.4.68 before it became a fixture. */
+  {
+    const quote = (l) => JSON.stringify(l.trim().length > 60 ? `${l.trim().slice(0, 57)}...` : l.trim());
+    /* null once the nesting has been reported broken. Apache stops at the
+       first nesting error, so this does too: one misplaced close would
+       otherwise cascade into a gap for every container after it. */
+    let open = [];
+    /* Whether an <Else> or <ElseIf> may open here: true right after an
+       </If> or </ElseIf> in this scope, and kept across plain directives and
+       <Files> blocks, which Apache also lets sit between the two. Each
+       container saves the outer value on open and settles it on close. */
+    let elseOk = false;
+    liveLines.forEach((l, i) => {
+      if (/^\s*$/.test(l)) return;
+      const at = liveAt[i];
+      const close = /^\s*<\/(\w+)\s*>\s*$/.exec(l);
+      const tag = close ?? /^\s*<(\w+)(?:\s(.*))?>\s*$/.exec(l);
+      if (tag) {
+        const name = tag[1];
+        const lower = name.toLowerCase();
+        const known = HTACCESS_CONTAINERS.has(lower);
+        if (!close) {
+          /* Reported once, at the open: its matching close then pops it
+             quietly, so <Directory>…</Directory> is one gap, not two. */
+          if (!known) out.push(`line ${at}: <${name}> is not a container .htaccess allows — Apache answers every request with 500`);
+          const arg = (tag[2] ?? "").trim();
+          if (known && !arg && !HTACCESS_NO_ARG_CONTAINERS.has(lower)) {
+            out.push(`line ${at}: <${name}> has no argument — Apache answers every request with 500 ("directive requires additional arguments")`);
+          }
+          if (known && arg && HTACCESS_NO_ARG_CONTAINERS.has(lower)) {
+            out.push(`line ${at}: <${name}> takes no argument but has ${quote(arg)} — Apache answers every request with 500`);
+          }
+          if ((lower === "else" || lower === "elseif") && open && !elseOk) {
+            out.push(`line ${at}: <${name}> has no <If> or <ElseIf> before it in the same scope — Apache answers every request with 500 (an <If> inside <IfModule> or another conditional block does not count: Apache drops it wherever that test fails)`);
+          }
+          open?.push({ name, at, reported: !known, arg, outerElseOk: elseOk });
+          if (HTACCESS_SCOPES.has(lower) || !known) elseOk = false;
+        } else if (!open) {
+          /* nesting already reported broken */
+        } else if (open.at(-1)?.name.toLowerCase() === lower) {
+          const { outerElseOk } = open.pop();
+          /* A conditional's body may or may not have been spliced in, so an
+             <Else> after it must be valid both ways. An <If> inside
+             <IfModule mod_x.c> pairs with an <Else> after it only on a server
+             that loads mod_x; this asks for the pair that works everywhere. */
+          elseOk = lower === "if" || lower === "elseif" ? true
+            : lower === "else" ? false
+            : HTACCESS_CONDITIONALS.has(lower) ? outerElseOk && elseOk
+            : HTACCESS_SCOPES.has(lower) || !known ? outerElseOk
+            : elseOk;
+        } else {
+          out.push(!known
+            ? `line ${at}: </${name}> is not a container .htaccess allows — Apache answers every request with 500`
+            : open.length
+              ? `line ${at} closes </${name}> while <${open.at(-1).name}> from line ${open.at(-1).at} is still open — Apache answers every request with 500`
+              : `line ${at} closes </${name}> with no container open — Apache answers every request with 500`);
+          open = null;
+        }
+        return;
+      }
+      const directive = /^\s*(\w+)(?:\s|$)/.exec(l)?.[1];
+      if (!directive || !HTACCESS_DIRECTIVES.has(directive.toLowerCase())) {
+        out.push(`line ${at} is not a comment, a container tag or a known directive: ${quote(l)} — Apache answers every request with 500 over a line it cannot parse (LiteSpeed skips it, so production hides the fault). A comment that lost its leading # needs it back; a real directive needs adding to HTACCESS_DIRECTIVES in content-checks.mjs`);
+      } else if (HTACCESS_LITESPEED_ONLY.has(directive.toLowerCase()) && open
+        && !open.some((o) => o.name.toLowerCase() === "ifmodule" && o.arg.toLowerCase() === "litespeed")) {
+        out.push(`line ${at}: ${directive} is LiteSpeed's, not Apache's, and is not inside <IfModule LiteSpeed> — Apache answers every request with 500 ("Invalid command")`);
+      }
+    });
+    for (const o of open ?? []) {
+      if (!o.reported) out.push(`<${o.name}> opened on line ${o.at} is never closed — Apache answers every request with 500`);
+    }
+  }
 
   for (const [format, mime] of [["avif", "image/avif"], ["webp", "image/webp"]]) {
     if (!new RegExp(`^\\s*AddType\\s+${mime.replace("/", "\\/")}\\s+\\.${format}\\s*$`, "mi").test(live)) {
@@ -2444,4 +2605,151 @@ export function restoreScriptGaps(scripts = {}) {
     else from = at + 1;
   }
   return gaps;
+}
+
+/**
+ * The tile cards on an experience page, in document order.
+ *
+ * Every experience partial carries two kinds of tile: `a.exp-card` (the
+ * sub-experience grid, where the card IS the link) and `div.event-card` (the
+ * "Trips We Plan Often" itinerary teasers, whose `a.event-cta` button stays on
+ * the planning form and which may carry one `a.event-more` text link to the
+ * page that covers the trip). src/data/tiles.mjs records where each one goes;
+ * tools/tile-links-apply.mjs writes those targets into the partials and this
+ * is the one parser both it and the verifier read them back with, so the
+ * writer and the check cannot disagree about what a card is.
+ *
+ * Names are returned raw, entities and all, because the map stores them the
+ * way the partial spells them and a mismatch is the point of comparing.
+ */
+export function readTileCards(html) {
+  const out = [];
+  for (const m of html.matchAll(/<a class="exp-card" href="([^"]*)">[\s\S]*?<div class="exp-card__name">([\s\S]*?)<\/div>/g)) {
+    out.push({ kind: "exp-card", name: m[2].trim(), href: m[1], at: m.index });
+  }
+  const EVENT = /<div class="event-card">[\s\S]*?<div class="event-name">([\s\S]*?)<\/div>[\s\S]*?<a class="event-cta" href="([^"]*)">([\s\S]*?)<\/a>(?:\s*<a class="event-more" href="([^"]*)">([\s\S]*?)<\/a>)?/g;
+  for (const m of html.matchAll(EVENT)) {
+    out.push({
+      kind: "event-card", name: m[1].trim(), href: m[2], cta: m[3].trim(),
+      more: m[4] ?? null, moreLabel: m[5]?.trim() ?? null, at: m.index,
+    });
+  }
+  return out;
+}
+
+/**
+ * exp-card-targets: a sub-experience card must lead to a page about its
+ * subject.
+ *
+ * Every one of the 78 `.exp-card` tiles pointed at /plan-your-trip/ when the
+ * tile map was introduced, under an "Explore →" arrow that promised a page.
+ * Nothing could see it: the form resolves, so internal-links passed. This
+ * fails a card that links the form, an in-page fragment, another site or a
+ * query-string variant (canonicals strip the query, so it is the same page
+ * twice), unless the card's name is in `pending` — the tiles whose page is
+ * approved but not built yet, which the map marks status "pending".
+ */
+export function cardTargetDefects(html, pending = []) {
+  const allow = new Set(pending);
+  const out = [];
+  for (const card of readTileCards(html)) {
+    if (card.kind !== "exp-card") continue;
+    const href = decodeEntities(card.href);
+    const why =
+      /^\/plan-your-trip\/?(?:[?#]|$)/.test(href) ? "links the planning form" :
+      href.startsWith("#") ? "links a fragment on its own page" :
+      !href.startsWith("/") || href.startsWith("//") ? "links off-site" :
+      href.includes("?") ? "carries a query string" : "";
+    if (why && !(allow.has(card.name) && href.startsWith("/plan-your-trip/"))) {
+      out.push(`the "${decodeEntities(card.name)}" card ${why} (${href})`);
+    }
+  }
+  return out;
+}
+
+/**
+ * Same-site card hrefs that carry a #fragment, from `a.exp-card` and
+ * `a.event-more`. The dead-link check strips fragments before it resolves a
+ * path (internalHrefs, above), so `/destinations/maldives/#places` passes it
+ * although Maldives has no such id. card-fragment-resolves checks each one
+ * against the target page with hasElementId.
+ */
+export function cardFragmentHrefs(html) {
+  const out = [];
+  for (const card of readTileCards(html)) {
+    for (const href of [card.kind === "exp-card" ? card.href : card.more]) {
+      if (!href) continue;
+      const h = decodeEntities(href);
+      const i = h.indexOf("#");
+      if (i > 0 && h.startsWith("/")) out.push({ name: decodeEntities(card.name), path: h.slice(0, i), id: h.slice(i + 1) });
+    }
+  }
+  return out;
+}
+
+/** True when some element in `html` carries `id="<id>"` exactly. */
+export function hasElementId(html, id) {
+  if (!id) return false;
+  const esc = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`<[a-z][^>]*\\sid="${esc}"`, "i").test(html);
+}
+
+/**
+ * tile-map-parity: the cards a page renders against the rows the tile map
+ * holds for it. Rows are { kind, name, href, more? } in document order, the
+ * shape of src/data/tiles.mjs. Reports a count mismatch, a renamed card the
+ * map was not told about, and any href (or event-card secondary link) that
+ * differs from the map, so a hand edit to one card's target cannot ship
+ * without the map — and the "Featured in" links derived from it — agreeing.
+ */
+export function tileParityDefects(html, rows = []) {
+  const out = [];
+  const cards = readTileCards(html);
+  for (const kind of ["exp-card", "event-card"]) {
+    const c = cards.filter((x) => x.kind === kind);
+    const r = rows.filter((x) => x.kind === kind);
+    if (c.length !== r.length) out.push(`${c.length} ${kind}s on the page, ${r.length} in the tile map`);
+    for (let i = 0; i < Math.min(c.length, r.length); i++) {
+      const label = `${kind} ${i + 1}`;
+      if (c[i].name !== r[i].name) { out.push(`${label} is "${c[i].name}" on the page and "${r[i].name}" in the tile map`); continue; }
+      if (c[i].href !== r[i].href) out.push(`${label} "${r[i].name}" links ${c[i].href}, the tile map says ${r[i].href}`);
+      if (kind === "event-card" && (c[i].more ?? null) !== (r[i].more ?? null)) {
+        out.push(`${label} "${r[i].name}" has secondary link ${c[i].more ?? "(none)"}, the tile map says ${r[i].more ?? "(none)"}`);
+      } else if (kind === "event-card" && c[i].more && (c[i].moreLabel ?? null) !== (r[i].moreLabel ?? null)) {
+        /* A label-only edit in the map must reach the page too; comparing the
+           href alone let the apply tool report "already matched" and the
+           page keep the old wording. */
+        out.push(`${label} "${r[i].name}" labels its secondary link "${c[i].moreLabel}", the tile map says "${r[i].moreLabel}"`);
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * The experience-page hrefs inside a page's `section.featured-in` strip, the
+ * reverse links DestinationLayout derives from the tile map. featured-in-parity
+ * compares them with the experiences whose tiles target the page.
+ */
+export function featuredInLinks(html) {
+  const m = /<section class="featured-in"[^>]*>([\s\S]*?)<\/section>/i.exec(html);
+  if (!m) return [];
+  return [...m[1].matchAll(/<a\b[^>]*href="([^"]*)"/gi)].map((x) => decodeEntities(x[1]));
+}
+
+/**
+ * nested-crumb: an experience detail page nested under one of the 12
+ * (/experiences/<parent>/<slug>/) must show a four-crumb trail, Home ›
+ * Experiences › <Parent> › <Name>. ExperienceLayout only adds the parent crumb
+ * when the wrapper passes `parent`, and a wrapper that forgets it still
+ * builds: the page then claims to sit directly under /experiences/, and its
+ * BreadcrumbList, built from the same trail, says the same to search engines.
+ * Returns a defect string, or "" when the trail is right or the page is not a
+ * nested experience page.
+ */
+export function nestedCrumbDefect(url, crumbs) {
+  if (!/^\/experiences\/[a-z0-9-]+\/[a-z0-9-]+\/$/.test(url)) return "";
+  return crumbs.length === 4
+    ? ""
+    : `${url} is a nested experience page but its breadcrumb has ${crumbs.length} crumbs (${crumbs.join(" › ")}); pass parent={{ label, href }} to ExperienceLayout`;
 }

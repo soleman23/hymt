@@ -1,0 +1,21 @@
+---
+import ExperienceLayout from "../../../../layouts/ExperienceLayout.astro";
+import Content from "../../../../content-pages/experiences__sports-event-travel__formula-1.html?raw";
+---
+<ExperienceLayout
+  title="Formula 1 Grand Prix Hospitality — Hit Your Mark Travel"
+  description="Formula 1 weekends at Monaco, Monza and Singapore: Paddock Club, grandstand, yacht and balcony tiers, the 6–18 month lead time, and what sets the price."
+  schemaType="website"
+  name={"Formula 1"}
+  parent={{ label: "Sports &amp; Event Travel", href: "/experiences/sports-event-travel/" }}
+  hero={{
+    image: "/assets/img/e-32-monaco-harbour-dusk.jpg",
+    eyebrow: "Sports &amp; Event Travel · Formula 1",
+    headline: "Trackside at Monaco,<br>Monza and Singapore",
+    sub: "Paddock Club, grandstand, yacht or balcony: four ways to watch a Grand Prix, and the best seats in each commit 6–18 months before the lights go out.",
+    ctaPrimary: { label: "Plan My Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "The Circuits ↓", href: "#monaco" },
+  }}
+>
+  <Fragment set:html={Content} />
+</ExperienceLayout>

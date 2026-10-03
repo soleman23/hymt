@@ -179,9 +179,10 @@ The 2026-09-03 note calling Meta-ExternalAgent "resolved host-side" was wrong
 about the cause and right about the outcome. Nothing established a host-side
 change; what was measured was a rested bucket. But it can crawl the site, which
 is what the entry was trying to say. **Only GPTBot needs the ticket.** —
-superseded 2026-10-01, below: Meta-ExternalAgent stopped recovering.
+superseded 2026-10-01, below: Meta-ExternalAgent did not recover within a
+20-minute probe run.
 
-### 2026-10-01 — Meta-ExternalAgent no longer recovers
+### 2026-10-01 — Meta-ExternalAgent did not recover in 20 minutes
 
 `npm run check:crawlers`, 12-request bursts, 21:06–21:08 UTC. Exit 1. The first
 full run since 2026-09-04; GPTBot was last probed on 2026-09-10 in [#156].
@@ -199,12 +200,17 @@ full run since 2026-09-04; GPTBot was last probed on 2026-09-10 in [#156].
 Then `node tools/check-ai-crawlers.mjs --recover Meta-ExternalAgent --minutes 20`,
 21:09–21:28 UTC: **429 on all 20 minute-spaced probes.**
 
-- **Meta-ExternalAgent stopped behaving like a token bucket.** On 2026-09-04 it
+- **Meta-ExternalAgent did not recover within this run.** On 2026-09-04 it
   recovered about six minutes after a burst while being probed once a minute.
-  Today it opened on 429, after nearly four weeks without a request from us,
-  and stayed on 429 through 20 minutes of the same once-a-minute probing.
-  Whatever limits it changed between those dates, and it now looks like the
-  GPTBot limit. That 09-04 recovery was the control the drafted Hostinger
+  Today it opened on 429 and stayed on 429 through 20 probes of the same
+  once-a-minute kind. The checker reads a run like that as one of two things:
+  the window is longer than 20 minutes, or each probe extends it. This run
+  cannot tell them apart, because no probe-free cooldown was measured, and it
+  does not show that the limit never clears. Opening on 429 after nearly four
+  weeks without a request from us is not a clean idle either: Meta's real
+  crawler may share the counter, as OpenAI's does for GPTBot (below). To
+  separate the two readings, leave the agent unprobed for an hour, then send
+  one request. The 09-04 recovery was the control the drafted Hostinger
   ticket leaned on. It no longer matters: see the resolution below.
 - **GPTBot's first request from us in 21 days was 429.** That is not a clean
   idle, because the counter is shared with OpenAI's real crawler (2026-09-03
@@ -247,6 +253,12 @@ Google AI Mode, "Sources" in ChatGPT), then search the page's HTML for
 `hymtravel` or "Hit Your Mark". The inline chips collapse sources into "+2", so
 reading the chips alone undercounts.
 
+For every cited source, record the **URL** the source link opens, with
+tracking parameters such as `utm_source` removed. Add the display name beside
+it if you like, but never record the name alone. A name like "Reddit",
+"Four Seasons" or "Tripadvisor" cannot identify the page once the answer
+changes, and the answer cannot be replayed.
+
 ### The query set — hold it steady
 
 Fixed on 2026-10-01 from the `P1` clusters in `KEYWORD-MAP.md` § 2. Change the
@@ -279,6 +291,12 @@ Run 21:10–21:30 UTC from a browser with no signed-in accounts.
 - **Answer quality not scored.** `KEYWORD-MAP.md` § 4's 1–5 field has no rubric
   yet, and a score invented after the fact would poison the series the same way
   a backfilled citation would. Define the rubric before the next run.
+- **Sources recorded by name, not URL.** The AI Mode rows carry each source
+  card's display name and the ChatGPT rows its domain. The URLs were not
+  captured, and the answers cannot be replayed. So this run compares by
+  source, not by page, and page-level comparison starts with the next run
+  (method above). Re-asking the queries now would record a later answer under
+  this date.
 
 | Date | Engine | # | Cited? | If not, who was (first five as listed) | Quality |
 |---|---|---|---|---|---|
@@ -313,9 +331,14 @@ What the first run says, for what one month is worth:
   Africa DMC, Art of Safari) are what AI Mode quotes. A dated, attributed
   figure on our page competes with them. Restating the authority's figure does
   not displace the authority in ChatGPT.
-- **Two of the ten targets cannot win yet.** Query 1's page does not exist (it
-  is the month-1 post in `KEYWORD-MAP.md` § 3), and query 10's page was not in
-  Google's index on 2026-10-01 ("Discovered – currently not indexed").
+- **One target cannot win anywhere yet, and one cannot win in AI Mode.**
+  Query 1's page does not exist (it is the month-1 post in `KEYWORD-MAP.md`
+  § 3), so neither engine can cite it. Query 10's page was not in Google's
+  index on 2026-10-01 ("Discovered – currently not indexed"), which rules it
+  out of AI Mode. It does not rule it out of ChatGPT, whose search fetches
+  pages with its own crawler, OAI-SearchBot (12 × 200 in § 1), so Google's
+  verdict does not decide it there. Work on query 10 can still move the
+  ChatGPT result now.
 
 ---
 
@@ -330,7 +353,7 @@ for what.
 ### 2026-10-01
 
 "3 months" setting, which covers 2026-08-31 to 2026-09-28, i.e. everything
-since launch: **41 impressions across 23 pages.**
+since launch: **41 impressions for the site, across 23 pages.**
 
 | Page | Impressions |
 |---|---|
@@ -344,14 +367,39 @@ since launch: **41 impressions across 23 pages.**
 | `https://hymtravel.com/` (apex) | 1 |
 | `/destinations/dominican-republic/` | 1 |
 | `/destinations/europe/` | 1 |
-| 13 more pages | — (not read) |
+| `/destinations/greenland/` | 1 |
+| `/destinations/peru/` | 1 |
+| `/destinations/south-pacific/` | 1 |
+| `/destinations/spain/` | 1 |
+| `/destinations/turks-caicos/` | 1 |
+| `/experiences/sports-event-travel/` | 1 |
+| `/experiences/wellness-retreat-travel/` | 1 |
+| `/plan-your-trip/` | 1 |
+| `/privacy-policy/` | 1 |
+| `/travel-journal/botswana-shoulder-season/` | 1 |
+| `/travel-journal/mediterranean-october/` | 1 |
+| `/travel-journal/napa-sonoma-winery-route/` | 1 |
+| `/travel-journal/willamette-valley-winery-route/` | 1 |
+
+**The rows add up to 44, not 41, and both are right.** The headline counts
+impressions for the property, so one AI answer that showed two of our pages
+is one impression. The page table counts the same answer once per page. The
+Countries (14 rows), Devices (3) and Dates (29) tabs are also counted per
+property, and each totals exactly 41. Google documents the difference under
+[Search Console's generative AI report metrics][gsc-ai-metrics]. Do not
+"correct" the headline to the row sum in later entries. The first version of
+this entry read only the first ten rows and called the other 13 "not read";
+they were read on 2026-10-01 after review of #201 flagged the arithmetic.
 
 For scale, all of Search over 28 days: 967 impressions, 12 clicks, average
-position 27.4. None of the ten pages above is a § 2 target. The site is
-surfacing in Google's AI features, but for questions other than the ones § 2
-samples. That is the case for keeping both measurements.
+position 27.4. One of the 23 pages is a § 2 target:
+`/travel-journal/mediterranean-october/` (query 7), with 1 impression. The
+other 22 are not. The site is surfacing in Google's AI features, but mostly
+for questions other than the ones § 2 samples. That is the case for keeping
+both measurements.
 
 [#37]: https://github.com/soleman23/hymt/issues/37
 [#156]: https://github.com/soleman23/hymt/issues/156
 [openai-bots]: https://platform.openai.com/docs/bots
 [hostinger-429]: https://www.hostinger.com/support/429-errors-on-automated-integrations-and-link-previews/
+[gsc-ai-metrics]: https://support.google.com/webmasters/answer/16984139#metrics

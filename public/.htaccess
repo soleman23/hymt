@@ -326,8 +326,7 @@ ErrorDocument 404 /404.html
   #
   # Retest (read the wire size and Content-Encoding, NOT `| wc -c` — curl
   # decompresses, so a piped byte count always reports the full document):
-  #   curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}
-' <url>
+  #   curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}\n' <url>
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=0, must-revalidate, no-transform"
   </FilesMatch>

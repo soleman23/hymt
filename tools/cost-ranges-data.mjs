@@ -1627,9 +1627,74 @@ export const COST_RANGES = {
     ],
     drivers: [
       "Which event — the ticket, not the room, is the largest line on the trip",
-      "Party composition — Monaco prices ages six to fifteen at half the adult ticket, and free on Thursday",
+      "Party composition — Monaco prices ages six to fifteen at half the adult ticket for Friday, Saturday or Sunday",
       "Duration — a two- or three-day Monaco package takes 10% off the daily rate; a single Sunday does not",
     ],
     source: { text: "Automobile Club de Monaco ticket terms", href: "https://acm.mc/en/epreuves/formula-1-grand-prix-de-monaco/useful-infos/information-about-ticket-or-package-purchase/" },
+  },
+  /* Experience detail pages nested under a parent (2026-10-03). Their
+     sections were rendered from these rows when the pages were written, so
+     p3-8-cost-insert.mjs finds them live and leaves them alone. */
+  "experiences__sports-event-travel__tennis.html": {
+    unit: "Priced by the seat per day, not by the night",
+    noBand: "The seat is the largest line on a Slam trip, and it is priced by route, court and day. A Ground Pass and a two-week loge are both tickets to the same tournament, and no nightly figure covers both.",
+    includes: [
+      "The seat at the route booked: debenture ticket, official hospitality or loge, reserved seat",
+      "A hotel on a direct line to the venue",
+      "Match-day transfers where a car beats the train",
+    ],
+    excludes: [
+      "International flights and the nights either side of the tournament",
+      "Food and drink outside the package's own catering",
+      "Cancel-for-any-reason cover",
+    ],
+    drivers: [
+      "Route: a Wimbledon Centre Court debenture cost £116,000 for the five Championships of 2026–2030; that is the series single-day debenture tickets come from",
+      "Day: the FFT prices a per-day Chatrier loge by date, from €935 per person before tax",
+      "Timing: Australian Open Ground Passes carry early-bird prices until 30 November",
+    ],
+    source: { text: "AELTC Centre Court debenture issue", href: "https://www.wimbledon.com/amp/en_GB/news/articles/2024-03-13/2024-03-13_centre_court_debenture_issue.html" },
+  },
+  "experiences__sports-event-travel__formula-1.html": {
+    unit: "Priced by the seat, not by the night",
+    noBand: "The seat sets the number: Paddock Club, grandstand, yacht and balcony are priced per race, per day and per guest, and the four tiers sit too far apart for one nightly figure to mean anything.",
+    includes: [
+      "Race access at the tier booked — grandstand, Paddock Club, yacht or terrace",
+      "A hotel within walking distance or a short private transfer of the circuit",
+      "Transfers on race days, and the catering the hospitality itself carries",
+    ],
+    excludes: [
+      "International flights, and the nights either side of race week",
+      "Anything outside the hospitality's own catering window",
+      "Cancel-for-any-reason cover, which event trips need more than most",
+    ],
+    drivers: [
+      "Which tier — a grandstand seat, the Paddock Club, a yacht berth and a private balcony are four different products, not four grades of one",
+      "Party composition — Monaco prices ages six to fifteen at half the adult ticket for Friday, Saturday or Sunday (ACM terms, checked October 2026)",
+      "Duration — a two- or three-day Monaco package takes 10% off the adult tickets; a single Sunday does not, and the discount excludes children's tickets",
+    ],
+    source: { text: "Automobile Club de Monaco ticket terms", href: "https://acm.mc/en/epreuves/formula-1-grand-prix-de-monaco/useful-infos/information-about-ticket-or-package-purchase/" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
+  "experiences__cruises__yacht-charters.html": {
+    unit: "Priced per boat per week, not per person",
+    noBand: "A crewed charter is quoted for the whole boat and crew by the week, and the APA and the gratuity are then worked out as shares of that fee, so a per-person band would move with every guest added to the same boat and describe none of them.",
+    includes: [
+      "The boat and its full crew for the charter period",
+      "Crew wages and the crew's own food",
+      "The standard water toys and tender listed in the boat's specification",
+    ],
+    excludes: [
+      "The APA: fuel, food, drink, berths and port fees, drawn down and reconciled against receipts",
+      "VAT where the charter is taxed, and any delivery or re-delivery fee",
+      "Crew gratuity, flights and hotel nights either side",
+    ],
+    drivers: [
+      "Boat type, length and season, with the guest limit on the certificate: 12 for a commercial yacht of 24 metres and over under the Red Ensign Group Yacht Code",
+      "The APA, a percentage of the fee set in each contract and reconciled against receipts before disembarkation",
+      "Where the boat is put at your disposal: in the EU a hire of 90 days or less is taxed there, so the VAT differs between Greece, Italy and Croatia",
+      "Crew gratuity, which MYBA guidance puts at 5–15% of the gross charter fee, at the charterer's discretion",
+    ],
+    source: { text: "MYBA guidelines for charter yacht captains & crew", href: "https://www.myba-association.com/files/index.cfm?id=481&crypt=418013" },
   },
 };

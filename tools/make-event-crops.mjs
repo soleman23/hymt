@@ -68,6 +68,16 @@ const SOURCES = [
      listed so the crop survives a --force rebuild if the slot swaps back. */
   ["xf", "e-16-safari-vehicle-sunrise.jpg"],
   ["xf", "jh-11-augusta-azalea-hole.jpg"],
+  /* Draft detail pages (docs/drafts/new-pages/), generated 2026-10-03. */
+  /* An optional third value overrides sharp's "attention" crop where it
+     picks the wrong subject: on e-74 it centres the village and cuts the
+     catamaran, which sits in the left third of the frame. */
+  ["ev", "e-74-cyclades-catamaran.jpg", "left"],             // yacht-charters: Greek catamaran week
+  ["ev", "e-75-caribbean-motor-yacht.jpg"],                  // yacht-charters: Caribbean motor yacht
+  ["ev", "e-69-marina-bay-night-circuit.jpg", "left"],        // sports-event-travel/formula-1: Singapore (keeps the track)
+  ["ev", "e-73-gulet-turquoise-cove.jpg", "centre"],          // yacht-charters: gulet; cruises: a gulet of your own
+  ["ev", "e-71-yas-marina-blue-hour.jpg", "centre"],         // sports-event-travel/formula-1: Abu Dhabi
+  ["ev", "e-68-melbourne-court-dusk.jpg", "centre"],         // sports-event-travel/tennis: Australian Open (attention crop drops the skyline)
 ];
 
 const manifest = await readImageManifest(MANIFEST);
@@ -75,7 +85,7 @@ const byTarget = new Map(manifest.map((m) => [m.target, m]));
 
 let built = 0, skipped = 0;
 
-for (const [kind, src] of SOURCES) {
+for (const [kind, src, position = "attention"] of SOURCES) {
   const { w, h } = BOX[kind];
   const srcPath = path.join(IMG, src);
   const out = `${kind}-` + src.replace(/\.(jpe?g|png|webp)$/i, "") + ".jpg";
@@ -87,7 +97,7 @@ for (const [kind, src] of SOURCES) {
 
   const meta = await sharp(srcPath).metadata();
   await sharp(srcPath)
-    .resize(w, h, { fit: "cover", position: "attention" })
+    .resize(w, h, { fit: "cover", position })
     .jpeg({ quality: QUALITY, mozjpeg: true })
     .toFile(outPath);
 
