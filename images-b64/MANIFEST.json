@@ -760,6 +760,11 @@
   "bytes": 71271
  },
  {
+  "b64": "images-b64/assets__img__dc-dolomites-tre-cime-di-lavaredo.jpg.b64",
+  "target": "public/assets/img/dc-dolomites-tre-cime-di-lavaredo.jpg",
+  "bytes": 81664
+ },
+ {
   "b64": "images-b64/assets__img__dc-e-09-jungle-yoga-pavilion.jpg.b64",
   "target": "public/assets/img/dc-e-09-jungle-yoga-pavilion.jpg",
   "bytes": 40770
@@ -773,6 +778,11 @@
   "b64": "images-b64/assets__img__dc-e-12-patagonia-trek.jpg.b64",
   "target": "public/assets/img/dc-e-12-patagonia-trek.jpg",
   "bytes": 66525
+ },
+ {
+  "b64": "images-b64/assets__img__dc-e-60-st-lucia-terrace-piton.jpg.b64",
+  "target": "public/assets/img/dc-e-60-st-lucia-terrace-piton.jpg",
+  "bytes": 44064
  },
  {
   "b64": "images-b64/assets__img__dc-france-french-riviera.jpg.b64",
@@ -853,6 +863,11 @@
   "b64": "images-b64/assets__img__dc-na-napa-sonoma-cellar-tasting.jpg.b64",
   "target": "public/assets/img/dc-na-napa-sonoma-cellar-tasting.jpg",
   "bytes": 47963
+ },
+ {
+  "b64": "images-b64/assets__img__dc-orlando-walt-disney-world-lagoon-fireworks.jpg.b64",
+  "target": "public/assets/img/dc-orlando-walt-disney-world-lagoon-fireworks.jpg",
+  "bytes": 71481
  },
  {
   "b64": "images-b64/assets__img__dc-polar-regions-arctic-norway-and-northern-lights.jpg.b64",
