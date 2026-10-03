@@ -600,7 +600,7 @@ t("eager: the post-fix homepage hero pattern counts slide 1 only",
 const LLMS = [
   "- [Destinations](https://www.hymtravel.com/destinations/): 43 destination guides, grouped by region",
   "- [Experiences](https://www.hymtravel.com/experiences/): 12 trip types",
-  "- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 field reports and planning guides",
+  "- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 trip and planning guides",
 ].join("\n");
 
 const TRUTH = { destinations: 43, experiences: 12, journal: 32 };
