@@ -1420,9 +1420,19 @@
   "bytes": 222607
  },
  {
+  "b64": "images-b64/assets__img__e-69-marina-bay-night-circuit.jpg.b64",
+  "target": "public/assets/img/e-69-marina-bay-night-circuit.jpg",
+  "bytes": 229390
+ },
+ {
   "b64": "images-b64/assets__img__e-71-yas-marina-blue-hour.jpg.b64",
   "target": "public/assets/img/e-71-yas-marina-blue-hour.jpg",
   "bytes": 252756
+ },
+ {
+  "b64": "images-b64/assets__img__e-73-gulet-turquoise-cove.jpg.b64",
+  "target": "public/assets/img/e-73-gulet-turquoise-cove.jpg",
+  "bytes": 319086
  },
  {
   "b64": "images-b64/assets__img__e-74-cyclades-catamaran.jpg.b64",
@@ -1615,9 +1625,19 @@
   "bytes": 61551
  },
  {
+  "b64": "images-b64/assets__img__ev-e-69-marina-bay-night-circuit.jpg.b64",
+  "target": "public/assets/img/ev-e-69-marina-bay-night-circuit.jpg",
+  "bytes": 77411
+ },
+ {
   "b64": "images-b64/assets__img__ev-e-71-yas-marina-blue-hour.jpg.b64",
   "target": "public/assets/img/ev-e-71-yas-marina-blue-hour.jpg",
   "bytes": 73056
+ },
+ {
+  "b64": "images-b64/assets__img__ev-e-73-gulet-turquoise-cove.jpg.b64",
+  "target": "public/assets/img/ev-e-73-gulet-turquoise-cove.jpg",
+  "bytes": 91898
  },
  {
   "b64": "images-b64/assets__img__ev-e-74-cyclades-catamaran.jpg.b64",

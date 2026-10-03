@@ -25,8 +25,9 @@ are written for the promoted location. They do not resolve from `docs/drafts/`.
   `tools/make-event-crops.mjs`, because sharp's attention crop centred the
   village and lost the boat).
 - Motor-yacht card: `ev-e-75-caribbean-motor-yacht.jpg`.
-- Still open: the gulet card and #gulets section. A generated gulet image is
-  ready to import; it still blocks launch until it is in.
+- Gulet card: `ev-e-73-gulet-turquoise-cove.jpg` (2026-10-03). No image gap now
+  blocks launch. The live Cruises page's gulet card still shows a French
+  Riviera photo; swap it to this crop in the promotion PR.
 
 ## 1. Metadata
 

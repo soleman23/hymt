@@ -93,11 +93,9 @@ What the draft uses, all checked to exist in `public/assets/img/`:
 - **#monza card:** `e-63-circuit-kerb-apex.jpg` (1600×899). This is a generic
   circuit shot, also used on the parent's F1 card, and the alt text does not
   claim it is Monza. Replace it with a Monza `ev-` tile when one exists.
-- **#singapore card:** **no photograph.** It shows the plain `event-image`
-  panel with the caption "Marina Bay · Night Race". **This blocks launch.**
-  CLAUDE.md says never ship a placeholder image, so make
-  `ev-…-singapore-marina-bay-night.jpg` (3:4, 600×700) first, then switch the
-  card to `event-image--photo` with an `<img>`.
+- **#singapore card:** done (2026-10-03). `ev-e-69-marina-bay-night-circuit.jpg`, a
+  left-anchored crop of the generated `e-69-marina-bay-night-circuit.jpg` (Marina
+  Bay street circuit at night, no cars). No longer blocks launch.
 - **#abu-dhabi card:** done (2026-10-03). `ev-e-71-yas-marina-blue-hour.jpg`, a centre
   crop of the generated `e-71-yas-marina-blue-hour.jpg` (the hotel canopy over
   the circuit at blue hour). It replaces the Louvre Abu Dhabi stand-in.

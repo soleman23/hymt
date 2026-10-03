@@ -74,6 +74,8 @@ const SOURCES = [
      catamaran, which sits in the left third of the frame. */
   ["ev", "e-74-cyclades-catamaran.jpg", "left"],             // yacht-charters: Greek catamaran week
   ["ev", "e-75-caribbean-motor-yacht.jpg"],                  // yacht-charters: Caribbean motor yacht
+  ["ev", "e-69-marina-bay-night-circuit.jpg", "left"],        // sports-event-travel/formula-1: Singapore (keeps the track)
+  ["ev", "e-73-gulet-turquoise-cove.jpg", "centre"],          // yacht-charters: gulet; cruises: a gulet of your own
   ["ev", "e-71-yas-marina-blue-hour.jpg", "centre"],         // sports-event-travel/formula-1: Abu Dhabi
   ["ev", "e-68-melbourne-court-dusk.jpg", "centre"],         // sports-event-travel/tennis: Australian Open (attention crop drops the skyline)
 ];
