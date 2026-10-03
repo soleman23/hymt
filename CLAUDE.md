@@ -267,8 +267,11 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
   (`tools/check-node.mjs`), the lockfile restore (`tools/restore-lockfile.mjs`),
   astro build, the sitemap reflow (`tools/format-sitemap.mjs`), the
   internal-comment strip, then the image restore
-  (`node tools/restore-images.mjs`), then the check fixtures
+  (`node tools/restore-images.mjs`), then the responsive variants derived from
+  it (`node tools/build-responsive-images.mjs`), then the check fixtures
   (`tools/verify-checks.test.mjs`), then `tools/verify-deployment.mjs`.
+  `npm run restore` runs the two image stages alone; the `restore-parity`
+  check fails if it stops running both.
 - The lockfile restore is the one stage that WRITES to a source file, and it
   exists because hPanel's build command cannot be changed on this account: the
   host installs before it builds, its install drops the `libc` blocks out of

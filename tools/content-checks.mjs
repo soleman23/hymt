@@ -2551,6 +2551,69 @@ export function postBuildDrift(scripts = {}) {
 }
 
 /**
+ * The stages that refill dist/assets/ after `astro build` wipes it, in the
+ * order they must run. restore-images.mjs writes the originals out of
+ * images-b64/; build-responsive-images.mjs then derives the WebP/AVIF variants
+ * under /assets/responsive/ from those originals, so it cannot run first.
+ * `npm run restore` runs exactly these, held to it by restoreScriptGaps().
+ */
+export const ASSET_RESTORE_STAGES = [
+  "node tools/restore-images.mjs",
+  "node tools/build-responsive-images.mjs",
+];
+
+/**
+ * The recovery hint for files missing from dist/ under /assets/, or null when
+ * it does not apply.
+ *
+ * The hint used to say `npm run restore` while that script ran the first stage
+ * alone. That covered everything until #199 added /assets/responsive/: on
+ * 2026-10-01 a checkout not built since then failed verify:prod with 106
+ * missing /assets/responsive/img/*.avif files, and following the hint left all
+ * 106 missing. The command now runs both stages and the hint names them; when
+ * derived variants are among the missing it also says which stage writes
+ * them, for anyone who runs restore-images.mjs by hand.
+ *
+ * Only when EVERY path is under /assets/: a missing stylesheet or script means
+ * the build itself went wrong, and restoring images would not fix it.
+ */
+export function assetRestoreHint(missing = []) {
+  if (!missing.length || !missing.every((p) => p.startsWith("/assets/"))) return null;
+  const hint = `run \`npm run restore\` (${ASSET_RESTORE_STAGES.join(" && ")}).`;
+  const derived = missing.filter((p) => p.startsWith("/assets/responsive/")).length;
+  if (!derived) return hint;
+  return `${hint} ${derived} of ${missing.length} missing ${missing.length === 1 ? "file" : "files"} ` +
+    `${derived === 1 ? "is a /assets/responsive/ variant" : "are /assets/responsive/ variants"}, ` +
+    "which only tools/build-responsive-images.mjs writes — restore-images.mjs alone leaves them missing.";
+}
+
+/**
+ * ASSET_RESTORE_STAGES that `npm run restore` does not run, in order.
+ *
+ * The missing-asset and og-image hints send people to `npm run restore`, so
+ * that script is where the hint's promise is kept or broken. It ran
+ * restore-images.mjs alone for two merges after build-responsive-images.mjs
+ * joined the build (#199, #200), and nothing noticed: the hint still printed,
+ * it just stopped working.
+ *
+ * Compared as whole `&&` segments, like postBuildDrift, except that order
+ * matters here — the derivation reads what the restore writes — so a stage
+ * that runs before its predecessor is reported. An absent `restore` script
+ * misses every stage.
+ */
+export function restoreScriptGaps(scripts = {}) {
+  const stages = String(scripts.restore ?? "").split("&&").map((s) => s.trim()).filter(Boolean);
+  const gaps = [];
+  let from = 0;
+  for (const stage of ASSET_RESTORE_STAGES) {
+    const at = stages.indexOf(stage, from);
+    if (at === -1) gaps.push(stage);
+    else from = at + 1;
+  }
+  return gaps;
+}
+
+/**
  * The tile cards on an experience page, in document order.
  *
  * Every experience partial carries two kinds of tile: `a.exp-card` (the
