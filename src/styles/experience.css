@@ -268,7 +268,7 @@
 }
 .compare-table:focus-visible { outline:2px solid var(--gold-500);outline-offset:2px }
 .compare-table table {
-  width:100%;min-width:720px;border-collapse:collapse;
+  width:100%;min-width:880px;border-collapse:collapse;
   font-family:var(--font-b);font-size:14px;line-height:1.55;color:var(--text-secondary);
 }
 .compare-table caption {
