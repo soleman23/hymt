@@ -98,9 +98,9 @@ What the draft uses, all checked to exist in `public/assets/img/`:
   CLAUDE.md says never ship a placeholder image, so make
   `ev-…-singapore-marina-bay-night.jpg` (3:4, 600×700) first, then switch the
   card to `event-image--photo` with an `<img>`.
-- **#abu-dhabi card:** `uae-gulf-abu-dhabi.jpg` (1600×899). It shows the
-  Louvre Abu Dhabi, not the circuit, and the alt text says so. A Yas Marina
-  `ev-` tile would be better.
+- **#abu-dhabi card:** done (2026-10-03). `ev-e-71-yas-marina-blue-hour.jpg`, a centre
+  crop of the generated `e-71-yas-marina-blue-hour.jpg` (the hotel canopy over
+  the circuit at blue hour). It replaces the Louvre Abu Dhabi stand-in.
 - **"Build the Week" cards:** a plain grid with no images, because no Milan
   or Lake Como photograph exists. I left the swatch out too, so nothing
   placeholder-like ships. If France, Italy and UAE photos all exist one day,

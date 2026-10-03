@@ -1420,6 +1420,11 @@
   "bytes": 222607
  },
  {
+  "b64": "images-b64/assets__img__e-71-yas-marina-blue-hour.jpg.b64",
+  "target": "public/assets/img/e-71-yas-marina-blue-hour.jpg",
+  "bytes": 252756
+ },
+ {
   "b64": "images-b64/assets__img__e-74-cyclades-catamaran.jpg.b64",
   "target": "public/assets/img/e-74-cyclades-catamaran.jpg",
   "bytes": 216841
@@ -1608,6 +1613,11 @@
   "b64": "images-b64/assets__img__ev-e-68-melbourne-court-dusk.jpg.b64",
   "target": "public/assets/img/ev-e-68-melbourne-court-dusk.jpg",
   "bytes": 61551
+ },
+ {
+  "b64": "images-b64/assets__img__ev-e-71-yas-marina-blue-hour.jpg.b64",
+  "target": "public/assets/img/ev-e-71-yas-marina-blue-hour.jpg",
+  "bytes": 73056
  },
  {
   "b64": "images-b64/assets__img__ev-e-74-cyclades-catamaran.jpg.b64",
