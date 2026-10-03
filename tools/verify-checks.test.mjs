@@ -1431,6 +1431,12 @@ AddType image/webp .webp
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+  RewriteRule ^travel-journal/amanjiwo-field-report/?$ https://www.hymtravel.com/travel-journal/amanjiwo/ [R=301,L,NE]
+  RewriteRule ^travel-journal/glacier-express-field-report/?$ https://www.hymtravel.com/travel-journal/glacier-express/ [R=301,L,NE]
+  RewriteRule ^travel-journal/heli-ski-field-report/?$ https://www.hymtravel.com/travel-journal/heli-skiing/ [R=301,L,NE]
+  RewriteRule ^travel-journal/kentucky-derby-field-report/?$ https://www.hymtravel.com/travel-journal/kentucky-derby/ [R=301,L,NE]
+  RewriteRule ^travel-journal/masters-field-report/?$ https://www.hymtravel.com/travel-journal/the-masters/ [R=301,L,NE]
+  RewriteRule ^travel-journal/singita-grumeti-field-report/?$ https://www.hymtravel.com/travel-journal/singita-grumeti/ [R=301,L,NE]
   RewriteRule ^sitemap\\.xml$ /sitemap-index.xml [L]
   RewriteCond %{HTTP_HOST} ^hymtravel\\.com$ [NC]
   RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
@@ -1472,6 +1478,12 @@ t("htaccess: a non-UTF-8 default charset is caught",
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
+
+t("htaccess: a missing renamed-journal redirect is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^travel-journal\/masters-field-report.*$/m, "")).length, 1);
+
+t("htaccess: a renamed-journal redirect pointing back at the old slug is caught",
+  htaccessGaps(HT_GOOD.replace("https://www.hymtravel.com/travel-journal/the-masters/", "https://www.hymtravel.com/travel-journal/masters-field-report/")).length, 1);
 
 t("htaccess: a legacy redirect with the wrong target is caught",
   htaccessGaps(HT_GOOD.replace("https://www.hymtravel.com/travel-journal/", "https://www.hymtravel.com/")).length, 1);
@@ -1915,8 +1927,8 @@ t("htaccess: a var named only inside a match pattern arms nothing",
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the canonical-host rewrite, sitemap alias, UTF-8 charset,
    the CSP once, the cache once, and the hashed immutable rule. */
-t("htaccess: an empty file reports all 18 gaps and does not throw",
-  htaccessGaps("").length, 18);
+t("htaccess: an empty file reports all 24 gaps and does not throw",
+  htaccessGaps("").length, 24);
 
 /* The #166 additions are pinned by exact string equality, so the value that
    shipped before them must now be a gap. Without this, the three copies could
@@ -2432,11 +2444,11 @@ const collectionPage = (items, n = items.length) => ld({
    positions. numberOfItems agreed with the (wrong) element count, so this is
    the duplicate branch alone. */
 t("itemlist: the featured post listed twice is one defect",
-  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "masters-field-report"),
+  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "the-masters"),
     li(3, "botswana-shoulder-season")])).length, 1);
 
 t("itemlist: the duplicate report names the URL and both positions",
-  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "masters-field-report"),
+  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "the-masters"),
     li(3, "botswana-shoulder-season")]))[0].includes("positions 1, 3"), true);
 
 t("itemlist: distinct URLs are clean",
@@ -2561,7 +2573,7 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   t("real /destinations/napa-sonoma/ is 1,215 words and passes: there is no floor",
     bodyWords(napa) < 1500 && bodyWords(napa) <= 3500, true);
 
-  const masters = await readFile(path.join(dist, "travel-journal", "masters-field-report", "index.html"), "utf8");
+  const masters = await readFile(path.join(dist, "travel-journal", "the-masters", "index.html"), "utf8");
   t("real masters post clears the destination-link floor",
     linkFloor(masters, "journal") >= 2, true);
 
