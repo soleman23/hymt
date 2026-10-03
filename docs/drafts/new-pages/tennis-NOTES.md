@@ -10,6 +10,17 @@ been changed.
 To promote it, copy both files to the same paths under the repo root. The
 import paths are already written for that location.
 
+## Images applied (2026-10-03)
+
+- Intro portrait: `np-e-66-grass-court-baseline.jpg` (900x1520), cut from the
+  generated `e-66-grass-court-baseline.jpg` (1600x900). The flat intro
+  placeholder is gone.
+- Still open: the Roland-Garros card (a generated Paris clay court is ready
+  to import) and the Australian Open card (the generated hard-court image
+  shows the New York skyline and was rejected; regenerate with a Melbourne or
+  neutral backdrop). The og crop for the hero is made at promotion by
+  `tools/make-og-crops.mjs`. Table CSS is still needed.
+
 ## Metadata
 
 | Field | Value | Length |

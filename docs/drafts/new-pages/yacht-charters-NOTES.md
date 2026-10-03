@@ -16,6 +16,18 @@ are written for the promoted location. They do not resolve from `docs/drafts/`.
 
 ---
 
+## Images applied (2026-10-03)
+
+- Hero: `e-76-yacht-bay-golden-hour.jpg` (1600x900 landscape) replaces the
+  portrait e-07, so `tools/make-og-crops.mjs` can cut a 1200x630 og:image at
+  promotion. The "Hero aspect" and og:image gaps below are resolved by this.
+- Catamaran card: `ev-e-74-cyclades-catamaran.jpg` (crop anchored left in
+  `tools/make-event-crops.mjs`, because sharp's attention crop centred the
+  village and lost the boat).
+- Motor-yacht card: `ev-e-75-caribbean-motor-yacht.jpg`.
+- Still open: the gulet card and #gulets section. A generated gulet image is
+  ready to import; it still blocks launch until it is in.
+
 ## 1. Metadata
 
 | Field | Value | Length |
