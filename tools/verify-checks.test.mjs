@@ -102,7 +102,10 @@ import {
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
   liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
   responsiveImageDefects,
+  readTileCards, cardTargetDefects, cardFragmentHrefs, hasElementId, tileParityDefects, featuredInLinks,
 } from "./content-checks.mjs";
+import { applyTileLinks, alignmentDefects } from "./tile-links-apply.mjs";
+import { TILES, EXPERIENCES, featuredIn, featuredInHtml, pagePath } from "../src/data/tiles.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
 const attribution = testimonialAttribution;
@@ -4460,6 +4463,115 @@ t("crawlers/verdict: ...and says the origin is degrading for everything",
     .map((a) => a.name);
   t(`crawlers: no agent robots.txt disallows is bursted (${wrong.join(", ") || "none"})`,
     wrong.length, 0);
+}
+
+
+/* ── Tile map (src/data/tiles.mjs) ──
+   All 126 experience-page tiles linked /plan-your-trip/ under "Explore →",
+   and every link check passed because the form resolves. Each predicate below
+   is shown failing on the broken shape it exists for, not only passing on the
+   site as built. */
+{
+  const card = (href, name = "Maldives") =>
+    `<a class="exp-card" href="${href}">\n      <img class="exp-card__img" src="/assets/img/x.jpg" alt="x" width="1600" height="899" loading="lazy" decoding="async">\n      <div class="exp-card__body">\n        <div class="exp-card__region">Indian Ocean</div>\n        <div class="exp-card__name">${name}</div>\n      </div>\n      <div class="exp-card__arrow">Explore &rarr;</div>\n    </a>`;
+  const event = (href, name = "The Overwater Classic", more = "") =>
+    `<div class="event-card">\n      <div class="event-body">\n        <div class="event-name">${name}</div>\n        <a class="event-cta" href="${href}">Plan This Trip</a>${more ? `\n        <a class="event-more" href="${more}">Maldives in detail</a>` : ""}\n      </div>\n    </div>`;
+  const page = (...parts) => `<section class="exp-cards-section" id="destinations">${parts.join("\n")}</section>`;
+
+  /* readTileCards: both kinds, in order, names raw. */
+  const parsed = readTileCards(page(card("/destinations/maldives/"), card("/plan-your-trip/", "Turks &amp; Caicos"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/#places")));
+  t("tiles: readTileCards finds two exp-cards and one event-card", parsed.length, 3);
+  t("tiles: ...keeps the entity in a card name", parsed[1].name, "Turks &amp; Caicos");
+  t("tiles: ...reads the event CTA href with its prefill", parsed[2].href, "/plan-your-trip/?type=beach");
+  t("tiles: ...reads the event secondary link", parsed[2].more, "/destinations/maldives/#places");
+  t("tiles: ...an event-card with no secondary link reads null", readTileCards(event("/plan-your-trip/"))[0].more, null);
+
+  /* exp-card-targets */
+  t("exp-card-targets: a card linking the planning form fails", cardTargetDefects(card("/plan-your-trip/")).length, 1);
+  t("exp-card-targets: ...and names the card", cardTargetDefects(card("/plan-your-trip/"))[0].includes("Maldives"), true);
+  t("exp-card-targets: ...the form with a prefill still fails", cardTargetDefects(card("/plan-your-trip/?type=beach")).length, 1);
+  t("exp-card-targets: a destination page passes", cardTargetDefects(card("/destinations/maldives/")).length, 0);
+  t("exp-card-targets: a deep link to a section passes", cardTargetDefects(card("/destinations/maldives/#places")).length, 0);
+  t("exp-card-targets: a fragment on the card's own page fails", cardTargetDefects(card("#destinations")).length, 1);
+  t("exp-card-targets: another site fails", cardTargetDefects(card("https://example.org/")).length, 1);
+  t("exp-card-targets: a protocol-relative href fails", cardTargetDefects(card("//example.org/x/")).length, 1);
+  t("exp-card-targets: a query-string variant fails", cardTargetDefects(card("/destinations/maldives/?from=beach")).length, 1);
+  t("exp-card-targets: a pending card may link the form", cardTargetDefects(card("/plan-your-trip/"), ["Maldives"]).length, 0);
+  t("exp-card-targets: ...but pending does not excuse an off-site link", cardTargetDefects(card("https://example.org/"), ["Maldives"]).length, 1);
+  t("exp-card-targets: ...nor excuse a different card", cardTargetDefects(card("/plan-your-trip/", "Seychelles"), ["Maldives"]).length, 1);
+  t("exp-card-targets: event-card CTAs on the form are not its concern", cardTargetDefects(event("/plan-your-trip/")).length, 0);
+
+  /* card-fragment-resolves */
+  const frags = cardFragmentHrefs(page(card("/destinations/maldives/#experiences"), card("/destinations/japan/"), event("/plan-your-trip/", "W", "/destinations/peru/#itineraries")));
+  t("card-fragment-resolves: collects the exp-card and event-more fragments only", frags.length, 2);
+  t("card-fragment-resolves: ...splits path and id", `${frags[0].path}|${frags[0].id}`, "/destinations/maldives/|experiences");
+  t("card-fragment-resolves: ...from the secondary link too", frags[1].id, "itineraries");
+  t("card-fragment-resolves: an id that exists is found", hasElementId(`<section class="places-section" id="places">`, "places"), true);
+  t("card-fragment-resolves: a missing id is reported", hasElementId(`<section class="places-section">`, "places"), false);
+  t("card-fragment-resolves: a longer id is not a match", hasElementId(`<div id="places-grid">`, "places"), false);
+  t("card-fragment-resolves: data-id is not an id", hasElementId(`<div data-id="places">`, "places"), false);
+
+  /* tile-map-parity */
+  const rows = [
+    { kind: "exp-card", name: "Maldives", href: "/destinations/maldives/", status: "live" },
+    { kind: "event-card", name: "Week", href: "/plan-your-trip/?type=beach", more: "/destinations/maldives/", moreLabel: "Maldives in detail" },
+  ];
+  const good = page(card("/destinations/maldives/"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/"));
+  t("tile-map-parity: a page matching the map is clean", tileParityDefects(good, rows).length, 0);
+  t("tile-map-parity: a hand-edited card href fails", tileParityDefects(page(card("/destinations/fiji/"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
+  t("tile-map-parity: a renamed card fails", tileParityDefects(page(card("/destinations/maldives/", "The Maldives"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
+  t("tile-map-parity: an extra card fails", tileParityDefects(page(card("/destinations/maldives/"), card("/destinations/fiji/", "Fiji"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
+  t("tile-map-parity: a dropped secondary link fails", tileParityDefects(page(card("/destinations/maldives/"), event("/plan-your-trip/?type=beach", "Week")), rows).length, 1);
+  t("tile-map-parity: a lost CTA prefill fails", tileParityDefects(page(card("/destinations/maldives/"), event("/plan-your-trip/", "Week", "/destinations/maldives/")), rows).length, 1);
+
+  /* tile-links-apply writes what parity reads, and nothing else. */
+  const stale = page(card("/plan-your-trip/"), event("/plan-your-trip/", "Week", "/destinations/fiji/"));
+  const applied = applyTileLinks(stale, rows);
+  t("tile-links-apply: the rewritten page matches the map", tileParityDefects(applied, rows).length, 0);
+  t("tile-links-apply: ...a second run changes nothing", applyTileLinks(applied, rows), applied);
+  t("tile-links-apply: ...card copy is untouched", applied.includes("Explore &rarr;") && applied.includes("Plan This Trip"), true);
+  t("tile-links-apply: a secondary link the map drops is removed",
+    readTileCards(applyTileLinks(good, [rows[0], { ...rows[1], more: undefined }]))[1].more, null);
+  t("tile-links-apply: refuses to pair a renamed card by position",
+    alignmentDefects(page(card("/x/", "The Maldives"), event("/y/", "Week")), rows).length, 1);
+  t("tile-links-apply: refuses a count mismatch",
+    alignmentDefects(page(card("/x/"), card("/z/", "Fiji"), event("/y/", "Week")), rows).length, 1);
+
+  /* featured-in: derived links, and chrome that bodyWords does not count. */
+  const strip = `<section class="featured-in">\n  <div class="related-more"><span class="related-more__label">Featured in our trip types:</span> <a class="related-more__link" href="/experiences/beach-island-escapes/">Beach</a></div>\n</section>`;
+  t("featured-in-parity: reads the strip's experience links", featuredInLinks(`<main>${strip}</main>`).join(), "/experiences/beach-island-escapes/");
+  t("featured-in-parity: no strip reads as no links", featuredInLinks("<main><p>x</p></main>").length, 0);
+  t("featured-in: bodyWords does not count the strip",
+    bodyWords(`<main><p>one two three</p>${strip}</main>`), bodyWords("<main><p>one two three</p></main>"));
+  t("featured-in: a page no live tile lands on gets no strip at all", featuredInHtml("/destinations/no-such-page/"), "");
+  t("featured-in: pagePath drops the fragment and query", pagePath("/destinations/x/?a=1#places"), "/destinations/x/");
+
+  /* The real map: every experience covered, card names unique per page, every
+     live/interim href same-site and query-free, and each strip it implies
+     links only experiences that exist. */
+  t("tiles.mjs: covers exactly the 12 experience pages",
+    Object.keys(TILES).sort().join(), Object.keys(EXPERIENCES).sort().join());
+  for (const [slug, list] of Object.entries(TILES)) {
+    const names = list.filter((r) => r.kind === "exp-card").map((r) => r.name);
+    t(`tiles.mjs: ${slug} has no duplicate card name`, new Set(names).size, names.length);
+    for (const r of list.filter((x) => x.kind === "exp-card")) {
+      const ok = r.status === "pending" ? r.href === "/plan-your-trip/" : (r.href.startsWith("/") && !r.href.startsWith("//") && !r.href.includes("?") && !r.href.startsWith("/plan-your-trip/"));
+      t(`tiles.mjs: ${slug} "${r.name}" (${r.status}) has a target its status allows`, ok, true);
+      if (r.status === "interim" || r.status === "pending") t(`tiles.mjs: ${slug} "${r.name}" names its final page`, typeof r.final === "string" && r.final.startsWith("/"), true);
+    }
+  }
+  for (const target of new Set(Object.values(TILES).flat().filter((r) => r.kind === "exp-card").map((r) => pagePath(r.href)))) {
+    t(`tiles.mjs: Featured-in for ${target} links only real experience pages`,
+      featuredIn(target).every((s) => s in EXPERIENCES), true);
+  }
+
+  /* Against the built site: every experience page's cards match the map. */
+  for (const slug of Object.keys(TILES)) {
+    const file = path.join(ROOT, "dist", "experiences", slug, "index.html");
+    if (!existsSync(file)) continue;
+    t(`tiles: real dist /experiences/${slug}/ matches src/data/tiles.mjs`,
+      tileParityDefects(readFileSync(file, "utf8"), TILES[slug]).length, 0);
+  }
 }
 
 /* ── report ── */

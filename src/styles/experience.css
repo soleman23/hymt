@@ -249,6 +249,15 @@
 }
 .event-cta:hover { gap:12px }
 .event-cta::after { content:'→' }
+/* The one optional text link under an event card's CTA, to the page that
+   covers that trip (src/data/tiles.mjs `more`). The CTA keeps the visual
+   weight; this reads as a footnote to it. */
+.event-more {
+  align-self:flex-start;margin-top:12px;
+  font-family:var(--font-b);font-size:13px;color:var(--text-muted);
+  text-decoration:underline;text-underline-offset:3px;
+}
+.event-more:hover,.event-more:focus-visible { color:var(--gold-500) }
 
 /* INCLUSIONS */
 .inclusions-section {
