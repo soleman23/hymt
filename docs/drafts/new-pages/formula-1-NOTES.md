@@ -25,7 +25,8 @@ Formula 1. The layout sends the hero image as `preloadImage` by itself.
   **152 characters.** The limit is 110–165.
 - **H1 (hero headline):** "Trackside at Monaco, / Monza and Singapore". This is not the parent's
   "The Best Seat in the House".
-- **Body:** **2,574 words**, measured with the site's own `bodyWords()` from
+- **Body:** **2,556 words** after the owner answers (2,574 before),
+  measured with the site's own `bodyWords()` from
   `tools/content-checks.mjs`. That is above the brief's 1,800–2,400 and
   CONTENT-STANDARDS' 1,200–2,000 for an experience page. The verifier sets no
   ceiling for experience pages, so the build will not fail on length. About
@@ -36,33 +37,47 @@ Formula 1. The layout sends the hero image as `preloadImage` by itself.
   all pass. The answer capsule is 60 words. Every FAQ first sentence is 25
   words or fewer, and every answer runs 74–89 words.
 
-## 2. NEEDS MARK: questions only Mark can answer
+## 2. Owner answers applied (2026-10-03)
 
-Each of these is an HTML comment in the partial. The page reads correctly
-without the answers.
+The owner answered every open question with one rule: **Mark has not been to
+any of these races.** Nothing on the page may claim first-hand experience,
+booking relationships, named hospitality operators or suppliers, hotels HYMT
+uses, prices, client stories or testimonials. Every detail stays
+informational: how each tier works, the calendar, the ticket rules, and where
+visitors typically base themselves (areas, not named hotels), each cited as
+before. All seven `NEEDS MARK` comments are gone from the partial (`grep -c`
+returns 0). What changed:
 
-1. **Has Mark been to these races himself?** Monaco, Monza, Singapore or
-   Abu Dhabi: which race, which year, and which tier. Until he confirms, the
-   page has no first-person trackside copy, and his note is an empty
-   placeholder.
-2. **Who does HYMT actually book through?** Paddock Club, yacht and balcony
-   products. The parent page claims "deep relationships" and "pre-allocated
-   hospitality packages", so please confirm that holds for F1. The draft
-   names no operator, broker or supplier.
-3. **Balcony viewing at the Fairmont Hairpin.** The parent's Monaco card
-   promises it. Can HYMT really source it, and through whom? If not, the
-   Balcony tier on this page should shrink to one line, and the parent's
-   event card should be reworded.
-4. **Real prices.** If Mark wants any figure on the page, he needs real,
-   dated quote ranges. Until then the cost block stays "Priced by the seat,
-   not by the night" with no price band.
-5. **A client testimonial for an F1 trip.** It needs a real name, race and
-   date. Leave the section out if there isn't one.
-6. **Where guests stay for Monaco.** In Monaco itself, or Beaulieu,
-   Cap-Ferrat or Nice? Name hotels only if Mark has a real view or a real
-   booking relationship.
-7. **Where guests stay for Monza.** Milan or Lake Como, and any hotel he
-   would name.
+1. **Mark's attendance.** The Mark's-note placeholder section is deleted
+   outright. There is no first-person trackside copy anywhere on the page.
+2. **Suppliers.** The yacht-operator comment is deleted; the yacht tier
+   names no operator, broker or supplier and keeps its two citations. No
+   other tier names a supplier.
+3. **Balcony at the Fairmont Hairpin.** No confirmed access. The Balcony or
+   Terrace tier is cut to one neutral line: "Monaco only: private terraces
+   and balconies above the circuit are sold for the race weekend." The
+   catering and sight-line sentences are gone. In the Monaco card, the
+   uncited "including around the Hairpin" is removed; the Hairpin is still
+   named once as part of the circuit route, which the 2026 timetable link
+   supports. (The live parent's Monaco card has already been reworded; see
+   § 5.)
+4. **Prices.** No figures. The cost block stays "Priced by the seat, not by
+   the night" with no band, and the trailing comment is deleted.
+5. **Testimonial.** The testimonial placeholder section is deleted outright.
+6. **Where to stay, Monaco.** The card now reads "Visitors base themselves in
+   Monaco itself or along the coast in Beaulieu, Cap-Ferrat or Nice", with
+   no hotel named. FAQ 6 is unchanged apart from "Many guests split it" →
+   "A common split is", which drops the implied client base.
+7. **Where to stay, Monza.** "Guests usually base in Milan or on the lakes"
+   → "Visitors typically base themselves in Milan or on Lake Como". No hotel
+   named.
+
+Copy that implied an HYMT track record was also neutralised: the circuits
+heading "The Circuits We Build Trips Around" → "Four Circuits, Race by
+Race"; the Abu Dhabi card's "explains how we plan around it" → "covers the
+season around it"; the final CTA's "come back with the seats, the rooms…" →
+"come back with options for the seats, the rooms…". No factual claim or
+citation was added or removed, and the FAQ markup is untouched.
 
 ## 3. Image gaps
 
@@ -142,6 +157,10 @@ What the draft uses, all checked to exist in `public/assets/img/`:
 
 ## 5. Changes needed elsewhere at launch (listed only, none made)
 
+Already done, so dropped from this list: the live Sports page's Monaco event
+card (date now "June", copy informational) and its FAQ 2 were reworded to
+informational copy on branch `main-0puhp3`.
+
 1. **Tile map (`tile-map.json` + `tools/apply-tile-links.mjs`):**
    - Record `sports-event-travel` exp-card 3 (Formula 1): change it from
      `/plan-your-trip/` to `/experiences/sports-event-travel/formula-1/`.
@@ -150,10 +169,7 @@ What the draft uses, all checked to exist in `public/assets/img/`:
      the `event-cta` with a label like "The Monaco Weekend", or add an
      `event-more` link, "Monaco Grand Prix hospitality tiers". The `#monaco`
      id exists in the draft, so the tile-links check will pass.
-2. **Parent event-card 3 date:** it says "May · Monte Carlo, Monaco".
-   Formula 1's calendars put Monaco on 5–7 June 2026 and 4–6 June 2027.
-   Change it to "June · Monte Carlo, Monaco".
-3. **Parent cost block** (both `tools/cost-ranges-data.mjs` →
+2. **Parent cost block** (both `tools/cost-ranges-data.mjs` →
    `"experiences__sports-event-travel.html"` and the rendered block,
    ~lines 211–233):
    - Remove the two Monaco drivers (children's price, 10% package) and the
@@ -164,41 +180,41 @@ What the draft uses, all checked to exist in `public/assets/img/`:
      hospitality terms (wimbledon.com) or Royal Ascot enclosure ticketing
      (ascot.com). Verify that source before using it.
    - Leave the parent's capsule and its 6–18 month figure exactly as they are.
-4. **Parent FAQ 4:** cut the Monaco example to one clause, e.g. "a
+3. **Parent FAQ 4:** cut the Monaco example to one clause, e.g. "a
    <a href="/experiences/sports-event-travel/formula-1/#monaco">Formula 1
    weekend in Monaco</a> pairs with the Côte d'Azur".
-5. **Parent FAQ 1 or 3 (optional):** link "Formula 1 races" (FAQ 1) or
+4. **Parent FAQ 1 or 3 (optional):** link "Formula 1 races" (FAQ 1) or
    "Formula 1 hospitality packages" (FAQ 3) to the new page.
-6. **`/destinations/uae-gulf/`** (line 204, the Abu Dhabi Grand Prix
+5. **`/destinations/uae-gulf/`** (line 204, the Abu Dhabi Grand Prix
    rate-driver sentence): add a second link, "Formula 1 hospitality", to the
    new page, and keep the existing formula1.com link. Check the body stays
    under 3,500 words.
-7. **`/travel-journal/europe-destination-guide/`** (line 141, the French
+6. **`/travel-journal/europe-destination-guide/`** (line 141, the French
    Riviera paragraph): the brief's anchor, "the Monaco Grand Prix weekend",
    does not exist in this paragraph, which never mentions Monaco. A short
    clause has to be added first, e.g. "…before the July–August peak, and
    just after <a href="/experiences/sports-event-travel/formula-1/#monaco">the
    Monaco Grand Prix weekend</a>…".
-8. **Other journal links back (optional):** `masters-field-report` and
+7. **Other journal links back (optional):** `masters-field-report` and
    `middle-east-destination-guide` are linked from this page's read-more
    block. Each could link back from a relevant sentence.
-9. **`/destinations/france/` (optional):** the brief suggests "Monaco Grand
+8. **`/destinations/france/` (optional):** the brief suggests "Monaco Grand
    Prix week" on the Côte d'Azur seasonal line (~line 228). Note that France
    has **no Riviera or Côte d'Azur place card** (its six are Paris, Provence,
    Bordeaux, Loire, Alsace, Normandy). The draft therefore links France with
    the anchors "a longer stay in France" and "a longer trip through France",
    not "Côte d'Azur".
-10. **`/destinations/italy/`:** it has **no Milan, Lake Como or Lombardy
+9. **`/destinations/italy/`:** it has **no Milan, Lake Como or Lombardy
     coverage**; its places are Rome, Tuscany, Amalfi, Venice, Sicily and
     Puglia. The draft's Italy anchors are "a longer trip through Italy" and
     "the rest of Italy", and the Italy card is framed as Venice and Tuscany
     after Monza, not "Milan and the lakes".
-11. **Singapore:** `destinations__vietnam-southeast-asia.html` does not
+10. **Singapore:** `destinations__vietnam-southeast-asia.html` does not
     mention Singapore anywhere, so the #singapore card has no destination
     link, as the review required.
-12. **`tools/head-baseline.json`:** add the new page's entry, in its own
+11. **`tools/head-baseline.json`:** add the new page's entry, in its own
     commit (`node tools/verify-deployment.mjs --update-baseline`).
-13. **`/experiences/` hub, footer, llms.txt counts:** no change. Optionally
+12. **`/experiences/` hub, footer, llms.txt counts:** no change. Optionally
     add one line to `public/llms.txt` under Sports & Event Travel.
 
 ## 6. Sources and how they were checked
@@ -247,8 +263,8 @@ the ACM rewrites its ticket terms every year. The page shows "checked
 - Section order: intro (capsule) → who it suits / who it does not → circuits
   (`#monaco`, `#monza`, `#singapore`, `#abu-dhabi`) → four ways to watch →
   2027 calendar and lead time (`seasons-strip`) → build the week (plain
-  `exp-cards`) → testimonial and Mark's-note placeholders (comments only) →
-  `exp-cta` → `cost-range` → `page-faq` (9 FAQs, `pf-formula-1-1` to `-9`)
+  `exp-cards`) → `exp-cta` (the testimonial and Mark's-note placeholders
+  were removed on 2026-10-03) → `cost-range` → `page-faq` (9 FAQs, `pf-formula-1-1` to `-9`)
   → `read-more` (3 journal posts).
 - Headings: only h2 and h3. The layout supplies the one h1.
 - No new CSS and no `pageCss`. Every class comes from `experience.css` or
