@@ -379,6 +379,11 @@
   "description": "Small-ship ocean voyages, European rivers, expedition sailings to Antarctica and the Galápagos, and private charters — matched to vessel, cabin and season.",
   "canonical": "https://www.hymtravel.com/experiences/cruises/"
  },
+ "/experiences/cruises/yacht-charters/": {
+  "title": "Private Crewed Yacht Charters — Hit Your Mark Travel",
+  "description": "Crewed gulets, catamarans and motor yachts, chartered by the week in the Med or the Caribbean: how crew, contract and the APA work, and what moves the price.",
+  "canonical": "https://www.hymtravel.com/experiences/cruises/yacht-charters/"
+ },
  "/experiences/culture-immersive-travel/": {
   "title": "Culture &amp; Immersive Travel — Hit Your Mark Travel",
   "description": "Japan, Italy, Morocco, Jordan and Greece — cultural travel planned for depth over breadth, with private expert guides and genuine access.",
@@ -414,10 +419,20 @@
   "description": "Botswana, Kenya, Tanzania, South Africa and Rwanda — private camps, expert guides, and the access that separates a safari from a game drive.",
   "canonical": "https://www.hymtravel.com/experiences/safari-wildlife-travel/"
  },
+ "/experiences/sports-event-travel/formula-1/": {
+  "title": "Formula 1 Grand Prix Hospitality — Hit Your Mark Travel",
+  "description": "Formula 1 weekends at Monaco, Monza and Singapore: Paddock Club, grandstand, yacht and balcony tiers, the 6–18 month lead time, and what sets the price.",
+  "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/formula-1/"
+ },
  "/experiences/sports-event-travel/": {
   "title": "Sports &amp; Event Travel — Hit Your Mark Travel",
   "description": "Courtside at Wimbledon, trackside at Monaco, fairways at Augusta — the great sporting moments with VIP access and every detail handled.",
   "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/"
+ },
+ "/experiences/sports-event-travel/tennis/": {
+  "title": "Wimbledon &amp; Grand Slam Tennis Travel — Hit Your Mark Travel",
+  "description": "Wimbledon debenture, official hospitality or the ballot? The three routes compared, plus Roland-Garros (late May) and the Australian Open (January).",
+  "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/tennis/"
  },
  "/experiences/wellness-retreat-travel/": {
   "title": "Wellness &amp; Retreat Travel — Hit Your Mark Travel",

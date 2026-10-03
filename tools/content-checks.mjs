@@ -310,7 +310,11 @@ export function bodyWords(html) {
   const open = /<main\b[^>]*>/i.exec(html);
   if (!open) return "no-main";
   let inner = innerOf(html, open.index + open[0].length, "main");
-  for (const [tag, cls] of [["div", "breadcrumb"], ["section", "dest-hero"]]) {
+  /* section.featured-in is layout chrome too: DestinationLayout derives it
+     from src/data/tiles.mjs, so it is not in the partial an author edits, and
+     on the pages with ~60 words of headroom it would fail page-length for
+     copy nobody wrote. */
+  for (const [tag, cls] of [["div", "breadcrumb"], ["section", "dest-hero"], ["section", "featured-in"]]) {
     const m = new RegExp(`<${tag}\\b[^>]*class="[^"]*\\b${cls}\\b[^"]*"[^>]*>`, "i").exec(inner);
     if (!m) continue;
     const from = m.index + m[0].length;
@@ -2538,4 +2542,151 @@ export function postBuildDrift(scripts = {}) {
   const stages = String(scripts["build:post"] ?? "").split("&&").map((s) => s.trim()).filter(Boolean);
   const build = String(scripts.build ?? "");
   return stages.filter((stage) => !build.includes(stage));
+}
+
+/**
+ * The tile cards on an experience page, in document order.
+ *
+ * Every experience partial carries two kinds of tile: `a.exp-card` (the
+ * sub-experience grid, where the card IS the link) and `div.event-card` (the
+ * "Trips We Plan Often" itinerary teasers, whose `a.event-cta` button stays on
+ * the planning form and which may carry one `a.event-more` text link to the
+ * page that covers the trip). src/data/tiles.mjs records where each one goes;
+ * tools/tile-links-apply.mjs writes those targets into the partials and this
+ * is the one parser both it and the verifier read them back with, so the
+ * writer and the check cannot disagree about what a card is.
+ *
+ * Names are returned raw, entities and all, because the map stores them the
+ * way the partial spells them and a mismatch is the point of comparing.
+ */
+export function readTileCards(html) {
+  const out = [];
+  for (const m of html.matchAll(/<a class="exp-card" href="([^"]*)">[\s\S]*?<div class="exp-card__name">([\s\S]*?)<\/div>/g)) {
+    out.push({ kind: "exp-card", name: m[2].trim(), href: m[1], at: m.index });
+  }
+  const EVENT = /<div class="event-card">[\s\S]*?<div class="event-name">([\s\S]*?)<\/div>[\s\S]*?<a class="event-cta" href="([^"]*)">([\s\S]*?)<\/a>(?:\s*<a class="event-more" href="([^"]*)">([\s\S]*?)<\/a>)?/g;
+  for (const m of html.matchAll(EVENT)) {
+    out.push({
+      kind: "event-card", name: m[1].trim(), href: m[2], cta: m[3].trim(),
+      more: m[4] ?? null, moreLabel: m[5]?.trim() ?? null, at: m.index,
+    });
+  }
+  return out;
+}
+
+/**
+ * exp-card-targets: a sub-experience card must lead to a page about its
+ * subject.
+ *
+ * Every one of the 78 `.exp-card` tiles pointed at /plan-your-trip/ when the
+ * tile map was introduced, under an "Explore →" arrow that promised a page.
+ * Nothing could see it: the form resolves, so internal-links passed. This
+ * fails a card that links the form, an in-page fragment, another site or a
+ * query-string variant (canonicals strip the query, so it is the same page
+ * twice), unless the card's name is in `pending` — the tiles whose page is
+ * approved but not built yet, which the map marks status "pending".
+ */
+export function cardTargetDefects(html, pending = []) {
+  const allow = new Set(pending);
+  const out = [];
+  for (const card of readTileCards(html)) {
+    if (card.kind !== "exp-card") continue;
+    const href = decodeEntities(card.href);
+    const why =
+      /^\/plan-your-trip\/?(?:[?#]|$)/.test(href) ? "links the planning form" :
+      href.startsWith("#") ? "links a fragment on its own page" :
+      !href.startsWith("/") || href.startsWith("//") ? "links off-site" :
+      href.includes("?") ? "carries a query string" : "";
+    if (why && !(allow.has(card.name) && href.startsWith("/plan-your-trip/"))) {
+      out.push(`the "${decodeEntities(card.name)}" card ${why} (${href})`);
+    }
+  }
+  return out;
+}
+
+/**
+ * Same-site card hrefs that carry a #fragment, from `a.exp-card` and
+ * `a.event-more`. The dead-link check strips fragments before it resolves a
+ * path (internalHrefs, above), so `/destinations/maldives/#places` passes it
+ * although Maldives has no such id. card-fragment-resolves checks each one
+ * against the target page with hasElementId.
+ */
+export function cardFragmentHrefs(html) {
+  const out = [];
+  for (const card of readTileCards(html)) {
+    for (const href of [card.kind === "exp-card" ? card.href : card.more]) {
+      if (!href) continue;
+      const h = decodeEntities(href);
+      const i = h.indexOf("#");
+      if (i > 0 && h.startsWith("/")) out.push({ name: decodeEntities(card.name), path: h.slice(0, i), id: h.slice(i + 1) });
+    }
+  }
+  return out;
+}
+
+/** True when some element in `html` carries `id="<id>"` exactly. */
+export function hasElementId(html, id) {
+  if (!id) return false;
+  const esc = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`<[a-z][^>]*\\sid="${esc}"`, "i").test(html);
+}
+
+/**
+ * tile-map-parity: the cards a page renders against the rows the tile map
+ * holds for it. Rows are { kind, name, href, more? } in document order, the
+ * shape of src/data/tiles.mjs. Reports a count mismatch, a renamed card the
+ * map was not told about, and any href (or event-card secondary link) that
+ * differs from the map, so a hand edit to one card's target cannot ship
+ * without the map — and the "Featured in" links derived from it — agreeing.
+ */
+export function tileParityDefects(html, rows = []) {
+  const out = [];
+  const cards = readTileCards(html);
+  for (const kind of ["exp-card", "event-card"]) {
+    const c = cards.filter((x) => x.kind === kind);
+    const r = rows.filter((x) => x.kind === kind);
+    if (c.length !== r.length) out.push(`${c.length} ${kind}s on the page, ${r.length} in the tile map`);
+    for (let i = 0; i < Math.min(c.length, r.length); i++) {
+      const label = `${kind} ${i + 1}`;
+      if (c[i].name !== r[i].name) { out.push(`${label} is "${c[i].name}" on the page and "${r[i].name}" in the tile map`); continue; }
+      if (c[i].href !== r[i].href) out.push(`${label} "${r[i].name}" links ${c[i].href}, the tile map says ${r[i].href}`);
+      if (kind === "event-card" && (c[i].more ?? null) !== (r[i].more ?? null)) {
+        out.push(`${label} "${r[i].name}" has secondary link ${c[i].more ?? "(none)"}, the tile map says ${r[i].more ?? "(none)"}`);
+      } else if (kind === "event-card" && c[i].more && (c[i].moreLabel ?? null) !== (r[i].moreLabel ?? null)) {
+        /* A label-only edit in the map must reach the page too; comparing the
+           href alone let the apply tool report "already matched" and the
+           page keep the old wording. */
+        out.push(`${label} "${r[i].name}" labels its secondary link "${c[i].moreLabel}", the tile map says "${r[i].moreLabel}"`);
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * The experience-page hrefs inside a page's `section.featured-in` strip, the
+ * reverse links DestinationLayout derives from the tile map. featured-in-parity
+ * compares them with the experiences whose tiles target the page.
+ */
+export function featuredInLinks(html) {
+  const m = /<section class="featured-in"[^>]*>([\s\S]*?)<\/section>/i.exec(html);
+  if (!m) return [];
+  return [...m[1].matchAll(/<a\b[^>]*href="([^"]*)"/gi)].map((x) => decodeEntities(x[1]));
+}
+
+/**
+ * nested-crumb: an experience detail page nested under one of the 12
+ * (/experiences/<parent>/<slug>/) must show a four-crumb trail, Home ›
+ * Experiences › <Parent> › <Name>. ExperienceLayout only adds the parent crumb
+ * when the wrapper passes `parent`, and a wrapper that forgets it still
+ * builds: the page then claims to sit directly under /experiences/, and its
+ * BreadcrumbList, built from the same trail, says the same to search engines.
+ * Returns a defect string, or "" when the trail is right or the page is not a
+ * nested experience page.
+ */
+export function nestedCrumbDefect(url, crumbs) {
+  if (!/^\/experiences\/[a-z0-9-]+\/[a-z0-9-]+\/$/.test(url)) return "";
+  return crumbs.length === 4
+    ? ""
+    : `${url} is a nested experience page but its breadcrumb has ${crumbs.length} crumbs (${crumbs.join(" › ")}); pass parent={{ label, href }} to ExperienceLayout`;
 }

@@ -29,7 +29,12 @@ import {
   bodyWords, crumbTrail, remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage, isThrottled,
   sitemapLineDefects, imageManifestDefects,
   responsiveImageDefects,
+  cardTargetDefects, cardFragmentHrefs, hasElementId, tileParityDefects, featuredInLinks,
+  nestedCrumbDefect,
 } from "./content-checks.mjs";
+/* Where every experience-page tile leads; also what DestinationLayout derives
+   its "Featured in" strip from, so these checks and the page read one record. */
+import { TILES, featuredIn } from "../src/data/tiles.mjs";
 /* Toolchain checks, same import-do-not-copy rule as above. */
 import {
   lockfileMetadataLoss, lockfileCheckState, lockfileCoverage, crDefect, isBinaryDistFile,
@@ -768,6 +773,7 @@ let eagerPeak = 0;
 const eagerDebtSeen = new Set();
 
 const deadLinks = new Set();
+const tilePagesSeen = new Set();
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const url = urlOf(file);
@@ -984,6 +990,55 @@ for (const file of htmlFiles) {
      scanning only `/…` left open between this check and check-external-links. */
   for (const href of await deadInternalHrefs(html, SAME_SITE_HOSTS, linkResolves)) deadLinks.add(href);
 
+  /* Tile map (src/data/tiles.mjs). All 126 tiles on the 12 experience pages
+     linked /plan-your-trip/ under an "Explore →" arrow, and every check here
+     passed, because the form resolves.
+
+     exp-card-targets: a sub-experience card leads to a page about it, never
+     the form, an in-page fragment, another site or a query variant — unless
+     the map marks it pending (its page is approved and not built yet).
+     tile-map-parity: the built cards match the map, so a hand edit to one
+     card's href cannot ship with the map (and the back-links derived from it)
+     saying otherwise.
+     card-fragment-resolves: deadInternalHrefs strips #fragments, so a card
+     deep-linked to an id the target page lacks would otherwise pass. */
+  const tileSlug = /^\/experiences\/([a-z0-9-]+)\/$/.exec(url)?.[1];
+  if (tileSlug && TILES[tileSlug]) {
+    tilePagesSeen.add(tileSlug);
+    const rows = TILES[tileSlug];
+    const pending = rows.filter((r) => r.kind === "exp-card" && r.status === "pending").map((r) => r.name);
+    for (const d of cardTargetDefects(html, pending)) fail("exp-card-targets", `${url}: ${d}`);
+    for (const d of tileParityDefects(html, rows)) fail("tile-map-parity", `${url}: ${d} — run node tools/tile-links-apply.mjs`);
+    for (const { name, path: target, id } of cardFragmentHrefs(html)) {
+      const file = path.join(DIST, target, "index.html");
+      const targetHtml = (await exists(file)) ? await readFile(file, "utf8") : "";
+      if (!hasElementId(targetHtml, id)) {
+        fail("card-fragment-resolves", `${url}: the "${name}" tile links ${target}#${id}, and ${target} has no element with id="${id}"`);
+      }
+    }
+  }
+
+  /* nested-crumb: a detail page nested under an experience page must show
+     its parent in the breadcrumb (and so in BreadcrumbList). */
+  {
+    const d = nestedCrumbDefect(url, crumbTrail(html));
+    if (d) fail("nested-crumb", d);
+  }
+
+  /* featured-in-parity: every destination page a live tile lands on renders a
+     "Featured in" link back to that experience page, and no other. The strip
+     is derived from the same map, so this fails only if the layout stops
+     rendering it — which is exactly the silent regression to catch. */
+  if (url.startsWith("/destinations/")) {
+    const want = featuredIn(url).map((s) => `/experiences/${s}/`);
+    const have = featuredInLinks(html);
+    const missing = want.filter((h) => !have.includes(h));
+    const extra = have.filter((h) => !want.includes(h));
+    if (missing.length || extra.length) {
+      fail("featured-in-parity", `${url}: Featured-in strip ${missing.length ? `is missing ${missing.join(", ")}` : ""}${missing.length && extra.length ? " and " : ""}${extra.length ? `links ${extra.join(", ")}, which no tile targets here` : ""}`);
+    }
+  }
+
   /* internal-link-floor (P3-6, finding F17) and testimonial-attribution
      (P3-7, folded into #67). Both predicates live in ./content-checks.mjs and
      are fixture-tested in ./verify-checks.test.mjs — see that file for why
@@ -1190,6 +1245,18 @@ for (const file of htmlFiles) {
   }
 }
 for (const link of deadLinks) fail("internal-links", `internal href ${link} resolves to nothing in dist/`);
+
+/* tile-map-parity, the other direction: a map entry for an experience page
+   that did not build checks nothing at all, so it must not pass silently. */
+for (const slug of Object.keys(TILES)) {
+  if (!tilePagesSeen.has(slug)) fail("tile-map-parity", `src/data/tiles.mjs has tiles for /experiences/${slug}/, which is not in dist/`);
+}
+{
+  const rows = Object.values(TILES).flat();
+  const exp = rows.filter((r) => r.kind === "exp-card");
+  const linked = exp.filter((r) => r.status !== "pending").length;
+  notes.push(`${rows.length} experience-page tiles match src/data/tiles.mjs; ${linked} of ${exp.length} sub-experience cards lead to a page, ${exp.length - linked} pending`);
+}
 
 /* The dead-handler ratchet (#104). A recorded name may only ever shrink; when
    it reaches zero its entry has to go, or the hole stays open for the next one. */
