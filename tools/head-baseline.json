@@ -104,6 +104,11 @@
   "description": "Two bases beat four in eight days. Arenal or Monteverde, then one coast — and why the Caribbean side is brightest in September while the Pacific floods.",
   "canonical": "https://www.hymtravel.com/destinations/costa-rica/"
  },
+ "/destinations/dolomites/": {
+  "title": "Dolomites | Alta Via Hut-to-Hut Trekking — Hit Your Mark Travel",
+  "description": "Alta Via 1 and 2, rifugio nights, via ferrata and Val Gardena: how to plan a Dolomites hut-to-hut trek inside the short summer window when the huts are open.",
+  "canonical": "https://www.hymtravel.com/destinations/dolomites/"
+ },
  "/destinations/dominican-republic/": {
   "title": "Dominican Republic Beyond Punta Cana — Hit Your Mark Travel",
   "description": "Punta Cana is not the country. Humpbacks fill Samaná Bay mid-January to late March, the dry season runs December to April, and the golf is at Casa de Campo.",
@@ -254,6 +259,11 @@
   "description": "Muscat, Wahiba Sands, the Musandam Peninsula and Nizwa — the Middle East's most underused destination, and a self-drive culture that rewards planning.",
   "canonical": "https://www.hymtravel.com/destinations/oman/"
  },
+ "/destinations/orlando/": {
+  "title": "Orlando | Walt Disney World &amp; Universal — Hit Your Mark Travel",
+  "description": "Disney World or Universal Orlando? Park days, on-site hotel perks, Lightning Lane vs Express Unlimited, and which rides fit kids under 48 inches.",
+  "canonical": "https://www.hymtravel.com/destinations/orlando/"
+ },
  "/destinations/patagonia/": {
   "title": "Patagonia — Hit Your Mark Travel",
   "description": "Torres del Paine, Los Glaciares, El Chaltén and Tierra del Fuego — planned around the weather windows, the right lodges, and the trekking.",
@@ -374,10 +384,20 @@
   "description": "Maldives, Turks &amp; Caicos, Seychelles, St. Barth's and the South Pacific — private beach access, overwater villas, and the right week for the water.",
   "canonical": "https://www.hymtravel.com/experiences/beach-island-escapes/"
  },
+ "/experiences/cruises/european-river-cruises/": {
+  "title": "European River Cruises | Rhine to Douro — Hit Your Mark Travel",
+  "description": "Rhine, Danube, Rhône, Douro or Seine? How river ships differ by cabin and kitchen, where they moor in Vienna, Budapest and Lyon, and why April and October.",
+  "canonical": "https://www.hymtravel.com/experiences/cruises/european-river-cruises/"
+ },
  "/experiences/cruises/": {
   "title": "Cruises | Ocean, River &amp; Expedition — Hit Your Mark Travel",
   "description": "Small-ship ocean voyages, European rivers, expedition sailings to Antarctica and the Galápagos, and private charters — matched to vessel, cabin and season.",
   "canonical": "https://www.hymtravel.com/experiences/cruises/"
+ },
+ "/experiences/cruises/mediterranean-small-ship/": {
+  "title": "Mediterranean Small-Ship Cruises — Hit Your Mark Travel",
+  "description": "Small-ship Mediterranean cruises on Croatia's Dalmatian Coast, the quieter Greek islands and Amalfi, matched to ship size and May–June or Sept–Oct sailings.",
+  "canonical": "https://www.hymtravel.com/experiences/cruises/mediterranean-small-ship/"
  },
  "/experiences/cruises/yacht-charters/": {
   "title": "Private Crewed Yacht Charters — Hit Your Mark Travel",
@@ -423,6 +443,11 @@
   "title": "Formula 1 Grand Prix Hospitality — Hit Your Mark Travel",
   "description": "Formula 1 weekends at Monaco, Monza and Singapore: Paddock Club, grandstand, yacht and balcony tiers, the 6–18 month lead time, and what sets the price.",
   "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/formula-1/"
+ },
+ "/experiences/sports-event-travel/golf/": {
+  "title": "Golf Travel: St Andrews to Pebble Beach — Hit Your Mark Travel",
+  "description": "The Old Course ballot is drawn two days ahead; Pebble Beach holds early tee times for resort guests. How a trip to play the great courses, or watch The Open, works.",
+  "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/golf/"
  },
  "/experiences/sports-event-travel/": {
   "title": "Sports &amp; Event Travel — Hit Your Mark Travel",
