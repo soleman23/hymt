@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__dolomites.html?raw";
+---
+<DestinationLayout
+  title="Dolomites | Alta Via Hut-to-Hut Trekking — Hit Your Mark Travel"
+  description="Alta Via 1 and 2, rifugio nights, via ferrata and Val Gardena: how to plan a Dolomites hut-to-hut trek inside the short summer window when the huts are open."
+  schemaType="website"
+  name={"Dolomites"}
+  region={{ label: "Europe", href: "/destinations/europe/" }}
+  hero={{
+    image: "/assets/img/e-55-alta-via-limestone.jpg",
+    eyebrow: "Italian Alps · South Tyrol, Belluno &amp; Trentino",
+    headline: "Walk Hut to Hut.<br>Eat Like It Matters.<br>Sleep at 2,000 Metres.",
+    sub: "The Dolomites are walked hut to hut, with dinner, a bunk and breakfast waiting at a staffed rifugio at the end of each stage. The first decision is the format: the classic Alta Via 1, the harder Alta Via 2, or a week in one valley base with lift-assisted day hikes instead.",
+    ctaPrimary: { label: "Plan a Dolomites Trek", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore the Routes ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "Late June – September" },
+      { label: "Best For", value: "Hut-to-Hut<br>Trekking" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

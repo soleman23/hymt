@@ -661,7 +661,7 @@ export function heroStatLabels(html) {
 export const LLMS_CLAIMS = [
   ["destinations", /(\d+)\s+destination guides\b/],
   ["experiences", /(\d+)\s+trip types\b/],
-  ["journal", /(\d+)\s+field reports and planning guides\b/],
+  ["journal", /(\d+)\s+trip and planning guides\b/],
 ];
 
 export function llmsClaimMismatches(text, actual) {
