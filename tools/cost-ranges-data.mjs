@@ -1758,4 +1758,17 @@ export const COST_RANGES = {
     source: { text: "SeaDream Yacht Club ship specifications", href: "https://seadream.com/yachts" },
     verified: { datetime: "2026-10-03", label: "October 2026" },
   },
+  "destinations__st-lucia.html": {
+    unit: "Priced per room night, by season, view and meal plan",
+    noBand: "A Soufrière room priced with breakfast and a north-coast all-inclusive rate that covers every meal are different units, and both move sharply between the dry season and the rest of the year, so no single band describes the island.",
+    includes: ["Room nights at the chosen base, or both bases on a split stay", "Breakfast, half board or an all-inclusive meal plan, depending on the property", "The arrival transfer from Hewanorra"],
+    excludes: ["International flights", "Meals outside the hotel's plan", "Boat trips, guided hikes, diving and spa"],
+    drivers: [
+      "Dates inside the December–April dry season, and above all the Christmas and New Year weeks",
+      "Pitons-view or beachfront category, and boutique room rate against an all-inclusive rate",
+      "Arrival transfer: a 90-minute road trip from Hewanorra to the north, or a helicopter in under 15 minutes",
+    ],
+    source: { text: "Saint Lucia Tourism Authority, helicopter transfers", href: "https://stlucia.org/en/travel-style/helicopter-tours/" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
 };

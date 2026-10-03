@@ -5005,6 +5005,11 @@
   "bytes": 85172
  },
  {
+  "b64": "images-b64/assets__img__og-e-60-st-lucia-terrace-piton.jpg.b64",
+  "target": "public/assets/img/og-e-60-st-lucia-terrace-piton.jpg",
+  "bytes": 79557
+ },
+ {
   "b64": "images-b64/assets__img__og-e-76-yacht-bay-golden-hour.jpg.b64",
   "target": "public/assets/img/og-e-76-yacht-bay-golden-hour.jpg",
   "bytes": 75161

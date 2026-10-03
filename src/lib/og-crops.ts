@@ -68,6 +68,7 @@ export const OG_CROPS: Record<string, string> = {
   "/assets/img/e-31-wimbledon-court-strawberries.jpg": "/assets/img/og-e-31-wimbledon-court-strawberries.jpg",
   "/assets/img/e-32-monaco-harbour-dusk.jpg": "/assets/img/og-e-32-monaco-harbour-dusk.jpg",
   "/assets/img/e-55-alta-via-limestone.jpg": "/assets/img/og-e-55-alta-via-limestone.jpg",
+  "/assets/img/e-60-st-lucia-terrace-piton.jpg": "/assets/img/og-e-60-st-lucia-terrace-piton.jpg",
   "/assets/img/e-76-yacht-bay-golden-hour.jpg": "/assets/img/og-e-76-yacht-bay-golden-hour.jpg",
   "/assets/img/golf-pacific-clifftop-green.jpg": "/assets/img/og-golf-pacific-clifftop-green.jpg",
   "/assets/south-pacific-landscape.jpg": "/assets/img/og-h-01-maldives-aerial.jpg",
