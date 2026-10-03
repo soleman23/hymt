@@ -210,11 +210,12 @@ is the entire competitive moat, and it has to be visible on the page.
 **Every journal post** carries a byline linking to `/about/`, a publication
 date, and a last-updated date when different.
 
-**Every destination and experience page** carries at least one first-hand
-sentence where it is true — a month, a year, a named property, a specific
-observation. If Mark has not been somewhere, say so plainly and say who the
-on-the-ground partner is. Honesty about the gap is stronger than pretending it
-does not exist.
+**Destination and experience pages are informational.** The owner's standing
+rule (2026-10-03): make no claim that Mark has been to a place or event, and
+keep every detail third-person and sourced. A first-hand sentence — a month, a
+year, a named property, a specific observation — goes on a page only when Mark
+himself supplies it for that page. The trust signal is sourcing and dating, not
+an implied visit.
 
 **`/about/`** is the entity page, not a marketing page. It carries: Mark's name
 and photo, years in the industry, consortium and host-agency affiliations, ASTA
@@ -223,8 +224,9 @@ membership if held, the three Seller of Travel license numbers in body copy
 and how he is paid.
 
 **Never** publish AI-drafted content as first-hand experience. Mark's
-experiences are his. An agent drafting a page leaves a clearly marked
-`<!-- NEEDS MARK: first-hand detail -->` comment rather than inventing one.
+experiences are his. An agent drafting a page writes the
+detail informationally or leaves it out; it does not leave a comment asking
+for a first-hand line, because none is coming unless Mark offers one.
 
 ---
 
@@ -286,7 +288,7 @@ these are the rest.
 **Content**
 - [ ] Every factual external claim linked to an authority
 - [ ] Perishable content carries a visible date
-- [ ] At least one genuine first-hand detail, or a `NEEDS MARK` comment
+- [ ] No claim, stated or implied, that Mark has been there (§ 6)
 - [ ] No banned phrases (§ 2)
 - [ ] No "Lorem ipsum", "TBD", "Coming soon", "TODO"
 
