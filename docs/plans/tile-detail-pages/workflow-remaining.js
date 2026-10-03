@@ -222,13 +222,24 @@ phase('Verify')
 const toVerify = consolidated.subjects.filter((s) => !(s.targetStatus === 'existing-unchanged' && s.confidence === 'high'))
 const skipped = consolidated.subjects.filter((s) => !toVerify.includes(s))
 log(`Verify: ${toVerify.length} subjects get two lenses; ${skipped.length} skipped as high-confidence unchanged reuse: ${skipped.map((s) => s.subjectId).join(', ')}`)
-const verified = (await pipeline(
-  toVerify,
-  (subject) => parallel(LENSES.map((lens) => () =>
-    agent(verifyPrompt(subject, lens), { label: `verify:${lens.key}:${subject.subjectId}`.slice(0, 60), phase: 'Verify', schema: VERDICT_SCHEMA })
-      .then((v) => v && { ...v, lens: lens.key })
-  )).then((vs) => ({ subject, verdicts: vs.filter(Boolean) })),
-)).filter(Boolean)
+/* Batched: each agent reviews a chunk of subjects through one lens, so the
+   fleet stays ~2 x ceil(n/8) agents instead of 2 per subject. */
+const CHUNK = 8
+const chunks = []
+for (let i = 0; i < toVerify.length; i += CHUNK) chunks.push(toVerify.slice(i, i + CHUNK))
+const BATCH_VERDICT_SCHEMA = {
+  type: 'object',
+  properties: { verdicts: { type: 'array', items: { type: 'object', properties: { subjectId: { type: 'string' }, ...VERDICT_SCHEMA.properties }, required: ['subjectId', ...VERDICT_SCHEMA.required] } } },
+  required: ['verdicts'],
+}
+const batchPrompt = (subs, lens) => verifyPrompt(subs, lens).replace('DECISION UNDER REVIEW:', `DECISIONS UNDER REVIEW (${subs.length}; judge EACH independently and return one verdict per subjectId):`)
+const batchResults = (await parallel(chunks.flatMap((subs, ci) => LENSES.map((lens) => () =>
+  agent(batchPrompt(subs, lens), { label: `verify:${lens.key}:batch${ci + 1}`, phase: 'Verify', schema: BATCH_VERDICT_SCHEMA })
+    .then((r) => r && r.verdicts.map((v) => ({ ...v, lens: lens.key })))
+)))).filter(Boolean).flat()
+const verified = toVerify.map((subject) => ({ subject, verdicts: batchResults.filter((v) => v.subjectId === subject.subjectId) }))
+const unjudged = verified.filter((v) => v.verdicts.length < 2).map((v) => v.subject.subjectId)
+if (unjudged.length) log(`Verify: ${unjudged.length} subjects missing a lens verdict: ${unjudged.join(', ')}`)
 const refuted = verified.filter((v) => v.verdicts.some((x) => x.verdict === 'refuted'))
 log(`Verify: ${refuted.length} subjects drew a refutation: ${refuted.map((v) => v.subject.subjectId).join(', ')}`)
 
