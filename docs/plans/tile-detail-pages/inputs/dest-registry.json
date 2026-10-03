@@ -1,0 +1,2928 @@
+[
+ {
+  "slug": "africa",
+  "name": "Africa",
+  "region": "",
+  "regionHref": "",
+  "title": "Africa | Safari, Gorillas & Morocco — Hit Your Mark Travel",
+  "description": "Kenya, Tanzania, Botswana, South Africa, Rwanda and Morocco — planned around the camps, guides and seasonal windows that actually deliver.",
+  "heroImage": "/assets/img/x-01-serengeti-elephants.jpg",
+  "words": 2803,
+  "h2s": [
+   "The Camp Is Everything. The Guide Is More.",
+   "Six African Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to African Travel",
+   "Africa by Season",
+   "Plan an Africa Trip Worth the Distance",
+   "What Africa Actually Costs",
+   "Africa — FAQ",
+   "Read More on Planning Africa"
+  ],
+  "placeCards": [
+   "Kenya &amp; Tanzania [East Africa] -> /destinations/kenya-tanzania/",
+   "South Africa [Southern Africa] -> /destinations/south-africa/",
+   "Botswana [Southern Africa] -> /destinations/botswana/",
+   "Rwanda &amp; Gorilla Country [Central Africa] -> /destinations/rwanda/",
+   "Zambia &amp; Victoria Falls [Southern Africa] -> /destinations/zambia-victoria-falls/",
+   "Morocco [North Africa] -> /destinations/morocco/"
+  ],
+  "itineraries": [
+   "Kenya Great Migration &amp; Mara Conservancies",
+   "South Africa: Safari, Winelands &amp; the Cape",
+   "Rwanda Gorilla Trek &amp; Kenya Safari",
+   "Morocco: Medina to Desert"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/morocco/",
+   "/destinations/south-africa/",
+   "/destinations/seychelles/",
+   "/destinations/kenya-tanzania/",
+   "/destinations/botswana/",
+   "/destinations/rwanda/",
+   "/destinations/zambia-victoria-falls/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "alaska",
+  "name": "Alaska",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "Alaska | Wilderness Lodges & Glaciers — Hit Your Mark Travel",
+  "description": "The Inside Passage, Denali and the Kenai Peninsula — planned around the wilderness lodges and float planes that make Alaska's scale comprehensible.",
+  "heroImage": "/assets/img/na-alaska-brown-bear-salmon.jpg",
+  "words": 3051,
+  "h2s": [
+   "The Last Genuinely Wild Place in North America.",
+   "Six Alaska Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Alaska Planning",
+   "Alaska by Season",
+   "Plan an Alaska Trip Built Around Wilderness",
+   "Destinations Worth Comparing",
+   "What Alaska Actually Costs",
+   "Alaska — FAQ",
+   "Read More on Planning Alaska"
+  ],
+  "placeCards": [
+   "Denali National Park [Interior Alaska]",
+   "Inside Passage &amp; Southeast [Southeast Alaska]",
+   "Kenai Peninsula [Southcentral Alaska]",
+   "Prince William Sound [Southcentral Alaska]",
+   "Kodiak Island [Kodiak Archipelago]",
+   "Arctic Alaska &amp; Northern Lights [Northern Alaska]"
+  ],
+  "itineraries": [
+   "Alaska Classic: Denali &amp; Kenai",
+   "Inside Passage Small Ship",
+   "Alaska Bear Watching",
+   "Alaska Northern Lights"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/north-america/",
+   "/destinations/canadian-rockies/",
+   "/destinations/patagonia/",
+   "/destinations/iceland/"
+  ]
+ },
+ {
+  "slug": "antarctica",
+  "name": "Antarctica",
+  "region": "Polar Regions",
+  "regionHref": "/destinations/polar-regions/",
+  "title": "Antarctica | Expedition Cruises — Hit Your Mark Travel",
+  "description": "Antarctica planned properly — which expedition ship, whether to fly the Drake, when to go for whales or penguins, and how to avoid the trips that disappoint.",
+  "heroImage": "/assets/img/dh-01-antarctica-ice-cliffs.jpg",
+  "words": 1425,
+  "h2s": [
+   "The ship is the trip.",
+   "The Regions Worth Understanding",
+   "Expeditions We Plan Often",
+   "What We Add to Antarctic Planning",
+   "The Antarctic Season",
+   "Plan an Antarctic Expedition Properly",
+   "Destinations Worth Comparing",
+   "What Antarctica Actually Costs",
+   "Antarctica &mdash; FAQ",
+   "Read More on Antarctica"
+  ],
+  "placeCards": [
+   "The Antarctic Peninsula [The Classic]",
+   "South Georgia &amp; the Falklands [The Full Version] -> /destinations/falklands-south-georgia/",
+   "Fly the Drake [The Fast Route]",
+   "The Ross Sea &amp; East Antarctica [The Rare One]"
+  ],
+  "itineraries": [
+   "The Peninsula, Properly",
+   "South Georgia &amp; the Falklands"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/falklands-south-georgia/",
+   "/destinations/polar-regions/",
+   "/destinations/iceland/",
+   "/destinations/patagonia/",
+   "/destinations/galapagos/"
+  ]
+ },
+ {
+  "slug": "arctic-norway",
+  "name": "Arctic Norway",
+  "region": "Polar Regions",
+  "regionHref": "/destinations/polar-regions/",
+  "title": "Arctic Norway & the Northern Lights — Hit Your Mark Travel",
+  "description": "Aurora season runs late September to late March, and Tromsø sits at 69°N under the oval. How many nights the odds need, and which base leaves room to move.",
+  "heroImage": "/assets/img/polar-regions-arctic-norway-and-northern-lights.jpg",
+  "words": 3438,
+  "h2s": [
+   "The Aurora Is a Probability, Not an Itinerary.",
+   "Six Bases on One Arctic Coast",
+   "Trips We Plan Often",
+   "What We Add to an Arctic Norway Trip",
+   "Arctic Norway by Season",
+   "Plan an Arctic Norway Trip Around Nights, Not Hopes.",
+   "Destinations Worth Comparing",
+   "What Arctic Norway Actually Costs",
+   "Arctic Norway — FAQ",
+   "Read More on Planning Polar Regions"
+  ],
+  "placeCards": [
+   "Tromsø [Troms]",
+   "The Lofoten Islands [Nordland]",
+   "Senja [Troms]",
+   "Alta &amp; the Finnmark Plateau [Finnmark]",
+   "Lyngen &amp; the Skibotn Valley [Troms]",
+   "The Coastal Route [Bergen – Kirkenes]"
+  ],
+  "itineraries": [
+   "Five Nights Under the Oval",
+   "Tromsø and Lofoten in Winter Light",
+   "Alta, Finnmark and the Dry Sky",
+   "The Midnight Sun Coast"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/polar-regions/",
+   "/destinations/iceland/",
+   "/destinations/svalbard/",
+   "/destinations/greenland/"
+  ]
+ },
+ {
+  "slug": "argentina",
+  "name": "Argentina",
+  "region": "South America",
+  "regionHref": "/destinations/south-america/",
+  "title": "Argentina | Buenos Aires, Mendoza &amp; Salta — Hit Your Mark Travel",
+  "description": "Buenos Aires, Mendoza's high-altitude malbec and the Salta northwest point three ways. Which two fit your dates, and why October and March are the windows.",
+  "heroImage": "/assets/img/south-america-argentina.jpg",
+  "words": 3359,
+  "h2s": [
+   "Argentina Is Three Trips In Three Directions.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Argentina Planning",
+   "Argentina by Season",
+   "Plan an Argentina Trip Around Two Regions, Not Five",
+   "Destinations Worth Comparing",
+   "What Argentina Actually Costs",
+   "Argentina — FAQ",
+   "Read More on Planning South America"
+  ],
+  "placeCards": [
+   "Buenos Aires [Federal Capital]",
+   "Mendoza &amp; the Uco Valley [Cuyo]",
+   "Salta &amp; Jujuy [The Northwest]",
+   "Iguazú Falls [Misiones]",
+   "The Lake District [Río Negro &amp; Neuquén]",
+   "Península Valdés [Chubut]"
+  ],
+  "itineraries": [
+   "Buenos Aires and the Wine Country",
+   "The Northwest, With the High Wine",
+   "Whales, Falls and the Capital",
+   "Lakes, Andes and Vineyards"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/patagonia/",
+   "/destinations/south-america/",
+   "/destinations/brazil/",
+   "/destinations/peru/"
+  ]
+ },
+ {
+  "slug": "asia",
+  "name": "Asia",
+  "region": "",
+  "regionHref": "",
+  "title": "Asia | Japan, Thailand & Bali — Hit Your Mark Travel",
+  "description": "Japan, Bali, Thailand, Vietnam, India and Sri Lanka — planned around the guides, properties and windows that reveal the depth, not the surface.",
+  "heroImage": "/assets/img/dh-02-asia-temple-valley.jpg",
+  "words": 2882,
+  "h2s": [
+   "The Most Culturally Rich Region in the World",
+   "Six Asian Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Asian Travel",
+   "Asia by Season",
+   "Plan an Asia Trip That Goes All the Way In",
+   "What Asia Actually Costs",
+   "Asia — FAQ",
+   "Read More on Planning Asia"
+  ],
+  "placeCards": [
+   "Japan [East Asia] -> /destinations/japan/",
+   "Bali &amp; Indonesia [Southeast Asia] -> /destinations/bali/",
+   "Thailand [Southeast Asia] -> /destinations/thailand/",
+   "Maldives [Indian Ocean] -> /destinations/maldives/",
+   "Vietnam &amp; Southeast Asia [Southeast Asia] -> /destinations/vietnam-southeast-asia/",
+   "India [South Asia] -> /destinations/india/",
+   "Sri Lanka [South Asia] -> /destinations/sri-lanka/"
+  ],
+  "itineraries": [
+   "Japan Cultural Immersion",
+   "Bali: Ubud Deep Dive &amp; Uluwatu",
+   "India: Rajasthan &amp; Kerala",
+   "Vietnam: North to South"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/vietnam-southeast-asia/",
+   "/destinations/bhutan/",
+   "/destinations/japan/",
+   "/destinations/bali/",
+   "/destinations/thailand/",
+   "/destinations/maldives/",
+   "/destinations/india/",
+   "/destinations/sri-lanka/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "aspen",
+  "name": "Aspen",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "Aspen | Four Mountains, One Lift Ticket — Hit Your Mark Travel",
+  "description": "Four mountains on one lift ticket, a season from late November to mid-April, and the two weeks that are their own market. Plus why July works.",
+  "heroImage": "/assets/img/dh-26-aspen-maroon-bells.jpg",
+  "words": 3390,
+  "h2s": [
+   "The Skiing Is Not the Scarce Part.",
+   "Six Parts of Aspen Worth Planning Separately",
+   "Trips We Plan Often",
+   "What We Add to Aspen Planning",
+   "Aspen by Season",
+   "Plan an Aspen Trip Before the Calendar Decides It",
+   "Destinations Worth Comparing",
+   "What Aspen Actually Costs",
+   "Aspen — FAQ",
+   "Read More on Planning North America"
+  ],
+  "placeCards": [
+   "Aspen Mountain [Above the Core]",
+   "Aspen Highlands [Maroon Creek Valley]",
+   "Snowmass [Snowmass Village]",
+   "Buttermilk [Owl Creek Road]",
+   "The Core [Roaring Fork Valley]",
+   "Maroon Bells &amp; the Passes [White River National Forest]"
+  ],
+  "itineraries": [
+   "The Holiday Week, Committed Early",
+   "The January Week Nobody Fights You For",
+   "March, and the Long Light",
+   "Aspen in July"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/north-america/",
+   "/destinations/canadian-rockies/",
+   "/destinations/napa-sonoma/",
+   "/destinations/new-york/"
+  ]
+ },
+ {
+  "slug": "australia",
+  "name": "Australia",
+  "region": "South Pacific",
+  "regionHref": "/destinations/south-pacific/",
+  "title": "Australia | Sydney, Uluru, the Reef — Hit Your Mark Travel",
+  "description": "Sydney, Uluru and the Great Barrier Reef are three trips, not a loop. Which reef gateway, why May and September work, and how many days it takes.",
+  "heroImage": "/assets/img/south-pacific-australia.jpg",
+  "words": 3389,
+  "h2s": [
+   "Australia Is Four Trips People Book as One.",
+   "Six Regions That Do Not Sit on a Loop",
+   "Trips We Plan Often",
+   "What We Add to Australia Planning",
+   "Australia by Season",
+   "Plan an Australia Trip With the Right Number of Regions",
+   "Destinations Worth Comparing",
+   "What Australia Actually Costs",
+   "Australia — FAQ",
+   "Read More on Planning South Pacific"
+  ],
+  "placeCards": [
+   "Sydney &amp; the Coast [New South Wales]",
+   "The Great Barrier Reef [Queensland]",
+   "Uluru &amp; the Red Centre [Northern Territory]",
+   "Tasmania [Tasmania]",
+   "The Kimberley [Western Australia]",
+   "Melbourne &amp; the Great Ocean Road [Victoria]"
+  ],
+  "itineraries": [
+   "Sydney and the Reef, Two Regions Done Properly",
+   "Sydney, the Red Centre and the Reef",
+   "Tasmania on Its Own Terms",
+   "The Kimberley by Expedition Ship"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-pacific/",
+   "/destinations/new-zealand/",
+   "/destinations/fiji/",
+   "/destinations/french-polynesia/"
+  ]
+ },
+ {
+  "slug": "bali",
+  "name": "Bali",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "Bali | Ubud, Komodo & the Nusa Islands — Hit Your Mark Travel",
+  "description": "Ubud, Sidemen Valley, the Nusa Islands, Komodo and Lombok — Bali's rice terrace culture and the surrounding islands most visitors never reach.",
+  "heroImage": "/assets/img/e-09-jungle-yoga-pavilion.jpg",
+  "words": 3242,
+  "h2s": [
+   "Tri Hita Karana. The System Behind the Beauty.",
+   "Six Areas Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Bali Planning",
+   "Bali by Season",
+   "Plan a Bali Trip That Goes Beyond the Surface",
+   "Destinations Worth Comparing",
+   "What Bali Actually Costs",
+   "Bali — FAQ",
+   "Read More on Planning Bali"
+  ],
+  "placeCards": [
+   "Ubud [Central Bali]",
+   "Seminyak &amp; Canggu [Southern Bali]",
+   "Sidemen Valley [Eastern Bali]",
+   "Nusa Islands [Southeast Bali]",
+   "Komodo National Park [East Nusa Tenggara]",
+   "Lombok &amp; Gili Islands [West Nusa Tenggara]"
+  ],
+  "itineraries": [
+   "Bali in Depth",
+   "Bali &amp; Komodo",
+   "Bali &amp; Lombok",
+   "Family Bali"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/asia/",
+   "/destinations/thailand/",
+   "/destinations/maldives/",
+   "/destinations/japan/"
+  ]
+ },
+ {
+  "slug": "barbados-eastern-caribbean",
+  "name": "Barbados &amp; Eastern Caribbean",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "Barbados &amp; the Eastern Caribbean — Hit Your Mark Travel",
+  "description": "Barbados is the Eastern Caribbean's air hub, and that decides the itinerary. West coast versus east, when to add St. Lucia or Nevis, and why December–April wins.",
+  "heroImage": "/assets/img/caribbean-mexico-barbados-and-eastern-caribbean.jpg",
+  "words": 3316,
+  "h2s": [
+   "Barbados Is the Hub. That Decides the Trip.",
+   "Six Places Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Eastern Caribbean Planning",
+   "The Eastern Caribbean by Season",
+   "Plan a Barbados Trip With the Connections Solved First",
+   "Destinations Worth Comparing",
+   "What Barbados Actually Costs",
+   "Barbados &amp; the Eastern Caribbean — FAQ",
+   "Read More on Planning Caribbean &amp; Mexico"
+  ],
+  "placeCards": [
+   "The Platinum Coast [Barbados · St James &amp; St Peter]",
+   "Bathsheba &amp; the East Coast [Barbados · St Joseph]",
+   "Bridgetown &amp; the South [Barbados · St Michael &amp; Christ Church]",
+   "Soufrière &amp; the Pitons [Saint Lucia]",
+   "English Harbour [Antigua &amp; Barbuda]",
+   "Nevis &amp; Mustique [St Kitts &amp; Nevis · The Grenadines]"
+  ],
+  "itineraries": [
+   "Barbados, Both Coasts",
+   "Barbados and St. Lucia",
+   "The Sailing Version",
+   "Barbados and Nevis"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/caribbean-mexico/",
+   "/destinations/st-barths/",
+   "/destinations/turks-caicos/",
+   "/destinations/jamaica/"
+  ]
+ },
+ {
+  "slug": "bhutan",
+  "name": "Bhutan",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "Bhutan | Paro, Punakha & Bumthang — Hit Your Mark Travel",
+  "description": "Bhutan charges US$100 per adult per night and requires a guide. What that buys, why Taktsang goes last, and how far east the road is worth going.",
+  "heroImage": "/assets/img/dh-28-bhutan-paro-taktsang.jpg",
+  "words": 3369,
+  "h2s": [
+   "Bhutan Publishes Its Price Before Anyone Asks.",
+   "Six Valleys, in Planning Order",
+   "Trips We Plan Often",
+   "What We Add to Bhutan Planning",
+   "Bhutan by Season",
+   "Plan a Bhutan Trip Around the Right Guide",
+   "Destinations Worth Comparing",
+   "What Bhutan Actually Costs",
+   "Bhutan — FAQ",
+   "Read More on Planning Asia"
+  ],
+  "placeCards": [
+   "Paro Valley [Paro Dzongkhag]",
+   "Thimphu [Thimphu Dzongkhag]",
+   "Punakha [Punakha Dzongkhag]",
+   "Phobjikha &amp; Gangtey [Wangdue Phodrang]",
+   "Bumthang [Bumthang Dzongkhag]",
+   "Haa Valley [Haa Dzongkhag]"
+  ],
+  "itineraries": [
+   "The Western Valleys, Unrushed",
+   "East to Bumthang by Road",
+   "A Tsechu, and the Valleys Around It",
+   "Cranes, Clear Air and Fewer People"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/asia/",
+   "/destinations/india/",
+   "/destinations/japan/",
+   "/destinations/thailand/"
+  ]
+ },
+ {
+  "slug": "botswana",
+  "name": "Botswana",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "Botswana — Hit Your Mark Travel",
+  "description": "The Okavango Delta, Chobe, Central Kalahari and Linyanti. Botswana's low-volume model produces the most pristine safari available in Africa.",
+  "heroImage": "/assets/img/e-11-elephant-herd-aerial.jpg",
+  "words": 2976,
+  "h2s": [
+   "Low Volume. High Value. The Botswana Model.",
+   "Six Ecosystems Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Botswana Planning",
+   "Botswana by Season",
+   "Plan a Botswana Safari at Its Best",
+   "Destinations Worth Comparing",
+   "What Botswana Actually Costs",
+   "Botswana — FAQ",
+   "Read More on Planning Botswana"
+  ],
+  "placeCards": [
+   "Okavango Delta [Northern Botswana]",
+   "Chobe National Park [Northern Botswana]",
+   "Central Kalahari [Central Botswana]",
+   "Linyanti Concession [Northern Botswana]",
+   "Makgadikgadi Pans [Eastern Botswana]",
+   "Khwai Community Concession [Northern Botswana]"
+  ],
+  "itineraries": [
+   "Okavango Delta &amp; Chobe",
+   "Botswana Complete: Delta, Kalahari &amp; Linyanti",
+   "Botswana &amp; Zimbabwe",
+   "Private Botswana: Okavango &amp; Makgadikgadi"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/africa/",
+   "/destinations/kenya-tanzania/",
+   "/destinations/rwanda/",
+   "/destinations/galapagos/",
+   "/destinations/south-africa/",
+   "/destinations/zambia-victoria-falls/"
+  ]
+ },
+ {
+  "slug": "brazil",
+  "name": "Brazil",
+  "region": "South America",
+  "regionHref": "/destinations/south-america/",
+  "title": "Brazil | Rio, the Pantanal & Iguaçu — Hit Your Mark Travel",
+  "description": "July to October is the window: Rio dry, Pantanal jaguars on the riverbanks, Iguaçu walkable. The Northeast beaches keep the opposite calendar.",
+  "heroImage": "/assets/img/south-america-brazil.jpg",
+  "words": 3382,
+  "h2s": [
+   "Brazil Is Bigger Than Any Ten-Day Itinerary.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Brazil Planning",
+   "Brazil by Season",
+   "Plan a Brazil Trip Around the Month You Have",
+   "Destinations Worth Comparing",
+   "What Brazil Actually Costs",
+   "Brazil — FAQ",
+   "Read More on Planning South America"
+  ],
+  "placeCards": [
+   "Rio de Janeiro [Rio de Janeiro State]",
+   "The Pantanal [Mato Grosso]",
+   "Iguaçu Falls [Paraná &amp; Misiones]",
+   "Salvador &amp; Bahia [Bahia]",
+   "The Northeast Coast [Pernambuco to Ceará]",
+   "The Amazon [Amazonas]"
+  ],
+  "itineraries": [
+   "Rio, Iguaçu and the Pantanal",
+   "The Pantanal First, the Amazon Second",
+   "The Northeast on Its Own Calendar",
+   "Rio and the Costa Verde, Slowly"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/peru/",
+   "/destinations/patagonia/",
+   "/destinations/south-america/",
+   "/destinations/argentina/"
+  ]
+ },
+ {
+  "slug": "canadian-rockies",
+  "name": "Canadian Rockies",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "Canadian Rockies | Banff & Jasper — Hit Your Mark Travel",
+  "description": "Banff and Jasper timed right — dawn at Moraine Lake, the Icefields Parkway, larch season's golden window, and the great railway hotels.",
+  "heroImage": "/assets/img/na-canadian-rockies-glacial-lake.jpg",
+  "words": 1369,
+  "h2s": [
+   "Three Parks. One Great Road.",
+   "The Bases That Matter",
+   "Trips We Plan Often",
+   "What We Add to Rockies Planning",
+   "The Rockies by Season",
+   "Plan a Rockies Trip Timed Right",
+   "Destinations Worth Comparing",
+   "What the Canadian Rockies Actually Cost",
+   "Canadian Rockies — FAQ",
+   "Read More on the Canadian Rockies"
+  ],
+  "placeCards": [
+   "Banff & Lake Louise [Banff NP]",
+   "The Icefields Parkway [The Parkway]",
+   "Jasper [Jasper NP]",
+   "The Rocky Mountaineer [By Rail]"
+  ],
+  "itineraries": [
+   "Banff to Jasper, Properly",
+   "The Golden Window"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/",
+   "/destinations/alaska/",
+   "/destinations/patagonia/",
+   "/destinations/new-zealand/",
+   "/destinations/north-america/"
+  ]
+ },
+ {
+  "slug": "caribbean-mexico",
+  "name": "Caribbean &amp; Mexico",
+  "region": "",
+  "regionHref": "",
+  "title": "Caribbean &amp; Mexico — Hit Your Mark Travel",
+  "description": "Turks & Caicos, St. Barth's, Jamaica, Barbados, Riviera Maya and Los Cabos — the islands, properties and windows that actually deliver.",
+  "heroImage": "/assets/img/d-06-st-barts-harbour.jpg",
+  "words": 2781,
+  "h2s": [
+   "Not All Sand and Blue Water Is the Same",
+   "Six Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Caribbean &amp; Mexico Travel",
+   "Caribbean &amp; Mexico by Season",
+   "Plan a Caribbean Trip That Actually Delivers",
+   "What the Caribbean &amp; Mexico Actually Cost",
+   "Caribbean &amp; Mexico — FAQ",
+   "Read More on the Caribbean &amp; Mexico"
+  ],
+  "placeCards": [
+   "Turks &amp; Caicos [British West Indies] -> /destinations/turks-caicos/",
+   "St. Barth's [French West Indies] -> /destinations/st-barths/",
+   "Jamaica [Greater Antilles] -> /destinations/jamaica/",
+   "Barbados &amp; Eastern Caribbean [Eastern Caribbean] -> /destinations/barbados-eastern-caribbean/",
+   "Riviera Maya &amp; Los Cabos [Mexico] -> /destinations/riviera-maya-los-cabos/",
+   "Dominican Republic [Greater Antilles] -> /destinations/dominican-republic/"
+  ],
+  "itineraries": [
+   "Turks &amp; Caicos Villa Week",
+   "Los Cabos Private Villa &amp; Pacific Coast",
+   "Riviera Maya Adults Escape",
+   "St. Barth's High Season"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/dominican-republic/",
+   "/destinations/jamaica/",
+   "/destinations/costa-rica/",
+   "/destinations/turks-caicos/",
+   "/destinations/st-barths/",
+   "/destinations/barbados-eastern-caribbean/",
+   "/destinations/riviera-maya-los-cabos/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "colombia",
+  "name": "Colombia",
+  "region": "South America",
+  "regionHref": "/destinations/south-america/",
+  "title": "Colombia | Coffee Country & Cartagena — Hit Your Mark Travel",
+  "description": "Cartagena earns three nights, not seven. Where Medellín, the coffee fincas and the Cocora valley fit, and why December to March is the window.",
+  "heroImage": "/assets/img/south-america-colombia.jpg",
+  "words": 3435,
+  "h2s": [
+   "Colombia Is South America's Shortest Way In.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Colombia Planning",
+   "Colombia by Season",
+   "Plan a Colombia Trip Around the Altitude, Not the Map",
+   "Destinations Worth Comparing",
+   "What Colombia Actually Costs",
+   "Colombia — FAQ",
+   "Read More on Planning South America"
+  ],
+  "placeCards": [
+   "Cartagena [Bolívar]",
+   "Medellín [Antioquia]",
+   "The Coffee Region [Quindío &amp; Risaralda]",
+   "Bogotá [Cundinamarca]",
+   "Santa Marta &amp; the Sierra Nevada [Magdalena]",
+   "The Pacific Coast [Chocó]"
+  ],
+  "itineraries": [
+   "Colombia in the Right Order",
+   "The Andes Without the Coast",
+   "The Coast and the Sierra Nevada",
+   "Whales on the Chocó Coast"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-america/",
+   "/destinations/peru/",
+   "/destinations/brazil/",
+   "/destinations/costa-rica/"
+  ]
+ },
+ {
+  "slug": "cook-islands",
+  "name": "Cook Islands",
+  "region": "South Pacific",
+  "regionHref": "/destinations/south-pacific/",
+  "title": "Cook Islands | Aitutaki &amp; Rarotonga — Hit Your Mark Travel",
+  "description": "Aitutaki's lagoon is the reason to come and Rarotonga is why people leave disappointed. How to split nine nights, and why May–October wins.",
+  "heroImage": "/assets/img/south-pacific-cook-islands.jpg",
+  "words": 3325,
+  "h2s": [
+   "Aitutaki Is Why You Go. Rarotonga Is Where You Land.",
+   "Where the Nights Actually Go",
+   "Trips We Plan Often",
+   "What We Add to Cook Islands Planning",
+   "The Cook Islands by Season",
+   "Plan a Cook Islands Trip With Aitutaki Given Its Days",
+   "Destinations Worth Comparing",
+   "What the Cook Islands Actually Costs",
+   "Cook Islands — FAQ",
+   "Read More on Planning South Pacific"
+  ],
+  "placeCards": [
+   "Aitutaki Lagoon [Aitutaki]",
+   "One Foot Island [Aitutaki]",
+   "Muri &amp; Titikaveka [Rarotonga]",
+   "The Cross-Island Track [Rarotonga]",
+   "Avarua &amp; the Market [Rarotonga]",
+   "Atiu [Southern Group]"
+  ],
+  "itineraries": [
+   "The Split That Works",
+   "Aitutaki, and Nothing Else",
+   "Three Islands, Including Atiu",
+   "Cook Islands and French Polynesia"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-pacific/",
+   "/destinations/french-polynesia/",
+   "/destinations/fiji/",
+   "/destinations/vanuatu/"
+  ]
+ },
+ {
+  "slug": "costa-rica",
+  "name": "Costa Rica",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "Costa Rica | Arenal, Monteverde, Osa — Hit Your Mark Travel",
+  "description": "Two bases beat four in eight days. Arenal or Monteverde, then one coast — and why the Caribbean side is brightest in September while the Pacific floods.",
+  "heroImage": "/assets/img/dh-27-costa-rica-cloud-forest.jpg",
+  "words": 3352,
+  "h2s": [
+   "Costa Rica Punishes the Four-Region Itinerary.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Costa Rica Planning",
+   "Costa Rica by Season",
+   "Plan a Costa Rica Trip With Two Bases and No Wasted Days",
+   "Destinations Worth Comparing",
+   "What Costa Rica Actually Costs",
+   "Costa Rica — FAQ",
+   "Read More on Planning Caribbean &amp; Mexico"
+  ],
+  "placeCards": [
+   "Arenal &amp; La Fortuna [Alajuela]",
+   "Monteverde [Puntarenas]",
+   "Manuel Antonio &amp; the Central Pacific [Central Pacific]",
+   "Osa Peninsula &amp; Corcovado [South Pacific]",
+   "Guanacaste &amp; Nicoya [Guanacaste]",
+   "Tortuguero &amp; the Caribbean [Limón]"
+  ],
+  "itineraries": [
+   "Two Bases, Done Properly",
+   "Cloud Forest and the Osa",
+   "Family Adventure, Ages 8 and Up",
+   "The Caribbean Side, on Its Own Calendar"
+  ],
+  "expLinks": [
+   "/experiences/family-travel/",
+   "/experiences/multigenerational-travel/"
+  ],
+  "destLinks": [
+   "/destinations/riviera-maya-los-cabos/",
+   "/destinations/caribbean-mexico/",
+   "/destinations/galapagos/",
+   "/destinations/peru/"
+  ]
+ },
+ {
+  "slug": "dominican-republic",
+  "name": "Dominican Republic",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "Dominican Republic Beyond Punta Cana — Hit Your Mark Travel",
+  "description": "Punta Cana is not the country. Humpbacks fill Samaná Bay mid-January to late March, the dry season runs December to April, and the golf is at Casa de Campo.",
+  "heroImage": "/assets/img/caribbean-mexico-dominican-republic.jpg",
+  "words": 3433,
+  "h2s": [
+   "Punta Cana Is Not the Dominican Republic.",
+   "Six Places Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Dominican Republic Planning",
+   "The Dominican Republic by Season",
+   "Plan a Dominican Republic Trip on the Right Side of the Country",
+   "Destinations Worth Comparing",
+   "What the Dominican Republic Actually Costs",
+   "Dominican Republic — FAQ",
+   "Read More on Planning Caribbean &amp; Mexico"
+  ],
+  "placeCards": [
+   "Casa de Campo [La Romana]",
+   "Las Terrenas &amp; Playa Bonita [Samaná Peninsula]",
+   "Samaná Bay &amp; Los Haitises [Samaná]",
+   "Santo Domingo [Distrito Nacional]",
+   "Punta Cana &amp; Cap Cana [La Altagracia]",
+   "Cabarete &amp; the North Coast [Puerto Plata]"
+  ],
+  "itineraries": [
+   "Casa de Campo, With the Golf Sequenced",
+   "Samaná in Whale Season",
+   "The City and the Peninsula",
+   "Punta Cana, Chosen Deliberately"
+  ],
+  "expLinks": [
+   "/experiences/all-inclusive-vacations/",
+   "/experiences/family-travel/"
+  ],
+  "destLinks": [
+   "/destinations/caribbean-mexico/",
+   "/destinations/jamaica/",
+   "/destinations/turks-caicos/",
+   "/destinations/riviera-maya-los-cabos/"
+  ]
+ },
+ {
+  "slug": "egypt",
+  "name": "Egypt",
+  "region": "Middle East",
+  "regionHref": "/destinations/middle-east/",
+  "title": "Egypt | Pyramids, Luxor & the Nile — Hit Your Mark Travel",
+  "description": "The Pyramids, the Valley of the Kings, Abu Simbel and the Nile — planned around Egyptologists and the dawn access that beats the crowds.",
+  "heroImage": "/assets/img/dh-03-egypt-nile-dusk.jpg",
+  "words": 2938,
+  "h2s": [
+   "The Egyptologist Makes the Difference.",
+   "Six Egypt Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Egypt Planning",
+   "Egypt by Season",
+   "Plan an Egypt Trip Built Around the Specialists",
+   "Destinations Worth Comparing",
+   "What Egypt Actually Costs",
+   "Egypt — FAQ",
+   "Read More on Planning Egypt"
+  ],
+  "placeCards": [
+   "Pyramids of Giza &amp; Sphinx [Greater Cairo]",
+   "Valley of the Kings &amp; Luxor [Upper Egypt · Luxor]",
+   "Aswan &amp; Nubia [Upper Egypt · Aswan]",
+   "Nile Cruise [Luxor to Aswan]",
+   "Cairo &amp; Old City [Greater Cairo]",
+   "Sinai &amp; Red Sea [South Sinai]"
+  ],
+  "itineraries": [
+   "Egypt Essential",
+   "Egypt in Depth",
+   "Egypt &amp; Jordan",
+   "Egypt Nile Cruise"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/middle-east/",
+   "/destinations/jordan/",
+   "/destinations/oman/",
+   "/destinations/peru/"
+  ]
+ },
+ {
+  "slug": "europe",
+  "name": "Europe",
+  "region": "",
+  "regionHref": "",
+  "title": "Europe | Italy, France, Spain & Greece — Hit Your Mark Travel",
+  "description": "Italy, France, Spain, Portugal, Greece and the UK — planned around the places, guides and access that most European itineraries never reach.",
+  "heroImage": "/assets/img/e-06-tuscan-landscape.jpg",
+  "words": 2605,
+  "h2s": [
+   "Europe Has a Tourist Version and a Real One",
+   "Six European Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to European Travel",
+   "Europe by Season",
+   "Plan a Europe Trip Worth the Flight",
+   "What Europe Actually Costs",
+   "Europe — FAQ",
+   "Read More on Planning Europe"
+  ],
+  "placeCards": [
+   "Italy [Southern Europe] -> /destinations/italy/",
+   "France [Western Europe] -> /destinations/france/",
+   "Spain [Iberian Peninsula] -> /destinations/spain/",
+   "Portugal [Iberian Peninsula] -> /destinations/portugal/",
+   "Greece &amp; the Aegean [Mediterranean] -> /destinations/greece/",
+   "UK &amp; Ireland [Northern Europe] -> /destinations/uk-ireland/"
+  ],
+  "itineraries": [
+   "Italy: Tuscany Villa &amp; Amalfi in Depth",
+   "France: Burgundy Deep Dive &amp; Lyon",
+   "Spain: Basque Country, Rioja &amp; Andalusia",
+   "Portugal: Lisbon, Alentejo &amp; the Douro"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/italy/",
+   "/destinations/france/",
+   "/destinations/spain/",
+   "/destinations/portugal/",
+   "/destinations/greece/",
+   "/destinations/uk-ireland/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "falklands-south-georgia",
+  "name": "Falklands &amp; South Georgia",
+  "region": "Polar Regions",
+  "regionHref": "/destinations/polar-regions/",
+  "title": "Falklands &amp; South Georgia Voyages — Hit Your Mark Travel",
+  "description": "South Georgia's king penguin beaches are why the 18–22 day voyage beats a Peninsula crossing. The October–March season, and the Falklands as a land trip.",
+  "heroImage": "/assets/img/polar-regions-falklands-and-south-georgia.jpg",
+  "words": 3348,
+  "h2s": [
+   "South Georgia Is Why You Take the Long Version.",
+   "Six Landings Worth the Voyage",
+   "Trips We Plan Often",
+   "What We Add to South Georgia Planning",
+   "South Georgia by Season",
+   "Plan the Long Version With Enough Days at the Island",
+   "Destinations Worth Comparing",
+   "What the Falklands and South Georgia Actually Cost",
+   "Falklands &amp; South Georgia — FAQ",
+   "Read More on Planning Polar Regions"
+  ],
+  "placeCards": [
+   "St Andrews Bay [South Georgia]",
+   "Salisbury Plain &amp; the Bay of Isles [South Georgia]",
+   "Grytviken &amp; Cumberland Bay [South Georgia]",
+   "Gold Harbour &amp; Drygalski Fjord [South Georgia]",
+   "Stanley &amp; Volunteer Point [East Falkland]",
+   "Carcass, Saunders &amp; Sea Lion [Outer Falklands]"
+  ],
+  "itineraries": [
+   "The Full Southern Ocean Circuit",
+   "South Georgia Without the Peninsula",
+   "The Falklands by Air, No Ship",
+   "Late Season, for Whales and Albatross"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/antarctica/",
+   "/destinations/polar-regions/",
+   "/destinations/patagonia/",
+   "/destinations/svalbard/"
+  ]
+ },
+ {
+  "slug": "fiji",
+  "name": "Fiji",
+  "region": "South Pacific",
+  "regionHref": "/destinations/south-pacific/",
+  "title": "Fiji | Private Islands & Coral Diving — Hit Your Mark Travel",
+  "description": "The Mamanuca and Yasawa Islands, the Coral Coast and the Lau Group — private island resorts, soft coral diving, and the right itinerary for each.",
+  "heroImage": "/assets/img/dh-04-fiji-lagoon-aerial.jpg",
+  "words": 3060,
+  "h2s": [
+   "Private Islands at a Scale Most Categories Can't Match.",
+   "Six Versions of Fiji Worth Planning Around",
+   "Trips We Plan Often",
+   "What We Add to Fiji Planning",
+   "Fiji by Season",
+   "Plan a Fiji Trip Built Around the Right Island",
+   "Destinations Worth Comparing",
+   "What Fiji Actually Costs",
+   "Fiji — FAQ",
+   "Read More on Planning Fiji"
+  ],
+  "placeCards": [
+   "Yasawa Islands [Western Fiji]",
+   "Mamanuca Islands [Western Fiji]",
+   "Vanua Levu &amp; Taveuni [Northern Fiji]",
+   "Lau Group [Eastern Fiji]",
+   "Coral Coast &amp; Pacific Harbour [Southern Viti Levu]",
+   "Kadavu &amp; the Great Astrolabe Reef [Southern Fiji]"
+  ],
+  "itineraries": [
+   "Yasawa Islands Private Resort",
+   "Fiji Diving: Vanua Levu &amp; the Great White Wall",
+   "Fiji Family: Mamanucas",
+   "Lau Group: Private Charter"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-pacific/",
+   "/destinations/french-polynesia/",
+   "/destinations/maldives/",
+   "/destinations/turks-caicos/"
+  ]
+ },
+ {
+  "slug": "france",
+  "name": "France",
+  "region": "Europe",
+  "regionHref": "/destinations/europe/",
+  "title": "France | Paris, Burgundy & Provence — Hit Your Mark Travel",
+  "description": "Paris, Provence, Bordeaux, the Loire, Alsace and Normandy — planned around the food specialists and properties that turn a visit into understanding.",
+  "heroImage": "/assets/img/dh-05-france-provence-dusk.jpg",
+  "words": 3111,
+  "h2s": [
+   "The Country That Set Every European Standard.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to France Planning",
+   "France by Season",
+   "Plan a France Trip That Goes Below the Surface",
+   "Destinations Worth Comparing",
+   "What France Actually Costs",
+   "France — FAQ",
+   "Read More on Planning France"
+  ],
+  "placeCards": [
+   "Paris [Île-de-France]",
+   "Provence [Provence]",
+   "Bordeaux &amp; Wine Country [Aquitaine]",
+   "Loire Valley [Centre-Val de Loire]",
+   "Alsace &amp; Strasbourg [Grand Est]",
+   "Normandy &amp; Brittany [Normandy &amp; Brittany]"
+  ],
+  "itineraries": [
+   "Paris &amp; Provence",
+   "Bordeaux &amp; Loire Valley",
+   "Normandy &amp; Paris",
+   "France by Season: Summer Provence"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/europe/",
+   "/destinations/italy/",
+   "/destinations/spain/",
+   "/destinations/portugal/"
+  ]
+ },
+ {
+  "slug": "french-polynesia",
+  "name": "French Polynesia",
+  "region": "South Pacific",
+  "regionHref": "/destinations/south-pacific/",
+  "title": "French Polynesia — Hit Your Mark Travel",
+  "description": "Bora Bora, Moorea, Tahiti and the Tuamotu atolls — the lagoon properties, island combinations and dive sites that justify the distance.",
+  "heroImage": "/assets/img/h-02-bora-bora-dawn.jpg",
+  "words": 3099,
+  "h2s": [
+   "The Lagoon Really Is That Color.",
+   "Six Islands Worth Sequencing Properly",
+   "Trips We Plan Often",
+   "What We Add to French Polynesia Planning",
+   "French Polynesia by Season",
+   "Plan a French Polynesia Trip That Justifies the Distance",
+   "Destinations Worth Comparing",
+   "What French Polynesia Actually Costs",
+   "French Polynesia — FAQ",
+   "Read More on French Polynesia"
+  ],
+  "placeCards": [
+   "Bora Bora [Society Islands]",
+   "Moorea [Society Islands]",
+   "Fakarava &amp; the Tuamotus [Tuamotu Atolls]",
+   "Tahiti &amp; Papeete [Society Islands]",
+   "Huahine [Society Islands]",
+   "Marquesas &amp; Aranui Cruise [Marquesas Islands]"
+  ],
+  "itineraries": [
+   "Bora Bora &amp; Moorea Honeymoon",
+   "French Polynesia Diving Circuit",
+   "French Polynesia: Beyond Bora Bora",
+   "Marquesas by Aranui 5"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-pacific/",
+   "/destinations/maldives/",
+   "/destinations/fiji/",
+   "/destinations/turks-caicos/"
+  ]
+ },
+ {
+  "slug": "galapagos",
+  "name": "Galápagos",
+  "region": "South America",
+  "regionHref": "/destinations/south-america/",
+  "title": "The Galápagos — Hit Your Mark Travel",
+  "description": "Santa Cruz, Fernandina, Española and Bartolomé — the liveaboard versus land-based decision, island selection, and the naturalist guides.",
+  "heroImage": "/assets/img/dh-06-galapagos-volcanic-coast.jpg",
+  "words": 3091,
+  "h2s": [
+   "The Choice That Determines What You Actually See.",
+   "Six Islands Worth Building a Trip Around",
+   "Trips We Plan Often",
+   "What We Add to Galápagos Planning",
+   "The Galápagos by Season",
+   "Plan a Galápagos Trip Built Around Real Access",
+   "Destinations Worth Comparing",
+   "What the Galápagos Actually Costs",
+   "Galápagos — FAQ",
+   "Read More on the Gal&aacute;pagos"
+  ],
+  "placeCards": [
+   "Santa Cruz &amp; Charles Darwin Research Station [Central Galápagos]",
+   "Española Island [Southeastern Islands]",
+   "Fernandina &amp; Isabela [Western Islands]",
+   "Bartolomé Island [Central Galápagos]",
+   "North Seymour &amp; Baltra [North Central]",
+   "Liveaboard Experience [Outer Islands]"
+  ],
+  "itineraries": [
+   "Galápagos Liveaboard",
+   "Galápagos Land-Based &amp; Santa Cruz",
+   "Galápagos &amp; Ecuador",
+   "Galápagos Family"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-america/",
+   "/destinations/peru/",
+   "/destinations/patagonia/",
+   "/destinations/antarctica/"
+  ]
+ },
+ {
+  "slug": "georgia-armenia",
+  "name": "Georgia & Armenia",
+  "region": "Middle East",
+  "regionHref": "/destinations/middle-east/",
+  "title": "Georgia & Armenia | Tbilisi to Yerevan — Hit Your Mark Travel",
+  "description": "Tbilisi to Yerevan is 280 km and one land border. When the Kakheti harvest runs, which mountain roads open in May, and how the crossing day is planned.",
+  "heroImage": "/assets/img/middle-east-georgia-and-armenia.jpg",
+  "words": 3368,
+  "h2s": [
+   "Two Countries, One Border, Eight Thousand Years of Wine.",
+   "Six Places That Repay the Driving",
+   "Trips We Plan Often",
+   "What We Add to Caucasus Planning",
+   "The Caucasus by Season",
+   "Plan a Georgia &amp; Armenia Trip With the Border Day Built In",
+   "Destinations Worth Comparing",
+   "What Georgia &amp; Armenia Actually Cost",
+   "Georgia &amp; Armenia — FAQ",
+   "Read More on Planning Middle East"
+  ],
+  "placeCards": [
+   "Tbilisi [Georgia]",
+   "Kakheti [Georgia]",
+   "Kazbegi [Georgia]",
+   "Upper Svaneti [Georgia]",
+   "Yerevan &amp; the Ararat Plain [Armenia]",
+   "Vayots Dzor &amp; Tatev [Armenia]"
+  ],
+  "itineraries": [
+   "Georgia, First Time",
+   "Both Countries, One Border",
+   "Georgia With Svaneti Added",
+   "Rtveli, the Harvest Trip"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/middle-east/",
+   "/destinations/israel/",
+   "/destinations/jordan/",
+   "/destinations/portugal/"
+  ]
+ },
+ {
+  "slug": "greece",
+  "name": "Greece",
+  "region": "Europe",
+  "regionHref": "/destinations/europe/",
+  "title": "Greece | Aegean Islands & the Peloponnese — Hit Your Mark Travel",
+  "description": "Athens, Santorini, Mykonos, Crete, the Peloponnese and Rhodes — archaeological access, island combinations, and the right property on each.",
+  "heroImage": "/assets/img/dh-07-greece-caldera-dusk.jpg",
+  "words": 3115,
+  "h2s": [
+   "The Country Where History Sits on Top of Landscape.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Greece Planning",
+   "Greece by Season",
+   "Plan a Greece Trip Timed and Built Correctly",
+   "Destinations Worth Comparing",
+   "What Greece Actually Costs",
+   "Greece — FAQ",
+   "Read More on Planning Greece"
+  ],
+  "placeCards": [
+   "Athens [Attica]",
+   "Santorini [Cyclades]",
+   "Crete [Crete]",
+   "Peloponnese [Peloponnese]",
+   "Mykonos &amp; Delos [Cyclades]",
+   "Rhodes &amp; Dodecanese [Dodecanese]"
+  ],
+  "itineraries": [
+   "Athens &amp; Santorini",
+   "Greek Islands Circuit",
+   "Peloponnese &amp; Athens",
+   "Greece in September"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/europe/",
+   "/destinations/italy/",
+   "/destinations/spain/",
+   "/destinations/portugal/"
+  ]
+ },
+ {
+  "slug": "greenland",
+  "name": "Greenland",
+  "region": "Polar Regions",
+  "regionHref": "/destinations/polar-regions/",
+  "title": "Greenland | Ilulissat and the Icefjord — Hit Your Mark Travel",
+  "description": "No road links Greenland's towns, so every plan is flights, boats and weather slack. Ilulissat, Disko Bay, and the February-to-April sled window.",
+  "heroImage": "/assets/img/polar-regions-greenland.jpg",
+  "words": 3347,
+  "h2s": [
+   "Greenland Has No Road Between Its Towns.",
+   "Six Places Worth the Connections",
+   "Trips We Plan Often",
+   "What We Add to Greenland Planning",
+   "Greenland by Season",
+   "Plan a Greenland Trip With the Weather Days Written In",
+   "Destinations Worth Comparing",
+   "What Greenland Actually Costs",
+   "Greenland — FAQ",
+   "Read More on Planning Polar Regions"
+  ],
+  "placeCards": [
+   "Ilulissat [Disko Bay]",
+   "Disko Island &amp; Eqi [Disko Bay]",
+   "Nuuk [Sermersooq]",
+   "Kangerlussuaq [Qeqqata]",
+   "Tasiilaq &amp; Ammassalik [East Greenland]",
+   "South Greenland [Kujalleq]"
+  ],
+  "itineraries": [
+   "Disko Bay With the Slack Built In",
+   "The Sea-Ice Window at Tasiilaq",
+   "Scoresby Sund by Small Ship",
+   "South Greenland on Foot and by Boat"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/polar-regions/",
+   "/destinations/svalbard/",
+   "/destinations/iceland/",
+   "/destinations/antarctica/"
+  ]
+ },
+ {
+  "slug": "hawaii",
+  "name": "Hawaii",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "Hawaii | Maui, Kauai & the Big Island — Hit Your Mark Travel",
+  "description": "Maui, Kauai, the Big Island and Lanai — island selection, inter-island sequencing, and the experiences that make it more than a beach trip.",
+  "heroImage": "/assets/img/dh-08-hawaii-napali-coast.jpg",
+  "words": 2940,
+  "h2s": [
+   "The Most Misunderstood American Destination.",
+   "Six Hawaii Islands Worth Understanding Properly",
+   "Trips We Plan Often",
+   "What We Add to Hawaii Planning",
+   "Hawaii by Season",
+   "Plan a Hawaii Trip Built Around the Right Islands",
+   "Destinations Worth Comparing",
+   "What Hawaii Actually Costs",
+   "Hawaii — FAQ",
+   "Read More on Planning Hawaii"
+  ],
+  "placeCards": [
+   "Maui [Maui County]",
+   "Kauai [Kauai County]",
+   "Big Island [Hawaii Island]",
+   "Lanai [Maui County]",
+   "Oahu &amp; Honolulu [City &amp; County of Honolulu]",
+   "Inter-Island Hawaii [Multi-Island]"
+  ],
+  "itineraries": [
+   "Maui &amp; Kauai",
+   "Big Island &amp; Maui",
+   "Hawaii Honeymoon",
+   "Family Hawaii"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/north-america/",
+   "/destinations/french-polynesia/",
+   "/destinations/fiji/",
+   "/destinations/riviera-maya-los-cabos/"
+  ]
+ },
+ {
+  "slug": "iceland",
+  "name": "Iceland",
+  "region": "Polar Regions",
+  "regionHref": "/destinations/polar-regions/",
+  "title": "Iceland | Northern Lights & Ring Road — Hit Your Mark Travel",
+  "description": "Iceland planned properly — when the northern lights are actually likely, which regions justify the drive, and how to skip the Golden Circle crowds.",
+  "heroImage": "/assets/img/dh-09-iceland-glacial-lagoon.jpg",
+  "words": 1372,
+  "h2s": [
+   "Everyone drives the same loop. You do not have to.",
+   "The Regions Worth the Drive",
+   "Trips We Plan Often",
+   "What We Add to Iceland Planning",
+   "Iceland by Season",
+   "Plan an Iceland Trip Worth the Drive",
+   "Destinations Worth Comparing",
+   "What Iceland Actually Costs",
+   "Iceland &mdash; FAQ",
+   "Read More on Planning Iceland"
+  ],
+  "placeCards": [
+   "South Coast &amp; Golden Circle [The Standard Route]",
+   "The Westfjords [The Empty Quarter]",
+   "M&yacute;vatn, Akureyri &amp; H&uacute;sav&iacute;k [The North]",
+   "The Highlands [The Interior]"
+  ],
+  "itineraries": [
+   "The Summer Version",
+   "Northern Lights, Realistically"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/polar-regions/",
+   "/destinations/antarctica/",
+   "/destinations/alaska/",
+   "/destinations/new-zealand/"
+  ]
+ },
+ {
+  "slug": "india",
+  "name": "India",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "India | Golden Triangle, Rajasthan, Kerala — Hit Your Mark Travel",
+  "description": "The Golden Triangle needs seven days, not four. Rajasthan's forts, Kerala's backwaters, and why October through March is the window that works.",
+  "heroImage": "/assets/img/asia-india.jpg",
+  "words": 3305,
+  "h2s": [
+   "India Rewards Preparation More Than Any Country.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to India Planning",
+   "India by Season",
+   "Plan an India Trip With the Days in the Right Places",
+   "Destinations Worth Comparing",
+   "What India Actually Costs",
+   "India — FAQ",
+   "Read More on Planning Asia"
+  ],
+  "placeCards": [
+   "Delhi [National Capital Territory]",
+   "Agra [Uttar Pradesh]",
+   "Jaipur [Rajasthan]",
+   "Udaipur &amp; the Lakes [Rajasthan]",
+   "Kerala [Kerala]",
+   "Ranthambore [Rajasthan]"
+  ],
+  "itineraries": [
+   "The Golden Triangle, Properly",
+   "Rajasthan Beyond the Triangle",
+   "North and South in One Trip",
+   "Kerala and the South"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/asia/",
+   "/destinations/thailand/",
+   "/destinations/japan/",
+   "/destinations/bali/"
+  ]
+ },
+ {
+  "slug": "israel",
+  "name": "Israel",
+  "region": "Middle East",
+  "regionHref": "/destinations/middle-east/",
+  "title": "Israel | Jerusalem, Tel Aviv & Masada — Hit Your Mark Travel",
+  "description": "March to May and October to November are the windows that work. What Shabbat closes, how many nights Jerusalem needs, and where Petra fits.",
+  "heroImage": "/assets/img/middle-east-israel.jpg",
+  "words": 3436,
+  "h2s": [
+   "Israel Runs on the Calendar, Not on the Map.",
+   "Six Places Worth the Nights",
+   "Trips We Plan Often",
+   "What We Add to Israel Planning",
+   "Israel by Season",
+   "Plan an Israel Trip Around the Right Week",
+   "Destinations Worth Comparing",
+   "What Israel Actually Costs",
+   "Israel — FAQ",
+   "Read More on Planning Middle East"
+  ],
+  "placeCards": [
+   "Jerusalem [Judaean Hills]",
+   "Tel Aviv &amp; Jaffa [Mediterranean Coast]",
+   "Galilee &amp; the Golan [Northern District]",
+   "Masada &amp; the Dead Sea [Judaean Desert]",
+   "Caesarea &amp; Akko [Northern Coast]",
+   "The Negev [Southern District]"
+  ],
+  "itineraries": [
+   "Jerusalem and Tel Aviv, Properly",
+   "Israel End to End",
+   "Israel and Jordan Overland",
+   "The Galilee, the Golan and the Coast"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/jordan/",
+   "/destinations/middle-east/",
+   "/destinations/egypt/",
+   "/destinations/greece/"
+  ]
+ },
+ {
+  "slug": "italy",
+  "name": "Italy",
+  "region": "Europe",
+  "regionHref": "/destinations/europe/",
+  "title": "Italy | Rome, Tuscany & the Amalfi Coast — Hit Your Mark Travel",
+  "description": "Rome, Tuscany, the Amalfi Coast, Venice, Sicily and Puglia — planned around the art historians, food specialists and properties worth the rate.",
+  "heroImage": "/assets/img/h-04-amalfi-golden-hour.jpg",
+  "words": 3235,
+  "h2s": [
+   "The Specialist Earns Back Everything in Italy.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Italy Planning",
+   "Italy by Season",
+   "Plan an Italy Trip That Goes Below the Surface",
+   "Destinations Worth Comparing",
+   "What Italy Actually Costs",
+   "Italy — FAQ",
+   "Read More on Planning Italy"
+  ],
+  "placeCards": [
+   "Rome [Lazio]",
+   "Tuscany [Tuscany]",
+   "Amalfi Coast [Campania]",
+   "Venice [Veneto]",
+   "Sicily [Sicily]",
+   "Puglia [Apulia]"
+  ],
+  "itineraries": [
+   "Rome &amp; Tuscany",
+   "Amalfi &amp; Sicily",
+   "Italy Food &amp; Wine",
+   "Italy South: Puglia &amp; Basilicata"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/europe/",
+   "/destinations/greece/",
+   "/destinations/france/",
+   "/destinations/spain/"
+  ]
+ },
+ {
+  "slug": "jamaica",
+  "name": "Jamaica",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "Jamaica | Which Coast to Pick — Hit Your Mark Travel",
+  "description": "Montego Bay, Negril, Port Antonio or the south coast — which Jamaican coast to pick, why December through April, and the drives that break itineraries.",
+  "heroImage": "/assets/img/caribbean-mexico-jamaica.jpg",
+  "words": 3353,
+  "h2s": [
+   "Which Coast You Pick Decides the Whole Trip.",
+   "Six Coasts Worth Choosing Between",
+   "Trips We Plan Often",
+   "What We Add to Jamaica Planning",
+   "Jamaica by Season",
+   "Plan a Jamaica Trip On the Right Coast",
+   "Destinations Worth Comparing",
+   "What Jamaica Actually Costs",
+   "Jamaica — FAQ",
+   "Read More on Planning Caribbean &amp; Mexico"
+  ],
+  "placeCards": [
+   "Montego Bay &amp; Hanover [Saint James &amp; Hanover]",
+   "Ocho Rios &amp; Oracabessa [Saint Ann &amp; Saint Mary]",
+   "Port Antonio &amp; the Blue Lagoon [Portland]",
+   "Negril &amp; the West End [Westmoreland &amp; Hanover]",
+   "Treasure Beach &amp; the South Coast [Saint Elizabeth]",
+   "The Blue Mountains &amp; Kingston [Saint Andrew &amp; Kingston]"
+  ],
+  "itineraries": [
+   "One Coast, a Staffed Villa",
+   "Port Antonio and the Blue Mountains",
+   "The South Coast, Slowly",
+   "North Coast, With Kingston In It"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/turks-caicos/",
+   "/destinations/caribbean-mexico/",
+   "/destinations/dominican-republic/",
+   "/destinations/st-barths/"
+  ]
+ },
+ {
+  "slug": "japan",
+  "name": "Japan",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "Japan | Tokyo, Kyoto & Ryokan Stays — Hit Your Mark Travel",
+  "description": "Tokyo, Kyoto, Osaka, Hiroshima, Kanazawa and rural Japan — the most complete destination in the world, planned around specialist guides.",
+  "heroImage": "/assets/img/dh-10-japan-kyoto-dawn.jpg",
+  "words": 3089,
+  "h2s": [
+   "Depth Beats Breadth. Always in Japan.",
+   "Six Cities and Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Japan Planning",
+   "Japan by Season",
+   "Plan a Japan Trip Built Around Depth",
+   "Destinations Worth Comparing",
+   "What Japan Actually Costs",
+   "Japan — FAQ",
+   "Read More on Planning Japan"
+  ],
+  "placeCards": [
+   "Tokyo [Kanto Region]",
+   "Kyoto [Kansai Region]",
+   "Osaka [Kansai Region]",
+   "Hiroshima &amp; Miyajima [Chugoku Region]",
+   "Kanazawa [Chubu Region]",
+   "Rural Japan [Various Regions]"
+  ],
+  "itineraries": [
+   "Japan: Tokyo, Kyoto &amp; Osaka",
+   "Japan Cherry Blossom",
+   "Japan Autumn",
+   "Japan Off the Circuit"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/asia/",
+   "/destinations/thailand/",
+   "/destinations/bali/",
+   "/destinations/italy/"
+  ]
+ },
+ {
+  "slug": "jordan",
+  "name": "Jordan",
+  "region": "Middle East",
+  "regionHref": "/destinations/middle-east/",
+  "title": "Jordan | Petra, Wadi Rum & the Dead Sea — Hit Your Mark Travel",
+  "description": "Petra, Wadi Rum, the Dead Sea and Jerash — Nabataean archaeology, Bedouin desert camps, and the hospitality culture that brings travelers back.",
+  "heroImage": "/assets/img/x-03-petra-treasury.jpg",
+  "words": 2838,
+  "h2s": [
+   "The Middle East for the First-Time Visitor.",
+   "Six Jordan Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Jordan Planning",
+   "Jordan by Season",
+   "Plan a Jordan Trip That Goes Beyond Petra",
+   "Destinations Worth Comparing",
+   "What Jordan Actually Costs",
+   "Jordan — FAQ",
+   "Read More on Planning Jordan"
+  ],
+  "placeCards": [
+   "Petra [Southern Jordan]",
+   "Wadi Rum [Southern Jordan]",
+   "Dead Sea [Jordan Valley]",
+   "Jerash [Northern Jordan]",
+   "Amman &amp; Surrounds [Central Jordan]",
+   "Aqaba &amp; Wadi Mujib [South &amp; Central Jordan]"
+  ],
+  "itineraries": [
+   "Jordan in Depth",
+   "Jordan &amp; Israel Combined",
+   "Petra Family Adventure",
+   "Jordan Hiking &amp; Nature"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/israel/",
+   "/destinations/middle-east/",
+   "/destinations/egypt/",
+   "/destinations/oman/",
+   "/destinations/peru/"
+  ]
+ },
+ {
+  "slug": "kenya-tanzania",
+  "name": "Kenya &amp; Tanzania",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "Kenya &amp; Tanzania — Hit Your Mark Travel",
+  "description": "The Masai Mara, Serengeti, Amboseli and Ngorongoro — East Africa's greatest wildlife theater, timed to the camps and seasonal windows.",
+  "heroImage": "/assets/img/x-01-serengeti-elephants.jpg",
+  "words": 2896,
+  "h2s": [
+   "The Greatest Wildlife Theater on Earth",
+   "Six Ecosystems Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to East Africa Planning",
+   "Kenya &amp; Tanzania by Season",
+   "Plan an East Africa Safari Worth the Distance",
+   "Destinations Worth Comparing",
+   "What Kenya &amp; Tanzania Actually Cost",
+   "Kenya &amp; Tanzania — FAQ",
+   "Read More on Kenya &amp; Tanzania"
+  ],
+  "placeCards": [
+   "Masai Mara Conservancies [Kenya]",
+   "Serengeti [Tanzania]",
+   "Amboseli [Kenya]",
+   "Ngorongoro Crater [Tanzania]",
+   "Laikipia Plateau [Northern Kenya]",
+   "Rwanda &amp; Akagera [Rwanda]"
+  ],
+  "itineraries": [
+   "Kenya Great Migration &amp; Mara Conservancies",
+   "Tanzania: Serengeti Calving &amp; Ngorongoro",
+   "Kenya &amp; Tanzania Safari Combined",
+   "Laikipia &amp; Mara Family Safari"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/africa/",
+   "/destinations/botswana/",
+   "/destinations/rwanda/",
+   "/destinations/galapagos/"
+  ]
+ },
+ {
+  "slug": "maldives",
+  "name": "The Maldives",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "The Maldives — Hit Your Mark Travel",
+  "description": "The Maldives: overwater villas, private atolls, and lagoons that glow at dusk. Every resort vetted reef by reef. Every itinerary built from scratch.",
+  "heroImage": "/assets/img/h-01-maldives-aerial.jpg",
+  "words": 1765,
+  "h2s": [
+   "Not Every Overwater Villa Is the Same",
+   "The Maldives Season by Season",
+   "Experiences Worth Planning Around",
+   "The Atolls We Recommend",
+   "What to Know Before You Go",
+   "Destinations Worth Comparing",
+   "Ready to plan your Maldives trip?",
+   "What the Maldives Actually Costs",
+   "Maldives — FAQ",
+   "Read More on the Maldives"
+  ],
+  "placeCards": [],
+  "itineraries": [],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/french-polynesia/",
+   "/destinations/fiji/",
+   "/destinations/turks-caicos/",
+   "/destinations/asia/",
+   "/destinations/sri-lanka/",
+   "/destinations/india/"
+  ]
+ },
+ {
+  "slug": "middle-east",
+  "name": "Middle East",
+  "region": "",
+  "regionHref": "",
+  "title": "Middle East — Hit Your Mark Travel",
+  "description": "Jordan, Israel, Oman, Egypt, and the UAE. Middle East travel planned around the ancient sites, desert landscapes, and cultural access most itineraries never reach.",
+  "heroImage": "/assets/img/dh-11-middle-east-dunes.jpg",
+  "words": 2970,
+  "h2s": [
+   "Ancient History. Genuine Hospitality. Wrong Assumptions.",
+   "Six Middle East Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Middle East Travel",
+   "Middle East by Season",
+   "Plan a Middle East Trip Worth the Preconceptions",
+   "What the Middle East Actually Costs",
+   "Middle East — FAQ",
+   "Read More on the Middle East"
+  ],
+  "placeCards": [
+   "Jordan [The Levant] -> /destinations/jordan/",
+   "Israel [The Levant] -> /destinations/israel/",
+   "Oman [Arabian Peninsula] -> /destinations/oman/",
+   "Egypt [North Africa] -> /destinations/egypt/",
+   "UAE &amp; the Gulf [Arabian Peninsula] -> /destinations/uae-gulf/",
+   "Georgia &amp; Armenia [Caucasus] -> /destinations/georgia-armenia/"
+  ],
+  "itineraries": [
+   "Jordan in Depth",
+   "Israel &amp; Jordan Combined",
+   "Oman Road Trip",
+   "Egypt: Cairo, the Nile &amp; Abu Simbel"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/israel/",
+   "/destinations/jordan/",
+   "/destinations/oman/",
+   "/destinations/egypt/",
+   "/destinations/uae-gulf/",
+   "/destinations/georgia-armenia/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "morocco",
+  "name": "Morocco",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "Morocco | Fez, Marrakech & the Sahara — Hit Your Mark Travel",
+  "description": "Fez before Marrakech, and October to April before high summer. How many days the Sahara detour really costs, and when a licensed medina guide pays for itself.",
+  "heroImage": "/assets/img/africa-morocco.jpg",
+  "words": 3374,
+  "h2s": [
+   "Morocco Is a Driving Country, Not a City Break.",
+   "Six Places Worth the Driving Days",
+   "Trips We Plan Often",
+   "What We Add to Morocco Planning",
+   "Morocco by Season",
+   "Plan a Morocco Trip Routed the Right Way",
+   "Destinations Worth Comparing",
+   "What Morocco Actually Costs",
+   "Morocco — FAQ",
+   "Read More on Planning Africa"
+  ],
+  "placeCards": [
+   "Fez [Fès-Meknès]",
+   "Marrakech [Marrakech-Safi]",
+   "The High Atlas [Al Haouz]",
+   "Aït Benhaddou &amp; the Valleys [Drâa-Tafilalet]",
+   "Merzouga &amp; Erg Chebbi [Drâa-Tafilalet]",
+   "Essaouira &amp; the Coast [Atlantic Coast]"
+  ],
+  "itineraries": [
+   "Fez First, Then Marrakech",
+   "Marrakech to the Sahara, One Way",
+   "The Coast and the Atlas in Summer",
+   "The North: Tangier, Chefchaouen, Volubilis"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/africa/",
+   "/destinations/egypt/",
+   "/destinations/jordan/",
+   "/destinations/spain/"
+  ]
+ },
+ {
+  "slug": "napa-sonoma",
+  "name": "Napa & Sonoma",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "Napa & Sonoma | Private Wine Country — Hit Your Mark Travel",
+  "description": "Napa and Sonoma done privately — small-producer appointments, vineyard lunches, harvest season timing, and the great tables booked the day they open.",
+  "heroImage": "/assets/img/na-napa-sonoma-cellar-tasting.jpg",
+  "words": 1365,
+  "h2s": [
+   "Two Valleys. Very Different Tempers.",
+   "Where to Base and What to Book",
+   "Trips We Plan Often",
+   "What We Add to Wine Country Planning",
+   "Wine Country by Season",
+   "Plan a Wine Country Trip Worth Tasting",
+   "Destinations Worth Comparing",
+   "What Napa &amp; Sonoma Actually Cost",
+   "Napa & Sonoma — FAQ",
+   "Read More on Napa &amp; Sonoma"
+  ],
+  "placeCards": [
+   "The Valley Floor [Napa]",
+   "The Sonoma Coast & Russian River [Sonoma]",
+   "Healdsburg [Sonoma]"
+  ],
+  "itineraries": [
+   "Harvest in the Valley",
+   "The Sonoma Slow Weekend"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/",
+   "/destinations/new-orleans/",
+   "/destinations/portugal/",
+   "/destinations/france/",
+   "/destinations/north-america/"
+  ]
+ },
+ {
+  "slug": "new-orleans",
+  "name": "New Orleans",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "New Orleans | Music, Food & Festivals — Hit Your Mark Travel",
+  "description": "New Orleans beyond Bourbon Street — Frenchmen Street with music insiders, the restaurants in the right order, Mardi Gras and Jazz Fest planned properly.",
+  "heroImage": "/assets/img/dh-12-new-orleans-quarter-dusk.jpg",
+  "words": 1469,
+  "h2s": [
+   "Beyond Bourbon Street.",
+   "The Neighborhoods That Matter",
+   "Trips We Plan Often",
+   "What We Add to New Orleans Planning",
+   "New Orleans by Season",
+   "Plan a New Orleans Trip With Soul",
+   "Destinations Worth Comparing",
+   "What New Orleans Actually Costs",
+   "New Orleans — FAQ",
+   "Read More on New Orleans"
+  ],
+  "placeCards": [
+   "The French Quarter, Early [The Quarter]",
+   "Frenchmen Street [The Music]",
+   "The Garden District & Magazine Street [Uptown]",
+   "The Bayou & River Road [Beyond the City]"
+  ],
+  "itineraries": [
+   "The City, Deep Version",
+   "Jazz Fest Properly"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/",
+   "/destinations/new-york/",
+   "/destinations/napa-sonoma/",
+   "/destinations/hawaii/",
+   "/destinations/north-america/"
+  ]
+ },
+ {
+  "slug": "new-york",
+  "name": "New York",
+  "region": "North America",
+  "regionHref": "/destinations/north-america/",
+  "title": "New York — Hit Your Mark Travel",
+  "description": "Manhattan, Brooklyn, the Hudson Valley and the Hamptons — the neighborhoods, food specialists and escapes that most visitors never find.",
+  "heroImage": "/assets/img/dh-13-new-york-skyline-dusk.jpg",
+  "words": 3222,
+  "h2s": [
+   "Surface Experience vs. Deep Experience.",
+   "Six New York Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to New York Planning",
+   "New York by Season",
+   "Plan a New York Trip That Goes Below the Surface",
+   "Destinations Worth Comparing",
+   "What New York Actually Costs",
+   "New York — FAQ",
+   "Read More on Planning New York"
+  ],
+  "placeCards": [
+   "Manhattan Neighborhoods [Manhattan]",
+   "Manhattan Food Circuit [Manhattan]",
+   "Brooklyn [Brooklyn]",
+   "Hudson Valley [Hudson Valley]",
+   "The Hamptons [Long Island]",
+   "Upstate &amp; Finger Lakes [Upstate New York]"
+  ],
+  "itineraries": [
+   "New York City Deep Dive",
+   "New York &amp; Hudson Valley",
+   "Hamptons Summer",
+   "Finger Lakes &amp; New York"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/north-america/",
+   "/destinations/new-orleans/",
+   "/destinations/uk-ireland/",
+   "/destinations/france/"
+  ]
+ },
+ {
+  "slug": "new-zealand",
+  "name": "New Zealand",
+  "region": "South Pacific",
+  "regionHref": "/destinations/south-pacific/",
+  "title": "New Zealand — Hit Your Mark Travel",
+  "description": "Queenstown, Fiordland, Marlborough and the Bay of Islands — South Island landscapes and lodge-supported Great Walks that justify the flight.",
+  "heroImage": "/assets/img/dh-14-new-zealand-fiord-dawn.jpg",
+  "words": 3112,
+  "h2s": [
+   "Two Islands, Two Countries Within One Trip.",
+   "Six Regions Worth the Distance",
+   "Trips We Plan Often",
+   "What We Add to New Zealand Planning",
+   "New Zealand by Season",
+   "Plan a New Zealand Trip Built Around the Lodges",
+   "Destinations Worth Comparing",
+   "What New Zealand Actually Costs",
+   "New Zealand — FAQ",
+   "Read More on New Zealand"
+  ],
+  "placeCards": [
+   "Queenstown &amp; Fiordland [South Island]",
+   "Marlborough &amp; Abel Tasman [South Island North]",
+   "Rotorua &amp; Taupo [North Island Central]",
+   "Bay of Islands &amp; Northland [Northland]",
+   "Hawke's Bay &amp; Napier [North Island East]",
+   "Stewart Island [Far South]"
+  ],
+  "itineraries": [
+   "South Island in Depth",
+   "North &amp; South Island Combined",
+   "Milford Track Lodge-Supported",
+   "New Zealand Wine &amp; Lodge Circuit"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-pacific/",
+   "/destinations/patagonia/",
+   "/destinations/iceland/",
+   "/destinations/canadian-rockies/",
+   "/destinations/australia/"
+  ]
+ },
+ {
+  "slug": "north-america",
+  "name": "North America",
+  "region": "",
+  "regionHref": "",
+  "title": "North America — Hit Your Mark Travel",
+  "description": "Napa & Sonoma, Hawaii, Alaska, New York, the Canadian Rockies and New Orleans — the places and properties that deliver, not the photogenic ones.",
+  "heroImage": "/assets/img/dh-15-north-america-rockies-dawn.jpg",
+  "words": 2484,
+  "h2s": [
+   "North America Is Not a Consolation Prize",
+   "Six North American Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to North American Travel",
+   "North America by Season",
+   "Plan a North America Trip Worth the Time Off",
+   "What North America Actually Costs",
+   "North America — FAQ",
+   "Read More on North America"
+  ],
+  "placeCards": [
+   "Napa &amp; Sonoma [California Wine Country] -> /destinations/napa-sonoma/",
+   "Hawaii [Pacific Islands · USA] -> /destinations/hawaii/",
+   "Alaska [Pacific Northwest · USA] -> /destinations/alaska/",
+   "New York &amp; the Northeast [Northeast · USA] -> /destinations/new-york/",
+   "Canadian Rockies [Western Canada] -> /destinations/canadian-rockies/",
+   "New Orleans [Gulf South · USA] -> /destinations/new-orleans/"
+  ],
+  "itineraries": [
+   "Napa Harvest &amp; Sonoma Deep Dive",
+   "Alaska Wilderness Lodge Week",
+   "Canadian Rockies by Rail &amp; Road",
+   "New Orleans in the Right Week"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/aspen/",
+   "/destinations/napa-sonoma/",
+   "/destinations/hawaii/",
+   "/destinations/alaska/",
+   "/destinations/new-york/",
+   "/destinations/canadian-rockies/",
+   "/destinations/new-orleans/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "oman",
+  "name": "Oman",
+  "region": "Middle East",
+  "regionHref": "/destinations/middle-east/",
+  "title": "Oman | Wahiba Sands & Musandam Fjords — Hit Your Mark Travel",
+  "description": "Muscat, Wahiba Sands, the Musandam Peninsula and Nizwa — the Middle East's most underused destination, and a self-drive culture that rewards planning.",
+  "heroImage": "/assets/img/dh-16-oman-wadi-fort.jpg",
+  "words": 2818,
+  "h2s": [
+   "The Antidote to the Dubai-Era Middle East.",
+   "Six Oman Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Oman Planning",
+   "Oman by Season",
+   "Plan an Oman Trip That Goes Beyond Muscat",
+   "Destinations Worth Comparing",
+   "What Oman Actually Costs",
+   "Oman — FAQ",
+   "Read More on Planning Oman"
+  ],
+  "placeCards": [
+   "Wahiba Sands [Eastern Oman]",
+   "Musandam Peninsula [Musandam Peninsula]",
+   "Nizwa [Interior Oman]",
+   "Wadi Shab &amp; Wadi Bani Khalid [Eastern Oman]",
+   "Muscat [Capital Region]",
+   "Jebel Akhdar &amp; the Green Mountain [Al Hajar Mountains]"
+  ],
+  "itineraries": [
+   "Oman Self-Drive",
+   "Oman Highlights",
+   "Oman &amp; Jordan",
+   "Oman Adventure"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/middle-east/",
+   "/destinations/jordan/",
+   "/destinations/egypt/",
+   "/destinations/maldives/",
+   "/destinations/uae-gulf/"
+  ]
+ },
+ {
+  "slug": "patagonia",
+  "name": "Patagonia",
+  "region": "South America",
+  "regionHref": "/destinations/south-america/",
+  "title": "Patagonia — Hit Your Mark Travel",
+  "description": "Torres del Paine, Los Glaciares, El Chaltén and Tierra del Fuego — planned around the weather windows, the right lodges, and the trekking.",
+  "heroImage": "/assets/img/e-12-patagonia-trek.jpg",
+  "words": 3060,
+  "h2s": [
+   "Weather Is the Point, Not the Problem.",
+   "Six Patagonian Landscapes Worth Planning Around",
+   "Trips We Plan Often",
+   "What We Add to Patagonia Planning",
+   "Patagonia by Season",
+   "Plan a Patagonia Trip Built Around the Full Circuit",
+   "Destinations Worth Comparing",
+   "What Patagonia Actually Costs",
+   "Patagonia — FAQ",
+   "Read More on Patagonia"
+  ],
+  "placeCards": [
+   "Torres del Paine [Chilean Patagonia]",
+   "Perito Moreno Glacier [Argentine Patagonia]",
+   "El Chaltén &amp; Fitz Roy [Argentine Patagonia]",
+   "Tierra del Fuego &amp; Ushuaia [Tierra del Fuego]",
+   "Peninsula Valdés [Atlantic Patagonia]",
+   "Chilean Fjords &amp; Carretera Austral [Chilean Fjords]"
+  ],
+  "itineraries": [
+   "Patagonia Essential: Torres del Paine &amp; Perito Moreno",
+   "Chilean &amp; Argentine Patagonia Combined",
+   "Patagonia Wildlife: Peninsula Valdés &amp; Torres del Paine",
+   "Patagonia Lodge Trek"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-america/",
+   "/destinations/new-zealand/",
+   "/destinations/alaska/",
+   "/destinations/antarctica/",
+   "/destinations/argentina/"
+  ]
+ },
+ {
+  "slug": "peru",
+  "name": "Peru",
+  "region": "South America",
+  "regionHref": "/destinations/south-america/",
+  "title": "Peru | Machu Picchu & the Sacred Valley — Hit Your Mark Travel",
+  "description": "Machu Picchu, the Sacred Valley, Cusco, Lake Titicaca and the Amazon — altitude acclimatization, archaeological context, and an Andean journey.",
+  "heroImage": "/assets/img/dh-17-peru-machu-picchu-dawn.jpg",
+  "words": 3157,
+  "h2s": [
+   "The Country That Surrounds the Ruin.",
+   "Six Peru Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Peru Planning",
+   "Peru by Season",
+   "Plan a Peru Trip Built Around the Full Country",
+   "Destinations Worth Comparing",
+   "What Peru Actually Costs",
+   "Peru — FAQ",
+   "Read More on Planning Peru"
+  ],
+  "placeCards": [
+   "Machu Picchu [Cusco Region]",
+   "Sacred Valley [Cusco Region]",
+   "Cusco [Cusco]",
+   "Lake Titicaca [Puno Region]",
+   "Amazon [Madre de Dios]",
+   "Lima [Lima]"
+  ],
+  "itineraries": [
+   "Peru Classic: Lima, Cusco &amp; Machu Picchu",
+   "Peru in Depth: Sacred Valley &amp; Titicaca",
+   "Peru &amp; Amazon",
+   "Peru Family"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-america/",
+   "/destinations/galapagos/",
+   "/destinations/patagonia/",
+   "/destinations/egypt/",
+   "/destinations/brazil/",
+   "/destinations/argentina/"
+  ]
+ },
+ {
+  "slug": "polar-regions",
+  "name": "Polar Regions",
+  "region": "",
+  "regionHref": "",
+  "title": "Polar Regions — Hit Your Mark Travel",
+  "description": "Antarctica, Arctic Norway, Svalbard, Greenland and Iceland — polar expeditions planned around the vessels, naturalists and windows that matter.",
+  "heroImage": "/assets/img/dh-18-polar-arctic-twilight.jpg",
+  "words": 2915,
+  "h2s": [
+   "The Vessel and the Naturalist Are Everything",
+   "Six Polar Destinations Worth Planning Properly",
+   "Expeditions We Plan Often",
+   "What We Add to Polar Expeditions",
+   "Polar Regions by Season",
+   "Plan a Polar Expedition Worth Every Degree of Cold",
+   "What polar travel Actually Costs",
+   "Polar Regions — FAQ",
+   "Read More on Polar Travel"
+  ],
+  "placeCards": [
+   "Antarctica [Southern Ocean] -> /destinations/antarctica/",
+   "Arctic Norway &amp; Northern Lights [Arctic Circle] -> /destinations/arctic-norway/",
+   "Svalbard [High Arctic] -> /destinations/svalbard/",
+   "Greenland [North Atlantic Arctic] -> /destinations/greenland/",
+   "Iceland [North Atlantic] -> /destinations/iceland/",
+   "Falklands &amp; South Georgia [South Atlantic] -> /destinations/falklands-south-georgia/"
+  ],
+  "itineraries": [
+   "Antarctica Peninsula Expedition",
+   "Arctic Norway: Svalbard &amp; Midnight Sun",
+   "Iceland &amp; Northern Lights",
+   "Antarctica, South Georgia &amp; the Falklands"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/falklands-south-georgia/",
+   "/destinations/antarctica/",
+   "/destinations/arctic-norway/",
+   "/destinations/svalbard/",
+   "/destinations/greenland/",
+   "/destinations/iceland/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "portugal",
+  "name": "Portugal",
+  "region": "Europe",
+  "regionHref": "/destinations/europe/",
+  "title": "Portugal | Lisbon, Porto & the Douro — Hit Your Mark Travel",
+  "description": "Lisbon's tasca culture, Porto's wine lodges, Douro harvest, the slow Alentejo and the western Algarve. Tables and quintas booked before you land.",
+  "heroImage": "/assets/img/dh-19-portugal-douro-valley.jpg",
+  "words": 1433,
+  "h2s": [
+   "Small Country. Outsized Table.",
+   "Five Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Portugal Planning",
+   "Portugal by Season",
+   "Plan a Portugal Trip Built Around the Table",
+   "Destinations Worth Comparing",
+   "What Portugal Actually Costs",
+   "Portugal — FAQ",
+   "Read More on Planning Portugal"
+  ],
+  "placeCards": [
+   "Lisbon [The Capital]",
+   "The Douro Valley [Wine Country]",
+   "Porto [The North]",
+   "The Alentejo [The Interior]",
+   "The Algarve, Western End [The Coast]"
+  ],
+  "itineraries": [
+   "Lisbon, Porto & the Douro",
+   "The Slow Alentejo"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/",
+   "/destinations/spain/",
+   "/destinations/greece/",
+   "/destinations/italy/",
+   "/destinations/europe/"
+  ]
+ },
+ {
+  "slug": "riviera-maya-los-cabos",
+  "name": "Riviera Maya &amp; Los Cabos",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "Riviera Maya & Los Cabos — Hit Your Mark Travel",
+  "description": "Mexico's two great beach coasts — which Riviera Maya resorts are worth it, when Los Cabos is at its best, and how to avoid the versions that disappoint.",
+  "heroImage": "/assets/img/dh-20-riviera-maya-coast.jpg",
+  "words": 1537,
+  "h2s": [
+   "The same country, two entirely different weeks.",
+   "The Areas That Actually Differ",
+   "Trips We Plan Often",
+   "What We Add to Mexico Planning",
+   "Mexico by Season",
+   "Plan a Mexico Trip That Earns the Flight",
+   "Destinations Worth Comparing",
+   "What Mexico's coasts Actually Cost",
+   "Riviera Maya &amp; Los Cabos &mdash; FAQ",
+   "Read More on Mexico's Coasts"
+  ],
+  "placeCards": [
+   "Playa del Carmen to Tulum [Riviera Maya]",
+   "Los Cabos &amp; the Corridor [Baja California Sur]",
+   "Todos Santos &amp; the East Cape [The Quiet Alternative]",
+   "Yucat&aacute;n &amp; M&eacute;rida [Inland]"
+  ],
+  "itineraries": [
+   "Coast and Culture",
+   "Baja, Properly"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/caribbean-mexico/",
+   "/destinations/turks-caicos/",
+   "/destinations/st-barths/",
+   "/destinations/hawaii/"
+  ]
+ },
+ {
+  "slug": "rwanda",
+  "name": "Rwanda",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "Rwanda | Mountain Gorilla Trekking — Hit Your Mark Travel",
+  "description": "Mountain gorilla trekking in Volcanoes National Park — the most profound wildlife encounter available, in a country rebuilt around small-group tourism.",
+  "heroImage": "/assets/img/dh-21-rwanda-volcano-hills.jpg",
+  "words": 2993,
+  "h2s": [
+   "Mountain Gorillas. A Country Rebuilt.",
+   "Six Areas Worth Knowing",
+   "Trips We Plan Often",
+   "What We Add to Rwanda Planning",
+   "Rwanda by Season",
+   "Plan a Rwanda Gorilla Trek Worth the Journey",
+   "Destinations Worth Comparing",
+   "What Rwanda Actually Costs",
+   "Rwanda — FAQ",
+   "Read More on Planning Rwanda"
+  ],
+  "placeCards": [
+   "Volcanoes National Park [Northwestern Rwanda]",
+   "Nyungwe Forest [Southwestern Rwanda]",
+   "Akagera National Park [Eastern Rwanda]",
+   "Kigali [Central Rwanda]",
+   "Lake Kivu [Western Rwanda]",
+   "Musanze &amp; Surrounds [Northern Rwanda]"
+  ],
+  "itineraries": [
+   "Rwanda Gorilla Trek &amp; Nyungwe Primates",
+   "Rwanda &amp; Kenya Safari",
+   "Rwanda Family Gorilla Trek",
+   "Rwanda in Depth"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/africa/",
+   "/destinations/botswana/",
+   "/destinations/kenya-tanzania/",
+   "/destinations/galapagos/"
+  ]
+ },
+ {
+  "slug": "seychelles",
+  "name": "Seychelles",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "Seychelles | Mahé, Praslin & La Digue — Hit Your Mark Travel",
+  "description": "Mahé, Praslin and La Digue sit an hour apart by scheduled ferry — nothing like a Maldives atoll. April and October are the two calmest months.",
+  "heroImage": "/assets/img/h-03-seychelles-granite.jpg",
+  "words": 3420,
+  "h2s": [
+   "Seychelles Is Not a Maldives With Hills.",
+   "Six Islands Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Seychelles Planning",
+   "Seychelles by Season",
+   "Plan a Seychelles Trip Around the Right Coast and the Right Week",
+   "Destinations Worth Comparing",
+   "What Seychelles Actually Costs",
+   "Seychelles — FAQ",
+   "Read More on Planning Africa"
+  ],
+  "placeCards": [
+   "Mahé [Inner Granitic Islands]",
+   "Praslin [Inner Granitic Islands]",
+   "La Digue [Inner Granitic Islands]",
+   "Curieuse &amp; Cousin [Praslin Day Boats]",
+   "The Private Islands [Inner &amp; Coralline Islands]",
+   "Aldabra &amp; the Outer Islands [Outer Islands]"
+  ],
+  "itineraries": [
+   "The Three-Island Week",
+   "Praslin and La Digue, Nothing Else",
+   "Granite Islands, Then One Private Island",
+   "Safari First, Seychelles Second"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/maldives/",
+   "/destinations/africa/",
+   "/destinations/french-polynesia/",
+   "/destinations/turks-caicos/"
+  ]
+ },
+ {
+  "slug": "south-africa",
+  "name": "South Africa",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "South Africa | Safari, Cape Town & Wine — Hit Your Mark Travel",
+  "description": "One trip with a private reserve, a city, a wine region and a coastline. April to October, Sabi Sand for leopards, and the Garden Route driven east to west.",
+  "heroImage": "/assets/img/africa-south-africa.jpg",
+  "words": 3309,
+  "h2s": [
+   "South Africa Is Four Trips Inside One Border.",
+   "Six Places That Decide the Itinerary",
+   "Trips We Plan Often",
+   "What We Add to South Africa Planning",
+   "South Africa by Season",
+   "Plan a South Africa Trip Around the Right Reserve.",
+   "Destinations Worth Comparing",
+   "What South Africa Actually Costs",
+   "South Africa — FAQ",
+   "Read More on Planning Africa"
+  ],
+  "placeCards": [
+   "Sabi Sand [Mpumalanga · Greater Kruger]",
+   "Kruger National Park [Mpumalanga &amp; Limpopo]",
+   "Cape Town [Western Cape]",
+   "The Cape Winelands [Western Cape]",
+   "Garden Route &amp; Overberg [Western &amp; Eastern Cape]",
+   "Addo &amp; the Eastern Cape [Eastern Cape]"
+  ],
+  "itineraries": [
+   "Safari, Cape Town and the Winelands",
+   "The Garden Route, Driven East to West",
+   "Malaria-Free, With Children",
+   "The Cape Without a Safari"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/botswana/",
+   "/destinations/africa/",
+   "/destinations/kenya-tanzania/",
+   "/destinations/rwanda/"
+  ]
+ },
+ {
+  "slug": "south-america",
+  "name": "South America",
+  "region": "",
+  "regionHref": "",
+  "title": "South America — Hit Your Mark Travel",
+  "description": "Patagonia, Peru, the Galápagos, Brazil, Colombia and Argentina — planned around the landscapes, lodges and windows that deliver the continent.",
+  "heroImage": "/assets/img/dh-22-south-america-andes-lake.jpg",
+  "words": 2905,
+  "h2s": [
+   "A Continent That Keeps Surprising People",
+   "Six South American Destinations Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to South American Travel",
+   "South America by Season",
+   "Plan a South America Trip That Earns the Distance",
+   "What South America Actually Costs",
+   "South America — FAQ",
+   "Read More on South America"
+  ],
+  "placeCards": [
+   "Patagonia [Southern Cone] -> /destinations/patagonia/",
+   "Peru [Andean South America] -> /destinations/peru/",
+   "Galápagos &amp; Ecuador [Ecuador] -> /destinations/galapagos/",
+   "Brazil [Brazil] -> /destinations/brazil/",
+   "Argentina [Southern Cone] -> /destinations/argentina/",
+   "Colombia [Northern South America] -> /destinations/colombia/"
+  ],
+  "itineraries": [
+   "Patagonia W Trek Lodge-Supported",
+   "Peru: Inca Trail &amp; Lima",
+   "Galápagos &amp; Ecuador Cloud Forest",
+   "Argentina: Buenos Aires &amp; Mendoza Wine Country"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/colombia/",
+   "/destinations/patagonia/",
+   "/destinations/peru/",
+   "/destinations/galapagos/",
+   "/destinations/brazil/",
+   "/destinations/argentina/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "south-pacific",
+  "name": "South Pacific",
+  "region": "",
+  "regionHref": "",
+  "title": "South Pacific — Hit Your Mark Travel",
+  "description": "French Polynesia, Fiji, New Zealand, Australia and the Cook Islands — the overwater villas, private islands and landscapes worth the distance.",
+  "heroImage": "/assets/img/d-03-bora-bora-otemanu.jpg",
+  "words": 2872,
+  "h2s": [
+   "Worth the Flight. Every Time.",
+   "Six South Pacific Destinations Worth the Distance",
+   "Trips We Plan Often",
+   "What We Add to South Pacific Travel",
+   "South Pacific by Season",
+   "Plan a South Pacific Trip Worth the Distance",
+   "What the South Pacific Actually Costs",
+   "South Pacific — FAQ",
+   "Read More on the South Pacific"
+  ],
+  "placeCards": [
+   "Bora Bora &amp; French Polynesia [French Polynesia] -> /destinations/french-polynesia/",
+   "Fiji [Melanesia] -> /destinations/fiji/",
+   "New Zealand [Australasia] -> /destinations/new-zealand/",
+   "Australia [Australasia] -> /destinations/australia/",
+   "Cook Islands [Polynesia] -> /destinations/cook-islands/",
+   "Vanuatu &amp; Beyond [Melanesia] -> /destinations/vanuatu/"
+  ],
+  "itineraries": [
+   "French Polynesia Island Hop",
+   "New Zealand South Island Complete",
+   "Fiji Private Island Week",
+   "Australia: Sydney, Reef &amp; the North"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/cook-islands/",
+   "/destinations/french-polynesia/",
+   "/destinations/fiji/",
+   "/destinations/new-zealand/",
+   "/destinations/australia/",
+   "/destinations/vanuatu/",
+   "/destinations/"
+  ]
+ },
+ {
+  "slug": "spain",
+  "name": "Spain",
+  "region": "Europe",
+  "regionHref": "/destinations/europe/",
+  "title": "Spain | Basque Country, Andalusia & Rioja — Hit Your Mark Travel",
+  "description": "Spain by region and by table — San Sebastián's pintxos, Andalusia's Moorish triangle, Rioja's wineries, Galicia's seafood. One region deeply, not five superficially.",
+  "heroImage": "/assets/img/dh-23-spain-andalusia-dusk.jpg",
+  "words": 1417,
+  "h2s": [
+   "Depth Over the Greatest Hits.",
+   "Five Spains Worth Choosing Between",
+   "Trips We Plan Often",
+   "What We Add to Spain Planning",
+   "Spain by Season",
+   "Plan a Spain Trip Built Around the Table",
+   "Destinations Worth Comparing",
+   "What Spain Actually Costs",
+   "Spain — FAQ",
+   "Read More on Planning Spain"
+  ],
+  "placeCards": [
+   "Basque Country [The North]",
+   "Andalusia [The South]",
+   "Barcelona & the Costa Brava [Catalonia]",
+   "Rioja & the Interior [Wine Country]",
+   "Galicia [The Northwest]"
+  ],
+  "itineraries": [
+   "The Northern Table",
+   "Andalusia Properly"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/",
+   "/destinations/portugal/",
+   "/destinations/france/",
+   "/destinations/italy/",
+   "/destinations/europe/"
+  ]
+ },
+ {
+  "slug": "sri-lanka",
+  "name": "Sri Lanka",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "Sri Lanka | Cultural Triangle to Yala — Hit Your Mark Travel",
+  "description": "Two monsoons on opposite coasts: the west and south run December to March, the east May to September. Which side of Sri Lanka to be on in your month.",
+  "heroImage": "/assets/img/asia-sri-lanka.jpg",
+  "words": 3338,
+  "h2s": [
+   "Sri Lanka Has Two Monsoons. Pick the Right Coast.",
+   "Six Places on One Circuit",
+   "Four Ways Round the Island",
+   "What We Add to Sri Lanka Planning",
+   "Sri Lanka by Coast and Season",
+   "Plan a Sri Lanka Trip Around the Month You Have",
+   "Destinations Worth Comparing",
+   "What Sri Lanka Actually Costs",
+   "Sri Lanka — FAQ",
+   "Read More on Planning Asia"
+  ],
+  "placeCards": [
+   "Sigiriya &amp; Dambulla [Central Province]",
+   "Anuradhapura &amp; Polonnaruwa [North Central Province]",
+   "Kandy [Central Province]",
+   "Nuwara Eliya &amp; Ella [Central &amp; Uva]",
+   "Yala &amp; Wilpattu [Southern &amp; North Western]",
+   "Galle &amp; the South Coast [Southern Province]"
+  ],
+  "itineraries": [
+   "The Classic Circuit",
+   "The Island in Reverse",
+   "Sri Lanka, Then the Maldives",
+   "The Wildlife-Led Version"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/asia/",
+   "/destinations/india/",
+   "/destinations/maldives/",
+   "/destinations/thailand/"
+  ]
+ },
+ {
+  "slug": "st-barths",
+  "name": "St. Barth&#39;s",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "St. Barth's | Villas & Beaches — Hit Your Mark Travel",
+  "description": "St. Barth&#39;s planned properly — which beach to base on, villa versus hotel, how the December window really works, and why the island rewards a return visit.",
+  "heroImage": "/assets/img/d-06-st-barts-harbour.jpg",
+  "words": 1436,
+  "h2s": [
+   "Small, French, and better in the shoulder weeks.",
+   "The Beaches That Set the Tone",
+   "Trips We Plan Often",
+   "What We Add to St. Barth&#39;s Planning",
+   "St. Barth&#39;s by Season",
+   "Plan a St. Barth&#39;s Trip in the Right Week",
+   "Destinations Worth Comparing",
+   "What St. Barth's Actually Costs",
+   "St. Barth&#39;s &mdash; FAQ",
+   "Read More on St. Barth's"
+  ],
+  "placeCards": [
+   "Flamands [The Long Beach]",
+   "Gustavia &amp; Shell Beach [The Village]",
+   "Colombier &amp; Anse des Cayes [The Quiet End]",
+   "Lurin, Gouverneur &amp; Saline [The Villas]"
+  ],
+  "itineraries": [
+   "The Villa Week",
+   "Hotel and Harbour"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/caribbean-mexico/",
+   "/destinations/turks-caicos/",
+   "/destinations/riviera-maya-los-cabos/",
+   "/destinations/french-polynesia/"
+  ]
+ },
+ {
+  "slug": "svalbard",
+  "name": "Svalbard",
+  "region": "Polar Regions",
+  "regionHref": "/destinations/polar-regions/",
+  "title": "Svalbard | Small-Ship Arctic Expeditions — Hit Your Mark Travel",
+  "description": "June to August is the circumnavigation window; March to May is snowmobile and blue-light season. Why passenger count decides how often you land.",
+  "heroImage": "/assets/img/polar-regions-svalbard.jpg",
+  "words": 3341,
+  "h2s": [
+   "Svalbard Is a Ship Trip Before It Is Anything Else.",
+   "Six Places Worth the Ice Time",
+   "Voyages and Weeks We Plan Often",
+   "What We Add to Svalbard Planning",
+   "Svalbard by Season",
+   "Plan a Svalbard Trip Around the Right Vessel.",
+   "Destinations Worth Comparing",
+   "What Svalbard Actually Costs",
+   "Svalbard — FAQ",
+   "Read More on Planning Polar Regions"
+  ],
+  "placeCards": [
+   "Longyearbyen [78° North]",
+   "Billefjorden &amp; Pyramiden [Isfjorden]",
+   "Forlandet &amp; the West Coast [West Spitsbergen]",
+   "Alkefjellet &amp; Hinlopen [Hinlopen Strait]",
+   "The Austfonna Ice Cap [Nordaustlandet]",
+   "Ny-Ålesund [Kongsfjorden]"
+  ],
+  "itineraries": [
+   "The Spitsbergen Circumnavigation",
+   "North Spitsbergen and the Ice Edge",
+   "Snowmobile Weeks and the Blue Light",
+   "Svalbard and Arctic Norway"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/arctic-norway/",
+   "/destinations/polar-regions/",
+   "/destinations/greenland/",
+   "/destinations/antarctica/"
+  ]
+ },
+ {
+  "slug": "thailand",
+  "name": "Thailand",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "Thailand — Hit Your Mark Travel",
+  "description": "Bangkok, Chiang Mai, the northern hill tribes and the southern islands — the food culture, temples and specialist guides most visitors miss.",
+  "heroImage": "/assets/img/dh-24-thailand-limestone-bay.jpg",
+  "words": 3373,
+  "h2s": [
+   "Bangkok Is a Great Food City. The North Is a Different Country.",
+   "Six Areas Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Thailand Planning",
+   "Thailand by Season",
+   "Plan a Thailand Trip Planned Around Depth",
+   "Destinations Worth Comparing",
+   "What Thailand Actually Costs",
+   "Thailand — FAQ",
+   "Read More on Planning Thailand"
+  ],
+  "placeCards": [
+   "Bangkok [Central Thailand]",
+   "Chiang Mai [Northern Thailand]",
+   "Chiang Rai &amp; Golden Triangle [Far Northern Thailand]",
+   "Southern Islands [Southern Thailand]",
+   "Krabi &amp; Railay [Andaman Coast]",
+   "Sukhothai &amp; Ancient Temples [Lower Northern Thailand]"
+  ],
+  "itineraries": [
+   "Bangkok &amp; Chiang Mai",
+   "Thailand Islands &amp; Culture",
+   "Northern Thailand in Depth",
+   "Thailand Family"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/vietnam-southeast-asia/",
+   "/destinations/asia/",
+   "/destinations/bali/",
+   "/destinations/maldives/",
+   "/destinations/japan/"
+  ]
+ },
+ {
+  "slug": "turks-caicos",
+  "name": "Turks &amp; Caicos",
+  "region": "Caribbean &amp; Mexico",
+  "regionHref": "/destinations/caribbean-mexico/",
+  "title": "Turks &amp; Caicos — Hit Your Mark Travel",
+  "description": "Grace Bay, North Caicos, Salt Cay, Pine Cay and Parrot Cay — the right villa on Providenciales, the quieter outer cays, and the winter whale season.",
+  "heroImage": "/assets/img/d-02-grace-bay.jpg",
+  "words": 3076,
+  "h2s": [
+   "The Beach Holds Up. The Country Has Layers.",
+   "Six Versions of Turks &amp; Caicos Worth Knowing",
+   "Trips We Plan Often",
+   "What We Add to Turks &amp; Caicos Planning",
+   "Turks &amp; Caicos by Season",
+   "Plan a Turks &amp; Caicos Trip That Earns the Reputation",
+   "Destinations Worth Comparing",
+   "What Turks &amp; Caicos Actually Costs",
+   "Turks &amp; Caicos — FAQ",
+   "Read More on Turks &amp; Caicos"
+  ],
+  "placeCards": [
+   "Grace Bay &amp; Providenciales [Providenciales]",
+   "North &amp; Middle Caicos [Caicos Cays]",
+   "Salt Cay &amp; Whale Watching [Turks Islands]",
+   "Parrot Cay &amp; COMO [Private Island]",
+   "Pine Cay [Private Island]",
+   "Grand Turk [Turks Islands]"
+  ],
+  "itineraries": [
+   "Grace Bay Villa Week",
+   "Parrot Cay Honeymoon",
+   "Whale Season: Salt Cay &amp; Grace Bay",
+   "Pine Cay Off-Grid Week"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/caribbean-mexico/",
+   "/destinations/st-barths/",
+   "/destinations/riviera-maya-los-cabos/",
+   "/destinations/maldives/",
+   "/destinations/dominican-republic/"
+  ]
+ },
+ {
+  "slug": "uae-gulf",
+  "name": "UAE &amp; the Gulf",
+  "region": "Middle East",
+  "regionHref": "/destinations/middle-east/",
+  "title": "UAE & the Gulf | Dubai, Abu Dhabi & Doha — Hit Your Mark Travel",
+  "description": "November to March is the only comfortable window, and July highs pass 40°C. What Dubai, Abu Dhabi and Doha each do better, and when to add Oman.",
+  "heroImage": "/assets/img/middle-east-uae-and-the-gulf.jpg",
+  "words": 3432,
+  "h2s": [
+   "Three Nights Is the Trip. Two Weeks Is a Stretch.",
+   "Six Places Worth the Days",
+   "Trips We Plan Often",
+   "What We Add to Gulf Planning",
+   "The Gulf by Season",
+   "Plan a UAE &amp; the Gulf Trip At the Length It Deserves",
+   "Destinations Worth Comparing",
+   "What the Gulf Actually Costs",
+   "UAE &amp; the Gulf — FAQ",
+   "Read More on Planning Middle East"
+  ],
+  "placeCards": [
+   "Dubai [Emirate of Dubai]",
+   "Abu Dhabi [Emirate of Abu Dhabi]",
+   "Liwa &amp; the Empty Quarter [Al Dhafra]",
+   "Doha [Qatar]",
+   "Al Ain [Emirate of Abu Dhabi]",
+   "Ras Al Khaimah [Northern Emirates]"
+  ],
+  "itineraries": [
+   "The Stopover, Done Properly",
+   "Dubai and Abu Dhabi, One Week",
+   "The Gulf and the Empty Quarter",
+   "The Gulf Into Oman"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/oman/",
+   "/destinations/middle-east/",
+   "/destinations/jordan/",
+   "/destinations/egypt/"
+  ]
+ },
+ {
+  "slug": "uk-ireland",
+  "name": "UK & Ireland",
+  "region": "Europe",
+  "regionHref": "/destinations/europe/",
+  "title": "UK & Ireland | Scotland, Ireland & England — Hit Your Mark Travel",
+  "description": "Scottish Highlands by private driver, Ireland's Wild Atlantic Way, London done properly, and the castle hotels worth booking a year out.",
+  "heroImage": "/assets/img/dh-25-uk-ireland-highland-loch.jpg",
+  "words": 1434,
+  "h2s": [
+   "Two Islands. A Lifetime of Roads.",
+   "Six Bases Worth Planning Around",
+   "Trips We Plan Often",
+   "What We Add to UK & Ireland Planning",
+   "UK & Ireland by Season",
+   "Plan Your Trip to the Isles",
+   "Destinations Worth Comparing",
+   "What the UK &amp; Ireland Actually Cost",
+   "UK & Ireland — FAQ",
+   "Read More on the UK &amp; Ireland"
+  ],
+  "placeCards": [
+   "The Highlands & Skye [Scotland]",
+   "The Wild Atlantic Way [Ireland]",
+   "London, Properly [England]",
+   "The Cotswolds [England]",
+   "Edinburgh [Scotland]",
+   "Dublin [Ireland]"
+  ],
+  "itineraries": [
+   "Scotland: City to Summit",
+   "Ireland's Atlantic Edge"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/",
+   "/destinations/france/",
+   "/destinations/iceland/",
+   "/destinations/new-york/",
+   "/destinations/europe/"
+  ]
+ },
+ {
+  "slug": "vanuatu",
+  "name": "Vanuatu &amp; Beyond",
+  "region": "South Pacific",
+  "regionHref": "/destinations/south-pacific/",
+  "title": "Vanuatu | Tanna, Espiritu Santo & Tonga — Hit Your Mark Travel",
+  "description": "The dry season runs May to October. Espiritu Santo's SS President Coolidge, Mount Yasur on Tanna, and why inter-island flights decide the trip.",
+  "heroImage": "/assets/img/south-pacific-vanuatu-and-beyond.jpg",
+  "words": 3359,
+  "h2s": [
+   "The Pacific That Was Never Organised Around Visitors.",
+   "Six Islands Across the Melanesian Arc",
+   "Trips We Plan Often",
+   "What We Add to a Melanesia Trip",
+   "Vanuatu and the Arc by Season",
+   "Plan a Vanuatu Trip Around the Flights That Exist",
+   "Destinations Worth Comparing",
+   "What Vanuatu Actually Costs",
+   "Vanuatu &amp; Beyond — FAQ",
+   "Read More on Planning South Pacific"
+  ],
+  "placeCards": [
+   "Espiritu Santo [Vanuatu]",
+   "Tanna [Vanuatu]",
+   "Efate &amp; Port Vila [Vanuatu]",
+   "Vava'u &amp; Ha'apai [Tonga]",
+   "Guadalcanal &amp; Marovo [Solomon Islands]",
+   "Upolu &amp; Savai'i [Samoa]"
+  ],
+  "itineraries": [
+   "One Island, One Week",
+   "Vanuatu End to End",
+   "Tonga in Whale Season",
+   "The Solomons and Papua New Guinea"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/south-pacific/",
+   "/destinations/fiji/",
+   "/destinations/cook-islands/",
+   "/destinations/french-polynesia/"
+  ]
+ },
+ {
+  "slug": "vietnam-southeast-asia",
+  "name": "Vietnam &amp; Southeast Asia",
+  "region": "Asia",
+  "regionHref": "/destinations/asia/",
+  "title": "Vietnam &amp; Southeast Asia — Hit Your Mark Travel",
+  "description": "Vietnam holds three climates at once, so no single month works everywhere. February to April runs Hanoi to the Mekong, and Hoi An floods in October.",
+  "heroImage": "/assets/img/asia-vietnam-and-southeast-asia.jpg",
+  "words": 3352,
+  "h2s": [
+   "Vietnam Holds Three Climates At the Same Time.",
+   "Six Places Worth the Days They Take",
+   "Trips We Plan Often",
+   "What We Add to Vietnam Planning",
+   "Vietnam by Season",
+   "Plan a Vietnam Trip Around the Month You Have",
+   "Destinations Worth Comparing",
+   "What Vietnam Actually Costs",
+   "Vietnam &amp; Southeast Asia — FAQ",
+   "Read More on Planning Asia"
+  ],
+  "placeCards": [
+   "Hanoi [Northern Vietnam]",
+   "Ha Long &amp; Lan Ha Bay [Quang Ninh &amp; Hai Phong]",
+   "Hue [Central Vietnam]",
+   "Hoi An [Quang Nam]",
+   "Ho Chi Minh City &amp; the Mekong [Southern Vietnam]",
+   "Siem Reap &amp; Angkor [Cambodia]"
+  ],
+  "itineraries": [
+   "Vietnam, North to South",
+   "The North, Slowly",
+   "Vietnam and Angkor",
+   "Central Vietnam and Luang Prabang"
+  ],
+  "expLinks": [],
+  "destLinks": [
+   "/destinations/asia/",
+   "/destinations/thailand/",
+   "/destinations/bali/",
+   "/destinations/japan/"
+  ]
+ },
+ {
+  "slug": "zambia-victoria-falls",
+  "name": "Zambia &amp; Victoria Falls",
+  "region": "Africa",
+  "regionHref": "/destinations/africa/",
+  "title": "Zambia &amp; Victoria Falls — Hit Your Mark Travel",
+  "description": "Victoria Falls peaks around April, months after the rain. South Luangwa invented the walking safari in the 1950s. Which month gives you which trip.",
+  "heroImage": "/assets/img/africa-zambia-and-victoria-falls.jpg",
+  "words": 3400,
+  "h2s": [
+   "Zambia Is the Second Africa Trip, Not the First.",
+   "Six Regions Worth Planning Properly",
+   "Trips We Plan Often",
+   "What We Add to Zambia Planning",
+   "Zambia by Season",
+   "Plan a Zambia Trip Around the Right Month",
+   "Destinations Worth Comparing",
+   "What Zambia Actually Costs",
+   "Zambia &amp; Victoria Falls — FAQ",
+   "Read More on Planning Africa"
+  ],
+  "placeCards": [
+   "Victoria Falls &amp; Livingstone [Southern Province]",
+   "South Luangwa [Eastern Province]",
+   "Lower Zambezi [Lusaka Province]",
+   "Kafue &amp; the Busanga Plains [North-Western Province]",
+   "North Luangwa [Muchinga Province]",
+   "Liuwa Plain [Western Province]"
+  ],
+  "itineraries": [
+   "The Falls and South Luangwa",
+   "The Walking Safari Circuit",
+   "Three Rivers: Luangwa, Lower Zambezi and the Falls",
+   "Kafue and the Busanga Plains"
+  ],
+  "expLinks": [
+   "/experiences/safari-wildlife-travel/"
+  ],
+  "destLinks": [
+   "/destinations/botswana/",
+   "/destinations/kenya-tanzania/",
+   "/destinations/africa/",
+   "/destinations/south-africa/"
+  ]
+ }
+]

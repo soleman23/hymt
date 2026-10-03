@@ -1,0 +1,2106 @@
+{
+ "adventure-active-travel": [
+  {
+   "page": "adventure-active-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "South America",
+   "name": "Patagonia",
+   "desc": "The benchmark active destination — a place whose landscape is so singular that the only honest way to experience it is on foot. Torres del Paine's W Trek delivers five days of some of the most dramatic scenery on earth: the granite towers at dawn, the French Valley glacier lookout, the Grey Glacier at the lake's edge. Supported trekking with gear transfers and lodge accommodation makes it accessible to fit travelers without mountaineering experience. Plan twelve months out — refugio and hotel slots fill fast and permits are tightly managed.",
+   "tags": [
+    "W Trek",
+    "Torres del Paine",
+    "Supported Trek",
+    "October – April"
+   ],
+   "img": "/assets/img/e-51-w-trek-trail.jpg",
+   "alt": "The W Trek trail crossing scree above a glacial lake below the Torres del Paine towers, Patagonia",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Active Trips Six Destinations Worth Moving Through Each destination rewards physical engagement in a way that passive travel simply can't replicate. These are the places where the experience lives in the doing."
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "South America",
+   "name": "Peru &amp; the Andes",
+   "desc": "The Inca Trail to Machu Picchu is the most iconic active trip in South America — 26 miles, four days, two altitude passes above 13,000 feet, and a sunrise arrival at the Sun Gate that puts everything in perspective. Permits are limited to 500 people per day and sell out months in advance. The Salkantay and Lares alternatives are less crowded and equally rewarding for groups who miss the main trail window.",
+   "tags": [
+    "Inca Trail",
+    "Machu Picchu",
+    "Altitude"
+   ],
+   "img": "/assets/img/e-52-inca-stairway-cloud.jpg",
+   "alt": "A worn Inca stone stairway climbing above cloud filling the valley, the Peruvian Andes",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Active Trips Six Destinations Worth Moving Through Each destination rewards physical engagement in a way that passive travel simply can't replicate. These are the places where the experience lives in the doing."
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "South Pacific",
+   "name": "New Zealand",
+   "desc": "The South Island is built for multi-sport travel. The Milford Track — one of the Great Walks — covers 33 miles through Fiordland over four days with guided lodge accommodation. Beyond the track: sea kayaking in Abel Tasman, cycling the Otago Rail Trail, glacier hiking on the West Coast, and the Routeburn for those who want something quieter than Milford. Best November through April.",
+   "tags": [
+    "Milford Track",
+    "Multi-Sport",
+    "Great Walks"
+   ],
+   "img": "/assets/img/e-53-fiordland-valley-falls.jpg",
+   "alt": "Waterfalls threading down a sheer forested fiord wall above a braided stream, Fiordland, New Zealand",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Active Trips Six Destinations Worth Moving Through Each destination rewards physical engagement in a way that passive travel simply can't replicate. These are the places where the experience lives in the doing."
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "North Atlantic",
+   "name": "Iceland",
+   "desc": "Glacier hiking on Vatnajökull, kayaking among icebergs in the Jökulsárlón lagoon, volcanic lava field scrambles on the Fimmvörðuháls trail, and the Laugavegur — Iceland's 34-mile highland traverse. Summer delivers twenty hours of daylight for extended outdoor days. Winter adds the Northern Lights and ice cave access beneath Vatnajökull that isn't possible any other time of year.",
+   "tags": [
+    "Glacier Hiking",
+    "Laugavegur",
+    "Year-Round"
+   ],
+   "img": "/assets/img/e-54-vatnajokull-crevasse.jpg",
+   "alt": "Ridged white ice and blue crevasses on the surface of the Vatnajokull glacier, Iceland",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Active Trips Six Destinations Worth Moving Through Each destination rewards physical engagement in a way that passive travel simply can't replicate. These are the places where the experience lives in the doing."
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "Dolomites &amp; Alps",
+   "desc": "Hut-to-hut trekking through the Italian Alps — six to eight days on the Alta Via routes with rifugio accommodation, local food, and a different set of vertical pink limestone faces each morning. Via ferrata for those who want more exposure. The Tour du Mont Blanc for those who want to loop through France, Italy, and Switzerland in eleven days. The most civilized version of serious trekking on earth.",
+   "tags": [
+    "Hut-to-Hut",
+    "Via Ferrata",
+    "Tour du Mont Blanc"
+   ],
+   "img": "/assets/img/e-55-alta-via-limestone.jpg",
+   "alt": "Vertical limestone faces catching first light above an alpine meadow and a stone rifugio, the Dolomites",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Active Trips Six Destinations Worth Moving Through Each destination rewards physical engagement in a way that passive travel simply can't replicate. These are the places where the experience lives in the doing."
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Central America",
+   "name": "Costa Rica",
+   "desc": "The most accessible adventure destination in the Americas — compact enough to cover meaningful ground in a week, diverse enough to stay interesting throughout. White-water rafting on the Pacuare, surfing on the Nicoya Peninsula, zip-line canopy in Monteverde, volcano hiking in Arenal, and sea kayaking along the Osa Peninsula coast. No permit queues, no altitude concerns, and short flights from most U.S. cities.",
+   "tags": [
+    "Surfing",
+    "White Water",
+    "Accessible Entry"
+   ],
+   "img": "/assets/img/e-56-pacuare-river-valley.jpg",
+   "alt": "White water running through a sunlit rainforest valley on the Pacuare river, Costa Rica",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Active Trips Six Destinations Worth Moving Through Each destination rewards physical engagement in a way that passive travel simply can't replicate. These are the places where the experience lives in the doing."
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "October – April · 10–12 days",
+   "name": "The Patagonia W Trek",
+   "desc": "Five days on the W Trek with supported lodge accommodation — no camping, no gear carry. The Torres base at dawn on day one, the French Valley lookout on day three, the Grey Glacier on the finish. Two days in Puerto Natales before the trek for acclimatization, plus optional extensions to El Chaltén and Fitz Roy in Argentina. Booked twelve months out for peak season slots.",
+   "meta": [
+    "Chile10–12 Days"
+   ],
+   "img": "/assets/img/ev-adventure-active-travel-torres-dawn-lagoon.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "May – September · 10–12 days",
+   "name": "Inca Trail to Machu Picchu",
+   "desc": "Two nights in Cusco for altitude acclimatization before the trail begins — this step is non-negotiable and often ignored by tours that skip straight to the trailhead. Four days on the classic Inca Trail with a small private group and a bilingual historian-guide. Sun Gate sunrise arrival, a full day at Machu Picchu, and two nights in the Sacred Valley on the return. Permits secured the moment dates are confirmed.",
+   "meta": [
+    "Peru10–12 Days"
+   ],
+   "img": "/assets/img/ev-adventure-active-travel-inca-trail-steps.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "July – September · 8–10 days",
+   "name": "Dolomites Hut-to-Hut",
+   "desc": "Six days on the Alta Via 1 or 2, sleeping in rifugi each night — mountain huts with full dinners, wine lists, and hot showers that make the hardest climbing days feel immediately civilized. Via ferrata sections can be added or removed based on exposure comfort. Flying into Venice and out of Innsbruck makes for a natural point-to-point route through some of Europe's most dramatic alpine terrain.",
+   "meta": [
+    "Italy / Austria8–10 Days"
+   ],
+   "img": "/assets/img/ev-adventure-active-travel-dolomites-rifugio-table.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "adventure-active-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "November – April · 12–14 days",
+   "name": "New Zealand South Island Multi-Sport",
+   "desc": "Queenstown as a base for the first three days — Remarkables hike, jet boat on the Dart River, optional skydive. The Milford Track in its entirety over four days with guided lodge accommodation. Sea kayaking in Abel Tasman for two days, cycling the Otago Rail Trail through Central Otago wine country for the finish. The most diverse active itinerary we run, on terrain that holds the attention at every stage.",
+   "meta": [
+    "New Zealand12–14 Days"
+   ],
+   "img": "/assets/img/ev-adventure-active-travel-abel-tasman-kayaks.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "all-inclusive-vacations": [
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "Mexico",
+   "desc": "The Riviera Maya and Los Cabos are the two strongest all-inclusive markets in the world — not because every property is excellent, but because the best properties here are genuinely exceptional. Riviera Maya for Caribbean water and cenote access. Cabo for Pacific drama, desert scenery, and the world's best swim-up bar sunsets. Both reward choosing carefully.",
+   "tags": [
+    "Riviera Maya",
+    "Los Cabos",
+    "Cancún",
+    "Puerto Vallarta"
+   ],
+   "img": "/assets/img/e-57-riviera-maya-resort-path.jpg",
+   "alt": "A thatched low-rise resort set into jungle with a stone path toward the Caribbean, Riviera Maya, Mexico",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Clients Six Destinations With Properties Worth Booking Every all-inclusive market has properties that are genuinely excellent and properties that aren't. These are the destinations where we're confident we can place you in the right one."
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "Caribbean",
+   "name": "Jamaica",
+   "desc": "Home to some of the most recognized all-inclusive brands in the Caribbean. Montego Bay for the widest property selection; Negril for the beach — seven miles of it. Strong for couples and adults-only escapes. Direct flights from most major U.S. cities.",
+   "tags": [
+    "Montego Bay",
+    "Negril",
+    "Adults-Only"
+   ],
+   "img": "/assets/img/e-58-negril-beach-curve.jpg",
+   "alt": "The long curve of Seven Mile Beach receding into golden haze under leaning palms, Negril, Jamaica",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Clients Six Destinations With Properties Worth Booking Every all-inclusive market has properties that are genuinely excellent and properties that aren't. These are the destinations where we're confident we can place you in the right one."
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Caribbean",
+   "name": "Dominican Republic",
+   "desc": "Punta Cana has the most concentrated collection of large all-inclusive resorts in the Caribbean. The range in quality is wide — but the top tier competes with anywhere. Best for families, groups, and value-conscious travelers who want a full-service property without a long-haul flight.",
+   "tags": [
+    "Punta Cana",
+    "La Romana",
+    "Family"
+   ],
+   "img": "/assets/img/e-59-punta-cana-palm-colonnade.jpg",
+   "alt": "Low evening sun raking between a colonnade of palms above the sand, Punta Cana, Dominican Republic",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Clients Six Destinations With Properties Worth Booking Every all-inclusive market has properties that are genuinely excellent and properties that aren't. These are the destinations where we're confident we can place you in the right one."
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Eastern Caribbean",
+   "name": "St. Lucia",
+   "desc": "The most visually dramatic all-inclusive setting in the Caribbean. The Pitons provide a backdrop that photographs like a screensaver — and delivers in person. A smaller property market than Jamaica or the DR, which works in your favor: fewer bad options, more discernible quality differences.",
+   "tags": [
+    "The Pitons",
+    "Couples",
+    "Boutique"
+   ],
+   "img": "/assets/img/e-60-st-lucia-terrace-piton.jpg",
+   "alt": "An infinity pool terrace above the bay with a Piton rising beyond in warm light, St Lucia",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Clients Six Destinations With Properties Worth Booking Every all-inclusive market has properties that are genuinely excellent and properties that aren't. These are the destinations where we're confident we can place you in the right one."
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "Mediterranean",
+   "name": "Greece &amp; Mediterranean",
+   "desc": "A growing market for high-end all-inclusive properties — particularly in Crete, Rhodes, and Corfu. The format works differently here: smaller properties, better food programs, and a product that sits between traditional all-inclusive and luxury boutique. Worth considering for clients who want Europe without the logistics of a city trip.",
+   "tags": [
+    "Crete",
+    "Rhodes",
+    "Adults-Only"
+   ],
+   "img": "/assets/img/e-61-crete-olive-terrace.jpg",
+   "alt": "A stone terrace and olive trees above a dry hillside with the Aegean beyond, Crete",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Clients Six Destinations With Properties Worth Booking Every all-inclusive market has properties that are genuinely excellent and properties that aren't. These are the destinations where we're confident we can place you in the right one."
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Caribbean",
+   "name": "Turks &amp; Caicos",
+   "desc": "A premium all-inclusive option for guests who won't compromise on water quality. Grace Bay offers the clearest Caribbean water available within a five-hour flight from the U.S. The all-inclusive inventory here is smaller and more selective — which is largely the point.",
+   "tags": [
+    "Grace Bay",
+    "Providenciales",
+    "Premium"
+   ],
+   "img": "/assets/img/e-62-providenciales-pool-edge.jpg",
+   "alt": "An infinity pool edge meeting the Grace Bay water beyond it, Providenciales, Turks and Caicos",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Clients Six Destinations With Properties Worth Booking Every all-inclusive market has properties that are genuinely excellent and properties that aren't. These are the destinations where we're confident we can place you in the right one."
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · 5–7 days",
+   "name": "Riviera Maya Adults Escape",
+   "desc": "A top-tier adults-only property in the Riviera Maya — butler service, swim-out suite, curated dining program, and a beach that isn't shared with three thousand other guests. The Riviera Maya has a handful of properties that genuinely deliver this. We know which ones.",
+   "meta": [
+    "Mexico5–7 Days"
+   ],
+   "img": "/assets/img/ev-all-inclusive-vacations-riviera-maya-plunge-pool.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "November – May · 5–7 days",
+   "name": "Cabo Family Resort Week",
+   "desc": "Los Cabos has emerged as the strongest family all-inclusive market for guests who want quality over volume. The best properties here run a tighter ship than comparable Caribbean options — better food, better service ratios, and pools that don't feel like a water park on a Saturday afternoon.",
+   "meta": [
+    "Mexico5–7 Days"
+   ],
+   "img": "/assets/img/ev-all-inclusive-vacations-los-cabos-coast.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · 5–7 days",
+   "name": "Jamaica Couples Week",
+   "desc": "Negril for the beach — seven miles of white sand on the western tip of the island, calm water, and a sunset that faces directly west. Paired with a property that runs a genuine couples program rather than using the label as marketing copy. Best for anniversary trips and honeymoons that want a simple, high-quality week.",
+   "meta": [
+    "Jamaica5–7 Days"
+   ],
+   "img": "/assets/img/ev-all-inclusive-vacations-negril-sunset-beach.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "all-inclusive-vacations",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "December – May · 5–7 days",
+   "name": "St. Lucia with the Pitons",
+   "desc": "One of the few Caribbean all-inclusive destinations where the setting alone justifies the trip. Properties near Soufrière sit in the shadow of two volcanic peaks, with a jungle-covered hillside behind and the Caribbean in front. The best properties here are small, genuinely intimate, and nothing like a conventional resort.",
+   "meta": [
+    "St. Lucia5–7 Days"
+   ],
+   "img": "/assets/img/ev-all-inclusive-vacations-st-lucia-pitons.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "beach-island-escapes": [
+  {
+   "page": "beach-island-escapes",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Indian Ocean",
+   "name": "Maldives",
+   "desc": "The benchmark for overwater living. Each resort occupies its own private atoll — no shared beaches, no crowds. House reef snorkeling directly off your villa, some of the clearest water on earth, and a calendar that rewards the right booking window. Best November through April.",
+   "tags": [
+    "Overwater Villas",
+    "House Reef",
+    "Private Atoll"
+   ],
+   "img": "/assets/img/e-39-maldives-atoll-overhead.jpg",
+   "alt": "A curving line of overwater villas above turquoise lagoon shallows, seen from directly overhead, Maldives",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Six Destinations We Know in Detail Each delivers a different version of beach travel. The right one depends on what you're actually after — and when you can go."
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "Caribbean",
+   "name": "Turks &amp; Caicos",
+   "desc": "Grace Bay consistently ranks among the top beaches on earth — and it earns it. Shallow turquoise water, powder sand, and a small collection of genuinely excellent resort properties. The ideal Caribbean choice for those who take water quality seriously.",
+   "tags": [
+    "Grace Bay",
+    "Providenciales"
+   ],
+   "img": "/assets/img/e-40-grace-bay-waterline.jpg",
+   "alt": "Clear shallow water at the waterline off the powder sand of Grace Bay, Turks and Caicos",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Six Destinations We Know in Detail Each delivers a different version of beach travel. The right one depends on what you're actually after — and when you can go."
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Indian Ocean",
+   "name": "Seychelles",
+   "desc": "Granite boulders, tropical forest, and beaches that feel like they were designed. Spread across 115 islands — the journey between them is part of the experience. Best combined as a multi-island itinerary. November through April for calmer water.",
+   "tags": [
+    "Mahé",
+    "Praslin",
+    "La Digue"
+   ],
+   "img": "/assets/img/e-41-la-digue-granite.jpg",
+   "alt": "Weathered granite boulders on the sand at La Digue, backed by takamaka forest, Seychelles",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Six Destinations We Know in Detail Each delivers a different version of beach travel. The right one depends on what you're actually after — and when you can go."
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Caribbean",
+   "name": "St. Barth's",
+   "desc": "Small, unhurried, and deliberately refined. No mega-resorts, no cruise ships — just a collection of boutique hotels and private villas, exceptional dining, and twelve beaches worth exploring. The Caribbean at its most understated.",
+   "tags": [
+    "Gustavia",
+    "Villa Stays",
+    "Boutique"
+   ],
+   "img": "/assets/img/e-42-st-barths-bay-clifftop.jpg",
+   "alt": "A crescent bay and its reef seen from the clifftop road above, St Barth's",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Six Destinations We Know in Detail Each delivers a different version of beach travel. The right one depends on what you're actually after — and when you can go."
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "South Pacific",
+   "name": "Bora Bora &amp; French Polynesia",
+   "desc": "Overwater bungalows invented here. The lagoon around Bora Bora is a spectacle in itself — shallow, warm, impossibly colored. Remote in the most satisfying way. Best May through October when trade winds keep conditions ideal.",
+   "tags": [
+    "Bora Bora",
+    "Moorea",
+    "Overwater"
+   ],
+   "img": "/assets/img/e-43-bora-bora-palm-frame.jpg",
+   "alt": "Palm fronds framing the lagoon with Mount Otemanu distant at golden hour, Bora Bora",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Six Destinations We Know in Detail Each delivers a different version of beach travel. The right one depends on what you're actually after — and when you can go."
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Eastern Caribbean",
+   "name": "St. Lucia &amp; Anguilla",
+   "desc": "Two Caribbean islands with completely different personalities — St. Lucia for lush drama and Piton-framed beaches, Anguilla for flat water, boutique quiet, and some of the best shoreline dining in the region. Often combined with a night in Antigua.",
+   "tags": [
+    "St. Lucia",
+    "Anguilla",
+    "Combination"
+   ],
+   "img": "/assets/img/e-44-pitons-from-the-water.jpg",
+   "alt": "Both Piton peaks rising above rainforest and flat calm sea, St Lucia",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Six Destinations We Know in Detail Each delivers a different version of beach travel. The right one depends on what you're actually after — and when you can go."
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "November – April · 7–10 days",
+   "name": "The Maldives Overwater Classic",
+   "desc": "A single resort on a private atoll, selected specifically for its house reef quality and villa positioning. Seven nights minimum — short Maldives trips rarely justify the journey. Snorkeling, diving, and absolute stillness included.",
+   "meta": [
+    "Maldives7–10 Days"
+   ],
+   "img": "/assets/img/ev-beach-island-escapes-maldives-overwater-villa.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "December – April · 7–10 days",
+   "name": "Turks &amp; Caicos Family Week",
+   "desc": "Grace Bay for families who want exceptional water without compromise. The right resort matters enormously here — connecting rooms, shallow beach entry, quality kids programming, and a stretch of sand the kids will talk about all year.",
+   "meta": [
+    "Turks &amp; Caicos7–10 Days"
+   ],
+   "img": "/assets/img/ev-beach-island-escapes-grace-bay-shallows.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "November – April · 10–14 days",
+   "name": "Seychelles Island Hop",
+   "desc": "Mahé for arrival and Beau Vallon, Praslin for Anse Lazio, La Digue for the dramatic boulder beaches of Anse Source d'Argent. Three distinct islands, short island-hopper flights between them, and a completeness very few Indian Ocean trips can match.",
+   "meta": [
+    "Seychelles10–14 Days"
+   ],
+   "img": "/assets/img/ev-beach-island-escapes-la-digue-boulders.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "beach-island-escapes",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "December – April · 7 days",
+   "name": "St. Barth's Villa Stay",
+   "desc": "A private villa over a hotel, whenever possible. St. Barth's villa inventory is genuinely exceptional — full kitchen, your own pool, and the ability to move between the island's twelve beaches at your pace. Best for couples or small groups who prefer privacy over service.",
+   "meta": [
+    "St. Barth's7 Days"
+   ],
+   "img": "/assets/img/ev-beach-island-escapes-st-barths-villa-terrace.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "cruises": [
+  {
+   "page": "cruises",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "The Mediterranean",
+   "desc": "The classic luxury cruising ground — but the version worth doing avoids the megaship ports in August. Small-ship and yacht itineraries through the Dalmatian coast, the Greek Isles beyond Mykonos and Santorini, and the Amalfi anchorages the big ships can't reach. Best May–June and September–October.",
+   "tags": [
+    "Dalmatian Coast",
+    "Greek Isles",
+    "Small Ship"
+   ],
+   "img": "/assets/img/jh-12-mediterranean-october-coast.jpg",
+   "alt": "Mediterranean coastline in October light",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Waters We Know in Detail Each cruising ground rewards a different kind of ship and season. The right combination depends on what you're actually going to see."
+  },
+  {
+   "page": "cruises",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "Alaska",
+   "desc": "Expedition cruising at its most accessible — glaciers, whales, and brown bears from a small ship that can nose into fjords the big vessels pass by. The Inside Passage done properly includes time in the smaller communities, not just the cruise ports. Best June through August.",
+   "tags": [
+    "Inside Passage",
+    "Glaciers",
+    "June &ndash; August"
+   ],
+   "img": "/assets/img/alaska-inside-passage-and-southeast.jpg",
+   "alt": "The Inside Passage, Southeast Alaska",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Waters We Know in Detail Each cruising ground rewards a different kind of ship and season. The right combination depends on what you're actually going to see."
+  },
+  {
+   "page": "cruises",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "South America",
+   "name": "The Galápagos",
+   "desc": "A destination that only exists as a cruise — the islands are visited by licensed vessel, full stop. Ship selection here is the entire decision: the best naturalist guides, the right island sequence, and vessels small enough to feel the place rather than tour it. Year-round, with wildlife calendars that vary by month.",
+   "tags": [
+    "Naturalist Guides",
+    "Licensed Vessel",
+    "Year-Round"
+   ],
+   "img": "/assets/img/dh-06-galapagos-volcanic-coast.jpg",
+   "alt": "Volcanic coastline in the Gal&aacute;pagos Islands",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Waters We Know in Detail Each cruising ground rewards a different kind of ship and season. The right combination depends on what you're actually going to see."
+  },
+  {
+   "page": "cruises",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "The European Rivers",
+   "desc": "The Rhine, Danube, Rhône, and Douro — docked in the center of Vienna, Budapest, or Lyon rather than a bus ride outside it. River cruising rewards the right ship choice: the difference between vessels is felt most at dinner and in the cabin. Shoulder season (April, October) means fewer ships and better tables.",
+   "tags": [
+    "Rhine &amp; Danube",
+    "Douro",
+    "City-Centre Docking"
+   ],
+   "img": "/assets/img/dh-19-portugal-douro-valley.jpg",
+   "alt": "The Douro Valley, Portugal",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Waters We Know in Detail Each cruising ground rewards a different kind of ship and season. The right combination depends on what you're actually going to see."
+  },
+  {
+   "page": "cruises",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "Polar Regions",
+   "name": "Antarctica & the Arctic",
+   "desc": "The ultimate expedition cruise. Ship choice determines everything: how many landings per day, whether you camp on the ice, how the vessel handles the Drake Passage. We book ice-class expedition ships with serious naturalist teams — never the large vessels that can only look from a distance. November through March for Antarctica.",
+   "tags": [
+    "Ice-Class Ships",
+    "Drake Passage",
+    "Nov &ndash; March"
+   ],
+   "img": "/assets/img/dh-01-antarctica-ice-cliffs.jpg",
+   "alt": "Ice cliffs in Antarctica",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Waters We Know in Detail Each cruising ground rewards a different kind of ship and season. The right combination depends on what you're actually going to see."
+  },
+  {
+   "page": "cruises",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Bespoke",
+   "name": "Private Yacht Charters",
+   "desc": "The anti-cruise: your own crewed vessel, your own pace, your own anchorages. Turkish gulets, Greek island catamarans, Caribbean motor yachts — with a chef who learns how you take breakfast by day two. The most flexible version of water travel that exists.",
+   "tags": [
+    "Turkish Gulets",
+    "Crewed Vessel",
+    "Caribbean"
+   ],
+   "img": "/assets/img/d-06-st-barts-harbour.jpg",
+   "alt": "Yachts at anchor in St Barth&rsquo;s harbour",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Waters We Know in Detail Each cruising ground rewards a different kind of ship and season. The right combination depends on what you're actually going to see."
+  },
+  {
+   "page": "cruises",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "May – June, September · 8–10 days",
+   "name": "The Dalmatian Coast by Small Ship",
+   "desc": "Dubrovnik to Split the way it should be done — overnighting in Hvar and Korčula after the day boats leave, swimming off the stern in quiet coves, and a ship small enough to dock in the old harbors. Paired with two nights on land at either end.",
+   "meta": [
+    "Croatia8–10 Days"
+   ],
+   "img": "/assets/img/ev-jh-12-mediterranean-october-coast.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "cruises",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "November – March · 11–14 days",
+   "name": "Antarctica, Done Properly",
+   "desc": "An ice-class expedition ship with two landings a day, a naturalist team worth listening to, and — for those who want it — a night camping on the ice. The trip that resets what travel can be. Booked twelve to eighteen months out; the best cabins go first.",
+   "meta": [
+    "Antarctica11–14 Days"
+   ],
+   "img": "/assets/img/ev-antarctica-the-ross-sea-and-east-antarctica.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "cruises",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "April, October · 8 days",
+   "name": "The Rhône for Wine People",
+   "desc": "Lyon to Avignon on a river ship chosen for its kitchen, with private tastings in Hermitage and Châteauneuf-du-Pape that the ship's excursions don't include. We add the producers we've worked with for years — the ones who don't take groups.",
+   "meta": [
+    "France8 Days"
+   ],
+   "img": "/assets/img/ev-france-bordeaux-and-wine-country.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "cruises",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "May – October · 7 days",
+   "name": "A Gulet of Your Own",
+   "desc": "A crewed wooden gulet on Turkey's Turquoise Coast — captain, chef, and a route that bends around your mood each morning. Ruins by tender, lunch at anchor, and evenings in harbor towns the cruise ships have never heard of. The definitive family or group charter.",
+   "meta": [
+    "Turkey7 Days"
+   ],
+   "img": "/assets/img/ev-france-french-riviera.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "culture-immersive-travel": [
+  {
+   "page": "culture-immersive-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "East Asia",
+   "name": "Japan",
+   "desc": "The most culturally layered destination we send clients to, and the one that most consistently produces the response: I need to come back. Tokyo for the intersection of the ancient and the ultramodern — Senso-ji at dawn before the crowds, a standing sushi counter in Tsukiji where the chef has been doing the same thing for forty years, teamLab's digital art installations as a counterpoint. Kyoto for the depth beneath the surface: private tea ceremony with a practicing master, nishiki market with a culinary guide, the back streets of Gion on a weekday morning before the tour groups arrive. Japan rewards slow travel more than almost anywhere on earth.",
+   "tags": [
+    "Tokyo",
+    "Kyoto",
+    "Tea Ceremony",
+    "Culinary Culture"
+   ],
+   "img": "/assets/img/dh-10-japan-kyoto-dawn.jpg",
+   "alt": "Kyoto at dawn, Japan",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Cultural Trips Six Destinations With Layers Worth Finding The best cultural destinations share one quality: the more time you spend, the more you find. These are places that reward depth — and where a good guide changes everything."
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "Italy",
+   "desc": "The depth version of Italy is not the highlights tour. It's an art historian in the Uffizi who focuses on three rooms instead of rushing thirty. It's Emilia-Romagna's food valley — a Parmigiano-Reggiano producer at 5 a.m., a prosciutto cellar in Langhirano, a fresh pasta lesson with a sfoglina in Bologna. It's Sicily instead of Rome — the Greek temples at Agrigento, the Baroque excess of Noto, the Arab-Norman architecture of Palermo. Italy has enough depth to fill a lifetime of trips. The question is where to focus.",
+   "tags": [
+    "Art History",
+    "Food Culture",
+    "Sicily"
+   ],
+   "img": "/assets/img/jh-16-empty-piazza-shoulder.jpg",
+   "alt": "An empty Italian piazza in shoulder season",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Cultural Trips Six Destinations With Layers Worth Finding The best cultural destinations share one quality: the more time you spend, the more you find. These are places that reward depth — and where a good guide changes everything."
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "North Africa",
+   "name": "Morocco",
+   "desc": "Fez's medina is one of the most intact medieval cities on earth — 9,000 narrow lanes, the oldest university in the world still operating, and craft traditions that have continued without interruption for centuries. The right guide transforms it from disorienting to extraordinary. Marrakech for the Djemaa el-Fna at dusk, the Majorelle Garden, and the Atlas foothills. The Sahara at Merzouga for two nights of silence under a sky with no light pollution. Best October through April.",
+   "tags": [
+    "Fez Medina",
+    "Sahara",
+    "Craft Traditions"
+   ],
+   "img": "/assets/img/jh-13-medina-alley-light.jpg",
+   "alt": "Light in a medina alley, Morocco",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Cultural Trips Six Destinations With Layers Worth Finding The best cultural destinations share one quality: the more time you spend, the more you find. These are places that reward depth — and where a good guide changes everything."
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Middle East",
+   "name": "Jordan &amp; the Levant",
+   "desc": "One of the most underrated cultural destinations in the world. Petra is one of the genuine archaeological wonders — rose-red sandstone carved by the Nabataean civilization two thousand years ago. Wadi Rum's silence and scale are incomparable. Jerash, north of Amman, is among the best-preserved Roman provincial cities outside of Italy. Jordanian hospitality is a cultural experience in itself. Small, safe, and one of the most efficiently explorable destinations we send clients to.",
+   "tags": [
+    "Petra",
+    "Wadi Rum",
+    "Jerash"
+   ],
+   "img": "/assets/img/x-03-petra-treasury.jpg",
+   "alt": "The Treasury at Petra, Jordan",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Cultural Trips Six Destinations With Layers Worth Finding The best cultural destinations share one quality: the more time you spend, the more you find. These are places that reward depth — and where a good guide changes everything."
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "Mediterranean",
+   "name": "Greece &amp; the Aegean",
+   "desc": "Athens with a classical archaeologist before the Acropolis opens to the public. Thessaloniki for Byzantine art and the best food culture in Greece. The Peloponnese for Mycenae, Epidaurus, and the medieval fortress of Mystras — without the Santorini crowds. The less-visited Dodecanese islands — Rhodes Old Town is a walled medieval city; Patmos has a monastery that has operated since 1088. Greece has been hiding in plain sight beneath the beach-and-island tourism for decades.",
+   "tags": [
+    "Archaeology",
+    "Byzantine Art",
+    "Peloponnese"
+   ],
+   "img": "/assets/img/dh-07-greece-caldera-dusk.jpg",
+   "alt": "The caldera at dusk, Greece",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Cultural Trips Six Destinations With Layers Worth Finding The best cultural destinations share one quality: the more time you spend, the more you find. These are places that reward depth — and where a good guide changes everything."
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "Mexico",
+   "desc": "Oaxaca is the most culturally concentrated destination in Mexico — pre-Columbian archaeological sites at Monte Albán, the mezcal villages of the Valles Centrales, a textile tradition that goes back thousands of years, and a food culture that anthropologists come to study. Mexico City for muralism, the Anthropology Museum, and the Coyoacán neighborhood where Frida Kahlo lived and worked. The Yucatán for Chichén Itzá and Uxmal with a guide who treats them as living history rather than photo stops.",
+   "tags": [
+    "Oaxaca",
+    "Mexico City",
+    "Pre-Columbian"
+   ],
+   "img": "/assets/img/e-65-monte-alban-gran-plaza.jpg",
+   "alt": "The Gran Plaza at Monte Albán, Mexico",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Cultural Trips Six Destinations With Layers Worth Finding The best cultural destinations share one quality: the more time you spend, the more you find. These are places that reward depth — and where a good guide changes everything."
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "March – May &amp; October – November · 12–14 days",
+   "name": "Japan Cultural Immersion",
+   "desc": "Tokyo for four nights with a food-culture specialist — Tsukiji pre-dawn, a standing ramen counter in Shimokitazawa, a private ceramics workshop in Koenji. Shinkansen to Kyoto for six nights: private tea ceremony with a licensed master, Nishiki market with a culinary guide, early-morning access to Fushimi Inari before the gates fill, and a half-day in a Nara temple compound away from the deer park crowds. Hiroshima and the Inland Sea for the finish.",
+   "meta": [
+    "Japan12–14 Days"
+   ],
+   "img": "/assets/img/ev-culture-immersive-travel-kyoto-tea-ceremony.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "October – April · 10–12 days",
+   "name": "Morocco: Medina to Desert",
+   "desc": "Three nights in Fez with a medina specialist who grew up in the old city — the tanneries, the madrasa, the brass-workers' quarter, and the city's oldest mosque viewed from an adjoining rooftop. Overland through the Middle Atlas to the Todra Gorge. Two nights at a desert camp outside Merzouga — dunes, no phone signal, and a sky worth the journey on its own. Marrakech for the final two nights before departure. The most complete single-trip version of Morocco we've found.",
+   "meta": [
+    "Morocco10–12 Days"
+   ],
+   "img": "/assets/img/ev-culture-immersive-travel-erg-chebbi-camp.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "October – April · 8–10 days",
+   "name": "Jordan in Depth",
+   "desc": "Amman for two nights with a local guide who covers the Citadel, the Roman Theatre, and dinner in an East Amman neighborhood the hotels don't recommend. Jerash for a half-day with a classicist. Petra for two full days — the Siq and the Treasury on the first morning before the tour groups arrive, the Royal Tombs and the Monastery trail on the second. Wadi Rum for two nights with a Bedouin camp host who has guided the desert for twenty years. Dead Sea for the finish.",
+   "meta": [
+    "Jordan8–10 Days"
+   ],
+   "img": "/assets/img/ev-culture-immersive-travel-petra-siq-treasury.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "culture-immersive-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "April – June &amp; September – October · 12 days",
+   "name": "Italy Off the Highlights Route",
+   "desc": "Bologna as a base for Emilia-Romagna — Parmigiano-Reggiano at dawn, a prosciutto ageing cellar, a fresh pasta lesson with a sfoglina who learned from her grandmother. Florence for three nights focused entirely on the Uffizi and the Oltrarno workshops, with an art historian who limits the day to twelve paintings. Sicily for the finish — Palermo's street food markets, the Greek temples at Agrigento in the late afternoon, and the Baroque hill town of Ragusa for two nights of stillness.",
+   "meta": [
+    "Italy12 Days"
+   ],
+   "img": "/assets/img/ev-culture-immersive-travel-agrigento-temple.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "family-travel": [
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "Mexico",
+   "desc": "The Riviera Maya is the strongest family all-inclusive destination in the world, full stop. Shallow Caribbean water, direct flights from most U.S. cities, no passport required for U.S. citizens, and a concentration of genuinely excellent family-oriented resorts within a short drive of each other. Los Cabos adds Pacific scenery and a slightly more sophisticated product. Both destinations reward choosing the property carefully — the gap between the best and second-best family resort here is significant.",
+   "tags": [
+    "Riviera Maya",
+    "Los Cabos",
+    "Cancún",
+    "All Ages"
+   ],
+   "img": "/assets/img/caribbean-mexico-riviera-maya-and-los-cabos.jpg",
+   "alt": "Clifftop Mayan ruin above a turquoise cove, Riviera Maya",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "Central America",
+   "name": "Costa Rica",
+   "desc": "The best destination for families with kids who need more than a beach. Wildlife, zip lines, white-water rafting, volcano hiking, and rainforest canopy walks — all within a compact country that's easy to move around. Strong for ages 8 and up. Tortuguero for sea turtles, Arenal for volcano and adventure, Manuel Antonio for wildlife and beach.",
+   "tags": [
+    "Wildlife",
+    "Adventure",
+    "Ages 8+"
+   ],
+   "img": "/assets/img/dh-27-costa-rica-cloud-forest.jpg",
+   "alt": "Cloud forest ridgelines at sunrise, Costa Rica",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "Italy &amp; Europe",
+   "desc": "Cultural family travel that parents remember as much as kids do. Rome for ancient history, the Amalfi Coast for scenery and swimming, Tuscany for slower pace and genuine countryside. Works best for ages 10 and up, and exceptionally well for multigenerational trips where grandparents want a meaningful experience rather than a resort week.",
+   "tags": [
+    "Rome",
+    "Amalfi Coast",
+    "Multigenerational"
+   ],
+   "img": "/assets/img/italy-amalfi-coast.jpg",
+   "alt": "The Amalfi coast road at sunset, lemon terraces above the sea",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "United States",
+   "name": "Hawaii",
+   "desc": "No passport, no currency exchange, no long-haul flight — and one of the most naturally spectacular environments on earth. Maui for the beach and road to Hana. The Big Island for volcanic landscapes and snorkeling with manta rays. Kauai for the dramatic Na Pali Coast. Strong for all ages, including young children who do best with shorter travel days.",
+   "tags": [
+    "Maui",
+    "Big Island",
+    "No Passport"
+   ],
+   "img": "/assets/img/dh-08-hawaii-napali-coast.jpg",
+   "alt": "Fluted cliffs of the Na Pali Coast, Kauai",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "United States",
+   "name": "Walt Disney World Resort",
+   "desc": "The classic Orlando trip at a scale nothing else matches: four theme parks and more than 25 Disney hotels on roughly 40 square miles. Typhoon Lagoon, one of the two water parks, has been closed for refurbishment since September 2026. The scale is the trap: one park a day unless you add Park Hopper, booking windows for dining and Lightning Lane, and 30-minute early entry only for Disney hotel guests. Four parks in four days is a sprint, so a pool day goes in the middle. Works from about age 4; under-3s get in free.",
+   "tags": [
+    "Four Theme Parks",
+    "Disney Hotels",
+    "Early Entry",
+    "Ages 4+"
+   ],
+   "img": "/assets/img/orlando-walt-disney-world-lagoon-fireworks.jpg",
+   "alt": "Fireworks over a palm-lined resort lagoon at blue hour, a family of four watching from the lawn beside a lit boat dock, Orlando",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "United States",
+   "name": "Disneyland Resort",
+   "desc": "The original, and the compact one. Disneyland Park and Disney California Adventure share one esplanade in Anaheim, with three Disney hotels a short walk or a monorail ride away, so a West Coast family can do this as a long weekend. Disney itself advises at least three days for both parks, and that is right. Tickets are date-based and still need a park reservation, so the dates get locked before the flights do. More than 60 rides and activities have no height minimum, which makes this the stronger Disney resort for children under six.",
+   "tags": [
+    "Two Parks",
+    "Long Weekend",
+    "All Ages",
+    "West Coast"
+   ],
+   "img": "/assets/img/anaheim-disneyland-pier-golden-hour.jpg",
+   "alt": "A Ferris wheel and looping coaster above a boardwalk lagoon at golden hour, families strolling the promenade, Anaheim",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 7,
+   "href": "/plan-your-trip/",
+   "region": "United States",
+   "name": "Universal Orlando Resort",
+   "desc": "Four parks since Epic Universe opened on May 22, 2025: Universal Studios Florida, Islands of Adventure, Epic Universe and the Volcano Bay water park, plus 11 hotels on site. The draw is the franchises: the Wizarding World across three parks and Mario Kart in SUPER NINTENDO WORLD. That is also the age gate: Mario Kart from 40 inches, Stardust Racers from 48, so this is for kids of roughly 8 and up, teens, and parents who grew up on the films. Portofino Bay, Hard Rock and Royal Pacific include Express Unlimited for the two original parks.",
+   "tags": [
+    "Epic Universe",
+    "Wizarding World",
+    "Express Pass",
+    "Ages 8+"
+   ],
+   "img": "/assets/img/orlando-universal-coaster-promenade-dusk.jpg",
+   "alt": "A lit steel coaster arcing over palms beside a stone waterfront promenade at dusk, a family walking toward it, Orlando",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 8,
+   "href": "/plan-your-trip/",
+   "region": "Caribbean",
+   "name": "Caribbean",
+   "desc": "Turks &amp; Caicos for the clearest water in the Caribbean. The Bahamas for proximity and ease, particularly from the East Coast. Jamaica and the Dominican Republic for full-service family resorts with strong kids' programming and beaches that are reliably flat and swimmable. The right island depends on the kids' ages and what the parents actually want from the week.",
+   "tags": [
+    "Turks &amp; Caicos",
+    "Bahamas",
+    "Jamaica"
+   ],
+   "img": "/assets/img/caribbean-mexico-turks-and-caicos.jpg",
+   "alt": "Turquoise shallows and white sand, Turks and Caicos",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "exp-card",
+   "index": 9,
+   "href": "/plan-your-trip/",
+   "region": "Southern Africa",
+   "name": "Family Safari",
+   "desc": "South Africa's malaria-free reserves — Sabi Sand, Madikwe, Shamwari — make a Big Five safari genuinely accessible for families with children. Many lodges accept kids from age 6. The Sabi Sand and Cape Town combination is the most popular family safari itinerary we run: game drives and beach in the same trip, no antimalarials required.",
+   "tags": [
+    "Malaria-Free",
+    "Sabi Sand",
+    "Ages 6+"
+   ],
+   "img": "/assets/img/botswana-chobe-national-park.jpg",
+   "alt": "Elephant herd with calves at a river at sunset, Chobe, Botswana",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Families Nine Destinations We Know for Families The right destination for a family depends entirely on the ages of the kids, the pace the parents want, and what the trip is meant to be. Here's where we send families most often — and why. Three of the nine are theme-park resorts, where the planning is the product. The rules those cards rest on are published by the resorts themselves: Disney World's early entry for hotel guests, Disneyland's own trip-length advice and Universal Orlando's ride height requirements."
+  },
+  {
+   "page": "family-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · 7 days",
+   "name": "Riviera Maya Family Week",
+   "desc": "A top family all-inclusive in the Riviera Maya, selected specifically for connecting room availability, beach entry depth, and a kids' program worth sending them to. Day trip to Tulum ruins and a cenote swim included — enough culture to make it a trip, not just a resort week. Works for ages 3 and up.",
+   "meta": [
+    "Mexico7 Days"
+   ],
+   "img": "/assets/img/ev-family-travel-tulum-ruins-cliff.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "family-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "December – April · 8–10 days",
+   "name": "Costa Rica Family Adventure",
+   "desc": "Arenal for the volcano and white-water rafting, Manuel Antonio for wildlife and a beach finish. Small-group naturalist guides, zip-line canopy, and a sea turtle nesting excursion if timing aligns. Designed for active families with kids aged 8 and up who want more than a pool week.",
+   "meta": [
+    "Costa Rica8–10 Days"
+   ],
+   "img": "/assets/img/ev-family-travel-costa-rica-sloth.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "family-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · 10 days",
+   "name": "Hawaii Two-Island Family Trip",
+   "desc": "Maui for the first half — Road to Hana, Kaanapali beach, snorkeling at Molokini. Big Island for the second — Kilauea lava fields, manta ray night dive, and the Kona coast. No international travel complexity, no passport logistics, and a natural landscape that genuinely holds kids' attention at every age.",
+   "meta": [
+    "Hawaii10 Days"
+   ],
+   "img": "/assets/img/ev-family-travel-road-to-hana-waterfall.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "family-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "May – June · September – October · 10–14 days",
+   "name": "Multigenerational Italy",
+   "desc": "Rome for three nights — the Colosseum and Vatican in a private family tour that moves at the kids' pace. Positano on the Amalfi Coast for the middle stretch. A Tuscan villa for the final days with a cooking class and a private pool. Built to work for grandparents and teenagers in the same group, which takes deliberate planning.",
+   "meta": [
+    "Italy10–14 Days"
+   ],
+   "img": "/assets/img/ev-family-travel-rome-colosseum-arches.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "food-wine-travel": [
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Northern Italy",
+   "name": "Italy",
+   "desc": "The country with the greatest density of genuinely excellent food traditions per square kilometer on earth. Emilia-Romagna is the center of gravity — Parmigiano-Reggiano, Prosciutto di Parma, aceto balsamico tradizionale, fresh egg pasta, mortadella. Each has a production story worth following to the source. Beyond the food valley: Piedmont for Barolo and white truffles in October and November, Sicily for olive oil and street food culture that has no equivalent, Campania for San Marzano tomatoes and the original Neapolitan pizza tradition. Italy is not one food destination. It is several dozen, each with a distinct culinary identity that took centuries to form.",
+   "tags": [
+    "Emilia-Romagna",
+    "Piedmont",
+    "Truffle Season",
+    "Wine Country"
+   ],
+   "img": "/assets/img/e-06-tuscan-landscape.jpg",
+   "alt": "Tuscan landscape, Italy",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "East Asia",
+   "name": "Japan",
+   "desc": "The most food-serious culture on earth, organized around a concept — shun — that has no direct translation: the moment when an ingredient is at its absolute peak and nothing else is appropriate. Tokyo has more Michelin stars than any city in the world and also the best standing ramen counter, the best tsukiji tuna auction, and a sake brewery tradition that rewards the traveler who finds a small producer rather than a famous label. Kyoto for kaiseki — the most refined expression of seasonal Japanese cuisine — and Osaka for the opposite: takoyaki, okonomiyaki, and the city's proudly gluttonous street food identity.",
+   "tags": [
+    "Tsukiji Market",
+    "Kaiseki",
+    "Sake"
+   ],
+   "img": "/assets/img/dh-10-japan-kyoto-dawn.jpg",
+   "alt": "Kyoto at dawn, Japan",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Western Europe",
+   "name": "France",
+   "desc": "Burgundy for the wine — Domaine visits in Gevrey-Chambertin and Meursault, a cellar dinner with a négociant, the Hospices de Beaune auction in November. Lyon for the bouchon tradition — the most honest expression of French cooking, unchanged by fashion. The Basque Country for pintxos bars, Idiazabal cheese, and txakoli wine in a culture that straddles the border with Spain and acknowledges neither country's full authority over its food. Périgord for black truffles and duck confit in January, when both are at their peak.",
+   "tags": [
+    "Burgundy Wine",
+    "Lyon",
+    "Truffles"
+   ],
+   "img": "/assets/img/dh-05-france-provence-dusk.jpg",
+   "alt": "Provence at dusk, France",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Southern Europe",
+   "name": "Spain",
+   "desc": "San Sebastián has more Michelin stars per capita than any city in the world — and its most interesting food is in the pintxos bars of the old quarter, where the counterwork is changed twice daily and the best ones run out by 8 p.m. La Rioja and Ribera del Duero for wine country that rewards the visitor who gets off the tour bus route. Andalusia for Ibérico ham, fino sherry culture, and olive oil from estates that have been producing for a thousand years.",
+   "tags": [
+    "San Sebastián",
+    "Pintxos",
+    "Rioja"
+   ],
+   "img": "/assets/img/dh-23-spain-andalusia-dusk.jpg",
+   "alt": "Andalusia at dusk, Spain",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "California Wine Country",
+   "desc": "Napa and Sonoma together represent one of the great food and wine regions in the world — the conversation stops being about domestic travel the moment you sit in a hillside cave in Rutherford with a winemaker who has been making the same Cabernet from the same block for thirty years. Harvest season in September and October is the window worth planning around. Combine with the Bay Area's restaurant culture — the farm-to-table tradition was invented here — for a complete food trip that never requires a passport.",
+   "tags": [
+    "Napa",
+    "Sonoma",
+    "Harvest Season"
+   ],
+   "img": "/assets/img/na-napa-sonoma-cellar-tasting.jpg",
+   "alt": "Cellar tasting in Napa and Sonoma, California",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Pacific Northwest",
+   "name": "Willamette Valley, Oregon",
+   "desc": "Oregon's Pinot Noir country sits on nearly the same latitude as Burgundy, and Burgundy noticed: Maison Joseph Drouhin bought land in the Dundee Hills in 1987, twenty-two years after David Lett planted the valley's first Pinot vines. Eleven nested appellations, more than 700 wineries, and no resort pricing. McMinnville and Newberg are working towns with serious restaurants. The red Jory soil of the Dundee Hills and the Pacific wind the Van Duzer Corridor sends into the Eola-Amity Hills make two different wines from one grape. Add Portland for the restaurants, Oregon's own truffles in January and February, and Dungeness crab off the coast once the season opens in December.",
+   "tags": [
+    "Dundee Hills",
+    "Pinot Noir",
+    "Portland",
+    "October Harvest"
+   ],
+   "img": "/assets/img/willamette-valley-dundee-hills-harvest.jpg",
+   "alt": "Pinot Noir rows turning gold above a fog-filled valley and hazelnut orchards, Dundee Hills, Willamette Valley",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 7,
+   "href": "/plan-your-trip/",
+   "region": "South America",
+   "name": "Peru",
+   "desc": "Lima has produced the most exciting food culture in the world over the past twenty years — not through a single restaurant but through a movement that runs from Virgilio Martínez's Central to the cevicherías in Miraflores to the market stalls in Surquillo where the biodiversity of Peru's 4,000 varieties of potato is the daily reality rather than a talking point. The cuisine of the Andes, the Amazon, and the Pacific coast are three distinct food traditions operating within a single country — and the best Peruvian chefs treat all three as a living archive worth preserving.",
+   "tags": [
+    "Lima",
+    "Ceviche",
+    "Market Culture"
+   ],
+   "img": "/assets/img/dh-17-peru-machu-picchu-dawn.jpg",
+   "alt": "Machu Picchu at dawn, Peru",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 8,
+   "href": "/plan-your-trip/",
+   "region": "South America",
+   "name": "Argentina",
+   "desc": "Malbec arrived from France in 1853 and found the place it was waiting for. Mendoza's vineyards climb from Luján de Cuyo at around 1,000 metres to the Uco Valley at up to 1,500, and the swing between hot desert days and cold Andean nights holds the acid and the colour the grape never managed at home. Aconcagua, at 6,961 metres, is the horizon on a clear morning. Harvest runs late February into April, with the Vendimia festival in Mendoza city the first weekend of March. Buenos Aires is the other half of the trip: a parrilla where the fire was lit in the afternoon, and wine lists that go well past Malbec. In the north, Cafayate grows Torrontés at 1,700 metres and the Calchaquí Valleys have vines above 3,000.",
+   "tags": [
+    "Mendoza",
+    "Uco Valley",
+    "Malbec",
+    "Parrilla"
+   ],
+   "img": "/assets/img/argentina-mendoza-and-the-uco-valley.jpg",
+   "alt": "Gnarled old vine heavy with dark grapes on stony ground below the snow-covered Andes, Uco Valley, Mendoza",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "exp-card",
+   "index": 9,
+   "href": "/plan-your-trip/",
+   "region": "South Australia",
+   "name": "Australia",
+   "desc": "The Barossa Valley has Shiraz vines planted in 1843 that are still in production, because South Australia has never had phylloxera and nobody pulled the old vines out. Seppeltsfield has released a 100-year-old Tawny from its barrel hall every year since 1978, and the Barossa's Old Vine Charter does not count a vine as old until it turns 35. Next door, the Eden Valley grows Australia's best dry Riesling with the Clare Valley to the north, McLaren Vale does old-vine Grenache, and the Adelaide Central Market, trading since 1869, is where the state's produce actually goes. Harvest runs February to April, the opposite calendar from Europe. Margaret River, the Yarra Valley and Tasmania each justify their own trip.",
+   "tags": [
+    "Barossa",
+    "Old-Vine Shiraz",
+    "Riesling",
+    "Adelaide Market"
+   ],
+   "img": "/assets/img/australia-barossa-valley-old-vines.jpg",
+   "alt": "Century-old bush-vine Shiraz on red soil, with gum trees, a stone winery and a Lutheran church spire behind, Barossa Valley",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Plan Food &amp; Wine Trips Nine Destinations Where the Food Explains the Place The best food destinations are the ones where the cuisine is inseparable from the landscape, the season, and the people who make it. These are the places where that condition holds most completely. Argentina and Australia harvest from February to April, six months out of step with the rest of this list. The Argentina planning page, the Australia planning page and the Willamette Valley winery route go deeper on each."
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · October – November for Truffle · 7–10 days",
+   "name": "Emilia-Romagna Food Valley",
+   "desc": "A Parmigiano-Reggiano producer at dawn — the morning curd, the aging rooms stacked floor to ceiling with 80-pound wheels. A prosciutto cellar in Langhirano where the legs hang for twenty-four months in rooms cooled by mountain air through louvred windows. A sfoglina in Bologna who has been making tagliatelle by hand since before pasta machines existed, who agrees to a private lesson on Tuesday mornings. Aceto balsamico tradizionale from a Modenese family whose attic has held the acetaia for six generations. This is the trip that changes how people think about Italian food permanently.",
+   "meta": [
+    "Italy7–10 Days"
+   ],
+   "img": "/assets/img/ev-food-wine-travel-parmigiano-ageing-room.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "September – November · 7 days",
+   "name": "Burgundy Wine Deep Dive",
+   "desc": "Three days in the Côte de Nuits — private visits to a premier cru and a grand cru domaine in Gevrey-Chambertin, a négociant cellar tasting through twenty vintages, and a Pinot Noir harvest participation if the timing aligns. Two days in the Côte de Beaune for Meursault and Montrachet — the white side of the conversation. A cellar dinner in Beaune at a restaurant with a list that goes back to 1947 and a sommelier who was born into the region. November adds the Hospices de Beaune charity auction for clients who want to attend the most important wine week in Burgundy's calendar.",
+   "meta": [
+    "France7 Days"
+   ],
+   "img": "/assets/img/ev-food-wine-travel-gevrey-harvest-rows.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · 10–12 days",
+   "name": "Japan Food Immersion",
+   "desc": "Tokyo for five days with a culinary specialist — Tsukiji outer market at 6 a.m. for tuna sashimi at a counter that has no English sign, a sake brewery in the western suburbs that receives visitors by appointment only, a ramen school in Shimokitazawa run by a chef who trained under two of the country's best bowl-makers, and an omakase sushi dinner where the chef has been working with the same fish supplier for eighteen years. Kyoto for four nights — a kaiseki dinner at a ryotei that doesn't take walk-ins, a morning tofu producer in Fushimi, and a cooking class organized around the current shun ingredient.",
+   "meta": [
+    "Japan10–12 Days"
+   ],
+   "img": "/assets/img/ev-food-wine-travel-tsukiji-tuna-counter.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "food-wine-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "April – June, September – October · 7–8 days",
+   "name": "Basque Country &amp; Rioja",
+   "desc": "San Sebastián for three nights — a pintxos crawl through the old quarter with a local guide who knows which bars change their counterwork at 7 p.m. and which ones are worth returning to twice, a lunch at a txoko (a Basque gastronomic society, members-only, accessible through the right connection), and a dinner at one of the city's serious addresses. Biarritz for the French side of the Basque food conversation. La Rioja for two days — a bodega visit at a family estate with vines planted in 1902, a village lunch that costs fourteen euros and lasts three hours.",
+   "meta": [
+    "Spain &amp; France7–8 Days"
+   ],
+   "img": "/assets/img/ev-food-wine-travel-san-sebastian-pintxos-bar.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "multigenerational-travel": [
+  {
+   "page": "multigenerational-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "Italy",
+   "desc": "The gold standard for multigenerational travel. Private villas in Tuscany and Umbria give three generations a shared home base with independent space — a dining table that seats twelve, a pool, and a garden that works as a gathering place without feeling like a scheduled activity. Rome for the history, the Amalfi Coast for the scenery, the Chianti hills for the pace. Something for every age and every energy level, often within the same day.",
+   "tags": [
+    "Tuscany Villas",
+    "Rome",
+    "Amalfi Coast",
+    "All Ages"
+   ],
+   "img": "/assets/img/e-06-tuscan-landscape.jpg",
+   "alt": "Tuscan landscape, Italy",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Multigenerational Groups Six Destinations Built for the Whole Family The best multigenerational destinations share a common quality: they offer something different for each generation without requiring the group to split up to find it."
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "United States",
+   "name": "Hawaii",
+   "desc": "No passport, no international travel friction, and one of the most naturally spectacular environments on earth. Multi-bedroom vacation rentals on Maui and the Big Island give groups a private base. Activities scale across generations naturally — whale watching and luau for grandparents, snorkeling and Road to Hana for the middle generation, volcano hikes for the teenagers.",
+   "tags": [
+    "No Passport",
+    "Maui",
+    "Big Island"
+   ],
+   "img": "/assets/img/dh-08-hawaii-napali-coast.jpg",
+   "alt": "The N&#257; Pali coast, Hawaii",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Multigenerational Groups Six Destinations Built for the Whole Family The best multigenerational destinations share a common quality: they offer something different for each generation without requiring the group to split up to find it."
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Asia",
+   "name": "Japan",
+   "desc": "Consistently one of the best multigenerational surprises — a destination that fascinates every age for completely different reasons. Tokyo for the energy and the food. Kyoto for the temples, the gardens, and the pace that grandparents actually enjoy. The Shinkansen is an experience in itself. Walkable, safe, with exceptional food at every price point.",
+   "tags": [
+    "Tokyo",
+    "Kyoto",
+    "Shinkansen"
+   ],
+   "img": "/assets/img/dh-10-japan-kyoto-dawn.jpg",
+   "alt": "Kyoto at dawn, Japan",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Multigenerational Groups Six Destinations Built for the Whole Family The best multigenerational destinations share a common quality: they offer something different for each generation without requiring the group to split up to find it."
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "Portugal",
+   "desc": "Lisbon for the first few days — manageable, walkable, with extraordinary food and a city that rewards curiosity at any age. The Alentejo countryside for the slow middle stretch. The Algarve for the beach finish. Lower cost than France or Italy, with quality that doesn't reflect that. One of the most underused multigenerational destinations in Europe.",
+   "tags": [
+    "Lisbon",
+    "Alentejo",
+    "Algarve"
+   ],
+   "img": "/assets/img/dh-19-portugal-douro-valley.jpg",
+   "alt": "The Douro Valley, Portugal",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Multigenerational Groups Six Destinations Built for the Whole Family The best multigenerational destinations share a common quality: they offer something different for each generation without requiring the group to split up to find it."
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "Mexico &amp; Caribbean",
+   "desc": "Private villa resorts in the Riviera Maya offer multi-bedroom configurations with shared pool, full kitchen, and butler service — the closest resort equivalent to renting a villa. Strong option for groups that want the service of a hotel with the privacy of a private home. Short flights, no jet lag, and a beach that's consistently accessible for all mobility levels.",
+   "tags": [
+    "Private Villas",
+    "Riviera Maya",
+    "Caribbean"
+   ],
+   "img": "/assets/img/dh-20-riviera-maya-coast.jpg",
+   "alt": "The Riviera Maya coast, Mexico",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Multigenerational Groups Six Destinations Built for the Whole Family The best multigenerational destinations share a common quality: they offer something different for each generation without requiring the group to split up to find it."
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Mediterranean",
+   "name": "Greece",
+   "desc": "Private villa rentals on Santorini, Mykonos, Crete, and the lesser-known Peloponnese. The Greek island rhythm — late mornings, afternoon swims, long dinners — suits multigenerational groups naturally. A private boat charter for a day of island hopping gives the whole group a shared experience that nobody forgets, regardless of age.",
+   "tags": [
+    "Private Villas",
+    "Santorini",
+    "Boat Charter"
+   ],
+   "img": "/assets/img/dh-07-greece-caldera-dusk.jpg",
+   "alt": "The caldera at dusk, Greece",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Multigenerational Groups Six Destinations Built for the Whole Family The best multigenerational destinations share a common quality: they offer something different for each generation without requiring the group to split up to find it."
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "May – June, September – October · 10–14 days",
+   "name": "The Tuscany Villa Week",
+   "desc": "A private villa in the Chianti hills for the full group — large enough for three generations to share without crowding each other. Private chef for group dinners, driver on call for day trips into Siena, Florence, and the hill towns. A cooking class that works across generations, a wine tasting that doesn't require walking, and a pool that functions as the gathering point for the whole week.",
+   "meta": [
+    "Italy10–14 Days"
+   ],
+   "img": "/assets/img/ev-multigenerational-travel-chianti-villa-pergola.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "March – May, October – November · 12–14 days",
+   "name": "Japan Across Generations",
+   "desc": "Tokyo for four nights — Tsukiji market, teamLab digital art, a sushi counter dinner that becomes the trip's signature memory. Shinkansen to Kyoto for five nights — a ryokan stay, the Arashiyama bamboo grove at dawn, and the Philosopher's Path on a pace that suits grandparents without boring teenagers. Hiroshima and Miyajima as a half-day from Kyoto. The most consistently surprising group trip we run.",
+   "meta": [
+    "Japan12–14 Days"
+   ],
+   "img": "/assets/img/ev-multigenerational-travel-arashiyama-bamboo.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "April – June, September – October · 10 days",
+   "name": "Portugal Three-Generation",
+   "desc": "Three nights in Lisbon — tram rides, pastéis de nata, and Belém. A driver south through the Alentejo cork forests with a night at a working herdade. Four nights on the Algarve coast in a villa large enough for the full group, with sea caves, boat trips, and the kind of beach that grandparents actually want to sit on. Understated, genuinely beautiful, and usually under budget.",
+   "meta": [
+    "Portugal10 Days"
+   ],
+   "img": "/assets/img/ev-multigenerational-travel-lisbon-alfama-lane.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "multigenerational-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "Year-Round · 10–12 days",
+   "name": "Hawaii Multigenerational Island Hop",
+   "desc": "Maui for the first five nights in a beachfront vacation rental — whale watching from the lanai in winter, snorkeling at Molokini, and the Road to Hana divided across two days so grandparents can take the short version. Big Island for the finish — manta ray night snorkel, Kilauea after dark, and Kona coffee country. No international logistics, no accessibility concerns that aren't manageable.",
+   "meta": [
+    "Hawaii10–12 Days"
+   ],
+   "img": "/assets/img/ev-multigenerational-travel-kilauea-night-glow.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "romance-celebration-travel": [
+  {
+   "page": "romance-celebration-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Indian Ocean",
+   "name": "The Maldives",
+   "desc": "The honeymoon benchmark for a reason: a villa over water that's yours alone, a house reef off your deck, and resorts that have raised privacy to an art form. The choice of atoll, villa orientation, and meal plan matters more than the brand name. Best November through April.",
+   "tags": [
+    "Overwater Villa",
+    "House Reef",
+    "Nov &ndash; April"
+   ],
+   "img": "/assets/img/h-01-maldives-aerial.jpg",
+   "alt": "Aerial view of a Maldivian atoll",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Where Celebrations Belong Each delivers a different register of romance — seclusion, drama, warmth, or wonder. The right one depends on the two of you."
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "Greece",
+   "name": "Santorini & the Aegean",
+   "desc": "The caldera view from the right suite, on the quiet side of the island, in May or October when the light is still extraordinary and the crowds are not. We pair it with a slower island — Folegandros, Paros — for the version of Greece the cruise passengers never see.",
+   "tags": [
+    "Caldera Suite",
+    "May &amp; October",
+    "Folegandros"
+   ],
+   "img": "/assets/img/dh-07-greece-caldera-dusk.jpg",
+   "alt": "The Santorini caldera at dusk, Greece",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Where Celebrations Belong Each delivers a different register of romance — seclusion, drama, warmth, or wonder. The right one depends on the two of you."
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Italy",
+   "name": "The Amalfi Coast",
+   "desc": "Positano and Ravello done privately: the cliffside suite, the boat day to Capri with lunch at anchor, the table at the restaurant you'd never get into on your own. September and early October are the connoisseur's months — warm sea, soft light, working towns.",
+   "tags": [
+    "Positano",
+    "Capri by Boat",
+    "September"
+   ],
+   "img": "/assets/img/d-04-positano-cliffside.jpg",
+   "alt": "Positano on the cliffside, Amalfi Coast",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Where Celebrations Belong Each delivers a different register of romance — seclusion, drama, warmth, or wonder. The right one depends on the two of you."
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "French Polynesia",
+   "name": "Bora Bora",
+   "desc": "The postcard that actually delivers — Mount Otemanu from your overwater deck, a lagoon that shifts through four colors by lunch, and a level of quiet that recalibrates you. Worth the long flight for ten days minimum; pairing with Moorea softens the journey.",
+   "tags": [
+    "Mount Otemanu",
+    "Overwater Deck",
+    "Pair with Moorea"
+   ],
+   "img": "/assets/img/d-03-bora-bora-otemanu.jpg",
+   "alt": "Mount Otemanu, Bora Bora",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Where Celebrations Belong Each delivers a different register of romance — seclusion, drama, warmth, or wonder. The right one depends on the two of you."
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "Africa",
+   "name": "A Safari Honeymoon",
+   "desc": "For couples who'd rather be astonished than lounged: private camps where dinner is served in a different location each night, a guide to yourselves, and the kind of silence that only exists in the bush. Botswana and the Serengeti are the classics; Rwanda adds gorillas.",
+   "tags": [
+    "Private Camps",
+    "Botswana",
+    "Serengeti"
+   ],
+   "img": "/assets/img/jh-03-moremi-delta-channel.jpg",
+   "alt": "A delta channel in Moremi, Botswana",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Where Celebrations Belong Each delivers a different register of romance — seclusion, drama, warmth, or wonder. The right one depends on the two of you."
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Japan",
+   "name": "Kyoto in Season",
+   "desc": "The connoisseur's romance: a ryokan with a private onsen, kaiseki dinners that unfold over three hours, and temple gardens at the exact two-week window when the maples turn. For couples who find intimacy in beauty rather than beaches.",
+   "tags": [
+    "Ryokan",
+    "Private Onsen",
+    "Kaiseki"
+   ],
+   "img": "/assets/img/dh-10-japan-kyoto-dawn.jpg",
+   "alt": "Kyoto at dawn, Japan",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Go Where Celebrations Belong Each delivers a different register of romance — seclusion, drama, warmth, or wonder. The right one depends on the two of you."
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "Year-round by region · 10–14 days",
+   "name": "The Honeymoon, Full Stop",
+   "desc": "Ten days minimum — the trip deserves it. We build in the slow start, the middle adventure, and the ending somewhere that makes leaving hurt a little. Every transfer, table, and room category confirmed before you leave, with a contact who answers if anything shifts.",
+   "meta": [
+    "Bespoke10–14 Days"
+   ],
+   "img": "/assets/img/ev-p-03-four-seasons-bora-bora.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "Year-round · 7–10 days",
+   "name": "The Anniversary Return",
+   "desc": "Back to where it started, or somewhere the two of you have been promising yourselves for years. We arrange the dinner that marks the actual evening — the private terrace, the vintage from the year you married, the details that say someone remembered.",
+   "meta": [
+    "Milestone7–10 Days"
+   ],
+   "img": "/assets/img/ev-i-02-anniversary-table.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "Year-round · 5–10 days",
+   "name": "The Proposal, Choreographed",
+   "desc": "We've planned engagements on sandbanks, in vineyard rows, on the deck of a gulet at anchor. The setting, the timing, the photographer who appears to be a passing tourist, and the celebration dinner already booked. You only have to ask.",
+   "meta": [
+    "Proposal5–10 Days"
+   ],
+   "img": "/assets/img/ev-e-19-secret-sea-cave.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "romance-celebration-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "Year-round · 7–12 days",
+   "name": "The Birthday Worth the Flight",
+   "desc": "Fifty, sixty, seventy — the birthdays that deserve a place, not just a party. A private villa with the people who matter, a chef for the week, and one evening that's formally celebrated while the rest of the trip stays gloriously unstructured.",
+   "meta": [
+    "Celebration7–12 Days"
+   ],
+   "img": "/assets/img/ev-p-02-north-island.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "safari-wildlife-travel": [
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Southern Africa",
+   "name": "Botswana",
+   "desc": "The benchmark for low-impact, high-quality safari. Strict camp limits, world-class guides, and the Okavango Delta — the only inland delta of its kind on earth. Best May through October.",
+   "tags": [
+    "Okavango",
+    "Linyanti",
+    "Moremi"
+   ],
+   "img": "/assets/img/e-33-okavango-channel-golden.jpg",
+   "alt": "Golden light across the flooded channels of the Okavango Delta, Botswana",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Safari Six Countries We Know Inside Out Different countries deliver different experiences. The right one depends on what you're actually after — and the time of year you can travel."
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "East Africa",
+   "name": "Kenya",
+   "desc": "The Maasai Mara during the Great Migration. Private conservancies that out-perform the reserves. The classic East African safari, refined.",
+   "tags": [
+    "Maasai Mara",
+    "Migration"
+   ],
+   "img": "/assets/img/e-34-mara-migration-line.jpg",
+   "alt": "A migration herd strung across the Maasai Mara under a lone acacia, Kenya",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Safari Six Countries We Know Inside Out Different countries deliver different experiences. The right one depends on what you're actually after — and the time of year you can travel."
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "East Africa",
+   "name": "Tanzania",
+   "desc": "The Serengeti, the Ngorongoro Crater, and the calving season in the south. The most ecologically diverse safari destination on the continent.",
+   "tags": [
+    "Serengeti",
+    "Ngorongoro"
+   ],
+   "img": "/assets/img/e-35-ngorongoro-crater-floor.jpg",
+   "alt": "The Ngorongoro Crater floor and soda lake seen from the rim, Tanzania",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Safari Six Countries We Know Inside Out Different countries deliver different experiences. The right one depends on what you're actually after — and the time of year you can travel."
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "Southern Africa",
+   "name": "South Africa",
+   "desc": "Big Five reliability, malaria-free reserves, and the option to combine safari with Cape Town and the Winelands. The ideal first-time safari destination.",
+   "tags": [
+    "Sabi Sand",
+    "Cape Town",
+    "Family-Friendly"
+   ],
+   "img": "/assets/img/e-36-sabi-sand-leadwood.jpg",
+   "alt": "A spreading leadwood tree in golden bushveld, Sabi Sand, South Africa",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Safari Six Countries We Know Inside Out Different countries deliver different experiences. The right one depends on what you're actually after — and the time of year you can travel."
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "East Africa",
+   "name": "Rwanda",
+   "desc": "Mountain gorilla trekking in Volcanoes National Park. A single permit, a small group, an hour with a habituated family. Genuinely life-altering.",
+   "tags": [
+    "Gorilla Trekking",
+    "Volcanoes NP"
+   ],
+   "img": "/assets/img/e-37-virunga-bamboo-light.jpg",
+   "alt": "Sunlight falling through bamboo on the Virunga volcano slopes, Rwanda",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Safari Six Countries We Know Inside Out Different countries deliver different experiences. The right one depends on what you're actually after — and the time of year you can travel."
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Southern Africa",
+   "name": "Namibia",
+   "desc": "Desert-adapted elephant and rhino, the dunes at Sossusvlei, and Etosha's waterholes in the dry season. The one safari where the landscape competes with the wildlife.",
+   "tags": [
+    "Sossusvlei",
+    "Etosha",
+    "Skeleton Coast"
+   ],
+   "img": "/assets/img/e-38-sossusvlei-dune-ridge.jpg",
+   "alt": "The sunlit ridge of a red dune above the clay pan at Sossusvlei, Namibia",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where to Safari Six Countries We Know Inside Out Different countries deliver different experiences. The right one depends on what you're actually after — and the time of year you can travel."
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "May – October · 10–14 days",
+   "name": "The Okavango Classic",
+   "desc": "Three camps across the Delta — water-based, land-based, and a final mobile camp deep in Moremi. Small aircraft transfers, no two days the same, and a guide team that hands off seamlessly.",
+   "meta": [
+    "Botswana10–14 Days"
+   ],
+   "img": "/assets/img/ev-safari-wildlife-travel-okavango-mokoro.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "July – October · 7–10 days",
+   "name": "The Great Migration",
+   "desc": "Mara Conservancy private camps positioned along the migration route. River crossings at Mara North, sundowners at the escarpment, and guides who've followed the herds for decades.",
+   "meta": [
+    "Kenya / Tanzania7–10 Days"
+   ],
+   "img": "/assets/img/ev-safari-wildlife-travel-mara-river-crossing.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "Year-round · 10–14 days",
+   "name": "Cape Town &amp; Sabi Sand",
+   "desc": "Four nights in Cape Town with private wine tours and Table Mountain hiking. Six nights at a Sabi Sand lodge for guaranteed Big Five sightings. The most balanced first-safari itinerary on the continent.",
+   "meta": [
+    "South Africa10–14 Days"
+   ],
+   "img": "/assets/img/ev-safari-wildlife-travel-table-mountain-cloud.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "safari-wildlife-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "June – September · 7 days",
+   "name": "Rwanda &amp; the Mountain Gorillas",
+   "desc": "Three nights at a Volcanoes-adjacent lodge with two trekking permits. Combine with two nights in Kigali or extend to Akagera for a complete contrast. Limited permits make booking early essential.",
+   "meta": [
+    "Rwanda7 Days"
+   ],
+   "img": "/assets/img/ev-safari-wildlife-travel-rwanda-silverback.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ],
+ "sports-event-travel": [
+  {
+   "page": "sports-event-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "London, Paris &amp; Melbourne",
+   "name": "Tennis",
+   "desc": "Wimbledon Centre Court. Roland Garros. The Australian Open. Debenture seats, hospitality suites, and the atmosphere money alone cannot buy.",
+   "tags": [
+    "Wimbledon",
+    "Grand Slams"
+   ],
+   "img": "/assets/img/e-31-wimbledon-court-strawberries.jpg",
+   "alt": "Strawberries and champagne on a courtside table as a rally plays out on a grass court at the All England Club",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Choose Your Sport Experiences We Design From Centre Court to the first tee — every sport, curated with the access and luxury that changes everything."
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "Augusta &amp; St Andrews",
+   "name": "Golf",
+   "desc": "Patron badges at Augusta. Practice rounds at The Open. Play the world's greatest courses — Pebble Beach, St Andrews, Royal Melbourne.",
+   "tags": [
+    "Augusta",
+    "The Open",
+    "Pebble Beach"
+   ],
+   "img": "/assets/img/e-28-augusta-tee-shot.jpg",
+   "alt": "A dawn tee shot framed by azaleas and dogwoods, the clubhouse at the far end of the fairway",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Choose Your Sport Experiences We Design From Centre Court to the first tee — every sport, curated with the access and luxury that changes everything."
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "Monaco, Monza &amp; Singapore",
+   "name": "Formula 1",
+   "desc": "Monaco harbour-side. Monza tifosi. Singapore under lights. Paddock Club access, yacht hospitality, and the roar from a metre away.",
+   "tags": [
+    "Monaco GP",
+    "Paddock Club"
+   ],
+   "img": "/assets/img/e-63-circuit-kerb-apex.jpg",
+   "alt": "A red and white kerb and apex line at a grand prix circuit with grandstands beyond",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Choose Your Sport Experiences We Design From Centre Court to the first tee — every sport, curated with the access and luxury that changes everything."
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "The Alps &amp; British Columbia",
+   "name": "Skiing &amp; Heli-Skiing",
+   "desc": "Private chalets in Verbier. First tracks at Zermatt. Heli-skiing untouched powder in British Columbia. Après-ski that rivals the runs.",
+   "tags": [
+    "Alps",
+    "Heli-Ski"
+   ],
+   "img": "/assets/img/e-29-heli-ski-powder-run.jpg",
+   "alt": "A skier cutting first tracks below a hovering helicopter, backcountry lodge in the valley at alpenglow",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Choose Your Sport Experiences We Design From Centre Court to the first tee — every sport, curated with the access and luxury that changes everything."
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "Europe &amp; The Six Nations",
+   "name": "Football &amp; Rugby",
+   "desc": "Champions League finals. Six Nations at Twickenham. World Cup hospitality. Premium suites and service to match the occasion.",
+   "tags": [
+    "Champions League",
+    "Six Nations"
+   ],
+   "img": "/assets/img/e-64-stadium-pitch-tiers.jpg",
+   "alt": "An empty European stadium bowl seen from a high stand, floodlight pylons above the pitch",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Choose Your Sport Experiences We Design From Centre Court to the first tee — every sport, curated with the access and luxury that changes everything."
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Ascot, Louisville &amp; Dubai",
+   "name": "Horse Racing",
+   "desc": "Royal Ascot in the Royal Enclosure. The Kentucky Derby from Millionaires Row. Dubai World Cup from the Apron. Tradition meets spectacle.",
+   "tags": [
+    "Royal Ascot",
+    "Kentucky Derby"
+   ],
+   "img": "/assets/img/e-30-derby-box-juleps.jpg",
+   "alt": "Mint juleps and binoculars in a trackside box as the field thunders down the home stretch",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Choose Your Sport Experiences We Design From Centre Court to the first tee — every sport, curated with the access and luxury that changes everything."
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "June–July · London, England",
+   "name": "Wimbledon Championships",
+   "desc": "Centre Court debenture seats, hospitality in the grounds, and a five-star London hotel minutes from the All England Club. The most prestigious fortnight in tennis — without a single queue.",
+   "meta": [
+    "Tennis2 Weeks"
+   ],
+   "img": "/assets/img/ev-e-27-wimbledon-pimms-terrace.jpg",
+   "ctaLabel": "Request Wimbledon Package"
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "April · Augusta, Georgia",
+   "name": "The Masters",
+   "desc": "Patron badges for practice rounds and tournament days at Augusta National. We pair them with luxury stays, private dining, and transfers that make the logistics disappear entirely.",
+   "meta": [
+    "Golf4–5 Days"
+   ],
+   "img": "/assets/img/ev-e-24-augusta-masters-flag.jpg",
+   "ctaLabel": "Request Masters Package"
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "May · Monte Carlo, Monaco",
+   "name": "Monaco Grand Prix",
+   "desc": "Yacht hospitality in the harbour. Paddock Club passes. Balcony viewing from the Fairmont Hairpin. The most glamorous weekend in motorsport, at the level the setting demands.",
+   "meta": [
+    "Formula 13 Days"
+   ],
+   "img": "/assets/img/ev-e-32-monaco-harbour-dusk.jpg",
+   "ctaLabel": "Request Monaco GP Package"
+  },
+  {
+   "page": "sports-event-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "December–April · Swiss &amp; French Alps",
+   "name": "Alpine Ski Season",
+   "desc": "Private chalets in Verbier, Courchevel, or Zermatt with chef, driver, and ski guide. Heli-skiing into untouched backcountry. Après-ski at members-only mountain clubs.",
+   "meta": [
+    "SkiingFlexible"
+   ],
+   "img": "/assets/img/ev-e-22-heli-ski-landing.jpg",
+   "ctaLabel": "Request Ski Package"
+  }
+ ],
+ "wellness-retreat-travel": [
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "exp-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "region": "Southeast Asia",
+   "name": "Bali",
+   "desc": "The most recognized wellness destination on earth — and one that earns the reputation when you find the right property. Ubud sits in the volcanic highlands surrounded by rice terraces, jungle, and a culture that has organized itself around ritual, balance, and the concept of Tri Hita Karana — harmony between people, nature, and the spiritual world. The best wellness retreats here offer genuine Balinese healing traditions alongside yoga programs, organic cooking, and the kind of silence that takes two days to settle into. The range in quality is wide. We know which properties deliver on the premise and which ones are wellness in name only.",
+   "tags": [
+    "Ubud",
+    "Yoga Immersion",
+    "Balinese Healing",
+    "May – September"
+   ],
+   "img": "/assets/img/e-45-ubud-yoga-pavilion.jpg",
+   "alt": "An open-sided timber and thatch yoga pavilion above misted rice terraces at dawn, Ubud, Bali",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Wellness Travelers Six Destinations Worth Slowing Down In Each destination has a different wellness tradition and a different quality of property. The right one depends on what you're trying to leave behind — and what you want to come home with."
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "exp-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "region": "South Asia",
+   "name": "Sri Lanka",
+   "desc": "The most credible destination for Ayurvedic medicine outside of India. Sri Lanka's Ayurvedic tradition is centuries old and clinically grounded — the best programs run seven to fourteen days with a physician-led assessment, customized treatment protocol, and strict dietary guidelines that form part of the therapy. The best properties combine rigorous programming with exceptional food and coastal or jungle settings that make the commitment easier to sustain.",
+   "tags": [
+    "Ayurveda",
+    "Panchakarma",
+    "7–14 Days"
+   ],
+   "img": "/assets/img/e-46-ayurveda-treatment-room.jpg",
+   "alt": "A carved wooden treatment bed and brass oil vessels in an Ayurvedic treatment room, Sri Lanka",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Wellness Travelers Six Destinations Worth Slowing Down In Each destination has a different wellness tradition and a different quality of property. The right one depends on what you're trying to leave behind — and what you want to come home with."
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "exp-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "region": "East Asia",
+   "name": "Japan",
+   "desc": "Onsen culture — the Japanese tradition of thermal bathing — is one of the oldest wellness practices on earth and one of the most quietly powerful. A ryokan stay in Hakone, Kinosaki, or Beppu structures the day around the bath, the meal, and the rest, in that order. Forest bathing (shinrin-yoku) in Yakushima or the Japanese Alps delivers a different quality of stillness. For travelers who find active wellness programs exhausting, Japan is the antidote.",
+   "tags": [
+    "Onsen",
+    "Ryokan",
+    "Forest Bathing"
+   ],
+   "img": "/assets/img/e-47-onsen-first-light.jpg",
+   "alt": "Steam rising off an outdoor onsen bath rimmed with volcanic rock at first light, Japan",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Wellness Travelers Six Destinations Worth Slowing Down In Each destination has a different wellness tradition and a different quality of property. The right one depends on what you're trying to leave behind — and what you want to come home with."
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "exp-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "region": "North America",
+   "name": "Mexico",
+   "desc": "Tulum and the Riviera Maya have developed one of the strongest wellness property markets in the Western Hemisphere. Boutique jungle retreats with cenote access, biodynamic menus, sound healing, and digital detox structures that the Caribbean resort model doesn't offer. The best Tulum properties are small, intentional, and a very different proposition from the resort corridor to the north. Short flight, no jet lag, immediate decompression.",
+   "tags": [
+    "Tulum",
+    "Digital Detox",
+    "Cenotes"
+   ],
+   "img": "/assets/img/e-48-cenote-light-shaft.jpg",
+   "alt": "A shaft of sunlight falling through the opening of a Yucatan cenote onto clear water, Mexico",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Wellness Travelers Six Destinations Worth Slowing Down In Each destination has a different wellness tradition and a different quality of property. The right one depends on what you're trying to leave behind — and what you want to come home with."
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "exp-card",
+   "index": 5,
+   "href": "/plan-your-trip/",
+   "region": "United States",
+   "name": "Arizona &amp; Southwest",
+   "desc": "Canyon Ranch in Tucson and Miraval in the Catalina foothills are two of the most seriously programmed wellness resorts in the world — clinical assessments, structured integrative medicine, and a daily schedule that treats restoration as a full-time activity. Sedona adds a different dimension: vortex hiking, red rock desert, and a concentration of bodywork practitioners that draws serious wellness travelers from across the country. No passport required, direct flights nationwide.",
+   "tags": [
+    "Canyon Ranch",
+    "Sedona",
+    "No Passport"
+   ],
+   "img": "/assets/img/e-49-catalina-foothills-dawn.jpg",
+   "alt": "Saguaro and layered desert ridgelines at dawn in the Catalina foothills, Arizona",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Wellness Travelers Six Destinations Worth Slowing Down In Each destination has a different wellness tradition and a different quality of property. The right one depends on what you're trying to leave behind — and what you want to come home with."
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "exp-card",
+   "index": 6,
+   "href": "/plan-your-trip/",
+   "region": "Europe",
+   "name": "Portugal &amp; Southern Europe",
+   "desc": "A growing market for genuine wellness properties — the Alentejo cork forests, the Serra da Estrela mountains, and the Douro Valley wine country all host retreats that combine the slow pace of rural Portugal with thermal bathing, naturopathic programs, and farm-to-table nutrition. For travelers who want European scenery and cultural grounding alongside their wellness program, Portugal is one of the most underused options on the continent.",
+   "tags": [
+    "Alentejo",
+    "Thermal Spas",
+    "Retreats"
+   ],
+   "img": "/assets/img/e-50-alentejo-cork-retreat.jpg",
+   "alt": "A whitewashed retreat terrace among stripped cork oaks in late afternoon light, the Alentejo, Portugal",
+   "arrow": "Explore &rarr;",
+   "sectionHeading": "Where We Send Wellness Travelers Six Destinations Worth Slowing Down In Each destination has a different wellness tradition and a different quality of property. The right one depends on what you're trying to leave behind — and what you want to come home with."
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "event-card",
+   "index": 1,
+   "href": "/plan-your-trip/",
+   "when": "May – September · 7–10 days",
+   "name": "Ubud Yoga &amp; Healing Retreat",
+   "desc": "A small retreat property in the Ubud highlands — rice terrace views, twice-daily yoga, traditional Balinese healing sessions with a local balian practitioner, and a kitchen building meals around the property's organic garden. Cooking class, a half-day at Tirta Empul water temple, and one afternoon completely unscheduled. Structured enough to hold the week together, quiet enough to let the location do its work.",
+   "meta": [
+    "Bali7–10 Days"
+   ],
+   "img": "/assets/img/ev-wellness-retreat-travel-ubud-yoga-pavilion.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "event-card",
+   "index": 2,
+   "href": "/plan-your-trip/",
+   "when": "November – April · 10–14 days",
+   "name": "Sri Lanka Ayurvedic Immersion",
+   "desc": "A physician-led Ayurvedic program at one of Sri Lanka's credentialed wellness resorts — initial Prakriti assessment, customized Panchakarma treatments, therapeutic diet, and daily consultations. Ten days minimum for the program to complete its intended arc; fourteen for a full course. A coastal property on the southwest circuit, reachable from Colombo in under three hours, with enough quiet to make the commitment feel sustainable.",
+   "meta": [
+    "Sri Lanka10–14 Days"
+   ],
+   "img": "/assets/img/ev-wellness-retreat-travel-sri-lanka-shirodhara.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "event-card",
+   "index": 3,
+   "href": "/plan-your-trip/",
+   "when": "October – May · 8–10 days",
+   "name": "Japan Onsen &amp; Ryokan Circuit",
+   "desc": "Two nights in Hakone — Fuji views, outdoor rotenburo baths, and kaiseki dinners served in the room. The overnight Sunrise Seto sleeper train to Matsuyama for two nights in Japan's oldest onsen. Beppu on Kyushu island for the finish — eight distinct types of thermal spring within a single city, and a town that has organized its entire identity around the bath. The most restorative itinerary we run, and the one most clients ask to repeat.",
+   "meta": [
+    "Japan8–10 Days"
+   ],
+   "img": "/assets/img/ev-wellness-retreat-travel-hakone-rotenburo.jpg",
+   "ctaLabel": "Plan This Trip"
+  },
+  {
+   "page": "wellness-retreat-travel",
+   "kind": "event-card",
+   "index": 4,
+   "href": "/plan-your-trip/",
+   "when": "November – May · 5–7 days",
+   "name": "Tulum Jungle Digital Detox",
+   "desc": "A small boutique property in the Tulum jungle — no Wi-Fi in the rooms, cenote swimming each morning, a biodynamic menu built around the property's farm, and bodywork sessions with a rotating roster of practitioners who live and work in the community. Sound healing, breathwork, and intentional scheduling around when the screens go away. Short enough to actually do, long enough to matter. The right reset for a specific kind of exhaustion.",
+   "meta": [
+    "Mexico5–7 Days"
+   ],
+   "img": "/assets/img/ev-wellness-retreat-travel-tulum-cenote-light.jpg",
+   "ctaLabel": "Plan This Trip"
+  }
+ ]
+}
