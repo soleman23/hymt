@@ -32,7 +32,7 @@ const BLOCKS = {
       `The <a href="/experiences/safari-wildlife-travel/">safari and wildlife planning</a> page covers how camp selection interacts with all three calendars, which is the decision that outranks the month in every case.`,
     ],
   },
-  "amanjiwo-field-report": {
+  "amanjiwo": {
     label: "Planning Around Borobudur",
     paras: [
       `Amanjiwo sits in Central Java, and most itineraries that reach it pair the temple half with the island next door. <a href="/destinations/bali/">Bali and Indonesia planning</a> covers how the two halves fit together and which order works better in practice.`,
@@ -60,14 +60,14 @@ const BLOCKS = {
       `<a href="/experiences/all-inclusive-vacations/">All-inclusive planning</a> carries the same issue in a different form: what the rate includes varies more between properties than the rating ever suggests.`,
     ],
   },
-  "glacier-express-field-report": {
+  "glacier-express": {
     label: "Fitting the Route Into a Trip",
     paras: [
       `Eight hours of train is a spine, not an itinerary. The route is usually hung off a longer <a href="/destinations/europe/">Europe trip</a>, and the Alpine section pairs cleanly with northern Italy at either end of it.`,
       `For the guiding and access side of a deliberately slow route, see <a href="/experiences/culture-immersive-travel/">culture and history travel</a>.`,
     ],
   },
-  "heli-ski-field-report": {
+  "heli-skiing": {
     label: "Planning a Heli Week",
     paras: [
       `British Columbia is the reference standard for this, and the rest of the trip usually gets built out from <a href="/destinations/canadian-rockies/">the Canadian Rockies</a> — the drive-in and fly-in lodges run on completely different logistics and lead times.`,
@@ -88,14 +88,14 @@ const BLOCKS = {
       `<a href="/destinations/portugal/">Portugal</a> rewards the same approach at a smaller scale, and <a href="/experiences/culture-immersive-travel/">culture and history travel</a> covers the guide side of staying somewhere long enough to want one twice.`,
     ],
   },
-  "kentucky-derby-field-report": {
+  "kentucky-derby": {
     label: "Derby Access and the Rest of the Trip",
     paras: [
       `The tier question — which seats, which day, which paddock access — sits on the <a href="/experiences/sports-event-travel/">sports and event travel</a> page alongside the other events that run on the same access logic.`,
       `For what is worth building around Louisville once the race is run, see <a href="/destinations/north-america/">North America destinations</a>.`,
     ],
   },
-  "masters-field-report": {
+  "the-masters": {
     label: "Building the Week Around Augusta",
     paras: [
       `Badge access, practice-round tickets and the hospitality tiers all sit on the <a href="/experiences/sports-event-travel/">sports and event travel</a> page, which covers the other events that work the same way.`,
@@ -123,7 +123,7 @@ const BLOCKS = {
       `The <a href="/experiences/safari-wildlife-travel/">safari and wildlife travel</a> page is where those answers get turned into an actual camp list.`,
     ],
   },
-  "singita-grumeti-field-report": {
+  "singita-grumeti": {
     label: "Grumeti in a Wider Itinerary",
     paras: [
       `The Western Corridor is one chapter of a longer route. <a href="/destinations/kenya-tanzania/">Kenya and Tanzania safari planning</a> covers how the Serengeti sections connect across the July–October window.`,

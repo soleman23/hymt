@@ -50,8 +50,8 @@ answer engines quote — a dated number is quotable in a way an adjective is not
 | do travel advisors charge fees / how much does a travel advisor cost | Info | `/faq/` + new post |
 | Antarctica expedition cruise cost per day | Info | new post: `/travel-journal/antarctica-what-it-costs/` |
 | what's included in a luxury safari price and what isn't | Info | destination pages (Africa) + post |
-| Masters badge and hotel package cost | Comm | `/travel-journal/masters-field-report/` (expand) |
-| Kentucky Derby package cost by seating tier | Comm | `/travel-journal/kentucky-derby-field-report/` (expand) |
+| Masters badge and hotel package cost | Comm | `/travel-journal/the-masters/` (expand) |
+| Kentucky Derby package cost by seating tier | Comm | `/travel-journal/kentucky-derby/` (expand) |
 | cost of a multigenerational family trip for 8 | Info/Comm | `/experiences/multigenerational-travel/` |
 | gorilla trekking permit cost Rwanda vs Uganda | Info | `/destinations/rwanda/` |
 | French Polynesia overwater villa cost per night | Info | `/destinations/french-polynesia/` |
@@ -76,7 +76,7 @@ answers.
 | Mediterranean in October — worth it? | Info | `/travel-journal/mediterranean-october/` |
 | shoulder season luxury travel — what you actually give up | Info | `/travel-journal/the-case-for-shoulder-season/` |
 | African safari month-by-month calendar | Info | `/travel-journal/african-safari-calendar/` |
-| when to book Masters lodging | Logistics | `/travel-journal/masters-field-report/` |
+| when to book Masters lodging | Logistics | `/travel-journal/the-masters/` |
 | best time for the Maldives / when the monsoon shifts | Info | `/destinations/maldives/` |
 
 ### Cluster C — Logistics and access `P1`
@@ -87,8 +87,8 @@ than a forum thread.
 
 | Query | Intent | Target URL |
 |---|---|---|
-| how Masters badges actually work / can you buy them | Logistics | `/travel-journal/masters-field-report/` |
-| Kentucky Derby seating explained: infield vs Millionaire's Row | Logistics | `/travel-journal/kentucky-derby-field-report/` |
+| how Masters badges actually work / can you buy them | Logistics | `/travel-journal/the-masters/` |
+| Kentucky Derby seating explained: infield vs Millionaire's Row | Logistics | `/travel-journal/kentucky-derby/` |
 | how gorilla permits are allocated and when to book | Logistics | `/destinations/rwanda/` |
 | how many days do you need in the Galápagos | Logistics | `/destinations/galapagos/` |
 | what to pack for a safari (and the luggage weight limit) | Logistics | new post |
@@ -107,12 +107,12 @@ nobody can copy Mark's actual trips.
 |---|---|---|
 | what a private guided safari is actually like day to day | Experiential | new post |
 | how rough is the Drake Passage really | Experiential | `/destinations/antarctica/` |
-| what the Masters is actually like to attend | Experiential | `/travel-journal/masters-field-report/` |
+| what the Masters is actually like to attend | Experiential | `/travel-journal/the-masters/` |
 | what staying at [named camp/lodge] is really like | Experiential | field-report posts |
-| Glacier Express — worth the money? | Experiential | `/travel-journal/glacier-express-field-report/` |
-| heli-skiing for a first-timer | Experiential | `/travel-journal/heli-ski-field-report/` |
-| Amanjiwo — honest assessment | Experiential | `/travel-journal/amanjiwo-field-report/` |
-| Singita Grumeti — what you're paying for | Experiential | `/travel-journal/singita-grumeti-field-report/` |
+| Glacier Express — worth the money? | Experiential | `/travel-journal/glacier-express/` |
+| heli-skiing for a first-timer | Experiential | `/travel-journal/heli-skiing/` |
+| Amanjiwo — honest assessment | Experiential | `/travel-journal/amanjiwo/` |
+| Singita Grumeti — what you're paying for | Experiential | `/travel-journal/singita-grumeti/` |
 
 **Add 4–6 more field reports per year — but only from trips that happened.**
 The format is the most defensible content type on the site precisely because
