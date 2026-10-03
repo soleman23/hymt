@@ -78,6 +78,8 @@ const SOURCES = [
   ["ev", "e-73-gulet-turquoise-cove.jpg", "centre"],          // yacht-charters: gulet; cruises: a gulet of your own
   ["ev", "e-71-yas-marina-blue-hour.jpg", "centre"],         // sports-event-travel/formula-1: Abu Dhabi
   ["ev", "e-68-melbourne-court-dusk.jpg", "centre"],         // sports-event-travel/tennis: Australian Open (attention crop drops the skyline)
+  ["ev", "e-67-clay-court-paris.jpg", "left"],             // sports-event-travel/tennis: Roland-Garros (keeps the net and the Eiffel Tower)
+  ["ev", "e-70-parkland-circuit-straight.jpg", "centre"],   // sports-event-travel/formula-1: Monza
 ];
 
 const manifest = await readImageManifest(MANIFEST);
