@@ -259,6 +259,34 @@
 }
 .event-more:hover,.event-more:focus-visible { color:var(--gold-500) }
 
+/* Comparison tables on the experience detail pages (the Tennis routes).
+   The wrapper scrolls sideways so a six-column table never widens the page
+   at 375px; it is a focusable region so keyboard users can scroll it too. */
+.compare-table {
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border:1px solid var(--border-subtle);background:var(--bg-surface);
+}
+.compare-table:focus-visible { outline:2px solid var(--gold-500);outline-offset:2px }
+.compare-table table {
+  width:100%;min-width:720px;border-collapse:collapse;
+  font-family:var(--font-b);font-size:14px;line-height:1.55;color:var(--text-secondary);
+}
+.compare-table caption {
+  caption-side:bottom;text-align:left;padding:12px 16px;
+  font-size:12px;color:var(--text-muted);
+}
+.compare-table th,.compare-table td {
+  padding:14px 16px;border-top:1px solid var(--border-subtle);
+  text-align:left;vertical-align:top;
+}
+.compare-table thead th {
+  border-top:none;
+  font-family:var(--font-d);font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);
+}
+.compare-table tbody th { color:var(--text-primary);font-weight:600 }
+.compare-table a { color:var(--gold-500) }
+
 /* INCLUSIONS */
 .inclusions-section {
   padding:72px 52px;background:var(--bg-page);

@@ -2668,3 +2668,20 @@ export function featuredInLinks(html) {
   if (!m) return [];
   return [...m[1].matchAll(/<a\b[^>]*href="([^"]*)"/gi)].map((x) => decodeEntities(x[1]));
 }
+
+/**
+ * nested-crumb: an experience detail page nested under one of the 12
+ * (/experiences/<parent>/<slug>/) must show a four-crumb trail, Home ›
+ * Experiences › <Parent> › <Name>. ExperienceLayout only adds the parent crumb
+ * when the wrapper passes `parent`, and a wrapper that forgets it still
+ * builds: the page then claims to sit directly under /experiences/, and its
+ * BreadcrumbList, built from the same trail, says the same to search engines.
+ * Returns a defect string, or "" when the trail is right or the page is not a
+ * nested experience page.
+ */
+export function nestedCrumbDefect(url, crumbs) {
+  if (!/^\/experiences\/[a-z0-9-]+\/[a-z0-9-]+\/$/.test(url)) return "";
+  return crumbs.length === 4
+    ? ""
+    : `${url} is a nested experience page but its breadcrumb has ${crumbs.length} crumbs (${crumbs.join(" › ")}); pass parent={{ label, href }} to ExperienceLayout`;
+}

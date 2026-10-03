@@ -103,6 +103,7 @@ import {
   liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
   responsiveImageDefects,
   readTileCards, cardTargetDefects, cardFragmentHrefs, hasElementId, tileParityDefects, featuredInLinks,
+  nestedCrumbDefect,
 } from "./content-checks.mjs";
 import { applyTileLinks, alignmentDefects } from "./tile-links-apply.mjs";
 import { TILES, EXPERIENCES, featuredIn, featuredInHtml, pagePath } from "../src/data/tiles.mjs";
@@ -4567,6 +4568,20 @@ t("crawlers/verdict: ...and says the origin is degrading for everything",
   for (const target of new Set(Object.values(TILES).flat().filter((r) => r.kind === "exp-card").map((r) => pagePath(r.href)))) {
     t(`tiles.mjs: Featured-in for ${target} links only real experience pages`,
       featuredIn(target).every((s) => s in EXPERIENCES), true);
+  }
+
+  /* nested-crumb */
+  const four = ["Home", "Experiences", "Sports & Event Travel", "Tennis"];
+  t("nested-crumb: a nested page with its parent crumb passes", nestedCrumbDefect("/experiences/sports-event-travel/tennis/", four), "");
+  t("nested-crumb: a nested page missing its parent crumb fails", nestedCrumbDefect("/experiences/sports-event-travel/tennis/", ["Home", "Experiences", "Tennis"]) !== "", true);
+  t("nested-crumb: ...and the message names the fix", nestedCrumbDefect("/experiences/cruises/yacht-charters/", ["Home", "Experiences", "Yachts"]).includes("parent="), true);
+  t("nested-crumb: a top-level experience page is not its concern", nestedCrumbDefect("/experiences/cruises/", ["Home", "Experiences", "Cruises"]), "");
+  t("nested-crumb: a destination page is not its concern", nestedCrumbDefect("/destinations/italy/", ["Home", "Destinations", "Europe", "Italy"]), "");
+  for (const nested of ["sports-event-travel/tennis", "sports-event-travel/formula-1", "cruises/yacht-charters"]) {
+    const file = path.join(ROOT, "dist", "experiences", ...nested.split("/"), "index.html");
+    if (!existsSync(file)) continue;
+    t(`nested-crumb: real dist /experiences/${nested}/ has a four-crumb trail`,
+      nestedCrumbDefect(`/experiences/${nested}/`, crumbTrail(readFileSync(file, "utf8"))), "");
   }
 
   /* Against the built site: every experience page's cards match the map. */

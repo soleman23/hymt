@@ -143,6 +143,8 @@ const SOURCES = [
   { src: "e-09-jungle-yoga-pavilion.jpg" },                               // wellness-retreat-travel
   { src: "e-39-maldives-atoll-overhead.jpg" },                            // maldives (.dest-intro)
   { src: "e-25-pebble-beach-sunset.jpg" },                                // sports-event-travel
+  /* Draft detail pages (docs/drafts/new-pages/), generated 2026-10-03. */
+  { src: "e-66-grass-court-baseline.jpg" },                                // sports-event-travel/tennis
 ];
 
 const cropName = (src) => "np-" + src.replace(/\.(jpe?g|png|webp)$/i, "") + ".jpg";

@@ -30,6 +30,7 @@ import {
   sitemapLineDefects, imageManifestDefects,
   responsiveImageDefects,
   cardTargetDefects, cardFragmentHrefs, hasElementId, tileParityDefects, featuredInLinks,
+  nestedCrumbDefect,
 } from "./content-checks.mjs";
 /* Where every experience-page tile leads; also what DestinationLayout derives
    its "Featured in" strip from, so these checks and the page read one record. */
@@ -1015,6 +1016,13 @@ for (const file of htmlFiles) {
         fail("card-fragment-resolves", `${url}: the "${name}" tile links ${target}#${id}, and ${target} has no element with id="${id}"`);
       }
     }
+  }
+
+  /* nested-crumb: a detail page nested under an experience page must show
+     its parent in the breadcrumb (and so in BreadcrumbList). */
+  {
+    const d = nestedCrumbDefect(url, crumbTrail(html));
+    if (d) fail("nested-crumb", d);
   }
 
   /* featured-in-parity: every destination page a live tile lands on renders a
