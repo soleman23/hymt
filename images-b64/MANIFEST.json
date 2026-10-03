@@ -4080,6 +4080,21 @@
   "bytes": 102656
  },
  {
+  "b64": "images-b64/assets__img__ni-st-lucia-gros-piton-trail.jpg.b64",
+  "target": "public/assets/img/ni-st-lucia-gros-piton-trail.jpg",
+  "bytes": 167066
+ },
+ {
+  "b64": "images-b64/assets__img__ni-st-lucia-north-beach-morning.jpg.b64",
+  "target": "public/assets/img/ni-st-lucia-north-beach-morning.jpg",
+  "bytes": 125544
+ },
+ {
+  "b64": "images-b64/assets__img__ni-st-lucia-piton-terrace-dusk.jpg.b64",
+  "target": "public/assets/img/ni-st-lucia-piton-terrace-dusk.jpg",
+  "bytes": 92122
+ },
+ {
   "b64": "images-b64/assets__img__ni-svalbard-alkefjellet-bird-cliff.jpg.b64",
   "target": "public/assets/img/ni-svalbard-alkefjellet-bird-cliff.jpg",
   "bytes": 114933
@@ -4655,6 +4670,11 @@
   "bytes": 156302
  },
  {
+  "b64": "images-b64/assets__img__np-st-lucia-soufriere-pitons.jpg.b64",
+  "target": "public/assets/img/np-st-lucia-soufriere-pitons.jpg",
+  "bytes": 279451
+ },
+ {
   "b64": "images-b64/assets__img__np-svalbard-alkefjellet-and-hinlopen.jpg.b64",
   "target": "public/assets/img/np-svalbard-alkefjellet-and-hinlopen.jpg",
   "bytes": 210649
@@ -4983,6 +5003,11 @@
   "b64": "images-b64/assets__img__og-e-55-alta-via-limestone.jpg.b64",
   "target": "public/assets/img/og-e-55-alta-via-limestone.jpg",
   "bytes": 85172
+ },
+ {
+  "b64": "images-b64/assets__img__og-e-60-st-lucia-terrace-piton.jpg.b64",
+  "target": "public/assets/img/og-e-60-st-lucia-terrace-piton.jpg",
+  "bytes": 79557
  },
  {
   "b64": "images-b64/assets__img__og-e-76-yacht-bay-golden-hour.jpg.b64",
@@ -5973,6 +5998,31 @@
   "b64": "images-b64/assets__img__st-barths-lurin-gouverneur-and-saline.jpg.b64",
   "target": "public/assets/img/st-barths-lurin-gouverneur-and-saline.jpg",
   "bytes": 356376
+ },
+ {
+  "b64": "images-b64/assets__img__st-lucia-anse-chastanet-reef.jpg.b64",
+  "target": "public/assets/img/st-lucia-anse-chastanet-reef.jpg",
+  "bytes": 356589
+ },
+ {
+  "b64": "images-b64/assets__img__st-lucia-cap-estate-north-coast.jpg.b64",
+  "target": "public/assets/img/st-lucia-cap-estate-north-coast.jpg",
+  "bytes": 308264
+ },
+ {
+  "b64": "images-b64/assets__img__st-lucia-marigot-bay.jpg.b64",
+  "target": "public/assets/img/st-lucia-marigot-bay.jpg",
+  "bytes": 342750
+ },
+ {
+  "b64": "images-b64/assets__img__st-lucia-pigeon-island-rodney-bay.jpg.b64",
+  "target": "public/assets/img/st-lucia-pigeon-island-rodney-bay.jpg",
+  "bytes": 274917
+ },
+ {
+  "b64": "images-b64/assets__img__st-lucia-sulphur-springs-rainforest.jpg.b64",
+  "target": "public/assets/img/st-lucia-sulphur-springs-rainforest.jpg",
+  "bytes": 384414
  },
  {
   "b64": "images-b64/assets__img__svalbard-alkefjellet-and-hinlopen.jpg.b64",
