@@ -1,0 +1,484 @@
+<title>HYMT Tile Destination Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a planning document. Sticky contents rail on wide screens, one reading column, the matrix breaks out to full width. */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#1b2422; --ink-2:#4a5653; --line:#dfe3e0; --tint:#eef3f1;
+  --accent:#0f5c57; --accent-2:#c4602a;
+  --ok:#2f7a45; --warn:#a86a00; --bad:#b23b3b; --info:#3a5ba0; --violet:#6a4c9c;
+  --display:"Newsreader",Georgia,"Times New Roman",serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --surface:#19211f; --ink:#e3e9e6; --ink-2:#a3b0ac; --line:#2c3633; --tint:#1e2a27;
+  --accent:#5fc0b5; --accent-2:#e89462; --ok:#6fc488; --warn:#e0b04a; --bad:#ec7f7f; --info:#8eaaf0; --violet:#b89ce6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --surface:#19211f; --ink:#e3e9e6; --ink-2:#a3b0ac; --line:#2c3633; --tint:#1e2a27;
+  --accent:#5fc0b5; --accent-2:#e89462; --ok:#6fc488; --warn:#e0b04a; --bad:#ec7f7f; --info:#8eaaf0; --violet:#b89ce6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:28px 80px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px}
+@media (max-width:960px){.wrap{grid-template-columns:minmax(0,1fr)} nav.toc{display:none}}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;max-height:calc(100vh - 32px);overflow:auto;font-size:13px}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:2px}
+nav.toc li{counter-increment:s}
+nav.toc a{display:grid;grid-template-columns:22px 1fr;color:var(--ink-2);text-decoration:none;padding:3px 6px;border-radius:4px}
+nav.toc a::before{content:counter(s);font:500 11px/1.9 var(--mono);color:var(--accent)}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--tint);color:var(--ink)}
+main{min-width:0}
+header.doc{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:8px}
+.eyebrow{font:600 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font:600 clamp(30px,4.4vw,44px)/1.1 var(--display);margin:10px 0 12px;text-wrap:balance}
+.lede{font-size:17px;color:var(--ink-2);max-width:68ch;margin:0}
+.stamp{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:16px;font:13px var(--mono);color:var(--ink-2)}
+section.s{padding-top:36px;scroll-margin-top:12px}
+section.s>h2{font:600 26px/1.2 var(--display);margin:0 0 4px;display:flex;gap:12px;align-items:baseline;text-wrap:balance}
+section.s>h2 .n{font:500 13px var(--mono);color:var(--accent);min-width:24px}
+h3{font:600 19px/1.3 var(--display);margin:26px 0 8px}
+h4{font:600 14px/1.4 var(--body);margin:18px 0 6px}
+h5{font:600 11px/1.4 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:16px 0 4px}
+p,li{max-width:76ch}
+p{margin:8px 0}
+ul,ol{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+code{font:12.5px var(--mono);background:var(--tint);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+a{color:var(--accent)}
+.muted{color:var(--ink-2)}
+.callout{border:1px solid var(--line);background:var(--surface);padding:14px 18px;border-radius:6px;margin:14px 0}
+.callout.rec{border-color:var(--accent);border-left-width:4px}
+.tag{font:600 10.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;padding:3px 6px;border-radius:3px;vertical-align:2px}
+.t-verified{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.t-rec{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.t-unc{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.stat b{display:block;font:600 28px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--ink-2)}
+table.plain{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}
+table.plain th,table.plain td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+table.plain th{font-weight:600;font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+.tw{overflow-x:auto;max-width:100%}
+.pill{display:inline-block;font:600 10.5px/1 var(--body);padding:3px 6px;border-radius:10px;border:1px solid currentColor;white-space:nowrap}
+.p-P1{color:var(--bad)} .p-P2{color:var(--warn)} .p-P3{color:var(--ink-2)} .p-owner{color:var(--violet)}
+details.subj,details.brief{border:1px solid var(--line);background:var(--surface);border-radius:6px;margin:8px 0}
+details>summary{cursor:pointer;padding:10px 14px;list-style-position:outside;display:block}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"▸";color:var(--accent);margin-right:8px;display:inline-block;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.sid{font:500 12px var(--mono);color:var(--accent)}
+.tiles{font:12px var(--mono);color:var(--ink-2)}
+.subj-body{padding:0 16px 14px 34px;font-size:14px}
+.meta{font-size:13.5px;color:var(--ink-2)}
+ul.review{list-style:none;padding:0}
+ul.review li{border-left:3px solid var(--line);padding-left:10px;margin:8px 0;font-size:13.5px}
+.lens{font-weight:600}
+.verdict{font:600 10.5px var(--body);text-transform:uppercase;letter-spacing:.06em;padding:2px 5px;border-radius:3px}
+.v-upheld{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.v-upheld-with-changes{color:var(--warn);background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.v-refuted{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+dl.kv{display:grid;grid-template-columns:170px minmax(0,1fr);gap:6px 14px;font-size:13.5px;margin:6px 0}
+dl.kv dt{font-weight:600;color:var(--ink-2)}
+dl.kv dd{margin:0}
+@media (max-width:640px){dl.kv{grid-template-columns:minmax(0,1fr)} dl.kv dd{margin-bottom:6px}}
+ol.secs li{font-size:13.5px}
+/* matrix */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:14px 0 10px;background:var(--surface);border:1px solid var(--line);padding:10px;border-radius:6px}
+.filters label{display:grid;gap:3px;font:600 11px var(--body);color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+.filters select,.filters input{font:13.5px var(--body);padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);min-width:0}
+.filters input{width:200px;max-width:100%}
+.count{margin-left:auto;font:13px var(--mono);color:var(--ink-2)}
+.mx{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table.matrix{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+table.matrix th{position:sticky;top:0;background:var(--tint);text-align:left;font:600 11px var(--body);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);padding:8px;border-bottom:1px solid var(--line)}
+table.matrix td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.matrix tr.row{cursor:pointer}
+table.matrix tr.row:hover td{background:var(--tint)}
+table.matrix tr.row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+table.matrix td.id{font:500 12px var(--mono);white-space:nowrap}
+table.matrix td.tgt{font:12px var(--mono);overflow-wrap:anywhere;max-width:340px}
+tr.detail td{background:var(--bg);padding:12px 16px}
+.act{display:inline-block;font:600 10.5px/1.3 var(--body);padding:3px 6px;border-radius:3px;white-space:nowrap}
+.a-REUSE{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.a-ENH{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
+.a-CDEST,.a-CEXP{background:color-mix(in srgb,var(--accent-2) 16%,transparent);color:var(--accent-2)}
+.a-REN{background:color-mix(in srgb,var(--info) 15%,transparent);color:var(--info)}
+.a-OWN{background:color-mix(in srgb,var(--violet) 16%,transparent);color:var(--violet)}
+.a-FORM{background:color-mix(in srgb,var(--ink-2) 14%,transparent);color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><ol>
+<li><a href="#s1">Executive recommendation</a></li>
+<li><a href="#s2">Current-state architecture</a></li>
+<li><a href="#s3">Key findings and risks</a></li>
+<li><a href="#s4">Tile-to-page matrix</a></li>
+<li><a href="#s5">Routing rules</a></li>
+<li><a href="#s6">Pages to reuse unchanged</a></li>
+<li><a href="#s7">Pages to enhance</a></li>
+<li><a href="#s8">New destination pages</a></li>
+<li><a href="#s9">New experience-detail pages</a></li>
+<li><a href="#s10">Combination, ambiguous, rename</a></li>
+<li><a href="#s11">Template and data architecture</a></li>
+<li><a href="#s12">SEO/AIO and duplication</a></li>
+<li><a href="#s13">Linking and breadcrumbs</a></li>
+<li><a href="#s14">Content and images</a></li>
+<li><a href="#s15">File-level plan</a></li>
+<li><a href="#s16">Phased roadmap A–F</a></li>
+<li><a href="#s17">QA and acceptance</a></li>
+<li><a href="#s18">Open owner decisions</a></li>
+</ol></nav>
+
+<main>
+<header class="doc">
+<div class="eyebrow">Hit Your Mark Travel · Implementation plan for review</div>
+<h1>A real destination for every experience tile</h1>
+<p class="lede">Where each of the 126 tiles on the 12 experience pages should link, which existing pages carry that weight, the few new pages worth building, and the order to ship it in. Planning only: nothing on the site has changed.</p>
+<div class="stamp"><span>Prepared 3 Oct 2026</span><span>Source: main @ 5f547a7</span><span>Production compared 2 Oct 2026</span><span>Branch: plan/tile-detail-pages</span></div>
+</header>
+
+<p class="muted" style="font-size:13px">Labels used throughout: <span class="tag t-verified">Verified</span> read from source, dist or production · <span class="tag t-rec">Recommendation</span> a decision this plan proposes · <span class="tag t-unc">Uncertain</span> needs a fact or a call before it can be acted on.</p>
+
+<section class="s" id="s1"><h2><span class="n">01</span>Executive recommendation</h2>
+<div class="stats">
+<div class="stat"><b>126</b><span>tiles audited: 78 sub-experience cards, 48 "Trips We Plan Often" cards</span></div>
+<div class="stat"><b>126</b><span>link to <code>/plan-your-trip/</code> today, in source, dist and production</span></div>
+<div class="stat"><b>62</b><span>of 78 cards resolve to a page that already exists</span></div>
+<div class="stat"><b>9</b><span>new pages recommended, plus 5 that depend on owner decisions</span></div>
+</div>
+<div class="callout rec"><p><span class="tag t-rec">Recommendation</span> <b>Link the 78 sub-experience cards to existing pages first, and build new pages only where nothing on the site answers the click.</b> 62 of the 78 resolve to an existing destination page, hub or journal post, with no new page needed. 25 of those cards need a targeted enhancement (one FAQ, one itinerary card, a corrected season), not a new section. Keep the 48 itinerary cards' "Plan This Trip" buttons on the form, add a <code>?type=</code> pre-fill where the form supports one, and add at most one "in detail →" text link per card.</p>
+<p>Build 9 new pages: <b>Orlando</b> (Disney World and Universal), <b>St. Lucia</b> and <b>the Dolomites</b> as destination pages, and six nested experience-detail pages: <b>Tennis</b>, <b>Formula 1</b> and <b>Golf</b> under Sports &amp; Event Travel, and <b>Private Yacht Charters</b>, <b>European River Cruises</b> and <b>Mediterranean Small-Ship Cruises</b> under Cruises. Five more tiles (Namibia, Disneyland, interior Mexico, the American Southwest, Football &amp; Rugby) wait on whether HYMT actually sells those trips.</p>
+<p>Ship it through one tile map (<code>src/data/tiles.mjs</code>) that both the build and the destination pages read. The map rewrites the card links and generates a "Featured in" strip back to each experience page. Four new verifier checks keep a card from ever pointing back at the form by accident.</p></div>
+<h3>Why this shape</h3>
+<ul>
+<li>Every tile gets a real page, but no new URL competes with an existing one. The page audits proposed 12 new URLs and floated more (Croatia, Turkey, a horse-racing page, per-event pages, an Alps ski page). Consolidation kept 9, gated 4 on owner decisions and rejected the rest; §10 lists each with its reason.</li>
+<li>The reuse work is small and safe. It changes hrefs and adds short modules on pages that already rank for the subject, with word budgets checked against the 3,500-word ceiling.</li>
+<li>New pages go only where a visitor's question has no answer on the site today: which Orlando park, a St. Lucia-only week, a Dolomites hut trek, how a Wimbledon debenture works, what a crewed charter costs.</li>
+</ul>
+<h3>How this plan was built</h3>
+<p>12 parallel page audits (one per experience page, each reading the page source and every candidate target's source), one independent architecture read of the layouts, schema and verifier, and one site-wide consolidation pass that collapsed the 126 tile rows into 56 subjects with one canonical URL each. Every decision except the 22 high-confidence unchanged reuses then went through two adversarial reviewers, one on duplication and SEO and one on whether the click delivers what the tile promises. <b>0 of 34 decisions were refuted; 28 were upheld with changes</b>, and those changes are applied throughout this plan. Each of the 13 new or conditional pages then got a full content brief.</p>
+</section>
+
+<section class="s" id="s2"><h2><span class="n">02</span>Current-state architecture</h2>
+<p><span class="tag t-verified">Verified</span> against HEAD 5f547a7 and production on 2 Oct 2026.</p>
+<h3>How the pages are assembled</h3>
+<ul>
+<li>Every <code>/experiences/&lt;slug>/</code> page is two files: <code>src/pages/experiences/&lt;slug>/index.astro</code> (title, description, name, hero props) wrapping <code>src/content-pages/experiences__&lt;slug>.html</code>, imported <code>?raw</code>. <code>ExperienceLayout.astro</code> owns a hardcoded three-crumb trail (Home › Experiences › Name), the hero, and the JSON-LD: BreadcrumbList, WebPage, Service, and FAQPage parsed from the body.</li>
+<li>Every <code>/destinations/&lt;slug>/</code> page has the same shape on <code>DestinationLayout.astro</code>, plus a <code>region</code> prop that adds the fourth crumb on the 59 country pages; the 9 regional hubs omit it. Schema is BreadcrumbList, WebPage, TouristDestination and FAQPage. The hero stat rail must carry "Best Season" and "Best For".</li>
+<li>The <code>/experiences/</code> and <code>/destinations/</code> hubs are hand-written card HTML on <code>Base.astro</code>, with a CollectionPage ItemList built from a depth-1 glob. A nested route such as <code>/experiences/cruises/yacht-charters/</code> joins neither ItemList and does not change the "12 trip types" count that <code>public/llms.txt</code> states and the verifier enforces.</li>
+<li>Canonical, og:url and every JSON-LD URL derive from <code>astro.config.mjs → site</code>, and canonicals drop the query string, so <code>/plan-your-trip/?type=safari</code> is invisible to search.</li>
+</ul>
+<h3>The tiles today</h3>
+<ul>
+<li>78 <code>.exp-card</code> anchors in an <code>.exp-cards--photo</code> grid under <code>section#destinations</code>: 6 per page, 9 on Family and Food &amp; Wine. The card <em>is</em> the link, so nothing inside it may be a link (verifier <code>nested-card-anchor</code>).</li>
+<li>48 <code>.event-card</code> "Trips We Plan Often" cards (4 per page), each with an <code>a.event-cta</code> "Plan This Trip" button. The card itself is a <code>div</code>.</li>
+<li>All 126 point at <code>/plan-your-trip/</code>. There is no tile map; targets are 126 literal <code>href</code>s. The "Explore →" arrow on every card promises a page it does not deliver.</li>
+<li>Same pattern elsewhere, out of scope here: 330 of 386 <code>.place-card</code>s on destination pages and 248 <code>.itin-cta</code> buttons also point at the form. The data model below is sized so the same mechanism can serve them later.</li>
+</ul>
+<h3>Reverse links</h3>
+<p>Only 3 of 68 destination pages link to any experience page (Costa Rica, Dominican Republic, Zambia &amp; Victoria Falls). Each destination page has one stable anchor, <code>id="places"</code>. Maldives has <code>id="experiences"</code> instead and a different section set. Neither <code>id="itineraries"</code> nor any per-section id exists yet.</p>
+<h3>Existing data patterns to copy</h3>
+<p><code>tools/cost-ranges-data.mjs</code> plus <code>tools/p3-8-cost-insert.mjs</code> (a keyed data file and an idempotent script that rewrites a marked section) is the established pattern for data-driven content without a component refactor. <code>tools/p3-6-related-destinations.mjs</code> is a second example.</p>
+<h3>Build gates that constrain this work</h3>
+<p><code>npm run build</code> runs 63 named verifier checks. The ones this project touches: <code>internal-links</code> (every same-site href must resolve, though it strips fragments), <code>nested-card-anchor</code>, <code>photo-grid</code>, <code>internal-link-floor</code> (≥2 journal links per destination or experience page), <code>page-length</code> (3,500 body words on 4-crumb destination pages), <code>head-baseline</code>, <code>schema-required</code>, <code>sitemap-parity</code>, <code>llms-txt</code> counts, and the image attribute and ratio checks. Rebuilding an unchanged tree leaves <code>dist/</code> byte-identical, so the regression test for any layout change is an empty <code>git diff --stat dist/</code>.</p>
+<h3>Production vs source</h3>
+<p>Production matches source for everything this plan touches (the sitemap's 122 URLs are identical). The only drift is documentary: <code>README.md</code> still says "43 destination pages" and that production is not on this host. That is a docs chore outside this project.</p>
+</section>
+
+<section class="s" id="s3"><h2><span class="n">03</span>Key findings and risks</h2>
+<h3><span class="tag t-verified">Verified</span> Findings</h3>
+<ol>
+<li><b>Every tile on every experience page dead-ends at the form.</b> All 126, confirmed in source, dist and production. The "Explore →" arrow is a broken promise on 78 cards.</li>
+<li><b>Most tiles already have a strong page.</b> 41 subjects (62 of the 78 cards) map to an existing page with fit 2–3 out of 3: the page is about the subject, or a full section covers it.</li>
+<li><b>Fragment links are not checked today.</b> The dead-link check strips <code>#fragment</code>, so <code>/destinations/maldives/#places</code> would ship green although Maldives has no such id. The plan adds a fragment check before any deep link ships.</li>
+<li><b>Word ceilings are tight.</b> 27 country pages have under 200 words of headroom. The five tightest have 62–68: Arctic Norway, Israel, Colombia, Dominican Republic and UAE &amp; Gulf. Any reverse link on a tight page is wrapped on existing words, and any layout-rendered module must be excluded from <code>bodyWords</code>.</li>
+<li><b>Tile copy contradicts its target page in several places.</b> Family Safari calls Sabi Sand "malaria-free", against the CDC-cited South Africa page. Other examples: the Seychelles, St. Barth's, Sri Lanka and Bali seasons; the Peru acclimatization order; the Sunrise Seto train (it terminates at Takamatsu, not Matsuyama). Linking a tile one click from its contradiction makes this worse, so these copy fixes ship before the links.</li>
+<li><b>Hub card tags disagree with the tiles</b> on 10 of 12 experience hub cards. Examples: the Wellness card names Switzerland and Thailand, which have no tile; the Adventure card names Verbier and the Coral Triangle, which no page covers.</li>
+<li><b>Thin reverse linking.</b> 3 of 68 destination pages link to any experience page, and Family and Multigenerational sell the same Italy and Hawaii trips with no link between them.</li>
+<li><b>The form's <code>?type=</code> pre-fill works</b> for exactly six values: beach, cruise, family, group, honeymoon, safari (<code>plan-your-trip.html</code> line 358, kebab-case validated).</li>
+</ol>
+<h3>Risks</h3>
+<table class="plain"><thead><tr><th>Risk</th><th>Level</th><th>Mitigation</th></tr></thead><tbody>
+<tr><td><code>DestinationLayout.astro</code> re-renders all 68 pages, and 3 verifier predicates plus 4 real-dist fixtures read its markup.</td><td><span class="pill p-P1">High</span></td><td>"Featured in" renders nothing when a page has no tile records, so dist stays byte-identical until a record names a page. <code>bodyWords</code> strips <code>.featured-in</code>, keeping the italy=3235 fixture. Run GitNexus <code>impact()</code> first.</td></tr>
+<tr><td><code>ExperienceLayout.astro</code> re-renders 12 pages; breadcrumb and BreadcrumbList share one trail array.</td><td><span class="pill p-P2">Medium</span></td><td>Optional <code>parent</code> prop defaulting to today's trail; prove with an empty dist diff.</td></tr>
+<tr><td>Deep links to ids that do not exist pass the build.</td><td><span class="pill p-P1">High</span></td><td><code>card-fragment-resolves</code> check, with red fixtures, in the same PR as the first fragment href.</td></tr>
+<tr><td>Enhancements push a country page over 3,500 words.</td><td><span class="pill p-P2">Medium</span></td><td>Per-page word budget in §7; re-measure with the verifier's <code>bodyWords()</code> after every edit; stop at ~3,400.</td></tr>
+<tr><td>New pages ship with invented first-hand claims.</td><td><span class="pill p-P2">Medium</span></td><td>Every brief lists its NEEDS MARK items, and no page ships with one unresolved.</td></tr>
+<tr><td>Concurrent PRs conflict on <code>MANIFEST.json</code>, <code>head-baseline.json</code>, the sitemap and <code>llms.txt</code> counts.</td><td><span class="pill p-P3">Low</span></td><td>One new page per PR; merge <code>origin/main</code> first; bump the destination count relative to main at merge time.</td></tr>
+<tr><td>A merge to <code>main</code> deploys production.</td><td><span class="pill p-P2">Medium</span></td><td>Treat each phase PR as a release; run <code>npm run verify:prod</code> about 10 minutes after merge.</td></tr>
+</tbody></table>
+</section>
+
+<section class="s" id="s4"><h2><span class="n">04</span>Tile-to-page matrix</h2>
+<p>One row per tile, all 126. Click a row for the full record: visitor and search intent, existing match and fit, reason, content gaps, link changes, breadcrumb, schema, cannibalization risk, images, dependencies and the subject it belongs to. Changes from the adversarial review are already applied, and each row's reason starts with them.</p>
+<div class="legend" id="legend"></div>
+<div class="filters">
+<label for="f-exp">Experience<select id="f-exp"><option value="">All 12</option></select></label>
+<label for="f-act">Action<select id="f-act"><option value="">All actions</option></select></label>
+<label for="f-kind">Tile type<select id="f-kind"><option value="">Both</option><option value="exp-card">Sub-experience card</option><option value="event-card">Trips We Plan Often</option></select></label>
+<label for="f-pri">Priority<select id="f-pri"><option value="">Any</option><option>P1</option><option>P2</option><option>P3</option></select></label>
+<label for="f-q">Search<input id="f-q" type="search" placeholder="Tile, URL, place…"></label>
+<span class="count" id="f-count"></span>
+</div>
+<div class="mx"><table class="matrix"><thead><tr><th>ID</th><th>Experience</th><th>Tile</th><th>Action</th><th>Recommended target</th><th>Pri</th><th>Effort</th><th>Conf.</th></tr></thead><tbody id="mx-body"></tbody></table></div>
+<p class="muted" style="font-size:13px">IDs: experience code + T (sub-experience card) or E (Trips We Plan Often card) + position on the page. For an E row, "Form CTA" means the button stays on <code>/plan-your-trip/</code> with the pre-fill from §10, and the URL after it is the one optional secondary text link.</p>
+</section>
+
+<section class="s" id="s5"><h2><span class="n">05</span>Routing rules</h2>
+<p><span class="tag t-rec">Recommendation</span> Apply these in order; the first rule that fits decides. Every rule names one canonical URL. No sub-experience card links to <code>/plan-your-trip/</code> once its target exists, nor to a query-string variant, nor to a page that exists only to receive the tile.</p>
+<ol>
+<li><b>R1 · Exact destination match.</b> The tile names a place with its own page, and that page's intro, places grid, itineraries or FAQ serves the tile at fit ≥2 → REUSE. <em>Maldives → /destinations/maldives/.</em></li>
+<li><b>R2 · One destination under several experiences.</b> One canonical URL regardless of how many experience pages feature it. The tile copy carries the intent; the destination carries one "Featured in" strip and, where the audit found a real gap, one targeted FAQ or card, never a section per experience. <em>Japan serves 5 tiles on 5 pages.</em></li>
+<li><b>R3 · Combined tiles ("A &amp; B").</b> (a) One established product covered by one page → reuse and keep the label: Bora Bora &amp; French Polynesia. (b) One half is a modifier → reuse the subject's page and rename the tile if the modifier over-promises: "Jordan &amp; the Levant" → Jordan. (c) Two separately booked places with coverage for only one → link the stronger half and drop or add the other: "St. Lucia &amp; Anguilla" → St. Lucia. A combination page only when the pairing is sold as one trip and nothing covers either half. None qualified.</li>
+<li><b>R4 · Regional tile with a hub.</b> If the intent is "pick somewhere in this region", link the hub: Caribbean → <code>/destinations/caribbean-mexico/#places</code>; Antarctica &amp; the Arctic → <code>/destinations/polar-regions/</code>. If the tile is a format (river cruising), the hub is the wrong answer; see R5.</li>
+<li><b>R5 · Thematic tile (sport, cruise format, charter).</b> Prefer an existing commercial page where the theme is the place's core (Galápagos and Alaska for cruises). A journal post is the canonical target only when it is the site's most complete answer and nothing commercial is warranted (Willamette, Horse Racing, Heli-Skiing). Otherwise, with distinct search demand, create an experience-detail page nested under the parent, one page per sport or format, never one per event.</li>
+<li><b>R6 · Destination + travel style</b> ("Family Safari", "A Safari Honeymoon", "Kyoto in Season"). The destination page or region hub is canonical; the style lives in tile copy plus one targeted FAQ. Never create a <code>/destinations/&lt;place>-&lt;style>/</code> page.</li>
+<li><b>R7 · Major attractions</b> (Walt Disney World, Universal, Disneyland). One destination page per resort area, with stable section ids for each resort, beats a page per park: Disney World and Universal share <code>/destinations/orlando/</code>.</li>
+<li><b>R8 · Tile broader or narrower than the page.</b> Link the page whose subject matches the tile's main noun; rename the tile if its label over-promises ("Italy &amp; Europe" → Italy). A narrower tile (Santorini, Amalfi) links the country page without a fragment unless a stable section answers it on its own.</li>
+<li><b>R9 · Deep links.</b> Only to a stable section that answers the tile by itself: <code>#places</code>, the new sitewide <code>#itineraries</code>, or a named section on an approved new page. An id is never invented for one tile alone, and every fragment is checked at build time.</li>
+<li><b>R10 · Competing pages.</b> Before any CREATE, grep <code>src/content-pages/</code> for the subject; if an existing page scores fit ≥2, enhance it instead. Two pages may not share a primary subject. A nested detail page goes one level more specific than its parent (venues, formats, calendars, costs) and never restates the parent's intro.</li>
+</ol>
+</section>
+
+<section class="s" id="s6"><h2><span class="n">06</span>Pages to reuse unchanged</h2>
+<p><span class="tag t-rec">Recommendation</span> {{N_UNCHANGED}} subjects link to an existing page with no content change beyond the sitewide <code>#itineraries</code> id and the generated "Featured in" strip. Tile-side copy fixes, such as a season or a superlative, are listed in each subject and in the matrix. Pages marked "Skipped review" were high-confidence reuse with the target untouched.</p>
+{{UNCHANGED}}
+</section>
+
+<section class="s" id="s7"><h2><span class="n">07</span>Pages to enhance</h2>
+<p><span class="tag t-rec">Recommendation</span> {{N_ENHANCE}} existing pages get one consolidated enhancement each. Greece, Italy and Japan each collected several audit specs, now merged into one. Word budgets are against the 3,500 ceiling; hubs and journal posts have none. Where the two reviewers required changes, those changes override the spec above them.</p>
+{{ENHANCE}}
+</section>
+
+<section class="s" id="s8"><h2><span class="n">08</span>New destination pages</h2>
+<p><span class="tag t-rec">Recommendation</span> <b>Build 3:</b> Orlando (P1), St. Lucia (P1), the Dolomites (P2). <b>Briefed but owner-gated:</b> Oaxaca &amp; Mexico City, Namibia, Disneyland, American Southwest. All use DestinationLayout with a region prop, Best Season and Best For hero stats, and the 3,500-word ceiling. Each one raises the "68 destination guides" count in <code>public/llms.txt</code> by one, relative to main at merge time.</p>
+<p><span class="tag t-unc">Uncertain</span> The Dolomites page should not be written until Mark confirms HYMT sells hut-to-hut Dolomites trips and the five-or-so place photographs exist. Orlando and St. Lucia also have photo gaps (7 and 8 respectively); a <code>--photo</code> grid cannot ship with a missing photo.</p>
+{{NEWDEST}}
+</section>
+
+<section class="s" id="s9"><h2><span class="n">09</span>New experience-detail pages</h2>
+<p><span class="tag t-rec">Recommendation</span> Six nested pages, each one level more specific than its parent:</p>
+<table class="plain"><thead><tr><th>URL</th><th>Parent</th><th>Distinct job</th><th>Pri</th></tr></thead><tbody>
+<tr><td><code>/experiences/sports-event-travel/tennis/</code></td><td>Sports &amp; Event</td><td>Wimbledon debenture vs official hospitality vs ballot; Roland Garros and Australian Open equivalents</td><td><span class="pill p-P1">P1</span></td></tr>
+<tr><td><code>/experiences/sports-event-travel/formula-1/</code></td><td>Sports &amp; Event</td><td>Hospitality tiers (Paddock Club, grandstand, yacht, balcony) for Monaco, Monza and Singapore</td><td><span class="pill p-P1">P1</span></td></tr>
+<tr><td><code>/experiences/cruises/yacht-charters/</code></td><td>Cruises</td><td>How a crewed charter works: gulet, catamaran, motor yacht; crew, APA, contract, cost</td><td><span class="pill p-P1">P1</span></td></tr>
+<tr><td><code>/experiences/sports-event-travel/golf/</code></td><td>Sports &amp; Event</td><td>Playing St Andrews, Pebble Beach and Royal Melbourne; The Open. Augusta capped at ~120 words, linking the Masters report.</td><td><span class="pill p-P2">P2</span></td></tr>
+<tr><td><code>/experiences/cruises/european-river-cruises/</code></td><td>Cruises</td><td>Which river and ship: Rhine, Danube, Rhône, Douro</td><td><span class="pill p-P2">P2</span></td></tr>
+<tr><td><code>/experiences/cruises/mediterranean-small-ship/</code></td><td>Cruises</td><td>Shared small-ship Med: the Dalmatian Coast, the Greek islands beyond the big-ship ports. Private charters go to yacht-charters.</td><td><span class="pill p-P2">P2</span></td></tr>
+</tbody></table>
+<p>All six depend on one template change, the optional ExperienceLayout <code>parent</code> prop (§11). That change ships first, in its own PR. Golf and Horse Racing are treated differently on purpose: horse racing has no page because the Kentucky Derby report, extended with an "Other meetings" section on Royal Ascot and the Dubai World Cup, already answers it; golf has distinct playing-trip demand that the Masters report does not serve.</p>
+{{NEWEXP}}
+</section>
+
+<section class="s" id="s10"><h2><span class="n">10</span>Combination, ambiguous and rename decisions</h2>
+<h3>How the known disagreements were settled</h3>
+<table class="plain"><thead><tr><th>Disagreement</th><th>Decision</th></tr></thead><tbody>
+<tr><td>St. Lucia: new page vs the Eastern Caribbean page's <code>#places</code></td><td>New <code>/destinations/st-lucia/</code>. Until it ships, the All-Inclusive tile links the Barbados &amp; Eastern Caribbean page's Soufrière &amp; the Pitons card. The Beach tile is renamed "St. Lucia" (Anguilla has no page and no image). At launch, that Barbados card's href also moves to the new page, which is the strongest consolidation signal.</td></tr>
+<tr><td>Disney/Universal: <code>/destinations/orlando/</code> vs <code>/destinations/disneyland/</code></td><td>Both are real, different places. Orlando serves the Disney World and Universal tiles (Universal deep-links a dated "Disney or Universal?" section). Disneyland is owner-gated, and the default is to drop the tile unless six honest photographed cards can be produced.</td></tr>
+<tr><td>Golf and Horse Racing to journal posts; Tennis and F1 to new pages</td><td>Tennis, F1 and Golf get detail pages, each a distinct trip type with commercial demand and nothing on the site answering it. Horse Racing stays on the Derby report with a new <code>#other-meetings</code> section. The Masters card keeps linking the Masters report, which is that subject's canonical page.</td></tr>
+<tr><td>Skiing &amp; Heli-Skiing to a journal post although Aspen and Canadian Rockies pages exist</td><td>Aspen and the Rockies have zero chalet or heli content. The tile is renamed "Heli-Skiing" (eyebrow "British Columbia") and links the heli-ski field report. The Verbier/Zermatt chalet line is cut unless an Alps page is commissioned.</td></tr>
+<tr><td>Willamette Valley to a journal post</td><td>Kept, as the canonical target rather than a placeholder. The winery-route post is the site's full answer, and a destination page would compete with it. Trim the tile's truffle and Dungeness crab clause, or add 40 cited words on each to the post.</td></tr>
+<tr><td>Mexico under five experiences with three targets</td><td>The coastal tiles (All-Inclusive, Family, Wellness) all go to <code>/destinations/riviera-maya-los-cabos/</code>, and Multigenerational goes to the Caribbean &amp; Mexico hub's villa itineraries. Interior cultural Mexico (Culture) is an owner decision: Oaxaca &amp; Mexico City page, or rename the tile "Yucatán &amp; Mérida". No <code>/destinations/mexico/</code> page, which would split equity with the coastal page.</td></tr>
+<tr><td>Greece and Italy each with several enhancement specs</td><td>Merged into one spec per page (§7): Greece gets one merged FAQ of ~90–100 words; Italy gets one family/three-generation FAQ, a ≤12-word truffle-season clause and an Amalfi couples line, staying under ~3,400 words.</td></tr>
+</tbody></table>
+<h3>Renames and copy corrections</h3>
+<ul>{{RENAMES}}</ul>
+<h3>Trips We Plan Often (event cards): one policy for all 48</h3>
+<div class="callout"><p>{{EVENTPOLICY}}</p></div>
+<p><span class="tag t-verified">Verified</span> The pre-fill reads <code>?type=</code> and matches it to a real checkbox; the six supported values are beach, cruise, family, group, honeymoon and safari. <span class="tag t-rec">Recommendation</span> One review change: the honeymoon card gets no secondary link either, so all three occasion cards follow the same "don't pre-empt the destination" rule.</p>
+<h3>Recommendations merged or dropped, and why</h3>
+<ul>{{DROPPED}}</ul>
+</section>
+
+<section class="s" id="s11"><h2><span class="n">11</span>Template and data architecture</h2>
+<h3>Templates</h3>
+<p><span class="tag t-rec">Recommendation</span></p>
+<ul>
+<li><b>Existing destination pages:</b> DestinationLayout unchanged for routing, plus one optional generated module, "Featured in".</li>
+<li><b>New destination pages:</b> DestinationLayout with a region prop. Model page: <code>destinations__turks-caicos.html</code>.</li>
+<li><b>New experience-detail pages:</b> ExperienceLayout with one new optional prop, <code>parent?: { name: string; path: string }</code>, which mirrors DestinationLayout's <code>region</code>. With it, the visible trail and the BreadcrumbList both read Home › Experiences › Sports &amp; Event Travel › Tennis. Without it, output is byte-identical to today. The verifier already requires ExperienceLayout recursively under <code>src/pages/experiences/</code>; <code>schema-required</code> keys on the prefix, so Service schema is emitted and required; and the depth-1 count keeps "12 trip types" true.</li>
+<li><b>Section mix for a detail page, existing classes only:</b> intro-section with answer capsule → exp-cards-section (venues or events; swatch grid until every card has a real photo) → events-section → inclusions-section → seasons-strip (the calendar) → exp-cta → cost-range (a row in <code>cost-ranges-data.mjs</code>) → page-faq → read-more (≥2 journal links). No new CSS beyond the two classes below.</li>
+<li><b>Rejected:</b> a new ExperienceDetailLayout, which would duplicate ~120 lines and a stylesheet for one crumb. DestinationLayout for thematic pages: wrong schema and the stat rail. JournalLayout: Article schema and a dated byline on an evergreen commercial page. Flat <code>/experiences/formula-1-travel/</code>: it joins the hub ItemList, breaks the llms.txt count and loses the parent crumb.</li>
+</ul>
+<h3>Data model: map now, component later</h3>
+<p><span class="tag t-rec">Recommendation</span> <code>src/data/tiles.mjs</code>, plain ESM so both Astro and the node tools can import it. It is keyed by partial filename, like <code>COST_RANGES</code>, with rows in document order:</p>
+<pre class="tw"><code>export const TILES = {
+  'experiences__beach-island-escapes.html': [
+    { kind: 'exp-card', name: 'Maldives', href: '/destinations/maldives/',
+      subject: 'S13', status: 'live', note: 'country page' },
+    { kind: 'exp-card', name: 'St. Lucia', href: '/destinations/barbados-eastern-caribbean/#places',
+      final: '/destinations/st-lucia/', status: 'interim', note: 'swap at St. Lucia launch' },
+    { kind: 'event-card', name: 'Maldives Overwater Classic', cta: '/plan-your-trip/?type=beach',
+      more: '/destinations/maldives/', exception: 'itinerary teaser: CTA stays on the form' },
+    // …
+  ],
+}
+export const featuredIn = (path) => /* experience pages whose rows target this pathname */</code></pre>
+<ul>
+<li><b><code>tools/tile-links-apply.mjs</code></b>, idempotent and modelled on <code>p3-8-cost-insert.mjs</code>. It pairs each <code>&lt;a class="exp-card" href></code> with the next <code>exp-card__name</code>, refuses on any count or name mismatch, rewrites only the <code>href</code> (and the event-card CTA and its secondary link), and prints what it changed. <code>--check</code> exits non-zero on drift.</li>
+<li><b><code>src/components/FeaturedIn.astro</code></b>, rendered by DestinationLayout from <code>featuredIn(Astro.url.pathname)</code>. It emits nothing when the list is empty. It renders as a <code>.featured-in</code> strip ("Featured in: Beach &amp; Island Escapes · Romance &amp; Celebration Travel"), at most 40 words, before the read-more section. <code>bodyWords</code> strips it, so it never counts against the ceiling. Reverse links are derived from the map, so they cannot rot.</li>
+<li><b>Verifier checks</b> in <code>tools/content-checks.mjs</code> and <code>verify-deployment.mjs</code>, each with fixtures in <code>verify-checks.test.mjs</code> that prove it goes red: <code>exp-card-targets</code> (no card links the form, an in-page fragment, an external URL or a query variant unless its map row says <code>exception</code>); <code>card-fragment-resolves</code> (every <code>#id</code> on a card or secondary link exists on the target page); <code>tile-map-parity</code> (built href equals map; no map row for a missing card; no card without a row); <code>featured-in-parity</code> (every targeted destination renders a link back).</li>
+<li><b>Why not move the cards into a component now:</b> the 78 cards hold hand-tuned copy and the photo gate. Moving them touches all 12 pages, the intake tool and the photo check at once for no visible gain. Revisit once the map has settled, then extend it to the 330 <code>.place-card</code>s.</li>
+</ul>
+</section>
+
+<section class="s" id="s12"><h2><span class="n">12</span>SEO/AIO and duplicate-content strategy</h2>
+<ul>
+<li><b>One canonical per subject.</b> 56 subjects, 56 URLs. Multiple tiles share a target (Japan ×5, Italy ×6, Greece ×4); the tiles carry the experience angle, and the destination page stays about the destination. Canonicals are self-referencing and inherited from <code>Base.astro</code>; nothing here overrides them.</li>
+<li><b>No style-variant URLs.</b> No <code>/destinations/maldives-honeymoon/</code>, no query variants, no per-experience sections on destination pages (R6).</li>
+<li><b>Parent and child never compete.</b> A nested page owns the specific query ("Wimbledon debenture tickets"), and the parent keeps the broad one ("sports event travel"). The parent's Monaco cost drivers and capsule clause move to the F1 page, leaving one clause on the parent that links down. The Masters report keeps the Augusta query; the golf page caps Augusta at ~120 words and links it.</li>
+<li><b>Hub vs new page.</b> At launch, the Barbados &amp; Eastern Caribbean card for Soufrière and the Europe hub's river FAQ link down to the new pages, so the hubs defer to the new canonicals.</li>
+<li><b>Schema per page type.</b> Destination: WebPage + BreadcrumbList + TouristDestination + FAQPage. Experience detail: WebPage + BreadcrumbList (4 items) + Service + FAQPage. Journal: Article + BreadcrumbList. Never Offer, TouristTrip or Event on itinerary cards, and never AggregateRating.</li>
+<li><b>AIO on every new page and every enhanced FAQ.</b> A 40–70 word answer capsule under the first h2 with at least one number from a named source. FAQ first sentences answer in ≤25 words. Time-sensitive facts carry a visible "Checked &lt;Month&gt; 2026" date: Epic Universe, Typhoon Lagoon, gulet season, the Grand Slam ballots, the F1 calendar.</li>
+<li><b>Titles and descriptions</b> for new pages are drafted in each brief within 30–65 and 110–165 characters. Each new page's head-baseline entry is its own commit. No reuse in this plan changes an existing title or description.</li>
+</ul>
+</section>
+
+<section class="s" id="s13"><h2><span class="n">13</span>Internal-linking and breadcrumb strategy</h2>
+<ul>
+<li><b>Forward:</b> tile → canonical page, generated from the map. Intro, seasons and FAQ copy on the experience page that names a tile subject links it once per section with descriptive anchor text ("Ayurvedic programmes in Sri Lanka"), never "Explore →" and never inside a card.</li>
+<li><b>Reverse:</b> the generated "Featured in" strip on every targeted destination page, plus one prose link from each enhanced page's new FAQ or itinerary, never inside a <code>.place-card</code>. On pages under 200 words of headroom, the link is wrapped on existing words.</li>
+<li><b>Sideways:</b> one body-copy link each way between Family and Multigenerational (they sell the same Italy and Hawaii trips). Each new detail page links up to its parent in body copy and across to the 2–4 destination pages it relies on.</li>
+<li><b>Journal floor:</b> unchanged (≥2 journal links per destination or experience page, ≥2 destination or experience links per post). Swap <code>/travel-journal/maldives-overwater-vs-beach-villa/</code> into Beach &amp; Island's Read More; it already links there and is not linked back.</li>
+<li><b>Breadcrumbs never vary by referrer.</b> A visitor from Romance lands on Home › Destinations › Asia › The Maldives; "Featured in" is the way back. Nested pages: Home › Experiences › Cruises › Private Yacht Charters.</li>
+<li><b>Hubs:</b> retag the <code>/experiences/</code> hub cards to name the subjects each page's tiles actually carry (body copy, no head-baseline change). Make the destination hub headings count-free ("Destinations worth planning properly") in the same PR as the first new card, so a seventh card cannot go stale. Remove the stray "Anguilla" tag from <code>destinations.html</code>.</li>
+</ul>
+<h3>Cross-page findings to fix along the way</h3>
+<ul>{{CROSS}}</ul>
+</section>
+
+<section class="s" id="s14"><h2><span class="n">14</span>Content and image requirements</h2>
+<h3>Content</h3>
+<ul>
+<li><b>Copy fixes before links</b> (P1, small): the malaria claim on the Family Safari tile, the Africa hub (4 statements) and the africa-destination-guide post, cited to the CDC; plus the season and fact corrections listed in §10 and §13.</li>
+<li><b>Enhancements:</b> 18 pages, ~30–250 words each, totals in §7. All FAQ additions follow the accordion rules (button in heading, <code>aria-controls</code>, <code>role="region"</code>, answer visible without JS).</li>
+<li><b>New pages:</b> 1,300–3,000 body words each, per brief. Every new page carries 6–10 real FAQs, ≥2 journal links, and cited sources from the brief's list.</li>
+<li><b>NEEDS MARK:</b> each brief lists 7–10 first-hand facts only Mark can supply (packages sold, properties used, prices, personal experience). None may be invented, and a page does not ship with one unresolved.</li>
+<li><b>Journal gaps</b> to commission later (each changes the "32 field reports" count): trekking, cruise, tennis and F1 field reports.</li>
+</ul>
+<h3>Images</h3>
+<p><span class="tag t-verified">Verified</span> against the 1,194-file listing (<code>public/assets/img/</code> is gitignored; run <code>npm run restore</code> before checking on disk).</p>
+<ul>
+<li><b>Reuse targets:</b> all 78 tiles already have a real photo, so href changes do not touch the photo gate. Optional swaps so a tile does not repeat its target's hero are listed per row (e.g. Family Safari → <code>south-africa-addo-and-the-eastern-cape.jpg</code>; Namibia Path B → <code>africa-zambia-and-victoria-falls.jpg</code>).</li>
+<li><b>Enhancement itinerary cards</b> need portrait <code>ni-</code> crops: Peru Inca Trail (from <code>np-e-52</code>), Iceland (<code>np-e-54</code>), Portugal and Italy family (existing Portugal and Italy landscapes).</li>
+<li><b>New pages</b> list their fitting images and gaps in each brief. Totals: Orlando 7 gaps, St. Lucia 8, Dolomites 7, Tennis 5, F1 5, Yacht 6, River 5, Mediterranean 4, Golf 6. Every new hero needs an <code>og-</code> 1200×630 crop via <code>tools/make-og-crops.mjs</code>, and every new image enters <code>MANIFEST.json</code> through <code>tools/image-manifest.mjs</code>. A card grid stays a non-photo swatch grid until every card has a real photo.</li>
+</ul>
+</section>
+
+<section class="s" id="s15"><h2><span class="n">15</span>File-level implementation plan</h2>
+<p>Run GitNexus <code>impact({target, direction:"upstream"})</code> on every layout, component or function before editing it, and <code>detect_changes()</code> before every commit. The MCP server was down for the planning session and the index was four commits stale, so analyze first (from a branch that has merged main, so PDG stays on).</p>
+<div class="tw"><table class="plain"><thead><tr><th>File</th><th>Change</th><th>Phase</th></tr></thead><tbody>
+<tr><td><code>src/data/tiles.mjs</code></td><td>New. 126 rows plus <code>featuredIn()</code>.</td><td>B</td></tr>
+<tr><td><code>tools/tile-links-apply.mjs</code></td><td>New. Idempotent href writer with <code>--check</code>.</td><td>B</td></tr>
+<tr><td><code>src/components/FeaturedIn.astro</code></td><td>New. Empty output when no rows.</td><td>B</td></tr>
+<tr><td><code>src/layouts/DestinationLayout.astro</code></td><td>Render FeaturedIn before read-more. <b>HIGH</b> blast radius (68 pages).</td><td>B</td></tr>
+<tr><td><code>src/layouts/ExperienceLayout.astro</code></td><td>Optional <code>parent</code> prop in trail and BreadcrumbList. <b>MEDIUM</b> (12 pages).</td><td>B</td></tr>
+<tr><td><code>src/styles/destination.css</code>, <code>src/styles/experience.css</code></td><td><code>.featured-in*</code>; one <code>.event-more</code> class for the event-card secondary link.</td><td>B</td></tr>
+<tr><td><code>tools/content-checks.mjs</code></td><td><code>cardTargetDefects</code>, <code>fragmentTargetDefects</code>, map parity, featured-in parity; <code>bodyWords</code> strips <code>.featured-in</code>.</td><td>B</td></tr>
+<tr><td><code>tools/verify-deployment.mjs</code>, <code>tools/verify-checks.test.mjs</code></td><td>Wire the 4 checks; a red fixture per sub-check.</td><td>B</td></tr>
+<tr><td><code>src/content-pages/experiences__*.html</code> (12)</td><td>Hrefs via the apply tool; renames; copy and season fixes; <code>?type=</code> pre-fills; event-card secondary links; unlinked subject mentions linked.</td><td>C</td></tr>
+<tr><td><code>src/content-pages/destinations__*.html</code> (~30)</td><td><code>id="itineraries"</code> on <code>section.itineraries-section</code> in one pass; 18 enhancements (§7); reverse prose links; Africa malaria fixes.</td><td>C</td></tr>
+<tr><td><code>src/content-pages/travel-journal__kentucky-derby-field-report.html</code>, <code>…heli-ski-field-report.html</code>, <code>…willamette-valley-winery-route.html</code>, <code>…africa-destination-guide.html</code></td><td><code>#other-meetings</code> section; Alps paragraph and reverse link; truffle/crab line; malaria fix.</td><td>C</td></tr>
+<tr><td><code>src/content-pages/experiences.html</code>, <code>destinations.html</code></td><td>Hub tag retags; remove the "Anguilla" tag.</td><td>C</td></tr>
+<tr><td><code>src/pages/destinations/&lt;slug>/index.astro</code> + <code>src/content-pages/destinations__&lt;slug>.html</code></td><td>Orlando, St. Lucia, Dolomites (and any approved conditional page).</td><td>D</td></tr>
+<tr><td><code>src/pages/experiences/&lt;parent>/&lt;slug>/index.astro</code> + <code>src/content-pages/experiences__&lt;parent>__&lt;slug>.html</code></td><td>The six detail pages, with <code>parent</code> prop set.</td><td>D</td></tr>
+<tr><td><code>public/llms.txt</code>, <code>src/content-pages/destinations.html</code>, region hub partial</td><td>+1 destination count and a card per new destination page.</td><td>D</td></tr>
+<tr><td><code>tools/cost-ranges-data.mjs</code></td><td>One cost row per new page, cited.</td><td>D</td></tr>
+<tr><td><code>images-b64/MANIFEST.json</code>, <code>src/lib/og-crops.ts</code></td><td>Via <code>tools/image-manifest.mjs</code> and <code>tools/make-og-crops.mjs</code> only.</td><td>D–E</td></tr>
+<tr><td><code>tools/head-baseline.json</code></td><td><code>--update-baseline</code> for each new page, in its own commit.</td><td>D</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="s" id="s16"><h2><span class="n">16</span>Phased roadmap A–F</h2>
+<p>Each phase is its own PR (Phase D is one PR per page). A and B can run in parallel; C ships before D so the site is never half-linked. Every merge to main is a production release.</p>
+<div class="tw"><table class="plain"><thead><tr><th>Phase</th><th>Objective</th><th>Key files</th><th>Risk</th><th>Validation</th></tr></thead><tbody>
+<tr><td><b>A · Inventory &amp; approvals</b></td><td>Owner signs off this plan and §18. Mark supplies NEEDS MARK facts for the P1 pages.</td><td>This plan only</td><td>Low</td><td>Decisions recorded in the tile map's <code>note</code> fields.</td></tr>
+<tr><td><b>B · Architecture</b></td><td>Tile map, apply tool, FeaturedIn, ExperienceLayout parent prop, 4 verifier checks with red fixtures.</td><td>§15 rows marked B</td><td>High (layouts)</td><td><code>impact()</code> on both layouts; with no rows live, <code>git diff --stat dist/</code> is empty; fixtures go red then green.</td></tr>
+<tr><td><b>C · Reuse</b></td><td>Copy and fact fixes, then 62 card links, 18 enhancements, <code>#itineraries</code>, event-card pre-fills and secondary links, hub retags.</td><td>12 experience partials, ~30 destination partials, 4 journal posts</td><td>Medium (word ceilings)</td><td><code>npm run build</code>; <code>tile-links-apply --check</code> clean; word counts ≤3,400 on edited country pages.</td></tr>
+<tr><td><b>D · Create</b></td><td>9 approved pages in priority order: Tennis, F1, Yacht Charters, Orlando, St. Lucia (P1), then Golf, River, Mediterranean, Dolomites (P2). Each launch swaps its tile from the form or interim link to the new URL.</td><td>Per page, §15 rows marked D</td><td>Medium</td><td>Per-page checklist in §17; the head-baseline commit is separate.</td></tr>
+<tr><td><b>E · Content &amp; media</b></td><td>Photography for the gaps; promote swatch grids to photo grids; commission the journal field reports.</td><td>MANIFEST, og-crops, partials</td><td>Low</td><td><code>photo-grid</code>, <code>img-attrs</code>, <code>img-ratio</code> green.</td></tr>
+<tr><td><b>F · QA &amp; launch</b></td><td>Cross-browser and responsive pass; production verification after each merge; review Search Console coverage after 4 weeks.</td><td>—</td><td>Low</td><td><code>npm run verify:prod</code> ~10 minutes after each merge.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="s" id="s17"><h2><span class="n">17</span>QA and acceptance checklist</h2>
+<h4>Site-wide</h4>
+<ul>
+<li><code>grep -c 'class="exp-card" href="/plan-your-trip/"' src/content-pages/experiences__*.html</code> returns 0 for every file except tiles whose page is pending, and each of those has a map row marked <code>interim</code> or <code>exception</code>.</li>
+<li><code>node tools/tile-links-apply.mjs --check</code> reports zero drift; the map has 126 rows and no duplicates.</li>
+<li><code>npm run build</code> is green with <code>exp-card-targets</code>, <code>card-fragment-resolves</code>, <code>tile-map-parity</code> and <code>featured-in-parity</code>; <code>verify-checks.test.mjs</code> has a red fixture for each.</li>
+<li>Every targeted destination page renders a "Featured in" link back to each experience that targets it; the 68 − n untargeted pages are byte-identical.</li>
+<li>No edited country page is over 3,400 body words (verifier <code>bodyWords</code>).</li>
+<li>Every <code>?type=</code> pre-fill ticks the right checkbox on <code>/plan-your-trip/</code> (manual check for each of the 6 values).</li>
+</ul>
+<h4>Each new page</h4>
+<ul>
+<li>Title 30–65 characters; description 110–165 with a specific; one h1; no skipped heading levels.</li>
+<li>Answer capsule of 40–70 words under the first h2, with a sourced number; 6–10 FAQs, first sentences ≤25 words; accordion markup per the house rules.</li>
+<li>Breadcrumb visible and in BreadcrumbList (4 items for nested pages); page-type schema per §12.</li>
+<li>≥2 journal links, ≥2 descriptive internal links, the up-link to the parent, and reverse links from every page listed in the brief's "inbound links".</li>
+<li>Hero passed as <code>preloadImage</code>; <code>og-</code> crop; every <code>img</code> has alt, width, height, <code>decoding="async"</code>; lazy below the fold only.</li>
+<li>In <code>dist/sitemap-0.xml</code> and <code>tools/head-baseline.json</code>; <code>llms.txt</code> count correct; zero unresolved NEEDS MARK comments.</li>
+</ul>
+<h4>Visual and accessibility</h4>
+<ul>
+<li>Screenshots at 375, 768 and 1280 px of one changed experience page, one "Featured in" destination page and one new detail page.</li>
+<li>Keyboard tab order through the tiles, the event-card secondary links and the "Featured in" chips; FAQ answers visible with JavaScript off.</li>
+<li><code>npm run verify:prod</code> is green about 10 minutes after each merge.</li>
+</ul>
+</section>
+
+<section class="s" id="s18"><h2><span class="n">18</span>Open owner decisions</h2>
+<p>Only decisions that need the owner. Each has a recommended default so work can proceed if you agree.</p>
+<table class="plain"><thead><tr><th>#</th><th>Decision</th><th>Recommended default</th></tr></thead><tbody>
+<tr><td>1</td><td><b>Approve the plan and the ExperienceLayout parent-crumb change</b> that all six detail pages depend on.</td><td>Approve.</td></tr>
+<tr><td>2</td><td><b>Namibia</b> (Safari tile 6): build <code>/destinations/namibia/</code>, or swap the tile to Zambia &amp; Victoria Falls, which already has a page.</td><td>Swap to Zambia now. Build Namibia only if HYMT sells it <em>and</em> a 6-card image set exists.</td></tr>
+<tr><td>3</td><td><b>Football &amp; Rugby</b> (Sports tile 5): a real line of business?</td><td>Remove the tile; change "six sports" to "five"; replace the "World Cup" capsule and FAQ examples. Build a nested page only if confirmed.</td></tr>
+<tr><td>4</td><td><b>Interior Mexico</b> (Culture tile 6): does HYMT plan Oaxaca and Mexico City?</td><td>If yes, build <code>/destinations/oaxaca-mexico-city/</code> (briefed). If no, rename the tile "Yucatán &amp; Mérida" → <code>/destinations/riviera-maya-los-cabos/#places</code>.</td></tr>
+<tr><td>5</td><td><b>Disneyland</b> (Family tile 6): build after Orlando, or drop?</td><td>Drop the tile ("Nine" → "Eight", "Three of the nine" → "Two of the eight") unless you want a West Coast Disney product and the photos exist.</td></tr>
+<tr><td>6</td><td><b>American Southwest</b> (Wellness tile 5): do you plan Tucson, Sedona and canyon-country spa weeks?</td><td>If yes, build <code>/destinations/american-southwest/</code> (P3, briefed). If no, replace the tile (the Maldives fits the hub tags) or remove it and change "Six" to "Five".</td></tr>
+<tr><td>7</td><td><b>Dolomites</b>: confirm hut-to-hut trips are sold, and commission ~5 place photographs.</td><td>Build (P2) once both are true; until then the tile stays on the form.</td></tr>
+<tr><td>8</td><td><b>Alps ski chalets</b>: commission an Alps destination page?</td><td>No. Rewrite the tile and event card as BC heli-skiing; revisit if chalet bookings justify it.</td></tr>
+</tbody></table>
+<p class="muted">Not owner decisions, so handled in the plan: Greece and Italy merges, St. Lucia vs Eastern Caribbean, Orlando vs Disneyland URLs, Willamette, Golf vs Horse Racing, the ski rename and the event-card policy.</p>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+var M={{MATRIX}};
+var ACT={'REUSE':'REUSE','REUSE + ENHANCE':'ENH','CREATE DESTINATION PAGE':'CDEST','CREATE EXPERIENCE DETAIL PAGE':'CEXP','SPLIT OR RENAME TILE':'REN','NEEDS OWNER DECISION':'OWN','EXCEPTION: KEEP PLANNING FORM':'FORM'};
+var COUNTS={{COUNTS}};
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function chip(a){return '<span class="act a-'+(ACT[a]||'FORM')+'">'+esc(a)+'</span>'}
+var exps=[];M.forEach(function(r){if(exps.indexOf(r.exp)<0)exps.push(r.exp)});
+exps.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;$('f-exp').appendChild(o)});
+Object.keys(ACT).forEach(function(a){if(!COUNTS[a])return;var o=document.createElement('option');o.value=a;o.textContent=a+' ('+COUNTS[a]+')';$('f-act').appendChild(o)});
+$('legend').innerHTML=Object.keys(ACT).filter(function(a){return COUNTS[a]}).map(function(a){return chip(a)+' <span class="muted" style="font-size:12px;margin-right:8px">'+COUNTS[a]+'</span>'}).join('');
+var FIELDS=[['Eyebrow / region','eyebrow'],['Current link','current'],['Visitor intent','visitor'],['Search intent','search'],['Best existing match','existing'],['Existing page type','existingType'],['Reuse status','reuse'],['Page type / template','template'],['Decision for this tile','decision'],['Reason','reason'],['Content gaps','gaps'],['Internal-link changes','links'],['Breadcrumb / nav','crumb'],['Schema','schema'],['Cannibalization risk','cannibal'],['Image availability','images'],['Dependencies','deps'],['Subject','subject']];
+var open={};
+function render(){
+  var fe=$('f-exp').value,fa=$('f-act').value,fk=$('f-kind').value,fp=$('f-pri').value,q=$('f-q').value.trim().toLowerCase();
+  var rows=M.filter(function(r){return(!fe||r.exp===fe)&&(!fa||r.action===fa)&&(!fk||r.kind===fk)&&(!fp||r.priority===fp)&&(!q||(r.id+' '+r.label+' '+r.target+' '+r.exp+' '+r.subject+' '+r.eyebrow).toLowerCase().indexOf(q)>=0)});
+  var h='';
+  rows.forEach(function(r){
+    h+='<tr class="row" tabindex="0" data-id="'+r.id+'" aria-expanded="'+(!!open[r.id])+'"><td class="id">'+r.id+'</td><td>'+esc(r.exp)+'</td><td><b>'+esc(r.label)+'</b></td><td>'+chip(r.action)+'</td><td class="tgt">'+esc(r.target)+'</td><td><span class="pill p-'+r.priority+'">'+r.priority+'</span></td><td>'+esc(r.effort)+'</td><td>'+esc(r.conf)+'</td></tr>';
+    if(open[r.id])h+='<tr class="detail"><td colspan="8"><dl class="kv">'+FIELDS.map(function(f){return r[f[1]]?'<dt>'+f[0]+'</dt><dd>'+esc(r[f[1]])+'</dd>':''}).join('')+'</dl></td></tr>';
+  });
+  $('mx-body').innerHTML=h||'<tr><td colspan="8" class="muted">No tiles match these filters.</td></tr>';
+  $('f-count').textContent=rows.length+' of '+M.length+' tiles';
+}
+$('mx-body').addEventListener('click',function(e){var tr=e.target.closest('tr.row');if(!tr)return;open[tr.dataset.id]=!open[tr.dataset.id];render();var n=document.querySelector('tr.row[data-id="'+tr.dataset.id+'"]');if(n)n.focus()});
+$('mx-body').addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr.row')){e.preventDefault();e.target.click()}});
+['f-exp','f-act','f-kind','f-pri'].forEach(function(id){$(id).addEventListener('change',render)});
+$('f-q').addEventListener('input',render);
+render();
+})();
+</script>

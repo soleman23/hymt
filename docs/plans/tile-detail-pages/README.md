@@ -18,8 +18,8 @@ finished plan.
 | Per-page tile audits | 11 of 12 done (116 of 126 tiles). `wellness-retreat-travel` was cut off by a usage limit. |
 | Independent architecture read | Done: `architecture-read.json`. |
 | Routing rules, data model, template choice, QA checklist | Drafted: `drafts/rules-data-template-qa.md`. Revisit after consolidation. |
-| Wellness audit, consolidation, adversarial verification, new-page briefs | Not started. `workflow-remaining.js` runs all four. |
-| Final plan in the 18-section order the owner specified | Not started. |
+| Wellness audit, consolidation, adversarial verification, new-page briefs | Done 2026-10-03: `remaining-results.json` (56 subjects, 34 reviewed by two lenses, 0 refuted, 13 briefs). |
+| Final plan in the 18-section order the owner specified | Done: `final/tile-plan.html`, published as a private artifact for owner review. Rebuild with `node final/matrix.mjs && node final/build.mjs` (paths inside point at the session scratchpad; adjust before reuse). |
 
 Tile counts: 78 `.exp-card` sub-experience tiles and 48 `.event-card`
 "Trips We Plan Often" cards. Every one links to `/plan-your-trip/` in source,
