@@ -19,7 +19,7 @@ import paths are already written for that location.
 | H1 (hero) | `Three Slams,<br>Three Ways In` | — |
 | Breadcrumb | Home › Experiences › Sports & Event Travel › Tennis, via the `parent` prop | 4 crumbs |
 
-- Body word count is about **2,460**, with comments and tags stripped. Of that,
+- Body word count is about **2,550**, with comments and tags stripped. Of that,
   the three tables are about 620 words.
 - The brief's target was 1,800–2,400. CONTENT-STANDARDS § 3.4 says 1,200–2,000
   for experience pages. The copy has already been cut once. If more has to go,
@@ -29,45 +29,45 @@ import paths are already written for that location.
 - There are 8 FAQs. Every first sentence is 25 words or fewer (longest 24) by the
   verifier's own splitter, and every answer runs 60–77 words.
 
-## NEEDS MARK (answer before launch)
+## Owner answers applied (2026-10-03)
 
-1. **Which routes does HYMT actually book through?** The options are official
-   debenture-ticket sellers, Keith Prowse (Wimbledon Official Hospitality), FFT
-   hospitality or loges, AO Reserve, or other operators. Also, which of these
-   have you booked for clients before? The page currently describes the routes
-   and claims access to none of them. (Intro paragraph 1.)
-2. **Your own experience at any of the three Slams.** Which ones, what year,
-   and what seat. If you have none, the page carries no first-hand line, and
-   one should not be written for you.
-3. **Wimbledon + London trip:** usual length, the London hotels you use, and
-   what it is usually paired with (the Cotswolds, Scotland). Do not reuse the
-   parent page's "without a single queue" or "deep relationships" lines unless
-   they are true.
-4. **Roland-Garros + Paris trip:** length, hotels (16e near the stadium or
-   central Paris), and whether Champagne or the Loire is the usual add-on.
-5. **Australian Open + Melbourne trip:** length, hotels, and whether you add
-   Sydney, the Yarra Valley or Tasmania.
-6. **Hotels near SW19, Porte d'Auteuil / the 16e and Melbourne Park** that you
-   actually use, and whether you have stayed in them (FAQ 8, and the
-   inclusions card).
-7. **Rest days between sessions.** Is this how you structure tennis trips?
-   (inclusions card 4)
-8. **Debenture ticket or Official Hospitality: which do you recommend, and for
-   whom?** (FAQ 4)
-9. **A real client testimonial from a tennis trip.** Without one, the page has
-   no testimonial section.
-10. **US Open: mention it or not?** It is left out because the tile names only
-    three Slams.
+The owner answered every NEEDS MARK question with one rule: Mark has not been
+to any of these events. The page therefore claims no first-hand experience, no
+booking relationships, no named operators or hotels HYMT uses, no prices beyond
+the cited published figures, and no client stories or testimonials. Every
+detail is informational: how the routes work, dates, rules, and which route
+suits which traveller, with the existing citations. The NEEDS FIGURE gaps are
+closed by leaving the figures out; never estimate them.
 
-## NEEDS FIGURE (published numbers not found)
+Removed or neutralised:
 
-- **No.1 Court debentures:** the number and price of the current series. The
-  AELTC page confirms only the five-year term.
-- **Wimbledon Official Hospitality (Keith Prowse) 2027:** package names and
-  per-person prices.
-- **AO Reserve 2027:** per-person prices.
-- **Single-day Wimbledon debenture ticket price:** no AELTC-published figure
-  exists. Never estimate one.
+- Intro: the NEEDS MARK on which routes HYMT books through, and the
+  first-hand-line placeholder. No sentence added.
+- Wimbledon table: NEEDS FIGURE comments on No.1 Court debentures and Keith
+  Prowse 2027 packages removed; the rows stay without figures.
+- AO table: NEEDS FIGURE on AO Reserve 2027 prices removed.
+- Trips section: H2 "Trips We Plan Around the Slams" became "How a Trip Around
+  Each Slam Fits Together". The three card descriptions were rewritten as
+  dates plus transport from the official getting-there pages already cited
+  (AELTC help page, FFT access guide, Tennis Australia getting-here page). The
+  AO card's "two nights on the Great Ocean Road" was removed. Two alt texts
+  lost their itinerary clauses ("where a Roland-Garros trip spends its
+  evenings", "a drive from Melbourne after the Open").
+- Inclusions: H2 "What We Handle Around the Seat" became "What to Plan Around
+  the Seat"; "We tell you which is faster on your day and book the car if it
+  is" became a neutral line; "Rest Days Between Sessions" became "Days Off
+  Between Sessions", phrased as a general planning consideration.
+- Seasons: the US Open comment removed. The page does not mention it.
+- Testimonial section placeholder removed entirely.
+- Cost section: NEEDS FIGURE on per-day debenture and hospitality prices
+  removed.
+- FAQ 4 and FAQ 7: the NEEDS MARK comments removed. FAQ 4 already ends on a
+  neutral "who each route suits" line; FAQ 7 names no hotels.
+
+Body word count after these edits: about **2,550** (comments and tags
+stripped), up from 2,460, because the trip cards now carry dates and transport
+facts. Still above the brief's 2,400; if it must come down, trim the trip-card
+and inclusions copy first.
 
 ## Image gaps
 
@@ -155,8 +155,7 @@ the row and compare the two.
    - On the Wimbledon event-card, keep "Request Wimbledon Package". Add
      `<a class="event-more" href="/experiences/sports-event-travel/tennis/#wimbledon">Debenture vs hospitality vs ballot, compared</a>`.
      Trim the description so the parent stops competing for "Wimbledon
-     hospitality", and drop "without a single queue" unless item 1 above
-     confirms it.
+     hospitality".
    - In FAQ 3, link "Tennis at Wimbledon and Roland Garros" to the new page.
 3. **`destinations__uk-ireland.html`:** in the why-desc, link the existing word
    "Wimbledon" to `/experiences/sports-event-travel/tennis/#wimbledon`.
