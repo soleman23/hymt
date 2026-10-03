@@ -1440,6 +1440,11 @@
   "bytes": 204736
  },
  {
+  "b64": "images-b64/assets__img__e-67-clay-court-paris.jpg.b64",
+  "target": "public/assets/img/e-67-clay-court-paris.jpg",
+  "bytes": 318712
+ },
+ {
   "b64": "images-b64/assets__img__e-68-melbourne-court-dusk.jpg.b64",
   "target": "public/assets/img/e-68-melbourne-court-dusk.jpg",
   "bytes": 222607
@@ -1450,9 +1455,19 @@
   "bytes": 229390
  },
  {
+  "b64": "images-b64/assets__img__e-70-parkland-circuit-straight.jpg.b64",
+  "target": "public/assets/img/e-70-parkland-circuit-straight.jpg",
+  "bytes": 316376
+ },
+ {
   "b64": "images-b64/assets__img__e-71-yas-marina-blue-hour.jpg.b64",
   "target": "public/assets/img/e-71-yas-marina-blue-hour.jpg",
   "bytes": 252756
+ },
+ {
+  "b64": "images-b64/assets__img__e-72-monaco-harbour-terrace-morning.jpg.b64",
+  "target": "public/assets/img/e-72-monaco-harbour-terrace-morning.jpg",
+  "bytes": 328785
  },
  {
   "b64": "images-b64/assets__img__e-73-gulet-turquoise-cove.jpg.b64",
@@ -1645,6 +1660,11 @@
   "bytes": 56846
  },
  {
+  "b64": "images-b64/assets__img__ev-e-67-clay-court-paris.jpg.b64",
+  "target": "public/assets/img/ev-e-67-clay-court-paris.jpg",
+  "bytes": 80364
+ },
+ {
   "b64": "images-b64/assets__img__ev-e-68-melbourne-court-dusk.jpg.b64",
   "target": "public/assets/img/ev-e-68-melbourne-court-dusk.jpg",
   "bytes": 61551
@@ -1655,9 +1675,19 @@
   "bytes": 77411
  },
  {
+  "b64": "images-b64/assets__img__ev-e-70-parkland-circuit-straight.jpg.b64",
+  "target": "public/assets/img/ev-e-70-parkland-circuit-straight.jpg",
+  "bytes": 85694
+ },
+ {
   "b64": "images-b64/assets__img__ev-e-71-yas-marina-blue-hour.jpg.b64",
   "target": "public/assets/img/ev-e-71-yas-marina-blue-hour.jpg",
   "bytes": 73056
+ },
+ {
+  "b64": "images-b64/assets__img__ev-e-72-monaco-harbour-terrace-morning.jpg.b64",
+  "target": "public/assets/img/ev-e-72-monaco-harbour-terrace-morning.jpg",
+  "bytes": 64161
  },
  {
   "b64": "images-b64/assets__img__ev-e-73-gulet-turquoise-cove.jpg.b64",
@@ -4483,6 +4513,11 @@
   "b64": "images-b64/assets__img__np-e-66-grass-court-baseline.jpg.b64",
   "target": "public/assets/img/np-e-66-grass-court-baseline.jpg",
   "bytes": 147517
+ },
+ {
+  "b64": "images-b64/assets__img__np-e-72-monaco-harbour-terrace-morning.jpg.b64",
+  "target": "public/assets/img/np-e-72-monaco-harbour-terrace-morning.jpg",
+  "bytes": 186617
  },
  {
   "b64": "images-b64/assets__img__np-egypt-pyramids-of-giza-and-sphinx.jpg.b64",
