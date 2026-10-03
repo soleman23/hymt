@@ -1415,6 +1415,11 @@
   "bytes": 204736
  },
  {
+  "b64": "images-b64/assets__img__e-68-melbourne-court-dusk.jpg.b64",
+  "target": "public/assets/img/e-68-melbourne-court-dusk.jpg",
+  "bytes": 222607
+ },
+ {
   "b64": "images-b64/assets__img__e-74-cyclades-catamaran.jpg.b64",
   "target": "public/assets/img/e-74-cyclades-catamaran.jpg",
   "bytes": 216841
@@ -1598,6 +1603,11 @@
   "b64": "images-b64/assets__img__ev-e-32-monaco-harbour-dusk.jpg.b64",
   "target": "public/assets/img/ev-e-32-monaco-harbour-dusk.jpg",
   "bytes": 56846
+ },
+ {
+  "b64": "images-b64/assets__img__ev-e-68-melbourne-court-dusk.jpg.b64",
+  "target": "public/assets/img/ev-e-68-melbourne-court-dusk.jpg",
+  "bytes": 61551
  },
  {
   "b64": "images-b64/assets__img__ev-e-74-cyclades-catamaran.jpg.b64",

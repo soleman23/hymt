@@ -74,6 +74,7 @@ const SOURCES = [
      catamaran, which sits in the left third of the frame. */
   ["ev", "e-74-cyclades-catamaran.jpg", "left"],             // yacht-charters: Greek catamaran week
   ["ev", "e-75-caribbean-motor-yacht.jpg"],                  // yacht-charters: Caribbean motor yacht
+  ["ev", "e-68-melbourne-court-dusk.jpg", "centre"],         // sports-event-travel/tennis: Australian Open (attention crop drops the skyline)
 ];
 
 const manifest = await readImageManifest(MANIFEST);
