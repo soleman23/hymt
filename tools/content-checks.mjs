@@ -2652,6 +2652,11 @@ export function tileParityDefects(html, rows = []) {
       if (c[i].href !== r[i].href) out.push(`${label} "${r[i].name}" links ${c[i].href}, the tile map says ${r[i].href}`);
       if (kind === "event-card" && (c[i].more ?? null) !== (r[i].more ?? null)) {
         out.push(`${label} "${r[i].name}" has secondary link ${c[i].more ?? "(none)"}, the tile map says ${r[i].more ?? "(none)"}`);
+      } else if (kind === "event-card" && c[i].more && (c[i].moreLabel ?? null) !== (r[i].moreLabel ?? null)) {
+        /* A label-only edit in the map must reach the page too; comparing the
+           href alone let the apply tool report "already matched" and the
+           page keep the old wording. */
+        out.push(`${label} "${r[i].name}" labels its secondary link "${c[i].moreLabel}", the tile map says "${r[i].moreLabel}"`);
       }
     }
   }

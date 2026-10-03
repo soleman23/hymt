@@ -4527,6 +4527,10 @@ t("crawlers/verdict: ...and says the origin is degrading for everything",
   t("tile-map-parity: a renamed card fails", tileParityDefects(page(card("/destinations/maldives/", "The Maldives"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
   t("tile-map-parity: an extra card fails", tileParityDefects(page(card("/destinations/maldives/"), card("/destinations/fiji/", "Fiji"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
   t("tile-map-parity: a dropped secondary link fails", tileParityDefects(page(card("/destinations/maldives/"), event("/plan-your-trip/?type=beach", "Week")), rows).length, 1);
+  t("tile-map-parity: a relabelled secondary link fails",
+    tileParityDefects(good, [rows[0], { ...rows[1], moreLabel: "The Maldives, in depth" }]).length, 1);
+  t("tile-links-apply: ...and applying the map rewrites the label",
+    readTileCards(applyTileLinks(good, [rows[0], { ...rows[1], moreLabel: "The Maldives, in depth" }]))[1].moreLabel, "The Maldives, in depth");
   t("tile-map-parity: a lost CTA prefill fails", tileParityDefects(page(card("/destinations/maldives/"), event("/plan-your-trip/", "Week", "/destinations/maldives/")), rows).length, 1);
 
   /* tile-links-apply writes what parity reads, and nothing else. */
