@@ -1,0 +1,20 @@
+---
+import ExperienceLayout from "../../../../layouts/ExperienceLayout.astro";
+import Content from "../../../../content-pages/experiences__cruises__yacht-charters.html?raw";
+---
+<ExperienceLayout
+  title="Private Crewed Yacht Charters — Hit Your Mark Travel"
+  description="Crewed gulets, catamarans and motor yachts, chartered by the week in the Med or the Caribbean: how crew, contract and the APA work, and what moves the price."
+  name={"Private Yacht Charters"}
+  parent={{ label: "Cruises &amp; Yachts", href: "/experiences/cruises/" }}
+  hero={{
+    image: "/assets/img/e-07-yacht-cove.jpg",
+    eyebrow: "Cruises &amp; Yachts",
+    headline: "Your Boat, Your Crew,<br>Your Anchorages",
+    sub: "A gulet, a catamaran or a motor yacht, with its captain and crew, yours alone for the week on the Mediterranean or in the Caribbean. Here is how the contract, the APA and the price work.",
+    ctaPrimary: { label: "Plan My Charter", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "A Gulet of Your Own ↓", href: "#gulets" },
+  }}
+>
+  <Fragment set:html={Content} />
+</ExperienceLayout>
