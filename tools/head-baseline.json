@@ -499,10 +499,10 @@
   "description": "Africa's regions run on different seasonal logics. The month-by-month breakdown: migration cycles, dry-season windows, and the case for green season.",
   "canonical": "https://www.hymtravel.com/travel-journal/african-safari-calendar/"
  },
- "/travel-journal/amanjiwo-field-report/": {
+ "/travel-journal/amanjiwo/": {
   "title": "Amanjiwo: What Aman Delivers — Hit Your Mark Travel Journal",
   "description": "Borobudur at dawn, a private pool facing the volcanoes, and a staff-to-guest ratio that makes 'dedicated service' mean something. What it actually is.",
-  "canonical": "https://www.hymtravel.com/travel-journal/amanjiwo-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/amanjiwo/"
  },
  "/travel-journal/asia-destination-guide/": {
   "title": "The Asia Destination Guide — Hit Your Mark Travel Journal",
@@ -539,15 +539,15 @@
   "description": "The five-star rating once meant something specific. It no longer does. What actually tells you whether a hotel is exceptional, and why the categories fail.",
   "canonical": "https://www.hymtravel.com/travel-journal/five-star-problem/"
  },
- "/travel-journal/glacier-express-field-report/": {
+ "/travel-journal/glacier-express/": {
   "title": "The Glacier Express, End to End — Hit Your Mark Travel Journal",
   "description": "Zermatt to St. Moritz in eight hours: 291 bridges, 91 tunnels, and one of the most deliberate rail journeys on earth. Why direction matters.",
-  "canonical": "https://www.hymtravel.com/travel-journal/glacier-express-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/glacier-express/"
  },
- "/travel-journal/heli-ski-field-report/": {
+ "/travel-journal/heli-skiing/": {
   "title": "A Week of Heli-Skiing — Hit Your Mark Travel Journal",
   "description": "No lifts, no groomers, no other tracks. What a week of heli-skiing in British Columbia actually looks like — the runs, the lodge, and the skiing required.",
-  "canonical": "https://www.hymtravel.com/travel-journal/heli-ski-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/heli-skiing/"
  },
  "/travel-journal/how-hotel-upgrades-work/": {
   "title": "How Hotel Upgrades Actually Work — Hit Your Mark Travel Journal",
@@ -564,10 +564,10 @@
   "description": "The Hit Your Mark Travel Journal — destination notes, shoulder-season guides, and considered opinions on how to travel exceptionally well.",
   "canonical": "https://www.hymtravel.com/travel-journal/"
  },
- "/travel-journal/kentucky-derby-field-report/": {
+ "/travel-journal/kentucky-derby/": {
   "title": "The Kentucky Derby, Explained — Hit Your Mark Travel Journal",
   "description": "A two-minute race that takes twelve hours to attend, and both facts are right. The tiers, the buildup, the race, and how to do Louisville around it.",
-  "canonical": "https://www.hymtravel.com/travel-journal/kentucky-derby-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/kentucky-derby/"
  },
  "/travel-journal/kyoto-april-vs-november/": {
   "title": "Kyoto in April vs. November — Hit Your Mark Travel Journal",
@@ -578,11 +578,6 @@
   "title": "Maldives: Overwater or Beach? — Hit Your Mark Travel Journal",
   "description": "The overwater villa is the image; the beach villa wins more often than the feed suggests. Reef quality, lagoon depth at low tide, and who should book which.",
   "canonical": "https://www.hymtravel.com/travel-journal/maldives-overwater-vs-beach-villa/"
- },
- "/travel-journal/masters-field-report/": {
-  "title": "The Masters at Augusta National — Hit Your Mark Travel Journal",
-  "description": "The badge waiting list closed in 1978. No phones, no advertising, no crowds in the usual sense. What The Masters actually is, and how access works.",
-  "canonical": "https://www.hymtravel.com/travel-journal/masters-field-report/"
  },
  "/travel-journal/mediterranean-october/": {
   "title": "The Mediterranean in October — Hit Your Mark Travel Journal",
@@ -619,10 +614,10 @@
   "description": "Most people ask about price and availability. The questions that decide safari quality — camp size, guide tenure, vehicle policy — rarely come up in time.",
   "canonical": "https://www.hymtravel.com/travel-journal/safari-planning-12-questions/"
  },
- "/travel-journal/singita-grumeti-field-report/": {
+ "/travel-journal/singita-grumeti/": {
   "title": "Singita Grumeti: What You Pay For — Hit Your Mark Travel Journal",
   "description": "The migration crosses the Western Corridor in July. What that means for a stay, and what separates Grumeti from the other Serengeti properties.",
-  "canonical": "https://www.hymtravel.com/travel-journal/singita-grumeti-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/singita-grumeti/"
  },
  "/travel-journal/south-america-destination-guide/": {
   "title": "The South America Guide — Hit Your Mark Travel Journal",
@@ -638,6 +633,11 @@
   "title": "The Case for Shoulder Season — Hit Your Mark Travel Journal",
   "description": "Peak season is the most crowded, most expensive version of any destination. Why the months on either side produce the better trip, and the windows to book.",
   "canonical": "https://www.hymtravel.com/travel-journal/the-case-for-shoulder-season/"
+ },
+ "/travel-journal/the-masters/": {
+  "title": "The Masters at Augusta National — Hit Your Mark Travel Journal",
+  "description": "The badge waiting list closed in 1978. No phones, no advertising, no crowds in the usual sense. What The Masters actually is, and how access works.",
+  "canonical": "https://www.hymtravel.com/travel-journal/the-masters/"
  },
  "/travel-journal/what-a-travel-advisor-actually-does/": {
   "title": "What a Travel Advisor Does — Hit Your Mark Travel Journal",
