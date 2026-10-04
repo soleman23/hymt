@@ -585,3 +585,23 @@
   .places-grid { grid-template-columns:1fr;grid-auto-rows:minmax(240px,auto) }
   .why-grid { grid-template-columns:1fr }
 }
+
+/* Route comparisons use the shared destination sheet, with headings kept
+   beside each option when the grid stacks on narrow screens. */
+.route-choice { padding:64px 52px;background:var(--bg-surface);border-bottom:1px solid var(--border-subtle) }
+.route-choice h2 { font-family:var(--font-d);font-size:clamp(24px,3vw,36px);font-weight:700;color:var(--text-primary);margin:12px 0 20px }
+.route-choice__intro,.route-choice__note { font-family:var(--font-b);font-size:15px;line-height:1.8;color:var(--text-secondary);max-width:80ch;margin:0 0 24px }
+.route-choice__note { font-size:13px;margin:24px 0 0 }
+.route-choice__grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px }
+.route-choice__card { padding:28px;background:var(--bg-elevated);border:1px solid var(--border-subtle);min-width:0 }
+.route-choice__card h3 { font-family:var(--font-d);font-size:19px;font-weight:700;line-height:1.4;color:var(--text-primary);margin:0 0 18px }
+.route-choice__card p { font-family:var(--font-b);font-size:15px;line-height:1.75;color:var(--text-secondary);margin:0 0 16px }
+.route-choice__card p:last-child { margin-bottom:0 }
+.route-choice__card strong { color:var(--text-primary) }
+.route-choice a { color:var(--gold-500);text-decoration:underline;text-underline-offset:3px }
+.route-choice a:hover { color:var(--gold-400) }
+@media (max-width:768px) {
+  .route-choice { padding:48px 28px }
+  .route-choice__grid { grid-template-columns:1fr }
+  .route-choice__card { padding:24px }
+}
