@@ -2538,9 +2538,10 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      Rome & Tuscany" plates were 25 of them. The invariant above was re-checked
      at each new number — bodyWords(dist) still equals a word count of
      src/content-pages/destinations__italy.html — so this is the copy moving,
-     not the predicate. */
+     not the predicate. The approved one-business-day response wording adds
+     one authored word, bringing the current count to 3236. */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3235);
+    bodyWords(italy), 3236);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");
