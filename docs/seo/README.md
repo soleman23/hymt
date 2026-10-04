@@ -6,11 +6,12 @@ output, deployed to Hostinger).
 
 **Production domain:** `https://www.hymtravel.com`
 **Development domain:** `https://brown-goose-754147.hostingersite.com`
-**Current state (checked 2026-10-02):** the Astro site serves the production
+**Current state (checked 2026-10-03 Pacific):** the Astro site serves the production
 domain. The cutover occurred on September 1 Pacific; see
-`HANDOFF-cutover-2026-09-02.md`. Hostinger's current completed deployment was
-checked October 3 as commit `5f547a7e`; its deployment ID, displayed time,
-phone, redirect, canonical, and indexability checks are in
+`HANDOFF-cutover-2026-09-02.md`. Hostinger's completed deployment after PR #242
+was checked October 3 Pacific as `main` commit `280a4cb3` (deployment
+`01a1050d-163f-7129-9cd6-5f43d7f96d89`). Its displayed time, phone,
+redirect, canonical, and indexability checks are in
 `M1-LIVE-AUDIT-2026-10-02.md`.
 
 **The same-domain platform migration is complete.** Hostinger now serves the

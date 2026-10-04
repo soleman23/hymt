@@ -8,7 +8,7 @@ Sitemap lastmod is based on later source commits and need not equal datePublishe
 | --- | --- | --- | --- | --- |
 | /travel-journal/africa-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/african-safari-calendar/ | April 2026 | 2026-09-01 | — | No earlier publication evidence |
-| /travel-journal/amanjiwo-field-report/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
+| /travel-journal/amanjiwo/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/asia-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/aspen-book-early/ | January 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/botswana-shoulder-season/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
@@ -16,14 +16,14 @@ Sitemap lastmod is based on later source commits and need not equal datePublishe
 | /travel-journal/europe-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/european-grand-tour-mistake/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/five-star-problem/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
-| /travel-journal/glacier-express-field-report/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
-| /travel-journal/heli-ski-field-report/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
+| /travel-journal/glacier-express/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
+| /travel-journal/heli-skiing/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/how-hotel-upgrades-work/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/in-defense-of-slow-travel/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
-| /travel-journal/kentucky-derby-field-report/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
+| /travel-journal/kentucky-derby/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/kyoto-april-vs-november/ | February 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/maldives-overwater-vs-beach-villa/ | April 2026 | 2026-09-01 | — | No earlier publication evidence |
-| /travel-journal/masters-field-report/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
+| /travel-journal/the-masters/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/mediterranean-october/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/middle-east-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/napa-sonoma-winery-route/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
@@ -31,7 +31,7 @@ Sitemap lastmod is based on later source commits and need not equal datePublishe
 | /travel-journal/polar-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/private-guide-advantage/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/safari-planning-12-questions/ | March 2026 | 2026-09-01 | — | No earlier publication evidence |
-| /travel-journal/singita-grumeti-field-report/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
+| /travel-journal/singita-grumeti/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/south-america-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/south-pacific-destination-guide/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
 | /travel-journal/the-case-for-shoulder-season/ | May 2026 | 2026-09-01 | — | No earlier publication evidence |
