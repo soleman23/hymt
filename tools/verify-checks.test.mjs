@@ -2561,9 +2561,10 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      the breadcrumb and the hero. 3383 since the plan's inbound links: a
      Dolomites sentence in the autumn season text and a small-ship clause on
      the Amalfi & Sicily itinerary (17 words), plus "the Trevi Fountain" in
-     place of a duplicated "Fushimi Inari" (1). */
+     place of a duplicated "Fushimi Inari" (1). 3384 since the one-business-day
+     response wording replaced "24 hours" in the closing note (1). */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3383);
+    bodyWords(italy), 3384);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");

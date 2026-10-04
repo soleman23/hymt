@@ -1,20 +1,25 @@
-# Off-site profiles — drafted now, submitted at cutover
+# Off-site profiles — inventory and copy for review
 
-Prepared 2026-08-24 for #97. Everything here is **ready to submit and must not
-be submitted yet**.
+Prepared 2026-08-24 for #97; rechecked for #207 on 2026-10-03. The site now
+serves at `https://www.hymtravel.com/`, and the approved business phone is
+**(541) 241-6481**. This document is draft profile copy, not evidence that any
+profile is live. Published profile URLs and edit access still need to be
+inventoried. Review dated legal, membership, pricing, and access claims before
+submitting any draft.
 
 ## The one rule
 
-Every item below ends in a link to `www.hymtravel.com`. That domain does not
-resolve until the DNS cutover. **Nothing goes out until #33 passes** — the
-post-cutover verification that confirms the site is actually serving.
+Every submitted profile should link to `www.hymtravel.com`. The site is now
+serving; verify the intended public URL and the profile's published phone
+after each edit.
 
 A broken link on a consortium profile or a chamber directory is worse than a
 missing one. Directory entries are slow to re-crawl once they have been seen
 broken, and the first crawl of a brand-new entity is the one that sets what
 search engines think the entity is.
 
-Runbook § 4.6 is the submit-day checklist. This file is what gets pasted into it.
+Runbook § 4.6 is the historical cutover checklist. Use the current #207 live
+audit for deployment and phone evidence.
 
 ---
 
@@ -59,11 +64,12 @@ lapsed number published in six places is worse than none:
 The site organises the practice into four areas. Profiles that reorder or
 rename them fragment the entity:
 
-1. **Elite motorsport** — circuit access at Formula 1 weekends, paddock and
-   pit-lane experiences, hospitality
-2. **Championship golf** — tee times at private clubs and bucket-list courses
-3. **Bespoke sport** — seats at the finals that matter, and access to the
-   people behind the game
+1. **Elite motorsport** — travel planned around Formula 1 events, with ticket
+   and hospitality options checked for each race
+2. **Championship golf** — golf trips planned around courses and tournaments,
+   with tee times and event access confirmed before quoting
+3. **Bespoke sport** — event travel built around confirmed tickets,
+   accommodation, and logistics
 4. **Global luxury** — fully planned international trips, from private-guide
    safaris to multi-country cultural tours
 
@@ -154,8 +160,8 @@ example measures 37 words. Two lengths, both written to that rule:
 **Short (about 45 words — matches what live profiles actually carry):**
 
 > I build trips around world-class sport. 20 years planning bespoke travel,
-> concentrated in Formula 1 circuit and paddock access, championship golf at
-> Augusta, St Andrews and Pebble Beach, and the finals worth flying for.
+> including Formula 1, championship golf, and the finals worth flying for.
+> I check event access and tee times before quoting any trip.
 > Alongside that, a full global luxury practice. Every itinerary built from
 > scratch.
 
@@ -167,11 +173,10 @@ example measures 37 words. Two lengths, both written to that rule:
 > 20 years of planning bespoke journeys sits behind it. It runs as a
 > consultancy, not a booking desk — every itinerary is built from scratch.
 >
-> The work concentrates in 4 areas: elite motorsport, including circuit and
-> paddock access at Formula 1 weekends; championship golf, from Augusta to
-> St Andrews to Pebble Beach; bespoke sport, meaning seats at the finals that
-> matter; and global luxury — private-guide safaris and multi-country cultural
-> itineraries.
+> The work concentrates in 4 areas: elite motorsport, championship golf,
+> bespoke sport, and global luxury — from private-guide safaris to
+> multi-country cultural itineraries. Event access and tee times are checked
+> against current availability before a trip is quoted.
 >
 > 1 advisor, start to finish. No hand-offs, no intake queue.
 >
@@ -256,12 +261,10 @@ the digits versions above, per TLN's guidance.
 > consultancy rather than a booking desk — every itinerary is built from
 > scratch.
 >
-> His work concentrates in four areas: elite motorsport, including circuit
-> access and paddock hospitality at Formula 1 weekends; championship golf, from
-> Augusta to St Andrews to Pebble Beach; bespoke sport, meaning seats at the
-> finals that matter and access to the people behind the game; and global
-> luxury travel — private-guide safaris, multi-country cultural itineraries,
-> and the trips that do not fit a package.
+> His work concentrates in four areas: elite motorsport, championship golf,
+> bespoke sport, and global luxury travel — from private-guide safaris to
+> multi-country cultural itineraries. Event access and tee times are checked
+> against current availability before a trip is quoted.
 >
 > One person answers the phone, knows your file, and stands behind every
 > recommendation.
@@ -349,9 +352,9 @@ shape.
 
 > Hit Your Mark Travel is a single-advisor luxury practice based in Bend,
 > Oregon, part of the Travel Leaders Network. Founder Mark Sole plans bespoke
-> international travel with a concentration in sport: Formula 1 circuit and
-> paddock access, championship golf at Augusta, St Andrews and Pebble Beach,
-> and seats at the finals that matter. Alongside that sits a full global
+> international travel with a concentration in sport: Formula 1, championship
+> golf, and major event travel, with access checked before a quote. Alongside
+> that sits a full global
 > luxury practice — private-guide safaris, multi-country cultural itineraries,
 > and celebration travel. Every itinerary is built from scratch; there is no
 > intake queue and no hand-off. CA Seller of Travel 2165910-50 · WA 605920581 ·
@@ -367,8 +370,9 @@ specialties (the four, in order) · years in business (20+) · consortium
 
 ## 3. LinkedIn
 
-**Status: ready to paste.** Update the profile at cutover; the website field is
-the only part that must wait.
+**Status: draft for owner review.** Compare the public profile with these
+facts before editing; the website and phone should point to the live site and
+approved business line.
 
 ### Headline (220 char limit)
 
@@ -387,12 +391,10 @@ the only part that must wait.
 >
 > The work tends to fall into four areas:
 >
-> • Elite motorsport — circuit access at Formula 1 weekends, with paddock and
->   pit-lane experiences and hospitality
-> • Championship golf — tee times at private clubs and bucket-list courses
->   around the world
-> • Bespoke sport — seats at the finals that matter, and access to the people
->   behind the game
+> • Elite motorsport — Formula 1 trips with ticket and hospitality options
+>   checked for each race
+> • Championship golf — golf trips with tee times checked before quoting
+> • Bespoke sport — major event trips planned around confirmed access
 > • Global luxury — fully planned international trips, from private-guide
 >   safaris to multi-country cultural tours
 >
@@ -473,9 +475,9 @@ existing listings in the directory)
 > them rather than the other way round.
 >
 > Founder Mark Sole has twenty years in bespoke travel, with a concentration
-> in sport — Formula 1 circuit and paddock access, championship golf at
-> Augusta, St Andrews and Pebble Beach, and seats at the finals worth flying
-> for — alongside a full global luxury practice covering private-guide
+> in sport — Formula 1, championship golf, and major event travel with
+> access checked before quoting — alongside a full global luxury practice
+> covering private-guide
 > safaris, multi-country cultural itineraries and celebration travel.
 >
 > Every itinerary is built from scratch. One advisor, start to finish.
@@ -677,11 +679,11 @@ _Filled in below from the 2026-08-24 research pass._
 
 ---
 
-## Acceptance for #97
+## Historical acceptance for #97 and current #207 follow-up
 
 - [x] All six items drafted and ready to submit
 - [x] Naming and positioning consistent across all drafts — § "Canonical facts"
       is the single source and every draft is written from it
-- [ ] Nothing submitted, and no link to `hymtravel.com` published anywhere,
-      before #33 passes — **stays open until cutover; this is the constraint,
-      not a task**
+- [x] The cutover hold is past: `https://www.hymtravel.com/` serves the live site.
+- [ ] Obtain exact URLs and edit ownership for each published controlled profile.
+- [ ] Compare the public phone, site URL, business name, and cautious access wording on each profile, then record its check date and correction.

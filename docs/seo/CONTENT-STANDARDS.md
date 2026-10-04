@@ -176,6 +176,29 @@ the outside world gets a linked source:
 
 Link out. It costs nothing and it makes the page more citable, not less.
 
+### Record the evidence behind material claims
+
+Before a material claim is published or renewed, record it in the page's
+editorial review sheet using [`EDITORIAL-REVIEW-TEMPLATE.md`](EDITORIAL-REVIEW-TEMPLATE.md).
+Keep client names, supplier contracts, unpublished prices, permissions, and
+other private proof outside the public repository; the sheet can point to a
+private evidence ID. A named reviewer and review date are required. A writer's
+draft is not a review.
+
+Classify each claim as one of: Mark's firsthand travel (confirmed by Mark),
+client work (with recorded permission for the precise public wording), supplier
+information (attributed and independently checked where possible), or
+independent research (linked to the issuing authority or original source).
+Do not turn a supplier description or generated copy into Mark's experience.
+
+For prices, taxes, event access, conservation permits, entry requirements,
+health rules, and seasonal transport, record the source, applicable nationality
+or traveler type, date/season and currency, verification date, and refresh
+trigger. Recheck before each relevant booking and whenever an authority or
+operator changes a rule. Refer medical and legal questions to official
+authorities and qualified professionals; the site should not make an
+individual eligibility judgment.
+
 ### Date everything perishable
 
 Any page containing a price, a schedule, an event date, a permit cost or an
@@ -259,6 +282,21 @@ for a first-hand line, because none is coming unless Mark offers one.
 - Decorative images: `alt=""` **and** `aria-hidden="true"`.
 - No stock-photo clichés and no placeholder images, ever.
 
+### Provenance and rights
+
+Maintain an image row for each hero and substantive editorial image: file,
+page/placement, source or creator, original/generated/stock classification,
+license or permission evidence ID, permitted web use, credit/caption, alt text,
+reviewer, and review date. A prompt manifest is evidence of generation, not
+evidence of a photographed scene or a license for a third-party image. A file
+name or a Drive location alone does not prove rights.
+
+Prefer an original photograph with recorded rights and an accurate location
+caption. A properly licensed real photograph is next. If a generated image is
+retained, describe it as an illustration where context could imply that it
+documents Mark's visit, a specific property, client, wildlife encounter, or
+event. Do not claim a generated frame is a photograph of a real trip.
+
 ---
 
 ## 9. Pre-commit checklist
@@ -287,6 +325,8 @@ these are the rest.
 
 **Content**
 - [ ] Every factual external claim linked to an authority
+- [ ] Material claims have a named reviewer, dated evidence row, and refresh trigger
+- [ ] Firsthand and client-work claims have Mark's confirmation or recorded client permission
 - [ ] Perishable content carries a visible date
 - [ ] No claim, stated or implied, that Mark has been there (§ 6)
 - [ ] No banned phrases (§ 2)
@@ -297,6 +337,7 @@ these are the rest.
 - [ ] Every internal link resolves in `dist/`
 - [ ] Every `<img>` has `alt`, `width`, `height`, `decoding`
 - [ ] Below-fold images lazy; LCP image not lazy
+- [ ] Hero/editorial images have provenance, rights evidence, and accurate caption/alt
 
 **Build**
 - [ ] `npm run build` passes (self-contained: astro build → image restore → verifier)
@@ -317,3 +358,7 @@ Every quarter:
 - Re-check event logistics posts (Masters, Derby) against the current year.
 - Add new FAQ questions from what clients actually asked that quarter. That is
   the best keyword research available and it is free.
+- Sample at least five published pages, including one destination, one
+  experience, and one journal post. Recheck one material claim and one image
+  per page against its evidence row; record the sample, reviewer, date,
+  corrections, and unresolved items in the private editorial log.
