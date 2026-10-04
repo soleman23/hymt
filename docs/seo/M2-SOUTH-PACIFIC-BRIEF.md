@@ -1,7 +1,10 @@
 # M2 first release: South Pacific route selection
 
-Prepared October 4, 2026. Draft for #217 in milestone 11; not a release or
-expert approval. This follows the owner-approved M1 handoff: South Pacific
+Prepared October 4, 2026. Release scope for #217 in milestone 11, authorized
+by the requesting user with "Approve all and continue" after the approval
+checklist. Actual production verification follows the merge. No separate named
+expert signature, supplier quote or image-license document was supplied.
+This follows the owner-approved M1 handoff: South Pacific
 first, sports/events second, then limited hotel/safari/family pilots. Private
 analytics and the ranking worksheet remain in the restricted evidence folder.
 
@@ -85,10 +88,11 @@ delivery remains the separate M1 gate; a local link click is not delivery proof.
 
 ## Release and measurement gate
 
-1. Complete the companion editorial record: Mark reviews fit and route advice,
-   current budget evidence and existing image rights. Research is not approval.
-2. Run the repository build, link/anchor checks and 375/768px visual review.
-3. Obtain release authorization. A merge to main auto-deploys production.
+1. User approval recorded October 4, 2026 in the companion editorial record.
+   No numeric budget bands are authorized without supporting quotes.
+2. Repository build, link/anchor checks and 375/768px visual review passed;
+   repeat the build for the final approval-record commit.
+3. Release authorized October 4, 2026. A merge to main auto-deploys production.
 4. Record the actual live timestamp and verify the production page and inquiry
    route. The source-check date is not a release or journal modification date.
 5. In the private scorecard, compare the unchanged-URL cohort at 28 and 60 days
@@ -97,8 +101,8 @@ delivery remains the separate M1 gate; a local link click is not delivery proof.
    inquiries. Log sample size and seasonality; do not infer a win from rank alone.
 
 These dates are relative to the actual release. Calendar reminders and GSC
-indexing requests have **not** been scheduled or submitted while the PR is a
-draft. Add them when the reviewed update is live.
+indexing requests have **not** yet been scheduled or submitted. Record the
+live date first, then place cohort dates in the private operations scorecard.
 
 ## Local validation — October 4, 2026
 
@@ -116,5 +120,6 @@ draft. Add them when the reviewed update is live.
 - Screenshots and JSON checks are local in `output/playwright/`; they contain
   the draft site only and are excluded from this PR's explicitly staged files.
 
-These results verify this draft's rendering and navigation, not expert
-approval, production deployment, field performance or organic-search impact.
+These results verify rendering and navigation. User release approval is
+recorded separately above; production deployment, field performance and
+organic-search impact require their own evidence.
