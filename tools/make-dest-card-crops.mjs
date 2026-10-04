@@ -47,6 +47,9 @@ const QUALITY = 72;
    change bytes that nothing asked to change. */
 const SOURCES = [
   "dh-26-aspen-maroon-bells.jpg",
+  "orlando-walt-disney-world-lagoon-fireworks.jpg",   // /destinations/orlando/
+  "dolomites-tre-cime-di-lavaredo.jpg",              // /destinations/dolomites/
+  "e-60-st-lucia-terrace-piton.jpg",                 // /destinations/st-lucia/
 ];
 
 const cropName = (src) => "dc-" + src.replace(/\.(jpe?g|png|webp)$/i, "") + ".jpg";

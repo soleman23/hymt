@@ -30,6 +30,10 @@ interface Props {
   schemaType?: "website" | "article";
   /** Breadcrumb leaf — the experience's own name. */
   name: string;
+  /** Parent experience crumb, for a detail page nested under one of the 12
+      (/experiences/<parent>/<slug>/). Omit on the 12 themselves, which then
+      render exactly as before. Mirrors DestinationLayout's `region`. */
+  parent?: { label: string; href: string };
   hero: {
     /** Full-bleed background photo. Falls back to the placeholder plate. */
     image?: string;
@@ -43,7 +47,7 @@ interface Props {
   };
 }
 
-const { title, description, ogImage, canonicalPath, schemaType, name, hero } = Astro.props;
+const { title, description, ogImage, canonicalPath, schemaType, name, parent, hero } = Astro.props;
 
 /* ── JSON-LD (P2-4/P2-5) — same pattern as DestinationLayout ── */
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
@@ -51,6 +55,7 @@ const path = canonicalPath || Astro.url.pathname;
 const trail = [
   { name: "Home", path: "/" },
   { name: "Experiences", path: "/experiences/" },
+  ...(parent ? [{ name: parent.label, path: parent.href }] : []),
   { name },
 ];
 const bodyHtml = await Astro.slots.render("default");

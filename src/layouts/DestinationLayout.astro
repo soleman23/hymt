@@ -13,6 +13,7 @@
  */
 import Base from "./Base.astro";
 import { breadcrumbs, destination, extractFaq, faq, plain, webPage } from "../lib/schema";
+import { featuredInHtml } from "../data/tiles.mjs";
 
 /**
  * A bare CSS import, not `?raw` piped through Base's pageCss prop. Astro
@@ -74,6 +75,22 @@ const trail = [
 ];
 const bodyHtml = await Astro.slots.render("default");
 const faqPairs = extractFaq(bodyHtml);
+
+/* "Featured in" (tile map): the experience pages whose tiles land here,
+   derived from src/data/tiles.mjs so the back-links cannot drift from the
+   tiles. Empty for a page no tile targets, which then renders exactly as
+   before. It goes above "You Might Also Consider" — or the closing CTA, or
+   the journal links, on pages without one — so it sits with the other
+   onward links rather than after the FAQ. */
+const featured = featuredInHtml(path);
+const featuredAt = featured
+  ? ['<section class="related-section"', '<section class="dest-cta', '<section class="read-more"']
+      .map((marker) => bodyHtml.indexOf(marker))
+      .find((i) => i !== -1) ?? bodyHtml.length
+  : -1;
+const pageHtml = featured
+  ? bodyHtml.slice(0, featuredAt) + featured + "\n" + bodyHtml.slice(featuredAt)
+  : bodyHtml;
 const schema = [
   breadcrumbs(SITE, trail.map((c) => ({ ...c, name: plain(c.name) }))),
   webPage(SITE, { name: plain(name), description: description ?? "", path }),
@@ -164,6 +181,7 @@ const ogCropAlt = (hero?.image && OG_CROPS[hero.image])
   </section>
 
   {/* The slot was already rendered above for FAQ extraction — emit that
-      capture rather than rendering the content a second time. */}
-  <Fragment set:html={bodyHtml} />
+      capture (with the Featured-in strip spliced in) rather than rendering
+      the content a second time. */}
+  <Fragment set:html={pageHtml} />
 </Base>

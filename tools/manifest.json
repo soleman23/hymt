@@ -354,10 +354,10 @@
   "src": "african-safari-calendar.html"
  },
  {
-  "route": "/travel-journal/amanjiwo-field-report/",
+  "route": "/travel-journal/amanjiwo/",
   "title": "Three Nights at Amanjiwo \u2014 Hit Your Mark Travel Journal",
   "desc": "Borobudur at dawn, a private pool facing the volcanoes, and a staff-to-guest ratio that makes the phrase 'dedicated service' finally mean something. Here is what the experience actually is.",
-  "src": "amanjiwo-field-report.html"
+  "src": "amanjiwo.html"
  },
  {
   "route": "/travel-journal/asia-destination-guide/",
@@ -396,16 +396,16 @@
   "src": "five-star-problem.html"
  },
  {
-  "route": "/travel-journal/glacier-express-field-report/",
+  "route": "/travel-journal/glacier-express/",
   "title": "The Glacier Express, End to End \u2014 Hit Your Mark Travel Journal",
   "desc": "Zermatt to St. Moritz in eight hours. 291 bridges, 91 tunnels, and one of the most deliberate rail journeys on earth. Here is what the experience is \u2014 and why direction matters.",
-  "src": "glacier-express-field-report.html"
+  "src": "glacier-express.html"
  },
  {
-  "route": "/travel-journal/heli-ski-field-report/",
+  "route": "/travel-journal/heli-skiing/",
   "title": "A Week of Heli-Skiing: What the Experience Actually Is \u2014 Hit Your Mark Travel Journal",
   "desc": "No lifts. No groomers. No other tracks in the snow. A helicopter drops you at a peak and you ski back to the valley, then does it again. Here is what a week of heli-skiing in British Columbia actually looks like \u2014 the runs, the weather, the lodge, and what you need to be able to ski before you go.",
-  "src": "heli-ski-field-report.html"
+  "src": "heli-skiing.html"
  },
  {
   "route": "/travel-journal/how-hotel-upgrades-work/",
@@ -420,16 +420,16 @@
   "src": "in-defense-of-slow-travel.html"
  },
  {
-  "route": "/travel-journal/kentucky-derby-field-report/",
+  "route": "/travel-journal/kentucky-derby/",
   "title": "The Kentucky Derby: What the Race Actually Is to Attend \u2014 Hit Your Mark Travel Journal",
   "desc": "It's a two-minute race that takes twelve hours to attend. Both of those facts are exactly right. Here is what the Kentucky Derby experience actually is \u2014 the tiers, the buildup, the race itself, and how to do Louisville properly around it.",
-  "src": "kentucky-derby-field-report.html"
+  "src": "kentucky-derby.html"
  },
  {
-  "route": "/travel-journal/masters-field-report/",
+  "route": "/travel-journal/the-masters/",
   "title": "The Masters: What Augusta National Actually Is to Attend \u2014 Hit Your Mark Travel Journal",
   "desc": "The badge waiting list closed in 1978. The concession prices haven't changed in decades. No phones, no advertising, no crowds in the usual sense. Here is what The Masters experience actually is \u2014 and how access works.",
-  "src": "masters-field-report.html"
+  "src": "the-masters.html"
  },
  {
   "route": "/travel-journal/mediterranean-october/",
@@ -474,10 +474,10 @@
   "src": "safari-planning-12-questions.html"
  },
  {
-  "route": "/travel-journal/singita-grumeti-field-report/",
+  "route": "/travel-journal/singita-grumeti/",
   "title": "Four Nights at Singita Grumeti \u2014 Hit Your Mark Travel Journal",
   "desc": "The migration crosses the Western Corridor in July. Here's what that actually looks like from the camp \u2014 and what separates Grumeti from the other properties in the ecosystem.",
-  "src": "singita-grumeti-field-report.html"
+  "src": "singita-grumeti.html"
  },
  {
   "route": "/travel-journal/south-america-destination-guide/",

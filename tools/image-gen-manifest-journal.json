@@ -9,7 +9,7 @@
  },
  {
   "id": "jh-02",
-  "slug": "amanjiwo-field-report",
+  "slug": "amanjiwo",
   "file": "jh-02-borobudur-dawn-stupas.jpg",
   "ratio": "16:9",
   "res": "4K",
@@ -41,7 +41,7 @@
  },
  {
   "id": "jh-06",
-  "slug": "glacier-express-field-report",
+  "slug": "glacier-express",
   "file": "jh-06-landwasser-viaduct.jpg",
   "ratio": "16:9",
   "res": "4K",
@@ -49,7 +49,7 @@
  },
  {
   "id": "jh-07",
-  "slug": "heli-ski-field-report",
+  "slug": "heli-skiing",
   "file": "jh-07-bc-powder-ridgeline.jpg",
   "ratio": "16:9",
   "res": "4K",
@@ -73,7 +73,7 @@
  },
  {
   "id": "jh-10",
-  "slug": "kentucky-derby-field-report",
+  "slug": "kentucky-derby",
   "file": "jh-10-racetrack-home-stretch.jpg",
   "ratio": "16:9",
   "res": "4K",
@@ -82,7 +82,7 @@
  },
  {
   "id": "jh-11",
-  "slug": "masters-field-report",
+  "slug": "the-masters",
   "file": "jh-11-augusta-azalea-hole.jpg",
   "ratio": "16:9",
   "res": "4K",
@@ -114,7 +114,7 @@
  },
  {
   "id": "jh-15",
-  "slug": "singita-grumeti-field-report",
+  "slug": "singita-grumeti",
   "file": "jh-15-grumeti-river-corridor.jpg",
   "ratio": "16:9",
   "res": "4K",

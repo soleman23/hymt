@@ -101,8 +101,12 @@ import {
   htaccessGaps as rawHtaccessGaps, configuredSite, internalHrefs, deadInternalHrefs, linkTargets, anchorHrefs, decodeEntities, photoGridDefects, nestedCardAnchors, bodyWords, crumbTrail,
   remoteRoutes, remoteMisses, remoteThrottled, remoteCoverage,
   liveSecurityHeaderGaps, HTACCESS_SECURITY_HEADERS, HSTS_MAX_AGE, CSP_DIRECTIVES,
-  responsiveImageDefects,
+  responsiveImageDefects, assetRestoreHint, restoreScriptGaps, ASSET_RESTORE_STAGES,
+  readTileCards, cardTargetDefects, cardFragmentHrefs, hasElementId, tileParityDefects, featuredInLinks,
+  nestedCrumbDefect,
 } from "./content-checks.mjs";
+import { applyTileLinks, alignmentDefects } from "./tile-links-apply.mjs";
+import { TILES, EXPERIENCES, featuredIn, featuredInHtml, pagePath } from "../src/data/tiles.mjs";
 const htaccessGaps = (text, productionSite = CONFIGURED_SITE) =>
   rawHtaccessGaps(text, productionSite);
 const attribution = testimonialAttribution;
@@ -596,7 +600,7 @@ t("eager: the post-fix homepage hero pattern counts slide 1 only",
 const LLMS = [
   "- [Destinations](https://www.hymtravel.com/destinations/): 43 destination guides, grouped by region",
   "- [Experiences](https://www.hymtravel.com/experiences/): 12 trip types",
-  "- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 field reports and planning guides",
+  "- [Travel Journal](https://www.hymtravel.com/travel-journal/): 32 trip and planning guides",
 ].join("\n");
 
 const TRUTH = { destinations: 43, experiences: 12, journal: 32 };
@@ -1427,6 +1431,12 @@ AddType image/webp .webp
 <IfModule mod_rewrite.c>
   RewriteRule ^terms-conditions/?$ https://www.hymtravel.com/terms-and-conditions/ [R=301,L,NE]
   RewriteRule ^trips/?$ https://www.hymtravel.com/travel-journal/ [R=301,L,NE]
+  RewriteRule ^travel-journal/amanjiwo-field-report/?$ https://www.hymtravel.com/travel-journal/amanjiwo/ [R=301,L,NE]
+  RewriteRule ^travel-journal/glacier-express-field-report/?$ https://www.hymtravel.com/travel-journal/glacier-express/ [R=301,L,NE]
+  RewriteRule ^travel-journal/heli-ski-field-report/?$ https://www.hymtravel.com/travel-journal/heli-skiing/ [R=301,L,NE]
+  RewriteRule ^travel-journal/kentucky-derby-field-report/?$ https://www.hymtravel.com/travel-journal/kentucky-derby/ [R=301,L,NE]
+  RewriteRule ^travel-journal/masters-field-report/?$ https://www.hymtravel.com/travel-journal/the-masters/ [R=301,L,NE]
+  RewriteRule ^travel-journal/singita-grumeti-field-report/?$ https://www.hymtravel.com/travel-journal/singita-grumeti/ [R=301,L,NE]
   RewriteRule ^sitemap\\.xml$ /sitemap-index.xml [L]
   RewriteCond %{HTTP_HOST} ^hymtravel\\.com$ [NC]
   RewriteRule ^ https://www.hymtravel.com%{REQUEST_URI} [R=301,L]
@@ -1468,6 +1478,12 @@ t("htaccess: a non-UTF-8 default charset is caught",
 
 t("htaccess: a missing legacy redirect is caught",
   htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^trips.*$/m, "")).length, 1);
+
+t("htaccess: a missing renamed-journal redirect is caught",
+  htaccessGaps(HT_GOOD.replace(/^\s*RewriteRule \^travel-journal\/masters-field-report.*$/m, "")).length, 1);
+
+t("htaccess: a renamed-journal redirect pointing back at the old slug is caught",
+  htaccessGaps(HT_GOOD.replace("https://www.hymtravel.com/travel-journal/the-masters/", "https://www.hymtravel.com/travel-journal/masters-field-report/")).length, 1);
 
 t("htaccess: a legacy redirect with the wrong target is caught",
   htaccessGaps(HT_GOOD.replace("https://www.hymtravel.com/travel-journal/", "https://www.hymtravel.com/")).length, 1);
@@ -1911,8 +1927,8 @@ t("htaccess: a var named only inside a match pattern arms nothing",
    both migration redirects, the 4 security headers, both staging lines, both
    HSTS lines (#79), the canonical-host rewrite, sitemap alias, UTF-8 charset,
    the CSP once, the cache once, and the hashed immutable rule. */
-t("htaccess: an empty file reports all 18 gaps and does not throw",
-  htaccessGaps("").length, 18);
+t("htaccess: an empty file reports all 24 gaps and does not throw",
+  htaccessGaps("").length, 24);
 
 /* The #166 additions are pinned by exact string equality, so the value that
    shipped before them must now be a gap. Without this, the three copies could
@@ -2428,11 +2444,11 @@ const collectionPage = (items, n = items.length) => ld({
    positions. numberOfItems agreed with the (wrong) element count, so this is
    the duplicate branch alone. */
 t("itemlist: the featured post listed twice is one defect",
-  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "masters-field-report"),
+  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "the-masters"),
     li(3, "botswana-shoulder-season")])).length, 1);
 
 t("itemlist: the duplicate report names the URL and both positions",
-  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "masters-field-report"),
+  itemListDefects(collectionPage([li(1, "botswana-shoulder-season"), li(2, "the-masters"),
     li(3, "botswana-shoulder-season")]))[0].includes("positions 1, 3"), true);
 
 t("itemlist: distinct URLs are clean",
@@ -2538,10 +2554,17 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      Rome & Tuscany" plates were 25 of them. The invariant above was re-checked
      at each new number — bodyWords(dist) still equals a word count of
      src/content-pages/destinations__italy.html — so this is the copy moving,
-     not the predicate. The approved one-business-day response wording adds
-     one authored word, bringing the current count to 3236. */
+     not the predicate. 3365 since the tile-map enhancement added a family
+     and three-generation FAQ, a truffle clause and an Amalfi line (130 words
+     of copy). The page also gained a Featured-in strip that same change, and
+     the count did not move for it: that strip is layout chrome, stripped like
+     the breadcrumb and the hero. 3383 since the plan's inbound links: a
+     Dolomites sentence in the autumn season text and a small-ship clause on
+     the Amalfi & Sicily itinerary (17 words), plus "the Trevi Fountain" in
+     place of a duplicated "Fushimi Inari" (1). 3384 since the one-business-day
+     response wording replaced "24 hours" in the closing note (1). */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3236);
+    bodyWords(italy), 3384);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");
@@ -2554,7 +2577,7 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
   t("real /destinations/napa-sonoma/ is 1,215 words and passes: there is no floor",
     bodyWords(napa) < 1500 && bodyWords(napa) <= 3500, true);
 
-  const masters = await readFile(path.join(dist, "travel-journal", "masters-field-report", "index.html"), "utf8");
+  const masters = await readFile(path.join(dist, "travel-journal", "the-masters", "index.html"), "utf8");
   t("real masters post clears the destination-link floor",
     linkFloor(masters, "journal") >= 2, true);
 
@@ -4174,6 +4197,79 @@ t("post-build: absent build:post is not drift",
 t("post-build: the shipped package.json has no drift",
   postBuildDrift(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
 
+/* ── missing-asset restore hint ── */
+
+/* The shape reproduced on 2026-10-01: a checkout not built since #199, with
+   the originals restored and every derived variant missing. The old hint
+   named `npm run restore` and stopped there, which left all 106 missing. */
+{
+  const derived = ["/assets/responsive/img/x-01-serengeti-elephants-1600.avif",
+    "/assets/responsive/img/dh-02-asia-temple-valley-1600.avif"];
+  const hint = assetRestoreHint(derived) ?? "";
+  t("restore-hint: derived variants name the stage that writes them",
+    hint.includes("node tools/build-responsive-images.mjs"), true);
+  t("restore-hint: ...after the stage that writes the originals",
+    hint.indexOf("node tools/restore-images.mjs") < hint.indexOf("node tools/build-responsive-images.mjs") &&
+      hint.includes("node tools/restore-images.mjs"), true);
+  t("restore-hint: ...and say how many of the missing are derived",
+    hint.includes("2 of 2 missing files are /assets/responsive/ variants"), true);
+}
+
+/* Originals only: the command, without a claim about derived files. */
+t("restore-hint: originals alone get the command and no derived-variant note",
+  assetRestoreHint(["/assets/img/dh-01-antarctica-ice-cliffs.jpg"]),
+  `run \`npm run restore\` (${ASSET_RESTORE_STAGES.join(" && ")}).`);
+
+/* A mix counts only the derived ones. */
+t("restore-hint: a mix counts the derived files, not all of them",
+  (assetRestoreHint(["/assets/img/a.jpg", "/assets/responsive/img/a-800.webp", "/assets/img/b.jpg"]) ?? "")
+    .includes("1 of 3 missing files is a /assets/responsive/ variant"), true);
+
+/* og:image passes one path at a time. */
+t("restore-hint: a single derived og:image path reads in the singular",
+  (assetRestoreHint(["/assets/responsive/img/a-1600.avif"]) ?? "")
+    .includes("1 of 1 missing file is a /assets/responsive/ variant"), true);
+
+/* Anything outside /assets/ means the build itself went wrong; an image
+   restore would not fix it, so no hint at all. */
+t("restore-hint: a missing stylesheet suppresses the hint",
+  assetRestoreHint(["/assets/responsive/img/a-1600.avif", "/_astro/index.css"]), null);
+t("restore-hint: nothing missing, no hint", assetRestoreHint([]), null);
+
+/* ── restore-parity ── */
+
+t("restore-parity: both stages in order passes",
+  restoreScriptGaps({ restore: "node tools/restore-images.mjs && node tools/build-responsive-images.mjs" }).length, 0);
+
+/* The shape that shipped in #199 and #200: the hint pointed here and the
+   script never derived a single variant. */
+t("restore-parity: restore-images alone fails, naming the derivation",
+  restoreScriptGaps({ restore: "node tools/restore-images.mjs" }).join(","),
+  "node tools/build-responsive-images.mjs");
+
+/* Unlike build/build:post, order is the point: the derivation reads the
+   originals, so running it first derives from whatever was there before. */
+t("restore-parity: derivation before the restore fails",
+  restoreScriptGaps({ restore: "node tools/build-responsive-images.mjs && node tools/restore-images.mjs" }).join(","),
+  "node tools/build-responsive-images.mjs");
+
+/* The hint names `npm run restore`; with no such script it names nothing. */
+t("restore-parity: an absent restore script misses every stage",
+  restoreScriptGaps({ build: "astro build" }).length, ASSET_RESTORE_STAGES.length);
+
+/* Against the real package.json, so the hint cannot pass here while the
+   script it names has drifted. */
+t("restore-parity: the shipped package.json runs every stage",
+  restoreScriptGaps(JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts).length, 0);
+
+/* And every stage the hint names is one the build itself runs, so `npm run
+   restore` cannot repair dist/ differently from `npm run build`. */
+{
+  const build = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts.build;
+  t("restore-parity: every restore stage is a build stage",
+    ASSET_RESTORE_STAGES.filter((s) => !build.includes(s)).join(","), "");
+}
+
 /* ── check-ai-crawlers (#156) ── */
 
 /* Same split as check-external-links: the network half is a manual command,
@@ -4461,6 +4557,133 @@ t("crawlers/verdict: ...and says the origin is degrading for everything",
     .map((a) => a.name);
   t(`crawlers: no agent robots.txt disallows is bursted (${wrong.join(", ") || "none"})`,
     wrong.length, 0);
+}
+
+
+/* ── Tile map (src/data/tiles.mjs) ──
+   All 126 experience-page tiles linked /plan-your-trip/ under "Explore →",
+   and every link check passed because the form resolves. Each predicate below
+   is shown failing on the broken shape it exists for, not only passing on the
+   site as built. */
+{
+  const card = (href, name = "Maldives") =>
+    `<a class="exp-card" href="${href}">\n      <img class="exp-card__img" src="/assets/img/x.jpg" alt="x" width="1600" height="899" loading="lazy" decoding="async">\n      <div class="exp-card__body">\n        <div class="exp-card__region">Indian Ocean</div>\n        <div class="exp-card__name">${name}</div>\n      </div>\n      <div class="exp-card__arrow">Explore &rarr;</div>\n    </a>`;
+  const event = (href, name = "The Overwater Classic", more = "") =>
+    `<div class="event-card">\n      <div class="event-body">\n        <div class="event-name">${name}</div>\n        <a class="event-cta" href="${href}">Plan This Trip</a>${more ? `\n        <a class="event-more" href="${more}">Maldives in detail</a>` : ""}\n      </div>\n    </div>`;
+  const page = (...parts) => `<section class="exp-cards-section" id="destinations">${parts.join("\n")}</section>`;
+
+  /* readTileCards: both kinds, in order, names raw. */
+  const parsed = readTileCards(page(card("/destinations/maldives/"), card("/plan-your-trip/", "Turks &amp; Caicos"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/#places")));
+  t("tiles: readTileCards finds two exp-cards and one event-card", parsed.length, 3);
+  t("tiles: ...keeps the entity in a card name", parsed[1].name, "Turks &amp; Caicos");
+  t("tiles: ...reads the event CTA href with its prefill", parsed[2].href, "/plan-your-trip/?type=beach");
+  t("tiles: ...reads the event secondary link", parsed[2].more, "/destinations/maldives/#places");
+  t("tiles: ...an event-card with no secondary link reads null", readTileCards(event("/plan-your-trip/"))[0].more, null);
+
+  /* exp-card-targets */
+  t("exp-card-targets: a card linking the planning form fails", cardTargetDefects(card("/plan-your-trip/")).length, 1);
+  t("exp-card-targets: ...and names the card", cardTargetDefects(card("/plan-your-trip/"))[0].includes("Maldives"), true);
+  t("exp-card-targets: ...the form with a prefill still fails", cardTargetDefects(card("/plan-your-trip/?type=beach")).length, 1);
+  t("exp-card-targets: a destination page passes", cardTargetDefects(card("/destinations/maldives/")).length, 0);
+  t("exp-card-targets: a deep link to a section passes", cardTargetDefects(card("/destinations/maldives/#places")).length, 0);
+  t("exp-card-targets: a fragment on the card's own page fails", cardTargetDefects(card("#destinations")).length, 1);
+  t("exp-card-targets: another site fails", cardTargetDefects(card("https://example.org/")).length, 1);
+  t("exp-card-targets: a protocol-relative href fails", cardTargetDefects(card("//example.org/x/")).length, 1);
+  t("exp-card-targets: a query-string variant fails", cardTargetDefects(card("/destinations/maldives/?from=beach")).length, 1);
+  t("exp-card-targets: a pending card may link the form", cardTargetDefects(card("/plan-your-trip/"), ["Maldives"]).length, 0);
+  t("exp-card-targets: ...but pending does not excuse an off-site link", cardTargetDefects(card("https://example.org/"), ["Maldives"]).length, 1);
+  t("exp-card-targets: ...nor excuse a different card", cardTargetDefects(card("/plan-your-trip/", "Seychelles"), ["Maldives"]).length, 1);
+  t("exp-card-targets: event-card CTAs on the form are not its concern", cardTargetDefects(event("/plan-your-trip/")).length, 0);
+
+  /* card-fragment-resolves */
+  const frags = cardFragmentHrefs(page(card("/destinations/maldives/#experiences"), card("/destinations/japan/"), event("/plan-your-trip/", "W", "/destinations/peru/#itineraries")));
+  t("card-fragment-resolves: collects the exp-card and event-more fragments only", frags.length, 2);
+  t("card-fragment-resolves: ...splits path and id", `${frags[0].path}|${frags[0].id}`, "/destinations/maldives/|experiences");
+  t("card-fragment-resolves: ...from the secondary link too", frags[1].id, "itineraries");
+  t("card-fragment-resolves: an id that exists is found", hasElementId(`<section class="places-section" id="places">`, "places"), true);
+  t("card-fragment-resolves: a missing id is reported", hasElementId(`<section class="places-section">`, "places"), false);
+  t("card-fragment-resolves: a longer id is not a match", hasElementId(`<div id="places-grid">`, "places"), false);
+  t("card-fragment-resolves: data-id is not an id", hasElementId(`<div data-id="places">`, "places"), false);
+
+  /* tile-map-parity */
+  const rows = [
+    { kind: "exp-card", name: "Maldives", href: "/destinations/maldives/", status: "live" },
+    { kind: "event-card", name: "Week", href: "/plan-your-trip/?type=beach", more: "/destinations/maldives/", moreLabel: "Maldives in detail" },
+  ];
+  const good = page(card("/destinations/maldives/"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/"));
+  t("tile-map-parity: a page matching the map is clean", tileParityDefects(good, rows).length, 0);
+  t("tile-map-parity: a hand-edited card href fails", tileParityDefects(page(card("/destinations/fiji/"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
+  t("tile-map-parity: a renamed card fails", tileParityDefects(page(card("/destinations/maldives/", "The Maldives"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
+  t("tile-map-parity: an extra card fails", tileParityDefects(page(card("/destinations/maldives/"), card("/destinations/fiji/", "Fiji"), event("/plan-your-trip/?type=beach", "Week", "/destinations/maldives/")), rows).length, 1);
+  t("tile-map-parity: a dropped secondary link fails", tileParityDefects(page(card("/destinations/maldives/"), event("/plan-your-trip/?type=beach", "Week")), rows).length, 1);
+  t("tile-map-parity: a relabelled secondary link fails",
+    tileParityDefects(good, [rows[0], { ...rows[1], moreLabel: "The Maldives, in depth" }]).length, 1);
+  t("tile-links-apply: ...and applying the map rewrites the label",
+    readTileCards(applyTileLinks(good, [rows[0], { ...rows[1], moreLabel: "The Maldives, in depth" }]))[1].moreLabel, "The Maldives, in depth");
+  t("tile-map-parity: a lost CTA prefill fails", tileParityDefects(page(card("/destinations/maldives/"), event("/plan-your-trip/", "Week", "/destinations/maldives/")), rows).length, 1);
+
+  /* tile-links-apply writes what parity reads, and nothing else. */
+  const stale = page(card("/plan-your-trip/"), event("/plan-your-trip/", "Week", "/destinations/fiji/"));
+  const applied = applyTileLinks(stale, rows);
+  t("tile-links-apply: the rewritten page matches the map", tileParityDefects(applied, rows).length, 0);
+  t("tile-links-apply: ...a second run changes nothing", applyTileLinks(applied, rows), applied);
+  t("tile-links-apply: ...card copy is untouched", applied.includes("Explore &rarr;") && applied.includes("Plan This Trip"), true);
+  t("tile-links-apply: a secondary link the map drops is removed",
+    readTileCards(applyTileLinks(good, [rows[0], { ...rows[1], more: undefined }]))[1].more, null);
+  t("tile-links-apply: refuses to pair a renamed card by position",
+    alignmentDefects(page(card("/x/", "The Maldives"), event("/y/", "Week")), rows).length, 1);
+  t("tile-links-apply: refuses a count mismatch",
+    alignmentDefects(page(card("/x/"), card("/z/", "Fiji"), event("/y/", "Week")), rows).length, 1);
+
+  /* featured-in: derived links, and chrome that bodyWords does not count. */
+  const strip = `<section class="featured-in">\n  <div class="related-more"><span class="related-more__label">Featured in our trip types:</span> <a class="related-more__link" href="/experiences/beach-island-escapes/">Beach</a></div>\n</section>`;
+  t("featured-in-parity: reads the strip's experience links", featuredInLinks(`<main>${strip}</main>`).join(), "/experiences/beach-island-escapes/");
+  t("featured-in-parity: no strip reads as no links", featuredInLinks("<main><p>x</p></main>").length, 0);
+  t("featured-in: bodyWords does not count the strip",
+    bodyWords(`<main><p>one two three</p>${strip}</main>`), bodyWords("<main><p>one two three</p></main>"));
+  t("featured-in: a page no live tile lands on gets no strip at all", featuredInHtml("/destinations/no-such-page/"), "");
+  t("featured-in: pagePath drops the fragment and query", pagePath("/destinations/x/?a=1#places"), "/destinations/x/");
+
+  /* The real map: every experience covered, card names unique per page, every
+     live/interim href same-site and query-free, and each strip it implies
+     links only experiences that exist. */
+  t("tiles.mjs: covers exactly the 12 experience pages",
+    Object.keys(TILES).sort().join(), Object.keys(EXPERIENCES).sort().join());
+  for (const [slug, list] of Object.entries(TILES)) {
+    const names = list.filter((r) => r.kind === "exp-card").map((r) => r.name);
+    t(`tiles.mjs: ${slug} has no duplicate card name`, new Set(names).size, names.length);
+    for (const r of list.filter((x) => x.kind === "exp-card")) {
+      const ok = r.status === "pending" ? r.href === "/plan-your-trip/" : (r.href.startsWith("/") && !r.href.startsWith("//") && !r.href.includes("?") && !r.href.startsWith("/plan-your-trip/"));
+      t(`tiles.mjs: ${slug} "${r.name}" (${r.status}) has a target its status allows`, ok, true);
+      if (r.status === "interim" || r.status === "pending") t(`tiles.mjs: ${slug} "${r.name}" names its final page`, typeof r.final === "string" && r.final.startsWith("/"), true);
+    }
+  }
+  for (const target of new Set(Object.values(TILES).flat().filter((r) => r.kind === "exp-card").map((r) => pagePath(r.href)))) {
+    t(`tiles.mjs: Featured-in for ${target} links only real experience pages`,
+      featuredIn(target).every((s) => s in EXPERIENCES), true);
+  }
+
+  /* nested-crumb */
+  const four = ["Home", "Experiences", "Sports & Event Travel", "Tennis"];
+  t("nested-crumb: a nested page with its parent crumb passes", nestedCrumbDefect("/experiences/sports-event-travel/tennis/", four), "");
+  t("nested-crumb: a nested page missing its parent crumb fails", nestedCrumbDefect("/experiences/sports-event-travel/tennis/", ["Home", "Experiences", "Tennis"]) !== "", true);
+  t("nested-crumb: ...and the message names the fix", nestedCrumbDefect("/experiences/cruises/yacht-charters/", ["Home", "Experiences", "Yachts"]).includes("parent="), true);
+  t("nested-crumb: a top-level experience page is not its concern", nestedCrumbDefect("/experiences/cruises/", ["Home", "Experiences", "Cruises"]), "");
+  t("nested-crumb: a destination page is not its concern", nestedCrumbDefect("/destinations/italy/", ["Home", "Destinations", "Europe", "Italy"]), "");
+  for (const nested of ["sports-event-travel/tennis", "sports-event-travel/formula-1", "cruises/yacht-charters"]) {
+    const file = path.join(ROOT, "dist", "experiences", ...nested.split("/"), "index.html");
+    if (!existsSync(file)) continue;
+    t(`nested-crumb: real dist /experiences/${nested}/ has a four-crumb trail`,
+      nestedCrumbDefect(`/experiences/${nested}/`, crumbTrail(readFileSync(file, "utf8"))), "");
+  }
+
+  /* Against the built site: every experience page's cards match the map. */
+  for (const slug of Object.keys(TILES)) {
+    const file = path.join(ROOT, "dist", "experiences", slug, "index.html");
+    if (!existsSync(file)) continue;
+    t(`tiles: real dist /experiences/${slug}/ matches src/data/tiles.mjs`,
+      tileParityDefects(readFileSync(file, "utf8"), TILES[slug]).length, 0);
+  }
 }
 
 /* ── report ── */

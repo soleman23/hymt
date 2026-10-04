@@ -60,8 +60,9 @@ was written, which is why step 2 existed). None of the work in this folder
 overrides them:
 
 - `npm run build` is self-contained: astro build, image restore
-  (`tools/restore-images.mjs`, which autodetects `python3`/`python`), verifier.
-  `npm run restore` runs the restore alone.
+  (`tools/restore-images.mjs`, which autodetects `python3`/`python`),
+  responsive image derivation (`tools/build-responsive-images.mjs`), verifier.
+  `npm run restore` runs those two image stages alone.
 - No new CSS or JS framework. Astro-official integrations only, and only where
   this plan names one.
 - Destination / experience / journal pages stay on their shared layout and
