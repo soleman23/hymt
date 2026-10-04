@@ -44,7 +44,14 @@ The six URLs in the September 20 private GSC snapshot all returned 200 with a se
 
 ## Remaining verification
 
-1. After the milestone branch deploys, record its new Hostinger deployment ID, commit SHA, and time; repeat the page-hash comparison and production crawl.
-2. Open each controlled business profile and reconcile its published phone and call destination to 541; record any stale profile before editing it.
-3. Perform a mobile tap check on the `tel:` link without placing a call.
-4. Compare the next GSC Page Indexing refresh with the six current URL Inspection results and the submitted sitemap count. Public search snippets and aggregate reports can lag the live site.
+1. Open each controlled business profile and reconcile its published phone and call destination to 541; record any stale profile before editing it.
+2. Perform a mobile tap check on the `tel:` link without placing a call.
+3. Compare the next GSC Page Indexing refresh with the six current URL Inspection results and the submitted sitemap count. Public search snippets and aggregate reports can lag the live site.
+
+## Post-merge release check — October 3 Pacific / October 4 UTC
+
+PR #242 merged to `main` at `2026-10-04T03:54:43Z`. Hostinger hPanel showed the **Current** completed deployment as ID `01a1050d-163f-7129-9cd6-5f43d7f96d89`, branch `main`, commit `280a4cb3b413798faebffd1f6658c477b02c6322`, displayed “Deployed: 2026-10-03 20:57” (timezone unlabeled). Five live HTML pages (home, Maldives, sports-event travel, Glacier Express and Kentucky Derby) matched that commit's tracked `dist` files byte for byte; none matched the previous `73771682` release.
+
+The live sitemap listed **131 URLs**. Every page returned HTTP 200, a self canonical, one H1, and no `noindex`; all 131 showed the approved visible **(541) 241-6481** and `tel:+15412416481`, with no old 408 number. Six sampled legacy/structural paths returned one-hop 301s, including the former Glacier Express and Kentucky Derby article URLs. `npm run verify:prod` from the committed release checkout passed all local content and sitemap checks, all 131 live page routes, and the live security-header checks. The sitewide crawl and representative page hashes are retained in the private owner-controlled evidence folder.
+
+This release check verifies the website, not unpublished or account-only profile fields. The profile inventory and physical mobile dialer check remain owner tasks. The September GSC indexing snapshot remains a separate historical observation until its aggregate report refreshes.
