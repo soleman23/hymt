@@ -1,0 +1,25 @@
+---
+import DestinationLayout from "../../../layouts/DestinationLayout.astro";
+import Content from "../../../content-pages/destinations__st-lucia.html?raw";
+---
+<DestinationLayout
+  title="St. Lucia: Pitons, Soufrière or the North — Hit Your Mark Travel"
+  description="Soufrière or the north, boutique or all-inclusive, and the long road from Hewanorra: planning a St. Lucia week under the Pitons, December to April."
+  schemaType="website"
+  name={"St. Lucia"}
+  region={{ label: "Caribbean &amp; Mexico", href: "/destinations/caribbean-mexico/" }}
+  hero={{
+    image: "/assets/img/e-60-st-lucia-terrace-piton.jpg",
+    eyebrow: "Eastern Caribbean · Windward Islands",
+    headline: "Two Pitons, Two Airports,<br>One Decision About<br>Where to Sleep.",
+    sub: "St. Lucia is 27 miles long, and long-haul flights land at Hewanorra on its southern tip. Soufrière, under the Pitons, and the north around Rodney Bay are two different holidays, and the island's winding roads make choosing between them the first decision.",
+    ctaPrimary: { label: "Plan a St. Lucia Trip", href: "/plan-your-trip/" },
+    ctaSecondary: { label: "Explore St. Lucia ↓", href: "#places" },
+    stats: [
+      { label: "Best Season", value: "December – April" },
+      { label: "Best For", value: "Couples<br>&amp; Honeymoons" },
+    ],
+  }}
+>
+  <Fragment set:html={Content} />
+</DestinationLayout>

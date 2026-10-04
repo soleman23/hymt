@@ -1627,9 +1627,148 @@ export const COST_RANGES = {
     ],
     drivers: [
       "Which event — the ticket, not the room, is the largest line on the trip",
-      "Party composition — Monaco prices ages six to fifteen at half the adult ticket, and free on Thursday",
+      "Party composition — Monaco prices ages six to fifteen at half the adult ticket for Friday, Saturday or Sunday",
       "Duration — a two- or three-day Monaco package takes 10% off the daily rate; a single Sunday does not",
     ],
     source: { text: "Automobile Club de Monaco ticket terms", href: "https://acm.mc/en/epreuves/formula-1-grand-prix-de-monaco/useful-infos/information-about-ticket-or-package-purchase/" },
+  },
+  /* Experience detail pages nested under a parent (2026-10-03). Their
+     sections were rendered from these rows when the pages were written, so
+     p3-8-cost-insert.mjs finds them live and leaves them alone. */
+  "experiences__sports-event-travel__tennis.html": {
+    unit: "Priced by the seat per day, not by the night",
+    noBand: "The seat is the largest line on a Slam trip, and it is priced by route, court and day. A Ground Pass and a two-week loge are both tickets to the same tournament, and no nightly figure covers both.",
+    includes: [
+      "The seat at the route booked: debenture ticket, official hospitality or loge, reserved seat",
+      "A hotel on a direct line to the venue",
+      "Match-day transfers where a car beats the train",
+    ],
+    excludes: [
+      "International flights and the nights either side of the tournament",
+      "Food and drink outside the package's own catering",
+      "Cancel-for-any-reason cover",
+    ],
+    drivers: [
+      "Route: a Wimbledon Centre Court debenture cost £116,000 for the five Championships of 2026–2030; that is the series single-day debenture tickets come from",
+      "Day: the FFT prices a per-day Chatrier loge by date, from €935 per person before tax",
+      "Timing: Australian Open Ground Passes carry early-bird prices until 30 November",
+    ],
+    source: { text: "AELTC Centre Court debenture issue", href: "https://www.wimbledon.com/amp/en_GB/news/articles/2024-03-13/2024-03-13_centre_court_debenture_issue.html" },
+  },
+  "experiences__sports-event-travel__formula-1.html": {
+    unit: "Priced by the seat, not by the night",
+    noBand: "The seat sets the number: Paddock Club, grandstand, yacht and balcony are priced per race, per day and per guest, and the four tiers sit too far apart for one nightly figure to mean anything.",
+    includes: [
+      "Race access at the tier booked — grandstand, Paddock Club, yacht or terrace",
+      "A hotel within walking distance or a short private transfer of the circuit",
+      "Transfers on race days, and the catering the hospitality itself carries",
+    ],
+    excludes: [
+      "International flights, and the nights either side of race week",
+      "Anything outside the hospitality's own catering window",
+      "Cancel-for-any-reason cover, which event trips need more than most",
+    ],
+    drivers: [
+      "Which tier — a grandstand seat, the Paddock Club, a yacht berth and a private balcony are four different products, not four grades of one",
+      "Party composition — Monaco prices ages six to fifteen at half the adult ticket for Friday, Saturday or Sunday (ACM terms, checked October 2026)",
+      "Duration — a two- or three-day Monaco package takes 10% off the adult tickets; a single Sunday does not, and the discount excludes children's tickets",
+    ],
+    source: { text: "Automobile Club de Monaco ticket terms", href: "https://acm.mc/en/epreuves/formula-1-grand-prix-de-monaco/useful-infos/information-about-ticket-or-package-purchase/" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
+  "experiences__cruises__yacht-charters.html": {
+    unit: "Priced per boat per week, not per person",
+    noBand: "A crewed charter is quoted for the whole boat and crew by the week, and the APA and the gratuity are then worked out as shares of that fee, so a per-person band would move with every guest added to the same boat and describe none of them.",
+    includes: [
+      "The boat and its full crew for the charter period",
+      "Crew wages and the crew's own food",
+      "The standard water toys and tender listed in the boat's specification",
+    ],
+    excludes: [
+      "The APA: fuel, food, drink, berths and port fees, drawn down and reconciled against receipts",
+      "VAT where the charter is taxed, and any delivery or re-delivery fee",
+      "Crew gratuity, flights and hotel nights either side",
+    ],
+    drivers: [
+      "Boat type, length and season, with the guest limit on the certificate: 12 for a commercial yacht of 24 metres and over under the Red Ensign Group Yacht Code",
+      "The APA, a percentage of the fee set in each contract and reconciled against receipts before disembarkation",
+      "Where the boat is put at your disposal: in the EU a hire of 90 days or less is taxed there, so the VAT differs between Greece, Italy and Croatia",
+      "Crew gratuity, which MYBA guidance puts at 5–15% of the gross charter fee, at the charterer's discretion",
+    ],
+    source: { text: "MYBA guidelines for charter yacht captains & crew", href: "https://www.myba-association.com/files/index.cfm?id=481&crypt=418013" },
+  },
+  "destinations__orlando.html": {
+    unit: "Priced per park day and per hotel night, by date",
+    noBand: "Disney and Universal both price tickets by date, and Lightning Lane and Express are sold per day on top, so the same week costs a different amount in February than at Easter and no single band describes it.",
+    includes: ["Park tickets for the days planned, with or without Park Hopper", "Hotel nights on one or both sides", "Lightning Lane or Express where the plan needs it"],
+    excludes: ["Flights to Orlando", "Meals outside any dining plan", "Merchandise, photos and separately ticketed events"],
+    drivers: [
+      "School-holiday weeks against quieter dates, since both resorts price tickets by date",
+      "Hotel tier, and whether it is one of the 3 Universal hotels that include Express Unlimited",
+      "How many days carry paid Lightning Lane, bookable 7 days ahead by Disney hotel guests and 3 by others",
+    ],
+    source: { text: "Walt Disney World Lightning Lane passes", href: "https://disneyworld.disney.go.com/lightning-lane-passes/" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
+  "experiences__sports-event-travel__golf.html": {
+    unit: "Priced by the round and the stay, not by the night",
+    noBand: "A golf week is green fees, caddies and the nights a course requires, and each course sets those on its own terms. A ballot round at a public links and a resort-stay round on the Pacific do not sit on one nightly scale.",
+    includes: [
+      "Tee times at the courses booked, by advance application, ballot strategy or resort stay",
+      "Hotels matched to the courses, including any stay a course requires for advance tee times",
+      "Transfers between courses in vehicles sized for golf bags",
+    ],
+    excludes: [
+      "International flights and the nights either side of the golf",
+      "Caddie gratuities, carts, club hire and food and drink on the course",
+      "Cancel-for-any-reason cover",
+    ],
+    drivers: [
+      "Green fees: Pebble Beach Golf Links charges $695 a round from 1 April 2026 to 31 March 2027",
+      "Required stays: advance Pebble Beach tee times need a minimum two-night stay at the resort",
+    ],
+    source: { text: "Pebble Beach Golf Links rate table", href: "https://www.pebblebeach.com/ratesajax/rate_table/pb_links/" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
+  "experiences__cruises__european-river-cruises.html": {
+    unit: "Priced per person, by cabin and by departure",
+    noBand: "Lines publish fares per person sharing a cabin, and the same 7-night sailing moves with the cabin deck, the month and each line's offers, so one band would describe none of the departures it claims to cover.",
+    includes: ["A shared cabin with onboard meals", "Guided walks in most ports", "Transfers between ship and shore where the line includes them"],
+    excludes: ["International airfare and insurance", "Pre- and post-cruise land nights", "Private guides and estate tastings"],
+    drivers: [
+      "Length: 7 nights is the common format, as on Viking's 8-day Rhine Getaway and AmaWaterways' Romantic Danube",
+      "Cabin: the lowest deck's fixed windows, a French balcony or a full balcony",
+      "Month: peak summer and Christmas-market departures against April and October",
+      "What is included: drinks, gratuities and excursions differ by line",
+    ],
+    source: { text: "Viking Rhine Getaway itinerary", href: "https://www.vikingrivercruises.com/cruise-destinations/europe/rhine-getaway/2027-basel-amsterdam/index.html" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
+  "experiences__cruises__mediterranean-small-ship.html": {
+    unit: "Priced per cabin per sailing, not per night",
+    noBand: "A small-ship fare is set per cabin for one departure, and it moves with the cabin category, the week of the season and how many share the cabin, so a nightly two-adult band would describe none of the sailings on this page.",
+    includes: ["A cabin on a scheduled sailing with meals on board", "Port calls and any excursions the line lists as included", "Tender transfers ashore where the ship anchors"],
+    excludes: ["Flights into the embarkation port and hotel nights either side", "Gratuities, drinks and port charges unless the line includes them", "Private guides and drivers ashore"],
+    drivers: [
+      "Cabin supply: SeaDream I has 56 staterooms in all, so the best categories on a popular departure sell first",
+      "The week: shoulder departures in May, June, September and October against the July and August peak",
+      "What the line includes, from drinks and excursions to gratuities and port charges",
+      "Flights into the embarkation port and hotel nights either side of the sailing",
+    ],
+    source: { text: "SeaDream Yacht Club ship specifications", href: "https://seadream.com/yachts" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
+  },
+  "destinations__st-lucia.html": {
+    unit: "Priced per room night, by season, view and meal plan",
+    noBand: "A Soufrière room priced with breakfast and a north-coast all-inclusive rate that covers every meal are different units, and both move sharply between the dry season and the rest of the year, so no single band describes the island.",
+    includes: ["Room nights at the chosen base, or both bases on a split stay", "Breakfast, half board or an all-inclusive meal plan, depending on the property", "The arrival transfer from Hewanorra"],
+    excludes: ["International flights", "Meals outside the hotel's plan", "Boat trips, guided hikes, diving and spa"],
+    drivers: [
+      "Dates inside the December–April dry season, and above all the Christmas and New Year weeks",
+      "Pitons-view or beachfront category, and boutique room rate against an all-inclusive rate",
+      "Arrival transfer: a 90-minute road trip from Hewanorra to the north, or a helicopter in under 15 minutes",
+    ],
+    source: { text: "Saint Lucia Tourism Authority, helicopter transfers", href: "https://stlucia.org/en/travel-style/helicopter-tours/" },
+    verified: { datetime: "2026-10-03", label: "October 2026" },
   },
 };

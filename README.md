@@ -16,7 +16,7 @@ Two deployable versions of the same site live in this repo, plus the full build 
 
 > **This repository is now the complete, single source of truth.** It holds the
 > full build pipeline (`tools/`), every generated page source, the `dist/` output,
-> and `images-b64/`. Clone it, run `npm run restore`, and you have
+> and `images-b64/`. Clone it, run `npm ci` and `npm run restore`, and you have
 > the entire site locally — no separate archive required.
 >
 > Earlier revisions of this README pointed at a `hymt-complete-repo.zip` handoff
@@ -30,14 +30,19 @@ text in `images-b64/` — a constraint of the tooling that maintains this repo.
 Restore them to real binaries with one command:
 
 ```bash
+npm ci
 npm run restore
 ```
 
-That runs `tools/restore-images.mjs`, which finds the local Python interpreter
-itself (`python3` on mac/linux, `python` on Windows) and runs
-`tools/restore_images.py` with it.
+That runs two stages. `tools/restore-images.mjs` finds the local Python
+interpreter itself (`python3` on mac/linux, `python` on Windows) and runs
+`tools/restore_images.py` with it, which reconstructs every image into
+`public/assets/` and `dist/assets/`. `tools/build-responsive-images.mjs` then
+derives the WebP/AVIF variants under `dist/assets/responsive/` from those
+originals with `sharp`, which is why `npm ci` comes first. The committed
+`dist/` pages reference those variants, so the first stage alone leaves them
+broken.
 
-This reconstructs every image into `public/assets/` and `dist/assets/`.
 The restored paths are gitignored — images stay as `images-b64/` in the repo.
 
 ## Building and verifying
@@ -82,19 +87,27 @@ in the built HTML, and writes the sitemap as one unmergeable line; `npm run
 build` fixes all four itself. If you run `npx astro build` directly, follow it
 with `npm run build:post`, which does the four together — the verifier will
 stop you if you forget any of them. Use
-`npm run restore` only for the images alone, as on a fresh clone where there is
-no `dist/` yet to strip. After deploying, confirm the upload actually landed
-(the FTP account does not start in the web root):
+`npm run restore` only for the images alone — the originals, then the
+responsive variants derived from them — as on a fresh clone, whose committed
+`dist/` is already stripped and reflowed.
+
+**A merge to `main` deploys production.** Since the 2026-09-02 cutover,
+`www.hymtravel.com` is served by the Hostinger site this repo deploys to:
+hPanel's auto-deployment clones the merged commit, runs `npm run build`, and
+serves the result, with no staging host in between. Allow about 10 minutes
+(7–11 measured) before calling a deploy broken, then confirm it landed:
 
 ```bash
-npm run verify:remote
+npm run verify:prod
 ```
 
-That checks `brown-goose-754147.hostingersite.com`, which is where deploys
-actually go. **`www.hymtravel.com` is not pointed at this host yet** — the DNS
-cutover has not happened, so nothing in this repo is live on the production
-domain. `npm run verify:prod` targets that domain and will report failures on
-every clean URL until the cutover; it is there for after it happens.
+It fails until the host's build finishes; that is the drift being reported,
+not a flaky check. `npm run verify:remote` still targets the old preview host,
+`brown-goose-754147.hostingersite.com`, which the cutover retired and which no
+longer serves the site (checked 2026-10-01). The script stays because the
+verifier and `tools/check-external-links.mjs` read the preview hostname from
+it; it is not a deploy check any more. FTP is only a fallback now — see
+`docs/hostinger-deployment.md` for where the FTP account actually lands.
 
 ## The static site (`dist/`)
 

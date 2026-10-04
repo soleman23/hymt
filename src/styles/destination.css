@@ -504,6 +504,11 @@
 }
 .related-more__link:hover { gap:10px }
 .related-more__link::after { content:'→' }
+/* "Featured in" (tile map): the experience pages whose tiles land on this
+   destination, rendered by DestinationLayout from src/data/tiles.mjs. It
+   reuses the .related-more row above; this only gives it its own band. */
+.featured-in { padding:36px 52px;background:var(--bg-page);border-bottom:1px solid var(--border-subtle) }
+.featured-in .related-more { margin-top:0 }
 
 /* ── CLOSING CTA ──
    Default is the centred block used across the destination set.
@@ -574,7 +579,7 @@
   .dest-cta__aside { padding-left:0;border-left:none;border-top:1px solid var(--border-gold);padding-top:28px }
   .intro-section,.places-section,.itineraries-section,.why-section,.dest-exp-section,
   .seasons-strip,.stay-section,.practical-section,.testimonial-section,
-  .related-section,.dest-cta { padding-left:28px;padding-right:28px }
+  .related-section,.dest-cta,.featured-in { padding-left:28px;padding-right:28px }
 }
 @media (max-width:540px) {
   .places-grid { grid-template-columns:1fr;grid-auto-rows:minmax(240px,auto) }

@@ -244,11 +244,11 @@ report("travel-journal.html", "onclick journal links", n, 29)
 # article card images, keyed by article slug
 card_imgs = {
     "botswana-shoulder-season": "e-11-elephant-herd-aerial.jpg",
-    "heli-ski-field-report": "e-22-heli-ski-landing.jpg",
-    "masters-field-report": "e-21-clifftop-golf.jpg",
+    "heli-skiing": "e-22-heli-ski-landing.jpg",
+    "the-masters": "e-21-clifftop-golf.jpg",
     "european-grand-tour-mistake": "e-05-positano-alley.jpg",
     "in-defense-of-slow-travel": "i-02-anniversary-table.jpg",
-    "singita-grumeti-field-report": "x-01-serengeti-elephants.jpg",
+    "singita-grumeti": "x-01-serengeti-elephants.jpg",
     "mediterranean-october": "i-03-spring-amalfi.jpg",
     "europe-destination-guide": "h-04-amalfi-golden-hour.jpg",
     "polar-destination-guide": "x-06-polar-iceberg-twilight.jpg",

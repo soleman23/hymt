@@ -1,0 +1,20 @@
+---
+import JournalLayout from "../../../layouts/JournalLayout.astro";
+import Content from "../../../content-pages/travel-journal__kentucky-derby.html?raw";
+---
+<JournalLayout
+  publishDate="2026-09-01"
+  title="The Kentucky Derby, Explained — Hit Your Mark Travel Journal"
+  description="A two-minute race that takes twelve hours to attend, and both facts are right. The tiers, the buildup, the race, and how to do Louisville around it."
+  name={"The Kentucky Derby"}
+  category={{ label: "Trip Guide" }}
+  hero={{
+    image: "/assets/img/jh-10-racetrack-home-stretch.jpg",
+    headline: "The Kentucky Derby: What the Race Actually Is to Attend",
+    deck: "It's a two-minute race that takes twelve hours to attend. Both of those facts are exactly right. Here is what the experience actually is — the tiers, the buildup, the race itself, and how to do Louisville properly before and after.",
+    date: "May 2026",
+    readTime: "9 min read",
+  }}
+>
+  <Fragment set:html={Content} />
+</JournalLayout>

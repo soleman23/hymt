@@ -11,7 +11,7 @@
  },
  "/contact/": {
   "title": "Contact — Hit Your Mark Travel",
-  "description": "Get in touch with Mark Sole, Founder &amp; Travel Director at Hit Your Mark Travel. Call, email, or send a message — we respond within 24 hours.",
+  "description": "Get in touch with Mark Sole, Founder &amp; Travel Director at Hit Your Mark Travel. Call, email, or send a message — we respond within one business day.",
   "canonical": "https://www.hymtravel.com/contact/"
  },
  "/destinations/africa/": {
@@ -103,6 +103,11 @@
   "title": "Costa Rica | Arenal, Monteverde, Osa — Hit Your Mark Travel",
   "description": "Two bases beat four in eight days. Arenal or Monteverde, then one coast — and why the Caribbean side is brightest in September while the Pacific floods.",
   "canonical": "https://www.hymtravel.com/destinations/costa-rica/"
+ },
+ "/destinations/dolomites/": {
+  "title": "Dolomites | Alta Via Hut-to-Hut Trekking — Hit Your Mark Travel",
+  "description": "Alta Via 1 and 2, rifugio nights, via ferrata and Val Gardena: how to plan a Dolomites hut-to-hut trek inside the short summer window when the huts are open.",
+  "canonical": "https://www.hymtravel.com/destinations/dolomites/"
  },
  "/destinations/dominican-republic/": {
   "title": "Dominican Republic Beyond Punta Cana — Hit Your Mark Travel",
@@ -254,6 +259,11 @@
   "description": "Muscat, Wahiba Sands, the Musandam Peninsula and Nizwa — the Middle East's most underused destination, and a self-drive culture that rewards planning.",
   "canonical": "https://www.hymtravel.com/destinations/oman/"
  },
+ "/destinations/orlando/": {
+  "title": "Orlando | Walt Disney World &amp; Universal — Hit Your Mark Travel",
+  "description": "Disney World or Universal Orlando? Park days, on-site hotel perks, Lightning Lane vs Express Unlimited, and which rides fit kids under 48 inches.",
+  "canonical": "https://www.hymtravel.com/destinations/orlando/"
+ },
  "/destinations/patagonia/": {
   "title": "Patagonia — Hit Your Mark Travel",
   "description": "Torres del Paine, Los Glaciares, El Chaltén and Tierra del Fuego — planned around the weather windows, the right lodges, and the trekking.",
@@ -319,6 +329,11 @@
   "description": "St. Barth's planned properly — which beach to base on, villa versus hotel, how the December window really works, and why the island rewards a return visit.",
   "canonical": "https://www.hymtravel.com/destinations/st-barths/"
  },
+ "/destinations/st-lucia/": {
+  "title": "St. Lucia: Pitons, Soufrière or the North — Hit Your Mark Travel",
+  "description": "Soufrière or the north, boutique or all-inclusive, and the long road from Hewanorra: planning a St. Lucia week under the Pitons, December to April.",
+  "canonical": "https://www.hymtravel.com/destinations/st-lucia/"
+ },
  "/destinations/svalbard/": {
   "title": "Svalbard | Small-Ship Arctic Expeditions — Hit Your Mark Travel",
   "description": "June to August is the circumnavigation window; March to May is snowmobile and blue-light season. Why passenger count decides how often you land.",
@@ -374,10 +389,25 @@
   "description": "Maldives, Turks &amp; Caicos, Seychelles, St. Barth's and the South Pacific — private beach access, overwater villas, and the right week for the water.",
   "canonical": "https://www.hymtravel.com/experiences/beach-island-escapes/"
  },
+ "/experiences/cruises/european-river-cruises/": {
+  "title": "European River Cruises | Rhine to Douro — Hit Your Mark Travel",
+  "description": "Rhine, Danube, Rhône, Douro or Seine? How river ships differ by cabin and kitchen, where they moor in Vienna, Budapest and Lyon, and why April and October.",
+  "canonical": "https://www.hymtravel.com/experiences/cruises/european-river-cruises/"
+ },
  "/experiences/cruises/": {
   "title": "Cruises | Ocean, River &amp; Expedition — Hit Your Mark Travel",
   "description": "Small-ship ocean voyages, European rivers, expedition sailings to Antarctica and the Galápagos, and private charters — matched to vessel, cabin and season.",
   "canonical": "https://www.hymtravel.com/experiences/cruises/"
+ },
+ "/experiences/cruises/mediterranean-small-ship/": {
+  "title": "Mediterranean Small-Ship Cruises — Hit Your Mark Travel",
+  "description": "Small-ship Mediterranean cruises on Croatia's Dalmatian Coast, the quieter Greek islands and Amalfi, matched to ship size and May–June or Sept–Oct sailings.",
+  "canonical": "https://www.hymtravel.com/experiences/cruises/mediterranean-small-ship/"
+ },
+ "/experiences/cruises/yacht-charters/": {
+  "title": "Private Crewed Yacht Charters — Hit Your Mark Travel",
+  "description": "Crewed gulets, catamarans and motor yachts, chartered by the week in the Med or the Caribbean: how crew, contract and the APA work, and what moves the price.",
+  "canonical": "https://www.hymtravel.com/experiences/cruises/yacht-charters/"
  },
  "/experiences/culture-immersive-travel/": {
   "title": "Culture &amp; Immersive Travel — Hit Your Mark Travel",
@@ -414,10 +444,25 @@
   "description": "Botswana, Kenya, Tanzania, South Africa and Rwanda — private camps, expert guides, and the access that separates a safari from a game drive.",
   "canonical": "https://www.hymtravel.com/experiences/safari-wildlife-travel/"
  },
+ "/experiences/sports-event-travel/formula-1/": {
+  "title": "Formula 1 Grand Prix Hospitality — Hit Your Mark Travel",
+  "description": "Formula 1 weekends at Monaco, Monza and Singapore: Paddock Club, grandstand, yacht and balcony tiers, the 6–18 month lead time, and what sets the price.",
+  "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/formula-1/"
+ },
+ "/experiences/sports-event-travel/golf/": {
+  "title": "Golf Travel: St Andrews to Pebble Beach — Hit Your Mark Travel",
+  "description": "The Old Course ballot is drawn two days ahead; Pebble Beach holds early tee times for resort guests. How a trip to play the great courses, or watch The Open, works.",
+  "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/golf/"
+ },
  "/experiences/sports-event-travel/": {
   "title": "Sports &amp; Event Travel — Hit Your Mark Travel",
   "description": "Courtside at Wimbledon, trackside at Monaco, fairways at Augusta — the great sporting moments with VIP access and every detail handled.",
   "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/"
+ },
+ "/experiences/sports-event-travel/tennis/": {
+  "title": "Wimbledon &amp; Grand Slam Tennis Travel — Hit Your Mark Travel",
+  "description": "Wimbledon debenture, official hospitality or the ballot? The three routes compared, plus Roland-Garros (late May) and the Australian Open (January).",
+  "canonical": "https://www.hymtravel.com/experiences/sports-event-travel/tennis/"
  },
  "/experiences/wellness-retreat-travel/": {
   "title": "Wellness &amp; Retreat Travel — Hit Your Mark Travel",
@@ -459,10 +504,10 @@
   "description": "Africa's regions run on different seasonal logics. The month-by-month breakdown: migration cycles, dry-season windows, and the case for green season.",
   "canonical": "https://www.hymtravel.com/travel-journal/african-safari-calendar/"
  },
- "/travel-journal/amanjiwo-field-report/": {
+ "/travel-journal/amanjiwo/": {
   "title": "Amanjiwo: What Aman Delivers — Hit Your Mark Travel Journal",
   "description": "Borobudur at dawn, a private pool facing the volcanoes, and a staff-to-guest ratio that makes 'dedicated service' mean something. What it actually is.",
-  "canonical": "https://www.hymtravel.com/travel-journal/amanjiwo-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/amanjiwo/"
  },
  "/travel-journal/asia-destination-guide/": {
   "title": "The Asia Destination Guide — Hit Your Mark Travel Journal",
@@ -499,15 +544,15 @@
   "description": "The five-star rating once meant something specific. It no longer does. What actually tells you whether a hotel is exceptional, and why the categories fail.",
   "canonical": "https://www.hymtravel.com/travel-journal/five-star-problem/"
  },
- "/travel-journal/glacier-express-field-report/": {
+ "/travel-journal/glacier-express/": {
   "title": "The Glacier Express, End to End — Hit Your Mark Travel Journal",
   "description": "Zermatt to St. Moritz in eight hours: 291 bridges, 91 tunnels, and one of the most deliberate rail journeys on earth. Why direction matters.",
-  "canonical": "https://www.hymtravel.com/travel-journal/glacier-express-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/glacier-express/"
  },
- "/travel-journal/heli-ski-field-report/": {
+ "/travel-journal/heli-skiing/": {
   "title": "A Week of Heli-Skiing — Hit Your Mark Travel Journal",
   "description": "No lifts, no groomers, no other tracks. What a week of heli-skiing in British Columbia actually looks like — the runs, the lodge, and the skiing required.",
-  "canonical": "https://www.hymtravel.com/travel-journal/heli-ski-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/heli-skiing/"
  },
  "/travel-journal/how-hotel-upgrades-work/": {
   "title": "How Hotel Upgrades Actually Work — Hit Your Mark Travel Journal",
@@ -524,10 +569,10 @@
   "description": "The Hit Your Mark Travel Journal — destination notes, shoulder-season guides, and considered opinions on how to travel exceptionally well.",
   "canonical": "https://www.hymtravel.com/travel-journal/"
  },
- "/travel-journal/kentucky-derby-field-report/": {
+ "/travel-journal/kentucky-derby/": {
   "title": "The Kentucky Derby, Explained — Hit Your Mark Travel Journal",
   "description": "A two-minute race that takes twelve hours to attend, and both facts are right. The tiers, the buildup, the race, and how to do Louisville around it.",
-  "canonical": "https://www.hymtravel.com/travel-journal/kentucky-derby-field-report/"
+  "canonical": "https://www.hymtravel.com/travel-journal/kentucky-derby/"
  },
  "/travel-journal/kyoto-april-vs-november/": {
   "title": "Kyoto in April vs. November — Hit Your Mark Travel Journal",
@@ -538,11 +583,6 @@
   "title": "Maldives: Overwater or Beach? — Hit Your Mark Travel Journal",
   "description": "The overwater villa is the image; the beach villa wins more often than the feed suggests. Reef quality, lagoon depth at low tide, and who should book which.",
   "canonical": "https://www.hymtravel.com/travel-journal/maldives-overwater-vs-beach-villa/"
- },
- "/travel-journal/masters-field-report/": {
-  "title": "The Masters at Augusta National — Hit Your Mark Travel Journal",
-  "description": "The badge waiting list closed in 1978. No phones, no advertising, no crowds in the usual sense. What The Masters actually is, and how access works.",
-  "canonical": "https://www.hymtravel.com/travel-journal/masters-field-report/"
  },
  "/travel-journal/mediterranean-october/": {
   "title": "The Mediterranean in October — Hit Your Mark Travel Journal",
@@ -579,10 +619,10 @@
   "description": "Most people ask about price and availability. The questions that decide safari quality — camp size, guide tenure, vehicle policy — rarely come up in time.",
   "canonical": "https://www.hymtravel.com/travel-journal/safari-planning-12-questions/"
  },
- "/travel-journal/singita-grumeti-field-report/": {
+ "/travel-journal/singita-grumeti/": {
   "title": "Singita Grumeti: What You Pay For — Hit Your Mark Travel Journal",
-  "description": "The migration crosses the Western Corridor in July. What that looks like from camp, and what separates Grumeti from the other Serengeti properties.",
-  "canonical": "https://www.hymtravel.com/travel-journal/singita-grumeti-field-report/"
+  "description": "The migration crosses the Western Corridor in July. What that means for a stay, and what separates Grumeti from the other Serengeti properties.",
+  "canonical": "https://www.hymtravel.com/travel-journal/singita-grumeti/"
  },
  "/travel-journal/south-america-destination-guide/": {
   "title": "The South America Guide — Hit Your Mark Travel Journal",
@@ -598,6 +638,11 @@
   "title": "The Case for Shoulder Season — Hit Your Mark Travel Journal",
   "description": "Peak season is the most crowded, most expensive version of any destination. Why the months on either side produce the better trip, and the windows to book.",
   "canonical": "https://www.hymtravel.com/travel-journal/the-case-for-shoulder-season/"
+ },
+ "/travel-journal/the-masters/": {
+  "title": "The Masters at Augusta National — Hit Your Mark Travel Journal",
+  "description": "The badge waiting list closed in 1978. No phones, no advertising, no crowds in the usual sense. What The Masters actually is, and how access works.",
+  "canonical": "https://www.hymtravel.com/travel-journal/the-masters/"
  },
  "/travel-journal/what-a-travel-advisor-actually-does/": {
   "title": "What a Travel Advisor Does — Hit Your Mark Travel Journal",

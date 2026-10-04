@@ -1,20 +1,23 @@
 # HYMT SEO + AIO Program — Document Set
 
-Everything in this folder is written to be executed by Claude Code against the
-`soleman23/hymt` repository (Astro 5, static output, deployed to Hostinger).
+This folder contains the live site's standards, earlier migration plans, and
+dated verification records for the `soleman23/hymt` repository (Astro 7, static
+output, deployed to Hostinger).
 
 **Production domain:** `https://www.hymtravel.com`
 **Development domain:** `https://brown-goose-754147.hostingersite.com`
-**Status at time of writing (2026-08-07):** dev site is built and deployed; the
-DNS cutover to the production domain has not happened yet.
+**Current state (checked 2026-10-02):** the Astro site serves the production
+domain. The cutover occurred on September 1 Pacific; see
+`HANDOFF-cutover-2026-09-02.md`. Hostinger's current completed deployment was
+checked October 3 as commit `5f547a7e`; its deployment ID, displayed time,
+phone, redirect, canonical, and indexability checks are in
+`M1-LIVE-AUDIT-2026-10-02.md`.
 
-**This is a same-domain platform migration.** Wix currently serves the
-production domain; the new site is an independent Astro deployment on
-Hostinger. No Wix page, code, hosting, or runtime dependency carries forward,
-but confirmed legacy URLs must redirect on Hostinger so search and referral
-value are not discarded. Search Console Change of Address does not apply
-because the domain is unchanged. New-site analytics measurement starts at
-launch; existing search history does not.
+**The same-domain platform migration is complete.** Hostinger now serves the
+Astro site. No Wix page, code, hosting, or runtime dependency carries forward.
+Confirmed legacy URLs redirect on Hostinger. Search Console Change of Address
+does not apply because the domain did not change. The older plans below remain
+historical records where they describe pre-cutover steps.
 
 ---
 
@@ -57,8 +60,9 @@ was written, which is why step 2 existed). None of the work in this folder
 overrides them:
 
 - `npm run build` is self-contained: astro build, image restore
-  (`tools/restore-images.mjs`, which autodetects `python3`/`python`), verifier.
-  `npm run restore` runs the restore alone.
+  (`tools/restore-images.mjs`, which autodetects `python3`/`python`),
+  responsive image derivation (`tools/build-responsive-images.mjs`), verifier.
+  `npm run restore` runs those two image stages alone.
 - No new CSS or JS framework. Astro-official integrations only, and only where
   this plan names one.
 - Destination / experience / journal pages stay on their shared layout and

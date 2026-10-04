@@ -5,7 +5,7 @@ import { breadcrumbs, webPage } from "../../lib/schema";
 
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
 const description =
-  "Get in touch with Mark Sole, Founder & Travel Director at Hit Your Mark Travel. Call, email, or send a message — we respond within 24 hours.";
+  "Get in touch with Mark Sole, Founder & Travel Director at Hit Your Mark Travel. Call, email, or send a message — we respond within one business day.";
 const schema = [
   webPage(SITE, { type: "ContactPage", name: "Contact", description, path: "/contact/" }),
   breadcrumbs(SITE, [{ name: "Home", path: "/" }, { name: "Contact" }]),
