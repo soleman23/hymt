@@ -7,6 +7,7 @@ import sharp from "sharp";
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DIST = path.join(ROOT, "dist");
 const ELIGIBLE = new Map([
+  ["home-hero__img", { kind: "hero", sizes: "100vw" }],
   ["dest-hero__img", { kind: "hero", sizes: "100vw" }],
   ["exp-hero__img", { kind: "hero", sizes: "100vw" }],
   ["post-hero__img", { kind: "hero", sizes: "100vw" }],

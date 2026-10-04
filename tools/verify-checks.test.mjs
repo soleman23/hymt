@@ -134,6 +134,12 @@ t("responsive-images: missing WebP source fails", responsiveImageDefects(RESPONS
 t("responsive-images: missing fallback sizes fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/ sizes="100vw"><\/picture>/, `><\/picture>`)).length, 1);
 t("responsive-images: missing hero preload fails", responsiveImageDefects(RESPONSIVE_HERO.replace(/<link[^>]+>/, "")).length, 1);
 
+const RESPONSIVE_HOME_HERO = RESPONSIVE_HERO.replace("dest-hero__img", "home-hero__img");
+t("responsive-images: complete homepage hero passes", responsiveImageDefects(RESPONSIVE_HOME_HERO).length, 0);
+t("responsive-images: bare homepage hero fails", responsiveImageDefects(`<img class="home-hero__img" src="/assets/hero.jpg">`).length, 2);
+t("responsive-images: homepage hero without preload fails", responsiveImageDefects(RESPONSIVE_HOME_HERO.replace(/<link[^>]+>/, "")).length, 1);
+t("responsive-images: homepage hero missing AVIF fails", responsiveImageDefects(RESPONSIVE_HOME_HERO.replace(/<source type="image\/avif"[^>]*>/, "")).length, 1);
+
 /* ── internal-link-floor ── */
 
 const FOOTER = `<footer><a href="/destinations/africa/">Africa</a><a href="/destinations/asia/">Asia</a>` +

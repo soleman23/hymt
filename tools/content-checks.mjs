@@ -15,8 +15,8 @@
  */
 import { createHash } from "node:crypto";
 
-const RESPONSIVE_IMAGE_CLASSES = new Set(["dest-hero__img", "exp-hero__img", "post-hero__img", "place-card__img", "exp-card__img", "cat-card__img", "featured__img"]);
-const RESPONSIVE_HERO_CLASSES = new Set(["dest-hero__img", "exp-hero__img", "post-hero__img"]);
+const RESPONSIVE_IMAGE_CLASSES = new Set(["home-hero__img", "dest-hero__img", "exp-hero__img", "post-hero__img", "place-card__img", "exp-card__img", "cat-card__img", "featured__img"]);
+const RESPONSIVE_HERO_CLASSES = new Set(["home-hero__img", "dest-hero__img", "exp-hero__img", "post-hero__img"]);
 const imageClasses = (tag) => (tag.match(/\bclass="([^"]*)"/i)?.[1] ?? "").split(/\s+/);
 
 /** Missing responsive markup on the image systems optimized by #191. */
