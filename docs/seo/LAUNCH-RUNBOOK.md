@@ -467,6 +467,10 @@ nameservers of a Wix-registered domain. So the registrar transfer is not
 housekeeping: it is the step that unlocks moving DNS off Wix at all, and the
 domain keeps resolving from the Wix zone throughout it. Tracked as #160.
 
+**Status 2026-10-04: step 1 not started.** The nameservers are still
+`ns4/ns5.wixdns.net` and MX still points at Google, so everything below is
+still ahead. The open gate is the Workspace billing decision in step 1.
+
 **Step 1 — registrar transfer (Mark, at Wix; then Hostinger).**
 
 - [x] At Hostinger first: a WHOIS contact profile. **Done 2026-09-10: profile
@@ -488,7 +492,7 @@ domain keeps resolving from the Wix zone throughout it. Tracked as #160.
       **Transfer away from Wix** opens the dialog above; its primary button
       is **Transfer Domain**. That one click is what unlocks the domain and
       issues the EPP code (privacy is on; Wix does not ask for it to be turned
-      off first). The code goes to the registrant email, solefam@gmail.com.
+      off first). The code goes to the registrant email on the Wix contact record.
       There is no separate "Advanced" page for this.
 - [ ] At Hostinger: Domains → Transfer → `hymtravel.com` with the code. The
       Business plan may include a free transfer; if a price is shown, it is the
