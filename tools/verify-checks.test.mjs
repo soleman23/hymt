@@ -2558,9 +2558,12 @@ if (await access(dist, constants.R_OK).then(() => true, () => false)) {
      and three-generation FAQ, a truffle clause and an Amalfi line (130 words
      of copy). The page also gained a Featured-in strip that same change, and
      the count did not move for it: that strip is layout chrome, stripped like
-     the breadcrumb and the hero. */
+     the breadcrumb and the hero. 3383 since the plan's inbound links: a
+     Dolomites sentence in the autumn season text and a small-ship clause on
+     the Amalfi & Sicily itinerary (17 words), plus "the Trevi Fountain" in
+     place of a duplicated "Fushimi Inari" (1). */
   t("real /destinations/italy/ measures its authored body copy, chrome excluded",
-    bodyWords(italy), 3365);
+    bodyWords(italy), 3383);
   t("real /destinations/italy/ is a country page, so page-length applies",
     crumbTrail(italy).length, 4);
   const africaHub = await readFile(path.join(dist, "destinations", "africa", "index.html"), "utf8");
