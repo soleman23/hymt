@@ -186,10 +186,9 @@ emails. Track these four instead:
    valid postal address (a street address, PO box or registered private mailbox)
    in every marketing email. The September footer only says "Bend, Oregon." Which
    address should go there?
-2. **The site's signup copy contradicts a monthly newsletter.** After someone
-   subscribes, the site says "Notes arrive occasionally, never on a schedule." I
-   suggest "About once a month. Unsubscribe from any of them." This is a
-   one-line site change. Say the word and I'll make it.
+2. ~~**The site's signup copy contradicts a monthly newsletter.**~~ Done
+   2026-10-25. The signup confirmation now reads "About once a month.
+   Unsubscribe from any of them."
 3. **Site signups don't reach Reach.** The site's newsletter form emails each
    signup to Mark through Web3Forms. Nothing adds them to the Reach list, so
    someone has to copy each one across by hand. Either do that once a month
