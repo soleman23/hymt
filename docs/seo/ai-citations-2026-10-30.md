@@ -7,7 +7,7 @@ replay. No URL below is `hymtravel.com`.
 
 ## Google AI Mode (signed out)
 
-### 1. 
+### 1. How much does a luxury African safari cost per person?
 
 1. <https://www.safaribookings.com/how-much-does-an-african-safari-cost>
 2. <https://www.africansafarihome.com/safari-pricing>
@@ -20,7 +20,7 @@ replay. No URL below is `hymtravel.com`.
 9. <https://dorsiatravel.com/the-true-cost-of-a-luxury-safari/>
 10. <https://magicalafrica.com/journal/why-are-african-safaris-so-expensive/>
 
-### 2. How much does a luxury African safari cost per person?
+### 2. Do travel advisors charge fees, and how much?
 
 1. <https://www.reddit.com/r/TravelHacks/comments/yvwvzr/is_paying_a_travel_agent_ever_worth_it/>
 2. <https://www.nerdwallet.com/travel/learn/do-travel-agents-really-save-you-money-actually-yeah>
@@ -33,7 +33,7 @@ replay. No URL below is `hymtravel.com`.
 9. <https://www.youtube.com/watch?v=06zKcScouz4&vl=en>
 10. <https://engine.com/blog/travel-agency-fees>
 
-### 3. Do travel advisors charge fees, and how much?
+### 3. How much does a gorilla trekking permit cost in Rwanda vs Uganda?
 
 1. <https://www.silverbackgorillatours.com/gorilla/the-cost-of-gorilla-trekking-safaris-and-tours>
 2. <https://www.reddit.com/r/solotravel/comments/juf5ll/gorilla_trekking_on_a_budget/>
@@ -49,7 +49,7 @@ replay. No URL below is `hymtravel.com`.
 12. <https://followalice.com/knowledge/rwanda-gorilla-trekking-cost>
 13. <https://www.katonatours.com/rwanda-gorilla-trekking/how-much-does-it-cost-to-see-the-gorillas-in-rwanda/>
 
-### 4. How much does a gorilla trekking permit cost in Rwanda vs Uganda?
+### 4. How much does an overwater villa in French Polynesia cost per night?
 
 1. <https://www.facebook.com/groups/boraboratravel/posts/1509563710809901/>
 2. <https://www.tiktok.com/@pointsandmiles/video/7565196521289960759>
@@ -66,11 +66,11 @@ replay. No URL below is `hymtravel.com`.
 13. <https://sandinmysuitcase.com/overwater-bungalows-bora-bora/>
 14. <https://www.thetravel.com/overwater-bungalow-in-tahiti-cost/>
 
-### 5. How much does an overwater villa in French Polynesia cost per night?
+### 5. When is the best time to go on safari in Tanzania vs Kenya?
 
 No source list shown; the answer carried two sponsored results instead. Asked twice.
 
-### 6. When is the best time to go on safari in Tanzania vs Kenya?
+### 6. When does the Okavango Delta flood peak in Botswana?
 
 1. <https://atzaro-okavango.com/blog/best-time-to-visit-the-okavango-delta-2025-month-by-month-guide/>
 2. <https://www.okavango.com/okavango-delta-flood-cycle.php>
@@ -80,7 +80,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 6. <https://www.tettsafaris.com/blog/okavango-delta-botswana-guide>
 7. <https://okavangodelta.com/the-okavango/>
 
-### 7. When does the Okavango Delta flood peak in Botswana?
+### 7. Is the Mediterranean worth visiting in October?
 
 1. <https://www.reddit.com/r/Cruise/comments/1lce4of/thoughts_on_mediterranean_cruise_late_in_the/>
 2. <https://www.cruisecritic.com/articles/best-months-to-cruise-the-mediterranean-a-year-round-guide>
@@ -104,7 +104,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 20. <https://www.facebook.com/fb-answers/what-is-the-weather-like-in-the-mediterranean-in-october/>
 21. <https://travelclubelite.com/blogs/best-destinations-to-visit-during-october/>
 
-### 8. Is the Mediterranean worth visiting in October?
+### 8. How do Masters badges work, and can you buy them?
 
 1. <https://www.reddit.com/r/masters/comments/1m8m5oc/masters_series_badge_patron/>
 2. <https://golf.com/news/masters-series-badges-coveted-item-sports-cost/>
@@ -119,11 +119,11 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 11. <https://www.fanhospitality.com/blog/2018/03/02/getting-tickets-for-the-masters-and-how-badges-work/>
 12. <https://hiddendoortravel.com/masters-hospitality-badges/>
 
-### 9. How do Masters badges work, and can you buy them?
+### 9. How many days do you need in the Galápagos?
 
 No source list shown; the answer carried two sponsored results instead. Asked twice.
 
-### 10. How many days do you need in the Galápagos?
+### 10. Is the Glacier Express worth the money?
 
 1. <https://www.reddit.com/r/askswitzerland/comments/1knidqp/should_i_take_glacier_express/>
 2. <https://community.ricksteves.com/travel-forum/switzerland/is-the-glacier-express-worthwhile>
@@ -152,7 +152,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 
 ## ChatGPT with Web search (signed out)
 
-### 1. 
+### 1. How much does a luxury African safari cost per person?
 
 1. <https://www.zoma.travel/blog/luxury-safari-cost-2026>
 2. <https://www.privatetourscapetown.com/blog/how-much-does-luxury-african-safari-cost>
@@ -161,7 +161,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 5. <https://thesafarijournal.com/luxury-safari-cost/>
 6. <https://ongeriexpeditions.com/luxury-safari-cost>
 
-### 2. How much does a luxury African safari cost per person?
+### 2. Do travel advisors charge fees, and how much?
 
 1. <https://www.aarp.org/money/personal-finance/is-a-travel-adviser-worth-it/>
 2. <https://www.aaa.com/tripcanvas/article/travel-advisor-vs-travel-agent-what-do-they-do-CM1651>
@@ -170,7 +170,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 5. <https://tripdash.net/advisor-resources/travel-agent-service-fees>
 6. <https://www.foratravel.com/join/resources/travel-agent-service-fees>
 
-### 3. Do travel advisors charge fees, and how much?
+### 3. How much does a gorilla trekking permit cost in Rwanda vs Uganda?
 
 1. <https://visitrwandabookings.rdb.rw/rdbportal/mountain-gorilla-tracking>
 2. <https://www.uggovagent.ug/tourism>
@@ -182,7 +182,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 8. <https://horizonguides.com/guides/gorilla-trekking/how-to-get-gorilla-trekking-permits>
 9. <https://rwandaecocompany.com/faq>
 
-### 4. How much does a gorilla trekking permit cost in Rwanda vs Uganda?
+### 4. How much does an overwater villa in French Polynesia cost per night?
 
 1. <https://polynesiancompass.com/stay/overwater/cost>
 2. <https://www.overwaterguide.com/destinations/moorea>
@@ -193,7 +193,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 7. <https://www.marriott.com/en-us/destinations/french-polynesia/bora-bora/resort-hotels.mi>
 8. <https://www.mylittlepolynesia.com/en/overwater-bungalow-polynesia-island/>
 
-### 5. How much does an overwater villa in French Polynesia cost per night?
+### 5. When is the best time to go on safari in Tanzania vs Kenya?
 
 1. <https://www.tanzaniatourism.com/about/when-to-travel>
 2. <https://tanzaniaparks.go.tz/serengeti>
@@ -213,7 +213,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 16. <https://discoverkenya.org/discover-masai-mara/>
 17. <https://www.pin.co.tz/guides/best-time-to-visit-tanzania>
 
-### 6. When is the best time to go on safari in Tanzania vs Kenya?
+### 6. When does the Okavango Delta flood peak in Botswana?
 
 1. <https://www.expertafrica.com/botswana/info/okavango-delta-flood>
 2. <https://agris.fao.org/search/fr/records/67bdb401e27dfa12518a75a1>
@@ -234,7 +234,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 17. <https://www.theafricanwild.com/okavango-delta-live-flood-monitoring/>
 18. <https://okavangoguide.com/>
 
-### 7. When does the Okavango Delta flood peak in Botswana?
+### 7. Is the Mediterranean worth visiting in October?
 
 1. <https://www.weather2travel.com/mediterranean/october/>
 2. <https://time-to-travel.org/guides/autumn-holiday-destinations-europe/>
@@ -249,7 +249,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 11. <https://voyagehacks.com/en/when-to-go/where-to-go-in-october/>
 12. <https://www.travelrove.com/best-places-to-travel-to-in-october/>
 
-### 8. Is the Mediterranean worth visiting in October?
+### 8. How do Masters badges work, and can you buy them?
 
 1. <https://www.sportsbusinessjournal.com/Articles/2026/06/01/masters-lottery-ticket-prices-to-remain-flat-in-2027/>
 2. <https://sports.yahoo.com/articles/2026-masters-badge-prices-slowly-212633961.html>
@@ -269,7 +269,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 16. <https://en.wikipedia.org/wiki/Masters_Tournament>
 17. <https://www.wsj.com/sports/golf/masters-gnomes-resale-augusta-national-09696ef0>
 
-### 9. How do Masters badges work, and can you buy them?
+### 9. How many days do you need in the Galápagos?
 
 1. <https://www.galapagos.org/travel/planning-a-trip/>
 2. <https://www.lonelyplanet.com/articles/first-timers-guide-galapagos-islands>
@@ -286,7 +286,7 @@ No source list shown; the answer carried two sponsored results instead. Asked tw
 13. <https://www.metropolitan-touring.com/wp-content/uploads/2024/01/Galapagos-Destination-brochure.pdf>
 14. <https://www.cntraveler.com/story/best-time-to-visit-the-galapagos-islands>
 
-### 10. How many days do you need in the Galápagos?
+### 10. Is the Glacier Express worth the money?
 
 1. <https://glacierexpress.ch/en/price>
 2. <https://glacierexpress.ch/en/price?anchor=luggage-information>
