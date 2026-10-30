@@ -267,6 +267,39 @@ site. Read it as a prompt to re-run from residential, not as a regression.
 - The citation agents that matter (OAI-SearchBot, ChatGPT-User,
   Claude-SearchBot, PerplexityBot, Googlebot) were all clean.
 
+**Follow-up, same day, from residential (03:30 UTC, a US home ISP).** Both
+changes reproduce, so neither was the datacenter vantage point. And Googlebot
+has now joined them:
+
+| Agent | Residential, 2026-10-30 |
+|---|---|
+| GPTBot, Meta-ExternalAgent, **ClaudeBot** | 429 × 12, `NO RESULT` |
+| **Claude-User** | 200 × 8, then 429 × 4, `THROTTLED` |
+| **Googlebot, Bingbot, Applebot** | 403 × 12, `ERROR` |
+| OAI-SearchBot, ChatGPT-User, Claude-SearchBot | 200 × 12 |
+| PerplexityBot, Perplexity-User, Amazonbot | 200 × 12 |
+| controls: Chrome, unknown UA, Chrome again | 200 × 12 each |
+
+- **The 403s are the host refusing spoofed search-engine user agents, not a
+  block on the real crawlers.** The first-party data says so for Google.
+  Search Console → Settings → Crawl stats (updated 10/27) shows 920 real
+  Googlebot requests since launch: 93% 200, 5% 404, 3% 301 and **no 403s**,
+  with both hosts at "No problems". The 404s are superseded content-hashed CSS
+  files and `apple-app-site-association` probes. A 403 for a Googlebot UA
+  from a home IP that is not Google's is what bot verification by reverse DNS
+  looks like. The datacenter run got 200 for Googlebot, so the rule was
+  probably switched on host-side after it, or it treats ranges differently.
+  This tool cannot measure these three agents from here any more. Read Google
+  from Crawl stats.
+- **Bing is still unverified first-party.** Bing Webmaster Tools was set up as
+  mark@hymtravel.com (HANDOFF-cutover-2026-09-02), and this session had no
+  access to it. Bing feeds ChatGPT search, so this is the open question. Mark,
+  or a user Mark adds to the property, should check Bing Webmaster Tools → URL
+  Inspection for `/` and the crawl errors.
+- **ClaudeBot 429 from two networks is a real change from 10-01.** It does not
+  touch citations, because Claude-SearchBot (search) is clean. Claude-User
+  (fetches on a user's request) throttling after 8 is ordinary limiting.
+
 ---
 
 ## 2. Citations
@@ -301,9 +334,15 @@ series.
 | 5 | When is the best time to go on safari in Tanzania vs Kenya? | B | `/destinations/kenya-tanzania/` |
 | 6 | When does the Okavango Delta flood peak in Botswana? | B | `/destinations/botswana/` |
 | 7 | Is the Mediterranean worth visiting in October? | B | `/travel-journal/mediterranean-october/` |
-| 8 | How do Masters badges work, and can you buy them? | C | `/travel-journal/masters-field-report/` |
+| 8 | How do Masters badges work, and can you buy them? | C | `/travel-journal/the-masters/` |
 | 9 | How many days do you need in the Galápagos? | C | `/destinations/galapagos/` |
-| 10 | Is the Glacier Express worth the money? | D | `/travel-journal/glacier-express-field-report/` |
+| 10 | Is the Glacier Express worth the money? | D | `/travel-journal/glacier-express/` |
+
+Targets 8 and 10 were `/travel-journal/masters-field-report/` and
+`/travel-journal/glacier-express-field-report/` until the journal slugs were
+renamed on 2026-10-03. The old paths 301 to the ones above, so a citation of
+either counts for its row. The query wording is unchanged, so the series
+continues.
 
 ### 2026-10-01 — first run: cited in 0 of 20
 
@@ -367,6 +406,74 @@ What the first run says, for what one month is worth:
   verdict does not decide it there. Work on query 10 can still move the
   ChatGPT result now.
 
+### 2026-10-30 — second run: cited in 0 of 20, first run with URLs
+
+Run 03:30–03:52 UTC from a browser with no signed-in accounts, on a
+residential connection. Same 10 queries, verbatim.
+
+- **Engines:** Google AI Mode (`google.com/search?udm=50`, signed out) and
+  ChatGPT (`chatgpt.com`, signed out, **Web search chosen from the composer's +
+  menu**). Perplexity and Claude were not run, for the 10-01 reasons.
+- **ChatGPT needs Web search selected by hand now.** With `?hints=search`
+  alone, the first answer cited nothing. Signed-out answers also no longer
+  carry clickable links: sources sit in popover chips whose rows open by
+  script. So the URLs were read from the answer's own citation metadata
+  (`searchSources` entries and `ref_id …search…` references in the stream
+  `chatgpt.com` receives), with `utm_source=chatgpt.com` removed. That list is
+  what the Sources panel shows, so ChatGPT counts run higher than 10-01's.
+- **AI Mode source cards link through `google.com/goto`.** Each was resolved
+  to its destination by following the redirect. Reddit, YouTube, Facebook and
+  TikTok are recorded like any other source.
+- **AI Mode showed no source list for queries 5 and 9**, only two sponsored
+  results. Both were asked twice, a few minutes apart, with the same result.
+  That is "no sources shown", not "not cited": nothing was citable.
+- **Every URL is in [`ai-citations-2026-10-30.md`](ai-citations-2026-10-30.md).**
+  The table keeps the first five as listed, plus the total.
+- **Quality not scored.** There is still no agreed rubric, so the column
+  stays "—".
+
+| Date | Engine | # | Cited? | Sources | First five as listed |
+|---|---|---|---|---|---|
+| 2026-10-30 | AI Mode | 1 | N | 10 | safaribookings.com/how-much-does-an-african-safari-cost · africansafarihome.com/safari-pricing · adventureoutloud.com/blog/how-much-does-a-safari-cost/ · africansafarimag.com/african-safari-cost · africansafarigroup.com/africa-safari-cost-what-does-a-real-safari-actually-cost-in-2026/ |
+| 2026-10-30 | AI Mode | 2 | N | 10 | reddit.com/r/TravelHacks/comments/yvwvzr/… · nerdwallet.com/travel/learn/do-travel-agents-really-save-you-money-actually-yeah · foratravel.com/join/resources/travel-agent-service-fees · travelweekly.com/Travel-News/Travel-Agent-Issues/More-than-half-of-US-advisors-now-charge-fees · ottotheagent.com/blog/travel-agent-costs |
+| 2026-10-30 | AI Mode | 3 | N | 13 | silverbackgorillatours.com/gorilla/the-cost-of-gorilla-trekking-safaris-and-tours · reddit.com/r/solotravel/comments/juf5ll/… · ongeriexpeditions.com/blog-gorilla-trekking-cost · watatutravel.com/en/blog/gorilla-trekking-rwanda-uganda-permits-logistics-2026 · gokenyasafari.com/where-to-see-gorillas-in-africa-rwanda-vs-uganda/ |
+| 2026-10-30 | AI Mode | 4 | N | 14 | facebook.com/groups/boraboratravel/posts/1509563710809901/ · tiktok.com/@pointsandmiles/video/7565196521289960759 · reddit.com/r/travelblog/comments/1twk7x4/… · facebook.com/groups/boraboras/posts/1421801395719652/ · bemytravelmuse.com/how-much-for-a-trip-to-bora-bora/ |
+| 2026-10-30 | AI Mode | 5 | — | 0 | no source list shown (2 sponsored results), twice |
+| 2026-10-30 | AI Mode | 6 | N | 7 | atzaro-okavango.com/blog/best-time-to-visit-the-okavango-delta-2025-month-by-month-guide/ · okavango.com/okavango-delta-flood-cycle.php · botswana.co.za/Botswana_FAQ-travel/okavango-delta-botswana-seasons.html · okavangodeltagamereserve.com/best-time-to-visit-the-okavango-delta-flood-seasons-explained/ · facebook.com/hillsofafrica/posts/… |
+| 2026-10-30 | AI Mode | 7 | N | 21 | reddit.com/r/Cruise/comments/1lce4of/… · cruisecritic.com/articles/best-months-to-cruise-the-mediterranean-a-year-round-guide · cruisebound.com/articles/mediterranean-cruise-ports-in-october · youtube.com/watch?v=NbmgPUQUBrg · travel.yahoo.com/guides/articles/why-fall-secretly-best-time-131000108.html |
+| 2026-10-30 | AI Mode | 8 | N | 12 | reddit.com/r/masters/comments/1m8m5oc/… · golf.com/news/masters-series-badges-coveted-item-sports-cost/ · youtube.com/watch?v=U3YMt8EJCrE · theblendgroup.com/insight/masters-badges-what-they-are-how-to-get-access/ · facebook.com/fb-answers/masters-tournament-badges/ |
+| 2026-10-30 | AI Mode | 9 | — | 0 | no source list shown (2 sponsored results), twice |
+| 2026-10-30 | AI Mode | 10 | N | 24 | reddit.com/r/askswitzerland/comments/1knidqp/… · community.ricksteves.com/travel-forum/switzerland/is-the-glacier-express-worthwhile · findingalexx.com/glacier-express-worth-it/ · reddit.com/r/askswitzerland/comments/1i5zvjx/… · findingalexx.com/bernina-express-vs-glacier-express/ |
+| 2026-10-30 | ChatGPT | 1 | N | 6 | zoma.travel/blog/luxury-safari-cost-2026 · privatetourscapetown.com/blog/how-much-does-luxury-african-safari-cost · privatetourscapetown.com/blog/private-african-safari-tours-guide · uncompromised.travel/expeditions/what-a-safari-costs-by-budget-2026 · thesafarijournal.com/luxury-safari-cost/ |
+| 2026-10-30 | ChatGPT | 2 | N | 6 | aarp.org/money/personal-finance/is-a-travel-adviser-worth-it/ · aaa.com/tripcanvas/article/travel-advisor-vs-travel-agent-what-do-they-do-CM1651 · asta.org/…/2025-astapresskit.pdf · journeyswithjb.com/travel-advisor-cost · tripdash.net/advisor-resources/travel-agent-service-fees |
+| 2026-10-30 | ChatGPT | 3 | N | 9 | visitrwandabookings.rdb.rw/rdbportal/mountain-gorilla-tracking · uggovagent.ug/tourism · eastafricasafaris.com/gorilla-trekking-permit-cost/ · sailadventuresafarisdmc.com/journal/gorilla-permit-prices-2026-27 · visitrwandabookings.rdb.rw/rdbportal/hiking-on-a-chain |
+| 2026-10-30 | ChatGPT | 4 | N | 8 | polynesiancompass.com/stay/overwater/cost · overwaterguide.com/destinations/moorea · only5star.com/destinations/bora-bora-overwater-villa-cost-2026 · polynesiancompass.com/stay/best-moorea-resorts · polynesiancompass.com/stay/hotels/hilton-moorea |
+| 2026-10-30 | ChatGPT | 5 | N | 17 | tanzaniatourism.com/about/when-to-travel · tanzaniaparks.go.tz/serengeti · tanzaniatourism.com/destination/selous-game-reserve · kws.go.ke/faq-items/what-is-the-weather-pattern-in-kenya-… · masaimara.or.ke/masai-mara-visitor-guide-how-to-plan-a-safari-properly/ |
+| 2026-10-30 | ChatGPT | 6 | N | 18 | expertafrica.com/botswana/info/okavango-delta-flood · agris.fao.org/search/fr/records/67bdb401e27dfa12518a75a1 · conservation.org/…/rap27_okavango_delta_botswana_jun-2000.pdf · okacom.org/sites/default/files/documents/TDA_Final-English.pdf · travel.africageographic.com/destinations/botswana/okavango-delta/when-to-visit-okavango-delta |
+| 2026-10-30 | ChatGPT | 7 | N | 12 | weather2travel.com/mediterranean/october/ · time-to-travel.org/guides/autumn-holiday-destinations-europe/ · themediterraneanliving.com/where-to-go-mediterranean-october/ · europeandestinations.co.uk/seasons/autumn-holidays/islands-in-autumn/ · europeantourism.org/europe-in-autumn/ |
+| 2026-10-30 | ChatGPT | 8 | N | 17 | sportsbusinessjournal.com/Articles/2026/06/01/masters-lottery-ticket-prices-to-remain-flat-in-2027/ · sports.yahoo.com/articles/2026-masters-badge-prices-slowly-212633961.html · frontofficesports.com/article/seatgeek-is-first-reseller-to-drop-masters-tickets-after-crackdown/ · golf.com/news/how-much-cost-masters-2026/ · goodseats.com/performers/masters-golf-tournament/ |
+| 2026-10-30 | ChatGPT | 9 | N | 14 | galapagos.org/travel/planning-a-trip/ · lonelyplanet.com/articles/first-timers-guide-galapagos-islands · expeditions.com/travel-guide/galapagos-travel-guide/how-many-days-in-galapagos · visitgalapagos.travel/info/tips/travel-galapagos-information.html · visitgalapagos.travel/blog/best-way-to-travel-galapagos.html |
+| 2026-10-30 | ChatGPT | 10 | N | 14 | glacierexpress.ch/en/price · glacierexpress.ch/en/price?anchor=luggage-information · glacierexpress.ch/en/faq · seat61.com/trains-and-routes/glacier-express.htm · glacierexpress.ch/de/price |
+
+Hosts and paths are shortened in the table. The full `https://` URLs are in
+the companion file.
+
+What the second run adds:
+
+- **Still 0 of 20, and the target pages are now indexed.** Queries 8 and 10's
+  targets, and the six 10-01 "Discovered" pages, all earn Google impressions
+  now (§ 3 and the #37 cycle comment). Being indexed has not been enough to
+  earn a citation in either engine.
+- **The 10-01 pattern holds at page level.** ChatGPT leans on the body that
+  sets the fact: Visit Rwanda's booking portal, Tanzania and Kenya park and
+  tourism authorities, the Glacier Express operator, FAO and Ramsar papers
+  for the Okavango. AI Mode leans on forums and social posts (Reddit in 6 of
+  8 source lists, YouTube in 6, Facebook in 5, TikTok in 2) next to operator
+  price guides. ChatGPT cited Reddit in none.
+- **Query 1 still has no page,** and its first-five lists are entirely dated
+  operator price guides ("2026", "2027" in the slugs). This is the clearest
+  gap in the set.
+
 ---
 
 ## 3. Google's generative AI features report
@@ -424,6 +531,51 @@ position 27.4. One of the 23 pages is a § 2 target:
 other 22 are not. The site is surfacing in Google's AI features, but mostly
 for questions other than the ones § 2 samples. That is the case for keeping
 both measurements.
+
+### 2026-10-30
+
+Read 03:55 UTC; data through 2026-10-27.
+
+- **"3 months" (31 Aug – 27 Oct, everything since launch): 196 impressions
+  across 58 pages.** That is up from 41 across 23 at 10-01, so about 155 of the
+  196 arrived in the four weeks since.
+- **"28 days" (30 Sep – 27 Oct): 153 impressions across 50 pages.** The 50 rows
+  sum to 160. Both are right: the headline counts per property and the rows
+  count per page (see 10-01 above). The headline is the number to quote.
+
+Top of the 28-day page table:
+
+| Page | Impressions |
+|---|---|
+| `/travel-journal/amanjiwo/` | 15 |
+| `/destinations/south-pacific/` | 13 |
+| `/experiences/sports-event-travel/tennis/` | 11 |
+| `/travel-journal/glacier-express-field-report/` (301 → `/travel-journal/glacier-express/`) | 11 |
+| `/` | 9 |
+| `/destinations/asia/` | 8 |
+| `/destinations/georgia-armenia/` | 8 |
+| `/experiences/culture-immersive-travel/` | 7 |
+| `/destinations/europe/` | 5 |
+| `/about/`, `/destinations/greenland/`, `/experiences/multigenerational-travel/`, `/travel-journal/willamette-valley-winery-route/` | 4 each |
+| 6 pages | 3 each |
+| 8 pages | 2 each |
+| 23 pages | 1 each |
+
+For scale, all of Search over the same 28 days: 1.48K impressions, 16 clicks,
+1.1% CTR, average position 30.4.
+
+- **§ 2 targets now show up here.** Four of the nine targets that exist
+  appear: the Glacier Express post (query 10) with 11, under its pre-rename
+  URL; `/faq/` (query 2) with 2; `/destinations/botswana/` (query 6) and
+  `/travel-journal/the-masters/` (query 8) with 1 each. On 10-01 only one
+  did. Google's AI features show these pages, but neither engine sampled in
+  § 2 cites them for the § 2 wording.
+- **Two of the top four changed since 10-01.** `/destinations/south-pacific/`
+  was rebuilt as the M2 route-selection hub (#246, merged 2026-10-04) . It
+  had 1 impression since launch at the 10-01 read and has 13 in the last 28
+  days. It also leads all of Search with 287
+  impressions in 28 days. The Glacier Express post was "Discovered – not
+  indexed" on 10-01.
 
 [#37]: https://github.com/soleman23/hymt/issues/37
 [#156]: https://github.com/soleman23/hymt/issues/156
