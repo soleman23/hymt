@@ -240,6 +240,33 @@ build a case. It is to notice if the agents that matter for citations
 Bingbot) ever join GPTBot and Meta-ExternalAgent on 429. That would be a
 reason to put a caching CDN in front of the origin.
 
+### 2026-10-30 — run from a datacenter IP, so not comparable to 10-01
+
+`npm run check:crawlers`, 12-request bursts, about 02:50 UTC, exit 1. **This
+run came from a cloud container, not the residential IP the 09-04 and 10-01
+runs used.** Hostinger's published policy rate-limits "specific automated
+network ranges", so a change below may be the vantage point rather than the
+site. Read it as a prompt to re-run from residential, not as a regression.
+
+| Agent | Result | vs 10-01 |
+|---|---|---|
+| GPTBot, Meta-ExternalAgent | 429 × 12, `NO RESULT` | same |
+| **ClaudeBot** | 429 × 12, `NO RESULT` | was 200 × 12 |
+| **Claude-User** | 200 × 8, then 429 × 4, `THROTTLED` | was 200 × 12 |
+| **Bingbot, Applebot** | 403 × 12, `ERROR` (LiteSpeed 403 page) | were 200 × 12 |
+| OAI-SearchBot, ChatGPT-User, Claude-SearchBot | 200 × 12 | same |
+| PerplexityBot, Perplexity-User, Amazonbot, Googlebot | 200 × 12 | same |
+| controls: Chrome, unknown UA, Chrome again | 200 × 12 each | same |
+
+- **Bingbot and Applebot 403 is the one to settle first.** `robots.txt` and
+  `.htaccess` have not changed since #238, so if real it is host-side. The
+  likeliest reading is the host refusing a request that claims to be Bingbot
+  from a non-Microsoft address, which a residential run would also not
+  exercise, so the check that decides it is first-party: Bing Webmaster Tools
+  crawl data (and URL inspection). Bing feeds ChatGPT search.
+- The citation agents that matter (OAI-SearchBot, ChatGPT-User,
+  Claude-SearchBot, PerplexityBot, Googlebot) were all clean.
+
 ---
 
 ## 2. Citations
