@@ -25,11 +25,12 @@ passes. In hPanel, the web app settings must be:
 | Build command | `npm run build` |
 | Output directory | `dist` |
 
-The floor is **Node 22.19.0**, and it is not Astro's. `npm ci` enforces
-`engines.node` for every package it installs, so the version that governs is
-the strictest floor anywhere in the tree — today that is `undici`, reached
-through `astro` → `unifont`. Astro's own floor is the lower `>=22.12.0`, and
-reading that one is what produced the wrong setting here.
+The floor is **Node 22.23.4**. `npm ci` enforces `engines.node` for every
+package it installs, so the version that governs is the strictest floor
+anywhere in the tree. Since the 2026-11-01 security update that is `astro`
+7.4.2+ itself; before it, it was `undici` (`>=22.19.0`, reached through
+`astro` → `unifont`) while Astro's own floor was the lower `>=22.12.0`, and
+reading that one is what produced the wrong setting below.
 
 **Do not select `22.x`.** It is a floating track: on 2026-08-29 it resolved to
 **v22.18.0**, one patch below the real floor, and the deployment failed in
