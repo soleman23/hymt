@@ -52,8 +52,8 @@ remains the room-wording guide; this page links to it rather than repeating it.
 | Marriott Platinum Elite and above: complimentary upgrade "subject to availability upon arrival", "for the entire length of stay", includes suites; brand exclusions | Independent research: [Marriott Bonvoy Program Rules](https://www.marriott.com/loyalty/terms/default.mi) §4.3.c.ii | Rules effective 1 January 2024 as served 2026-11-01 | Mark | Review required |
 | Platinum Elite threshold is 50 qualifying nights | Same source, elite qualification table ("50 to 74 Qualifying Nights") | 2026-11-01 | Mark | Review required |
 | Nightly Upgrade Awards must be applied to every night | Same source | 2026-11-01 | Mark | Review required |
-| HYMT is part of Travel Leaders Network; Internova runs SELECT Hotels & Resorts | DECISIONS.md D2; [Internova release, 2023-03-02](https://internova.com/?p=2409) | Release names Travel Leaders Network among eligible networks | Mark: confirm HYMT can book SELECT rates today | Review required |
-| SELECT benefits: upgrade "based on availability", breakfast for two, amenity up to $100, early/late when available | Supplier: same Internova release | Published March 2023; may have changed; per-property | Mark: confirm current benefit list | Review required |
+| HYMT is part of Travel Leaders Network; Internova runs SELECT Hotels & Resorts | DECISIONS.md D2; [Internova release, 2023-03-02](https://internova.com/?p=2409) | Release names Travel Leaders Network among eligible networks | Mark approved describing SELECT and its published benefits 2026-11-01 (DECISIONS.md D2 extension, #251) | Covered by D2; confirm this page's wording |
+| SELECT benefits: upgrade "based on availability", breakfast for two, amenity up to $100, early/late when available | Supplier: same Internova release | Published March 2023; may have changed; per-property | D2 requires "when available" wording and the 2023 release link, both present | Covered by D2; confirm this page's wording |
 | "When I quote a hotel, I tell you which program applies … before you pay" | Mark's practice (first person) | Generic process, no client outcome | Mark must confirm or rewrite | Review required |
 | Third-party discount rates may not qualify for loyalty benefits | Editorial; qualified "may not" | Generic | Mark | Review required |
 | Later arrival "sometimes" leaves more options | Editorial; stated as a tendency, not a rule | Generic | Mark: keep or cut | Review required |
@@ -71,10 +71,10 @@ their provenance is outside this review's scope.
 
 ## Out-of-scope finding
 
-Five other pages say HYMT is a **Virtuoso** member (`destinations__asia`,
-`destinations__caribbean-mexico`, `destinations__europe`,
-`destinations__north-america`, `experiences__all-inclusive-vacations`),
-contradicting D2. Tracked separately, not changed in this PR.
+Five other pages said HYMT is a **Virtuoso** member, contradicting D2. Fixed
+separately in #251 (merged 2026-11-01), which also recorded Mark's approval of
+the SELECT program wording as a D2 extension. This page was the last remaining
+Virtuoso/Signature claim.
 
 ## Release checks
 
