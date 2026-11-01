@@ -2505,6 +2505,11 @@
   "bytes": 28582
  },
  {
+  "b64": "images-b64/assets__img__jc-dh-04-fiji-lagoon-aerial.jpg.b64",
+  "target": "public/assets/img/jc-dh-04-fiji-lagoon-aerial.jpg",
+  "bytes": 49834
+ },
+ {
   "b64": "images-b64/assets__img__jc-dh-10-japan-kyoto-dawn.jpg.b64",
   "target": "public/assets/img/jc-dh-10-japan-kyoto-dawn.jpg",
   "bytes": 26871

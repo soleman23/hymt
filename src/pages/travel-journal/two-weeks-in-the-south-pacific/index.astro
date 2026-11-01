@@ -1,0 +1,20 @@
+---
+import JournalLayout from "../../../layouts/JournalLayout.astro";
+import Content from "../../../content-pages/travel-journal__two-weeks-in-the-south-pacific.html?raw";
+---
+<JournalLayout
+  publishDate="2026-11-01"
+  title="Two Weeks in the South Pacific — Hit Your Mark Travel Journal"
+  description="Two weeks in the South Pacific holds two island bases, three at most. Where the 14 days go, three 12–15-night routes, and the mistakes that overpack a trip."
+  name={"Two Weeks in the South Pacific"}
+  category={{ label: "Trip Guide" }}
+  hero={{
+    image: "/assets/img/dh-04-fiji-lagoon-aerial.jpg",
+    headline: "Two Weeks in the South Pacific: How Many Islands Actually Fit",
+    deck: "Fourteen days sounds like plenty until you count the travel days. How many stops a two-week trip holds, three routes that work, and the simpler version that often works better.",
+    date: "November 2026",
+    readTime: "7 min read",
+  }}
+>
+  <Fragment set:html={Content} />
+</JournalLayout>
