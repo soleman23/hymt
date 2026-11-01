@@ -153,9 +153,11 @@ Full standards: `docs/seo/CONTENT-STANDARDS.md`. Schema: `docs/seo/SCHEMA-LIBRAR
 
 ### Node and npm
 
-- The build needs **Node >=22.19.0**, and the package that sets that floor is
-  **undici**, reached through `astro` → `unifont`. Astro's own floor is lower
-  (`>=22.12.0`) — do not read it and assume it governs. `npm ci` enforces
+- The build needs **Node >=22.23.4**, set since 2026-11-01 by **astro** 7.4.2+
+  itself (with `@astrojs/prism` and `@astrojs/telemetry`). Before that the
+  floor was undici's `>=22.19.0`, reached through `astro` → `unifont`, while
+  Astro's own floor was the lower `>=22.12.0` — so never assume any one
+  package governs. `npm ci` enforces
   `engines.node` for every package it installs, so what governs is the
   strictest floor **anywhere in the tree**.
 - This is written from a failure, not from theory. `engines.node` said
