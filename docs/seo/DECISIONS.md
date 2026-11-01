@@ -20,6 +20,11 @@ without updating this file in the same commit.
   the final pre-cutover build — and `dateModified` starts equal to it.
 - **D2 wording on the site:** say "part of the Travel Leaders Network" and no
   more until Mark confirms the exact membership level and profile URL.
+  One sourced extension, approved by Mark 2026-11-01 (#251): pages may
+  describe Internova's SELECT Hotels & Resorts program and its published
+  benefits, always "when available" at participating hotels and linked to
+  [Internova's March 2, 2023 release](https://internova.com/?p=2409). Never
+  claim Virtuoso, Signature or any other consortium.
 - **D4 sequencing:** GBP is the only legitimate route to review stars
   (self-controlled reviews are ineligible per Google policy) — create it before
   the launch-week press/directory pushes in #38.
