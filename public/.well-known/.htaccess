@@ -1,0 +1,6 @@
+# Narrow exception to the site's global .json deny rule: this exact published discovery file only.
+<Files "ai-catalog.json">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+</Files>

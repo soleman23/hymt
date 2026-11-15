@@ -1,0 +1,10 @@
+{
+  "specVersion": "1.0",
+  "entries": [
+    {
+      "identifier": "urn:air:hymtravel.com:mcp:public-travel",
+      "type": "application/mcp-server-card+json",
+      "url": "https://hymt-public-mcp.onrender.com/mcp/server-card"
+    }
+  ]
+}
