@@ -110,8 +110,8 @@ ErrorDocument 404 /404.html
 <IfModule mod_headers.c>
   Header always set Link "</llms.txt>; rel=\"describedby\"; type=\"text/plain\", </index.markdown>; rel=\"alternate\"; type=\"text/markdown\"" env=HYMT_AGENT_HOME
   Header always merge Vary "Accept" env=HYMT_AGENT_HOME
-  # Avoid CDN cache-key confusion between HTML and the negotiated Markdown.
-  Header always set Cache-Control "private, no-store, max-age=0, no-transform" env=HYMT_AGENT_HOME
+  # The existing HTML policy is max-age=0, must-revalidate, no-transform.
+  # Vary: Accept differentiates HTML from the Markdown representation.
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"

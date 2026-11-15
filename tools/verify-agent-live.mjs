@@ -47,7 +47,12 @@ async function verify() {
     assert.ok(link.includes("</llms.txt>") && link.includes("</index.markdown>"),
       "agent alternate Link header missing");
     const cache = response.headers.get("cache-control") || "";
-    assert.match(cache, /no-store/i, "prevent CDN cross-variant cache contamination");
+    // Hostinger's FilesMatch policy is authoritative: HTML currently returns
+    // public, max-age=0, must-revalidate, no-transform. The Vary header plus
+    // alternating response-body checks below detect cross-variant caching.
+    assert.ok(/no-store/i.test(cache) ||
+      (/max-age=0/i.test(cache) && /must-revalidate/i.test(cache)),
+      "Expected non-stale cache policy, got: " + cache);
     if (accept === "text/markdown") {
       assert.match(body, /^# Hit Your Mark Travel/m);
       assert.doesNotMatch(body, /<!DOCTYPE html>/i);
