@@ -24,3 +24,10 @@ jobs:
           node-version: 24.16.0
       - name: Exercise public MCP server locally
         run: node --test agent-mcp/server.test.mjs
+      - name: Inspect live homepage headers (diagnostic only)
+        run: |
+          echo '=== HTML headers ==='
+          curl -sSIL --max-time 20 -H 'Accept: text/html' https://www.hymtravel.com/ | grep -iE '^(HTTP/|cache-control:|link:|vary:|content-type:|x-hcdn-|server:)' || true
+          echo '=== Markdown headers ==='
+          curl -sSIL --max-time 20 -H 'Accept: text/markdown' https://www.hymtravel.com/ | grep -iE '^(HTTP/|cache-control:|link:|vary:|content-type:|x-hcdn-|server:)' || true
+
