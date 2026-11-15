@@ -33,7 +33,8 @@ assert.ok(ht.includes(String.raw`RewriteRule ^(index\.html)?$ /index.markdown`))
 assert.ok(ht.includes("Header always set Link"));
 assert.ok(ht.includes('Header always merge Vary "Accept"'));
 assert.ok(ht.includes("HYMT_AGENT_HOME"));
-assert.ok(ht.includes('Header always set Cache-Control "private, no-store, max-age=0, no-transform" env=HYMT_AGENT_HOME'));
+assert.ok(ht.includes('Header set Cache-Control "public, max-age=0, must-revalidate, no-transform"'));
+assert.ok(!ht.includes('Header always set Cache-Control "private, no-store'));
 const md = await read("dist/index.markdown");
 for (const url of ["/destinations/", "/experiences/", "/plan-your-trip/", "/contact/"]) {
   assert.ok(md.includes("https://www.hymtravel.com" + url), "missing Markdown link: " + url);
