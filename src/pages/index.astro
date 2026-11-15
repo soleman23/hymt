@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Content from "../content-pages/home.html?raw";
-import { organization, webPage } from "../lib/schema";
+import { organization, webPage, website, service } from "../lib/schema";
 
 /* P2-2: the FULL TravelAgency node lives here and only here — every other
    page references it by @id. Address per DECISIONS.md D3 (city/region only),
@@ -18,6 +18,10 @@ const schema = [
     sameAs: ["https://www.instagram.com/travelwithsoleman/"],
   }),
   webPage(SITE, { name: title, description, path: "/" }),
+  website(SITE),
+  service(SITE, {"name":"Safari & Wildlife Travel","description":"Personalized safari and wildlife travel planning.","path":"/experiences/safari-wildlife-travel/","serviceType":"Safari travel planning"}),
+  service(SITE, {"name":"Family Travel","description":"Personalized family travel itineraries and accommodations.","path":"/experiences/family-travel/","serviceType":"Family travel planning"}),
+  service(SITE, {"name":"Cruises & Yachts","description":"Cruise and yacht travel planning with a dedicated advisor.","path":"/experiences/cruises/","serviceType":"Cruise travel planning"}),
 ];
 ---
 <Base

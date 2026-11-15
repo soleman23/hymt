@@ -1,0 +1,24 @@
+name: agent-live
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-live
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.16.0
+      - name: Verify live agent endpoints after Hostinger deployment
+        run: node tools/verify-agent-live.mjs --retry
