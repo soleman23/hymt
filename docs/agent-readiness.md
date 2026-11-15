@@ -8,7 +8,7 @@ This is a static Astro/Hostinger site. Its existing TravelAgency schema is a Loc
 - Homepage WebSite and three real on-page travel Service nodes, linked to the existing TravelAgency identity.
 - A short public /index.markdown alternate; /llms.txt remains the navigation guide.
 - Root Accept: text/markdown negotiation, MIME type, RFC 8288 Link discovery and Vary: Accept via Hostinger .htaccess.
-- Read-only homepage WebMCP tool using document.modelContext, with safe feature detection. No form submission, personal data, backend calls or booking.
+- Read-only homepage WebMCP tool using document.modelContext with readOnlyHint and safe feature detection/registration rejection handling. No form submission, personal data, backend calls or booking.
 - CI check of deployed asset parity and schema presence.
 
 ## Review and deploy

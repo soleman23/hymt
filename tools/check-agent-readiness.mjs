@@ -20,6 +20,8 @@ assert.ok(md.includes("https://www.hymtravel.com/plan-your-trip/"));
 const js = await read("dist/agent-tools.js");
 assert.ok(js.includes("document.modelContext") && js.includes("context.registerTool"));
 assert.ok(!js.includes("navigator.modelContext"));
+assert.ok(js.includes("readOnlyHint: true"));
+assert.ok(js.includes(")).catch(() => {})"));
 const html = await read("dist/index.html");
 const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m => JSON.parse(m[1]));
 for (const type of ["TravelAgency", "WebPage", "WebSite", "Service"]) {

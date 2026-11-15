@@ -13,7 +13,7 @@
     journal: ["Travel Journal", "Read destination and travel planning articles.", "/travel-journal/"]
   };
   try {
-    context.registerTool({
+    Promise.resolve(context.registerTool({
       name: "explore_hymt_travel",
       description: "Find official Hit Your Mark Travel destination, experience, planning, FAQ and journal pages. Read-only; does not submit forms or make bookings.",
       inputSchema: {
@@ -28,13 +28,14 @@
         required: ["topic"],
         additionalProperties: false
       },
+      annotations: { readOnlyHint: true, untrustedContentHint: false },
       execute: async ({ topic } = {}) => {
         const page = Object.prototype.hasOwnProperty.call(pages, topic) ? pages[topic] : null;
         return page
           ? { business: "Hit Your Mark Travel", title: page[0], description: page[1], url: "https://www.hymtravel.com" + page[2] }
           : { error: "Choose destinations, experiences, planning, faq or journal." };
       }
-    });
+    })).catch(() => {});
   } catch {
     // Browser preview behavior changes; ordinary site functionality must not.
   }
