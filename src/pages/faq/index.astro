@@ -9,7 +9,7 @@ import { breadcrumbs, faq, plain } from "../../lib/schema";
    content string already imported; never a second hand-typed copy. */
 const SITE = (Astro.site?.href ?? "https://www.hymtravel.com/").replace(/\/$/, "");
 const description =
-  "Answers to the most common questions about working with Hit Your Mark Travel — from how we charge to what happens when something goes wrong.";
+  "Find out how Hit Your Mark Travel plans and books trips without charging fees, when supplier payments are due, and how we help during your trip.";
 const qa: { q: string; a: string }[] = [];
 for (const chunk of Content.split('<div class="faq-item">').slice(1)) {
   const q = chunk.match(/class="faq-q__text"[^>]*>([\s\S]*?)<\/span>/)?.[1];
