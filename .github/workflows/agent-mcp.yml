@@ -1,0 +1,26 @@
+name: agent-mcp
+on:
+  pull_request:
+    paths:
+      - "agent-mcp/**"
+      - ".github/workflows/agent-mcp.yml"
+  push:
+    branches: [main]
+    paths:
+      - "agent-mcp/**"
+      - ".github/workflows/agent-mcp.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.16.0
+      - name: Exercise public MCP server locally
+        run: node --test agent-mcp/server.test.mjs
