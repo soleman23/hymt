@@ -31,5 +31,9 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24.16.0
-      - name: Verify deployed MCP service (including production website after merge)
-        run: node tools/verify-mcp-live.mjs ${{ github.event_name == 'pull_request' && '' || '--retry --site' }}
+      - name: Verify deployed Render MCP service
+        if: github.event_name == 'pull_request'
+        run: node tools/verify-mcp-live.mjs
+      - name: Verify MCP service and canonical website discovery
+        if: github.event_name != 'pull_request'
+        run: node tools/verify-mcp-live.mjs --retry --site
