@@ -81,8 +81,11 @@ function errorResponse(id, code, message, data) {
 function error(res, status, id, code, message, data) {
   return send(res, status, errorResponse(id, code, message, data));
 }
-function ok(res, id, result) {
-  return send(res, 200, { jsonrpc: "2.0", id, result });
+function ok(res, id, result, modern = false) {
+  // The 2026-07-28 spec asks servers to identify themselves on every result.
+  return send(res, 200, { jsonrpc: "2.0", id, result: modern
+    ? { ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } }
+    : result });
 }
 function card(publicUrl) {
   return {
@@ -172,6 +175,9 @@ function respondRpc(req, res, msg) {
 
   switch (msg.method) {
     case "initialize": {
+      if (modern || headerVersion === MODERN) {
+        return error(res, 404, id, -32601, "Method not found in stateless protocol");
+      }
       const want = msg.params?.protocolVersion;
       if (typeof want !== "string" || !msg.params?.clientInfo || !msg.params?.capabilities) {
         return error(res, 400, id, -32602, "Invalid initialize parameters");
@@ -192,14 +198,15 @@ function respondRpc(req, res, msg) {
         _meta: { "io.modelcontextprotocol/serverInfo": SERVER_INFO },
         instructions: "Only public information. Never submit a travel inquiry or claim live availability.",
         ttlMs: 300000, cacheScope: "public"
-      });
+      }, true);
     case "ping":
-      return ok(res, id, modern ? { resultType: "complete" } : {});
+      return modern ? error(res, 404, id, -32601, "Method not found in stateless protocol")
+        : ok(res, id, {});
     case "tools/list":
       if (msg.params?.cursor) return error(res, 400, id, -32602, "No pagination cursor is supported");
       return ok(res, id, modern
         ? { resultType: "complete", tools: TOOLS, ttlMs: 300000, cacheScope: "public" }
-        : { tools: TOOLS });
+        : { tools: TOOLS }, modern);
     case "tools/call": {
       const name = msg.params?.name;
       if (!TOOLS.some(t => t.name === name)) return error(res, 404, id, -32602, "Unknown tool");
@@ -213,7 +220,7 @@ function respondRpc(req, res, msg) {
       return ok(res, id, {
         ...(modern ? { resultType: "complete", structuredContent: data } : {}),
         content: [{ type: "text", text: JSON.stringify(data) }], isError: false
-      });
+      }, modern);
     }
     default:
       return error(res, 404, id, -32601, "Method not found");
@@ -230,7 +237,26 @@ export function createMcpServer(options = {}) {
   }
   const allowedOrigins = options.allowedOrigins ?? process.env.MCP_ALLOWED_ORIGINS ?? "";
   const token = options.token ?? process.env.MCP_ACCESS_TOKEN ?? "";
+  // A small in-process abuse guard; configure per-IP limits at the host/WAF
+  // as well because this bucket is reset on restart and may be shared by proxies.
+  const buckets = new Map();
+  const windowMs = options.rateWindowMs ?? 60_000;
+  const maxPerWindow = options.rateLimit ?? 120;
   return createServer(async (req, res) => {
+    const now = Date.now();
+    if (buckets.size > 1024) {
+      for (const [ip, bucket] of buckets) if (now - bucket.start >= windowMs) buckets.delete(ip);
+    }
+    const ip = req.socket.remoteAddress ?? "unknown";
+    let bucket = buckets.get(ip);
+    if (!bucket || now - bucket.start >= windowMs) {
+      bucket = { start: now, count: 0 }; buckets.set(ip, bucket);
+    }
+    bucket.count++;
+    if (bucket.count > maxPerWindow) {
+      res.setHeader("Retry-After", String(Math.ceil((bucket.start + windowMs - now) / 1000)));
+      return error(res, 429, null, -32000, "Too many requests");
+    }
     res.setHeader("X-Content-Type-Options", "nosniff");
     const incomingOrigin = req.headers.origin;
     if (!validOrigin(incomingOrigin, origin.origin, allowedOrigins)) {

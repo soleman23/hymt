@@ -114,6 +114,34 @@ test("headers, unknown methods, origins and size limits fail closed", async () =
     body: "x".repeat(40000) });
   assert.equal(tooBig.status, 413);
 });
+test("modern responses have server identity, removed methods fail, and header mismatch is denied", async () => {
+  const listing = await rpc("tools/list");
+  assert.equal(listing.body.result._meta["io.modelcontextprotocol/serverInfo"].name, SERVER_INFO.name);
+  const oldInit = await rpc("initialize", { protocolVersion: LEGACY, capabilities: {},
+    clientInfo: { name: "modern-test", version: "1.0" } });
+  assert.equal(oldInit.status, 404);
+  assert.equal(oldInit.body.error.code, -32601);
+  const ping = await rpc("ping");
+  assert.equal(ping.status, 404);
+  const wrong = await rpc("tools/call", { name: "list_hymt_sections", arguments: {} },
+    { headers: { "Mcp-Name": "get_hymt_public_contact" } });
+  assert.equal(wrong.status, 400);
+  assert.equal(wrong.body.error.code, -32020);
+});
+test("in-process abuse limiter returns 429 and Retry-After", async () => {
+  const guarded = createMcpServer({ publicUrl: "https://mcp.example.test", rateLimit: 2 });
+  guarded.listen(0, "127.0.0.1");
+  await once(guarded, "listening");
+  const url = "http://127.0.0.1:" + guarded.address().port + "/healthz";
+  try {
+    for (let i = 0; i < 2; i++) assert.equal((await fetch(url)).status, 200);
+    const limited = await fetch(url);
+    assert.equal(limited.status, 429);
+    assert.ok(Number(limited.headers.get("retry-after")) >= 1);
+  } finally {
+    await new Promise(resolve => guarded.close(resolve));
+  }
+});
 test("browser preflight is restricted to explicitly trusted origins", async () => {
   const good = await fetch(base + "/mcp", { method: "OPTIONS",
     headers: { Origin: "https://www.hymtravel.com" } });
