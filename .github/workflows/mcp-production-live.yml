@@ -32,4 +32,4 @@ jobs:
         with:
           node-version: 24.16.0
       - name: Verify deployed MCP service (including production website after merge)
-        run: node tools/verify-mcp-live.mjs --retry ${{ github.event_name == 'pull_request' && '' || '--site' }}
+        run: node tools/verify-mcp-live.mjs ${{ github.event_name == 'pull_request' && '' || '--retry --site' }}
