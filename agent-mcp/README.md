@@ -27,6 +27,6 @@ Do NOT publish discovery on www.hymtravel.com until the real external endpoint i
 
 ## Security notes
 
-Public information only, small 32 KiB request cap and in-process sliding time-window abuse budget, validated Origin, exact allowed routes, strict tool arguments and no outbound URLs. The server intentionally does not log request bodies. In-process limits are shared by the connection's remoteAddress (which can be a load-balancer address) and reset on restart; Node-level protection is not a substitute for provider-level rate limiting, DDoS controls, service health checks and alerting. The experimental card spec and MCP protocol may evolve; periodically check upstream and conformance-test before publishing revised metadata.
+Public information only, small 32 KiB request cap and in-process fixed-window abuse budget, validated Origin, exact allowed routes, strict tool arguments and no outbound URLs. The server intentionally does not log request bodies. In-process limits are shared by the connection's remoteAddress (which can be a load-balancer address) and reset on restart; Node-level protection is not a substitute for provider-level rate limiting, DDoS controls, service health checks and alerting. The experimental card spec and MCP protocol may evolve; periodically check upstream and conformance-test before publishing revised metadata.
 
 No production endpoint is asserted until it is actually hosted.
