@@ -90,6 +90,21 @@ export function organization(site: string, opts: {
   };
 }
 
+/* ── WebSite — homepage, separate from business and WebPage ──────────── */
+export function website(site: string) {
+  const id = ids(site);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': id.website,
+    name: 'Hit Your Mark Travel',
+    url: `${site}/`,
+    description: 'Official website of Hit Your Mark Travel, a bespoke luxury travel advisory.',
+    inLanguage: 'en-US',
+    publisher: { '@id': id.org },
+  };
+}
+
 /* ── Person — /about/ only ─────────────────────────────────────────────── */
 export function person(site: string, opts: { sameAs: string[]; image?: string }) {
   const id = ids(site);

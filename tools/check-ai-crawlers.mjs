@@ -110,16 +110,13 @@ export const AGENTS = [
   { name: "control-chrome", control: "browser", ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" },
   { name: "control-unknown", control: "unknown", ua: "ZeeblorpCrawler/3.7 (+https://example.invalid/bot)" },
 
-  /* The "AI answer engines: allowed, deliberately" block of public/robots.txt,
-     in full. These are the agents where a 429 costs a citation, which is the
-     entire stake of #156, so the fixtures require this set to stay in step with
-     that file rather than trusting anyone to remember. */
+  /* The "AI answer engines" block of public/robots.txt, in full.
+     Only search/citation crawlers belong in live bursts. GPTBot/ClaudeBot
+     are training crawlers now explicitly disallowed and MUST NOT be probed. */
   { name: "OAI-SearchBot", ua: "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; OAI-SearchBot/1.0; +https://openai.com/searchbot" },
   { name: "ChatGPT-User", ua: "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; ChatGPT-User/1.0; +https://openai.com/bot" },
-  { name: "GPTBot", ua: "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; GPTBot/1.1; +https://openai.com/gptbot" },
   { name: "Claude-SearchBot", ua: "Mozilla/5.0 (compatible; Claude-SearchBot/1.0; +claudebot@anthropic.com)" },
   { name: "Claude-User", ua: "Mozilla/5.0 (compatible; Claude-User/1.0; +claudebot@anthropic.com)" },
-  { name: "ClaudeBot", ua: "Mozilla/5.0 (compatible; ClaudeBot/1.0; +claudebot@anthropic.com)" },
   { name: "PerplexityBot", ua: "Mozilla/5.0 (compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)" },
   { name: "Perplexity-User", ua: "Mozilla/5.0 (compatible; Perplexity-User/1.0; +https://perplexity.ai/perplexitybot)" },
   { name: "Meta-ExternalAgent", ua: "meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)" },

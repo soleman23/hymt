@@ -54,6 +54,9 @@ jobs:
 
       - run: npm run build
 
+      - name: Check agent-facing metadata and files
+        run: node tools/check-agent-readiness.mjs
+
       # dist/ is committed and deployed byte-for-byte, so source committed
       # without a rebuild ships a stale site silently — nothing else in the
       # build compares the two. The step above just regenerated dist/, so any
