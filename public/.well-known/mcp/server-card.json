@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+  "name": "com.hymtravel/public-travel",
+  "title": "Hit Your Mark Travel Public Resources",
+  "description": "Read-only public travel information and official HYMT links.",
+  "version": "1.0.0",
+  "websiteUrl": "https://www.hymtravel.com/",
+  "repository": {
+    "source": "github",
+    "url": "https://github.com/soleman23/hymt",
+    "subfolder": "agent-mcp"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://hymt-public-mcp.onrender.com/mcp",
+      "supportedProtocolVersions": [
+        "2026-07-28",
+        "2025-11-25"
+      ]
+    }
+  ]
+}

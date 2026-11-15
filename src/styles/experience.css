@@ -58,6 +58,8 @@
    The rest of this component is in section-shared.css. Experiences run a
    64px inner gutter where destinations run 52px, so this one stays here. */
 .intro-content { padding:72px 64px }
+/* Let the panel size the portrait, so it can't stretch the row beside the copy. */
+.intro-image__img--cover { position:absolute;inset:0;width:100%;height:100%;object-fit:cover }
 
 /* ── EXPERIENCE CARD GRID ──
    The one 6-card component every /experiences/<slug>/ page uses, and the

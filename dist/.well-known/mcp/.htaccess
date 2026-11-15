@@ -1,0 +1,6 @@
+# Narrow exception to the site's global .json deny rule: this exact published MCP Server Card only.
+<Files "server-card.json">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+</Files>

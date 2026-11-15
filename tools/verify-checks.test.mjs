@@ -4559,8 +4559,13 @@ t("crawlers/verdict: ...and says the origin is degrading for everything",
   const disallowed = [...robots.matchAll(/^User-agent:\s*(\S+)\s*\r?\nDisallow:\s*\//gim)]
     .map((m) => m[1].toLowerCase());
   const wrong = CRAWLER_AGENTS
-    .filter((a) => !a.control && disallowed.includes(a.name.toLowerCase()))
+    .filter((a) => !a.control && !a.robotsOnly && disallowed.includes(a.name.toLowerCase()))
     .map((a) => a.name);
+  t("crawlers: training-only GPTBot and ClaudeBot are not in the live burst list",
+    ["GPTBot", "ClaudeBot"].every((n) => !CRAWLER_AGENTS.some((a) => a.name === n)), true);
+  t("crawlers: citation search bots remain in the live burst list",
+    ["OAI-SearchBot", "Claude-SearchBot", "ChatGPT-User", "Claude-User"]
+      .every((n) => CRAWLER_AGENTS.some((a) => a.name === n && a.ua)), true);
   t(`crawlers: no agent robots.txt disallows is bursted (${wrong.join(", ") || "none"})`,
     wrong.length, 0);
 }

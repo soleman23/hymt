@@ -41,6 +41,10 @@
   RewriteCond %{HTTPS} off
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+  # Request a compact homepage representation explicitly via Accept.
+  RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
+  RewriteRule ^(index\.html)?$ /index.markdown [L]
+
   # Pretty directory URLs: /about → /about/ → /about/index.html
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
@@ -53,6 +57,7 @@ DirectoryIndex index.html
 AddDefaultCharset UTF-8
 AddType image/avif .avif
 AddType image/webp .webp
+AddType text/markdown .markdown
 
 # ── Custom 404 ──
 ErrorDocument 404 /404.html
@@ -83,6 +88,8 @@ ErrorDocument 404 /404.html
 # is unaffected, so this rule can and should ship in the same .htaccess.
 <IfModule mod_setenvif.c>
   SetEnvIf Host "hostingersite\.com$" IS_STAGING=1
+  # Set for the root HTML and its negotiated Markdown counterpart only.
+  SetEnvIf Request_URI "^/(index\.html|index\.markdown)?$" HYMT_AGENT_HOME=1
 </IfModule>
 <IfModule mod_headers.c>
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet" env=IS_STAGING
@@ -101,6 +108,10 @@ ErrorDocument 404 /404.html
 
 # ── Security headers ──
 <IfModule mod_headers.c>
+  Header always set Link "</llms.txt>; rel=\"describedby\"; type=\"text/plain\", </index.markdown>; rel=\"alternate\"; type=\"text/markdown\"" env=HYMT_AGENT_HOME
+  Header always merge Vary "Accept" env=HYMT_AGENT_HOME
+  # The existing HTML policy is max-age=0, must-revalidate, no-transform.
+  # Vary: Accept differentiates HTML from the Markdown representation.
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
@@ -336,6 +347,10 @@ ErrorDocument 404 /404.html
   # Retest (read the wire size and Content-Encoding, NOT `| wc -c` — curl
   # decompresses, so a piped byte count always reports the full document):
   #   curl -s -H 'Accept-Encoding: br' -D - -o /dev/null -w 'wire=%{size_download}\n' <url>
+  <FilesMatch "^index\.markdown$">
+    Header set Cache-Control "public, max-age=0, must-revalidate, no-transform"
+  </FilesMatch>
+
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=0, must-revalidate, no-transform"
   </FilesMatch>
