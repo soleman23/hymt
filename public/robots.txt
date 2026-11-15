@@ -1,7 +1,9 @@
 # Hit Your Mark Travel — https://www.hymtravel.com
-# Posture: allow every crawler that can cite us in a user-facing answer.
-# Block crawlers that only harvest for training-data resale, where there is
-# no citation surface and therefore no upside.
+# Posture: allow search and retrieval for AI answers, opt out of model training.
+# Content Signals state usage preferences; vendor-specific Disallow directives
+# reinforce the training restriction where providers document separate bots.
+# For mixed-purpose bots, the signal alone may not prevent training.
+# Existing conventional search and user-directed retrieval remain accessible.
 
 # ── Search engines ──
 User-agent: Googlebot
@@ -20,17 +22,13 @@ User-agent: DuckDuckBot
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
-# ── AI answer engines: allowed, deliberately ──
-# These retrieve and cite with attribution. Being in their index is the point.
+# ── AI answer engines: search and user-directed retrieval ──
+# Distinct from training crawlers. These support AI answer citations.
 User-agent: OAI-SearchBot
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
 User-agent: ChatGPT-User
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=no
-
-User-agent: GPTBot
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
@@ -42,23 +40,11 @@ User-agent: Claude-User
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
-User-agent: ClaudeBot
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=no
-
 User-agent: PerplexityBot
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
 User-agent: Perplexity-User
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=no
-
-User-agent: Google-Extended
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=no
-
-User-agent: Applebot-Extended
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
@@ -69,6 +55,25 @@ Content-Signal: search=yes, ai-input=yes, ai-train=no
 User-agent: Amazonbot
 Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+# ── Training crawlers / training-use tokens: block model training ──
+# GPTBot and ClaudeBot are training crawlers. Their providers use Disallow
+# to recognize training opt-outs; OAI-SearchBot and Claude-SearchBot stay open.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+# Google-Extended and Applebot-Extended are usage-control tokens, not
+# independent crawlers. Disallow protects the defined training uses without
+# blocking Googlebot/Applebot search. Google-Extended also controls grounding
+# in some Gemini products; this is an intentional training-first tradeoff.
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
 
 # ── Harvest-only crawlers: no citation surface, no upside ──
 User-agent: CCBot

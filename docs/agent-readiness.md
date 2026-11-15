@@ -4,12 +4,12 @@ This is a static Astro/Hostinger site. Its existing TravelAgency schema is a Loc
 
 ## Implemented
 
-- Robots Content-Signal: search=yes, ai-input=yes, ai-train=no, repeated for allowed crawler groups. Signals are preferences, not guaranteed enforcement; existing bot allow/disallow rules stay intact.
+- Robots Content-Signal: search=yes, ai-input=yes, ai-train=no, repeated for allowed crawler groups. Signals are preferences, not guaranteed enforcement. The training-only GPTBot and ClaudeBot are explicitly disallowed while their separate search bots remain allowed. Google-Extended and Applebot-Extended usage-control tokens are blocked to reinforce the training opt-out without affecting ordinary Googlebot/Applebot search. Google-Extended also controls some Gemini grounding uses, which is an intentional tradeoff. Mixed-purpose crawlers may not honor Content Signals.
 - Homepage WebSite and three real on-page travel Service nodes, linked to the existing TravelAgency identity.
 - A short public /index.markdown alternate; /llms.txt remains the navigation guide.
 - Root Accept: text/markdown negotiation, MIME type, RFC 8288 Link discovery and Vary: Accept via Hostinger .htaccess.
 - Read-only homepage WebMCP tool using document.modelContext with readOnlyHint and safe feature detection/registration rejection handling. No form submission, personal data, backend calls or booking.
-- CI check of deployed asset parity and schema presence.
+- CI checks of deployed asset parity, schema cross-references, crawler-policy consistency, and simulated WebMCP registration/execution.
 
 ## Review and deploy
 
