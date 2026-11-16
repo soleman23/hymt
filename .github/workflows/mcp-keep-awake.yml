@@ -1,0 +1,43 @@
+# Best-effort keep-awake for the public, read-only HYMT MCP server on Render Free.
+# GitHub can delay/drop scheduled runs, and Render can restart Free services.
+# This is not a 24/7 uptime guarantee. Render's 750 Free instance hours are
+# shared across the workspace, so monitor usage if other Free services run.
+name: mcp-keep-awake
+
+on:
+  schedule:
+    # Every 10 minutes, offset from the top of the hour to avoid peak load.
+    - cron: '7,17,27,37,47,57 * * * *'
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/mcp-keep-awake.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mcp-keep-awake.yml'
+
+# The health probe doesn't need repository access or secrets.
+permissions: {}
+
+concurrency:
+  group: mcp-keep-awake
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Wake and verify HYMT public MCP health
+        env:
+          HEALTH_URL: https://hymt-public-mcp.onrender.com/healthz
+        shell: bash
+        run: |
+          response="$(curl --fail --silent --show-error \
+            --connect-timeout 15 --max-time 100 \
+            --retry 2 --retry-delay 5 --retry-all-errors \
+            "$HEALTH_URL")"
+          printf '%s\n' "$response" | jq -e '.status == "ok"' >/dev/null
+          echo 'HYMT MCP health responded successfully.'
